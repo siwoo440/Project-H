@@ -1,0 +1,42 @@
+# Unity 생성 폴더
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# IDE 생성 파일
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# 운영체제 파일
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Unity 패키지/빌드 임시 파일
+*.apk
+*.aab
+*.app
+*.unitypackage
+
+# Crash 리포트
+sysinfo.txt
+crashlytics-build.properties

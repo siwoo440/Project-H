@@ -1,0 +1,10 @@
+{
+    "name": "ProjectH.Editor",
+    "rootNamespace": "ProjectH",
+    "references": [
+        "ProjectH.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ]
+}

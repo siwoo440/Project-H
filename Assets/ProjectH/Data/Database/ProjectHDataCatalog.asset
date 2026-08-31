@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 294b59839eed6c04ba7ec8999e2fab4d, type: 3}
+  m_Name: ProjectHDataCatalog
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.ProjectHDataCatalog
+  characters:
+  - {fileID: 11400000, guid: 743fdce42476ae6499611dbf632f62bd, type: 2}
+  - {fileID: 11400000, guid: d15e810faa2b64146a2daf41ea88a7b6, type: 2}
+  - {fileID: 11400000, guid: 292b597f2e57cc64d9e08c048604e11a, type: 2}
+  - {fileID: 11400000, guid: 7e1f427aa34e57b488d81ea0a8ed9663, type: 2}
+  monsters:
+  - {fileID: 11400000, guid: f65ff710b39d622439ce01bf264c8c81, type: 2}
+  - {fileID: 11400000, guid: 4eebdda77fa2f3f468dc72f5cf17394c, type: 2}
+  - {fileID: 11400000, guid: 3c73c01f3a0212146b935e4ec5dc7a20, type: 2}
+  dungeons:
+  - {fileID: 11400000, guid: 24b33301a12dcdb4fa0a07208167cded, type: 2}
+  items:
+  - {fileID: 11400000, guid: 2f6003cce6372624aaf768320e5718a8, type: 2}
+  - {fileID: 11400000, guid: 67e6d8747a459ba468c5a65a732583f0, type: 2}

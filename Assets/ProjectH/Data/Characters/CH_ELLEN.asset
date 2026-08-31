@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1333d1323a04a624cbc4dfdf41050a13, type: 3}
+  m_Name: CH_ELLEN
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.CharacterData
+  id: CH_ELLEN
+  displayName: "\uC5D8\uB80C"
+  job: 2
+  position: 0
+  role: 2
+  baseHp: 1350
+  baseAttack: 70
+  baseMagic: 35
+  baseDefense: 110
+  baseResistance: 75
+  attackSpeed: 0.85
+  criticalRate: 0.04

@@ -1,0 +1,13 @@
+{
+    "name": "ProjectH.Tests.EditMode",
+    "rootNamespace": "ProjectH.Tests",
+    "references": [
+        "ProjectH.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

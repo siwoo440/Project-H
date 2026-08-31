@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_CORRUPTED_WOLF
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_CORRUPTED_WOLF
+  displayName: "\uCE68\uC2DD\uB41C \uB291\uB300"
+  maxHp: 420
+  attack: 48
+  defense: 24
+  resistance: 18
+  attackSpeed: 1.15
+  attackRange: 1.4
+  moveSpeed: 2.8

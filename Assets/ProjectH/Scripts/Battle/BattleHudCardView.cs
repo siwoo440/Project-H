@@ -26,6 +26,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public void Bind(BattleStats stats) // HUD 전투 스탯 연결
         {
+            UnbindHealthEvent(); // 기존 체력 이벤트 연결 해제
             Stats = stats; // 전투 스탯 저장
 
             if (Stats == null) // 전투 스탯 확인
@@ -34,6 +35,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // HUD 연결 중단
             }
 
+            Stats.HealthChanged += Refresh; // 체력 변경 시 HUD 갱신 연결
             SetVisible(true); // HUD 카드 표시
             SetText(nameText, Stats.DisplayName); // 캐릭터 이름 표시
             SetText(levelText, $"Lv.{Stats.Level}"); // 캐릭터 레벨 표시
@@ -55,7 +57,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             SetText(hpText, $"{Stats.CurrentHp}/{Stats.MaxHp}"); // 현재 체력 수치 표시
             SetFill(hpFillImage, Stats.HealthRatio); // HP 게이지 비율 적용
-            SetFill(gaugeFillImage, 0f); // 11일차 스킬 게이지 초기 자리 표시
+            SetFill(gaugeFillImage, 0f); // 현재 스킬 게이지 자리 유지
+        }
+
+        private void OnDestroy() // HUD 카드 제거
+        {
+            UnbindHealthEvent(); // 체력 이벤트 연결 해제
+        }
+
+        private void UnbindHealthEvent() // HUD 체력 이벤트 안전 해제
+        {
+            if (Stats != null) // 기존 전투 스탯 확인
+            {
+                Stats.HealthChanged -= Refresh; // 기존 체력 변경 이벤트 해제
+            }
         }
 
         private static void SetFill(Image target, float ratio) // 가로 게이지 비율 설정

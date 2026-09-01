@@ -54,6 +54,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public void Bind(BattleStats stats) // 전투 스탯 연결
         {
+            UnbindHealthEvent(); // 기존 체력 이벤트 연결 해제
             Stats = stats; // 전투 스탯 저장
 
             if (Stats == null) // 전투 스탯 확인
@@ -62,6 +63,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 데이터 연결 중단
             }
 
+            Stats.HealthChanged += Refresh; // 체력 변경 시 전장 View 갱신 연결
             Color roleColor = GetRoleColor(Stats.Position); // 역할 기반 캐릭터 색상 계산
             SetText(characterText, Stats.DisplayName); // 캐릭터 이름 표시
             SetText(runtimeIdText, Stats.RuntimeId); // 런타임 ID 표시
@@ -102,6 +104,19 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public void ShowDebugAction(BattleActionKind actionKind) // 전투 행동 디버그 텍스트 표시
         {
             actor?.ShowAction(actionKind); // 공통 전투 액터 행동 텍스트 호출
+        }
+
+        private void OnDestroy() // 전투 유닛 View 제거
+        {
+            UnbindHealthEvent(); // 체력 이벤트 연결 해제
+        }
+
+        private void UnbindHealthEvent() // 체력 이벤트 안전 해제
+        {
+            if (Stats != null) // 기존 전투 스탯 확인
+            {
+                Stats.HealthChanged -= Refresh; // 기존 체력 변경 이벤트 해제
+            }
         }
 
         private static Color GetRoleColor(BattlePosition position) // 역할 기반 캐릭터 색상 반환

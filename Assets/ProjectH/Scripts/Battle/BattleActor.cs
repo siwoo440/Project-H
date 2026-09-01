@@ -9,6 +9,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         [SerializeField] private Image bodyImage; // 임시 전투 바디 이미지
         [SerializeField] private BattleActionDebugText actionDebugText; // 머리 위 행동 디버그 텍스트
+        [SerializeField] private BattleFloatingValueText floatingValueText; // 피해 회복 숫자 디버그 텍스트
         private Color baseBodyColor = Color.white; // 기본 바디 색상
         private Coroutine flashRoutine; // 피격 미리보기 코루틴
         public BattleTeam Team { get; private set; } // 전투 팀
@@ -17,10 +18,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public bool IsCombatReady => Stats != null; // 전투 초기화 완료 여부
         public float ForwardDirection => Team == BattleTeam.Ally ? 1f : -1f; // 팀별 전진 방향 반환
 
-        public void ConfigureVisuals(Image body, BattleActionDebugText debugText) // 전투 액터 시각 참조 설정
+        public void ConfigureVisuals(Image body, BattleActionDebugText debugText) // 이전 전투 시각 참조 설정
+        {
+            ConfigureVisuals(body, debugText, floatingValueText); // 기존 체력 변화 텍스트 유지 설정
+        }
+
+        public void ConfigureVisuals(Image body, BattleActionDebugText debugText, BattleFloatingValueText valueText) // 체력 변화 포함 전투 시각 참조 설정
         {
             bodyImage = body; // 전투 바디 이미지 연결
             actionDebugText = debugText; // 행동 디버그 텍스트 연결
+            floatingValueText = valueText; // 체력 변화 텍스트 연결
 
             if (bodyImage != null) // 전투 바디 이미지 확인
             {
@@ -111,6 +118,66 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Vector3 nextPosition = transform.position; // 현재 위치 복사
             nextPosition.x = nextX; // 가로 전진 위치 적용
             transform.position = nextPosition; // 전투 객체 전진 위치 저장
+        }
+
+        public int ApplyDamage(BattleDamageResult result) // 계산 완료 피해 적용
+        {
+            if (!IsCombatReady || !Stats.IsAlive) // 전투 상태 및 생존 여부 확인
+            {
+                return 0; // 피해 적용 중단
+            }
+
+            if (result.TargetRuntimeId != Stats.RuntimeId) // 피해 대상 ID 일치 확인
+            {
+                return 0; // 잘못된 대상 피해 차단
+            }
+
+            IBattleMutableCombatantStats mutableStats = Stats as IBattleMutableCombatantStats; // 변경 가능 전투 스탯 변환
+
+            if (mutableStats == null) // 변경 가능 전투 스탯 확인
+            {
+                return 0; // 체력 변경 불가 대상 차단
+            }
+
+            int applied = mutableStats.TakeDamage(result.Damage); // 실제 피해 적용
+
+            if (applied <= 0) // 실제 피해 발생 확인
+            {
+                return 0; // 피해 시각 처리 중단
+            }
+
+            FlashHitPreview(); // 피해 피격 표시
+            floatingValueText?.ShowDamage(applied); // 피해 숫자 표시
+            return applied; // 실제 피해량 반환
+        }
+
+        public int ApplyHealing(BattleHealingResult result) // 계산 완료 회복 적용
+        {
+            if (!IsCombatReady || !Stats.IsAlive) // 전투 상태 및 생존 여부 확인
+            {
+                return 0; // 일반 회복 부활 차단
+            }
+
+            if (result.TargetRuntimeId != Stats.RuntimeId) // 회복 대상 ID 일치 확인
+            {
+                return 0; // 잘못된 대상 회복 차단
+            }
+
+            IBattleMutableCombatantStats mutableStats = Stats as IBattleMutableCombatantStats; // 변경 가능 전투 스탯 변환
+
+            if (mutableStats == null) // 변경 가능 전투 스탯 확인
+            {
+                return 0; // 체력 변경 불가 대상 차단
+            }
+
+            int applied = mutableStats.Heal(result.Healing); // 실제 회복 적용
+
+            if (applied > 0) // 실제 회복 발생 확인
+            {
+                floatingValueText?.ShowHealing(applied); // 회복 숫자 표시
+            }
+
+            return applied; // 실제 회복량 반환
         }
 
         public void ShowAction(BattleActionKind actionKind) // 머리 위 행동 텍스트 표시

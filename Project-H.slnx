@@ -1,5 +1,5 @@
 ﻿<Solution>
-  <Project Path="ProjectH.Runtime.csproj" />
   <Project Path="ProjectH.Tests.EditMode.csproj" />
+  <Project Path="ProjectH.Runtime.csproj" />
   <Project Path="ProjectH.Editor.csproj" />
 </Solution>

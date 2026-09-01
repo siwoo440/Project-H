@@ -117,19 +117,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 공격 적중 대기 유지
             }
 
-            currentTarget.FlashHitPreview(); // 대상 피격 미리보기 표시
+            BattleDamageResult damageResult = BattleDamageResolver.ResolveBasicAttack(actor.Stats, currentTarget.Stats); // 기본 공격 실제 피해 계산
+            currentTarget.ApplyDamage(damageResult); // 대상 실제 체력 감소 적용
             state = BattleAttackState.Cooldown; // 현재 위치에서 공격 대기 상태 전환
             stateTimer = BattleBasicAttackTiming.GetInterval(actor.Stats.AttackSpeed); // 공격속도 기반 다음 공격 시간 설정
         }
 
         private void UpdateCooldown() // 현재 전선 위치에서 다음 기본 공격 대기
         {
-            if (!IsTargetValid()) // 현재 타겟 유효성 확인
-            {
-                AcquireTarget(); // 사망 또는 소실 타겟 즉시 교체
-                return; // 공격 대기 중단
-            }
-
             stateTimer -= Time.deltaTime; // 공격 대기 시간 감소
 
             if (stateTimer > 0f) // 공격 대기 남은 시간 확인
@@ -137,11 +132,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 공격 대기 유지
             }
 
-            BattleActor nearestOpponent = registry.FindNearestOpponent(actor); // 다음 행동 전 가장 가까운 상대 재확인
+            currentTarget = registry.FindNearestOpponent(actor); // 다음 행동의 가장 가까운 생존 상대 재선택
 
-            if (nearestOpponent != null) // 새로운 가장 가까운 상대 확인
+            if (!IsTargetValid()) // 새로운 타겟 유효성 확인
             {
-                currentTarget = nearestOpponent; // 현재 타겟 최신화
+                ResetTarget(); // 적군 없음 상태 초기화
+                return; // 공격 대기 처리 종료
             }
 
             if (actor.IsWithinAttackRange(currentTarget)) // 다음 타겟 공격 사거리 확인
@@ -150,7 +146,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 공격 대기 종료
             }
 
-            state = BattleAttackState.Approach; // 타겟이 멀어졌으면 다시 전진
+            state = BattleAttackState.Approach; // 타겟이 멀면 다시 전진
         }
 
         private bool IsTargetValid() // 현재 타겟 유효성 확인

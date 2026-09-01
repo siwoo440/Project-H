@@ -46,6 +46,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public void Bind(BattleEnemyStats stats) // 적군 전투 스탯 연결
         {
+            UnbindHealthEvent(); // 기존 체력 이벤트 연결 해제
             Stats = stats; // 적군 전투 스탯 저장
 
             if (Stats == null) // 적군 전투 스탯 확인
@@ -54,6 +55,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 적군 데이터 연결 중단
             }
 
+            Stats.HealthChanged += Refresh; // 체력 변경 시 적군 View 갱신 연결
             Color enemyColor = new Color(0.58f, 0.28f, 0.20f, 0.96f); // 임시 적군 기본색 생성
             SetText(nameText, Stats.DisplayName); // 적군 표시 이름 적용
             SetText(runtimeIdText, Stats.RuntimeId); // 적군 런타임 ID 적용
@@ -87,6 +89,19 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 fillRect.anchorMax = new Vector2(Stats.HealthRatio, 1f); // 적군 체력 비율 적용
                 fillRect.offsetMin = Vector2.zero; // 체력 게이지 최소 오프셋 초기화
                 fillRect.offsetMax = Vector2.zero; // 체력 게이지 최대 오프셋 초기화
+            }
+        }
+
+        private void OnDestroy() // 적군 View 제거
+        {
+            UnbindHealthEvent(); // 체력 이벤트 연결 해제
+        }
+
+        private void UnbindHealthEvent() // 적군 체력 이벤트 안전 해제
+        {
+            if (Stats != null) // 기존 적군 전투 스탯 확인
+            {
+                Stats.HealthChanged -= Refresh; // 기존 체력 변경 이벤트 해제
             }
         }
 

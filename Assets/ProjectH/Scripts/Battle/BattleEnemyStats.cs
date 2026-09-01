@@ -1,11 +1,13 @@
+using System; // 이벤트 기능
 using ProjectH.Data; // 몬스터 데이터 기능
 using UnityEngine; // Unity 수학 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
 {
-    public sealed class BattleEnemyStats : IBattleCombatantStats // 적 전투 런타임 스탯
+    public sealed class BattleEnemyStats : IBattleMutableCombatantStats, IBattleResistanceStats // 적 전투 런타임 스탯
     {
         private int currentHp; // 현재 체력
+        public event Action HealthChanged; // 체력 변경 이벤트
         public string RuntimeId { get; } // 전투 인스턴스 ID
         public string MonsterId { get; } // 몬스터 원본 ID
         public string DisplayName { get; } // 몬스터 표시 이름
@@ -40,15 +42,34 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             int safeAmount = Mathf.Max(0, amount); // 음수 피해 방지
             int before = currentHp; // 적용 전 체력 저장
             currentHp = Mathf.Clamp(currentHp - safeAmount, 0, MaxHp); // 체력 감소 및 범위 보정
-            return before - currentHp; // 실제 피해량 반환
+            int applied = before - currentHp; // 실제 피해량 계산
+
+            if (applied > 0) // 실제 피해 발생 확인
+            {
+                HealthChanged?.Invoke(); // 체력 변경 이벤트 발생
+            }
+
+            return applied; // 실제 피해량 반환
         }
 
         public int Heal(int amount) // 계산 완료 회복 적용
         {
+            if (!IsAlive) // 전투 불능 상태 확인
+            {
+                return 0; // 일반 회복 부활 차단
+            }
+
             int safeAmount = Mathf.Max(0, amount); // 음수 회복 방지
             int before = currentHp; // 적용 전 체력 저장
             currentHp = Mathf.Clamp(currentHp + safeAmount, 0, MaxHp); // 체력 회복 및 범위 보정
-            return currentHp - before; // 실제 회복량 반환
+            int applied = currentHp - before; // 실제 회복량 계산
+
+            if (applied > 0) // 실제 회복 발생 확인
+            {
+                HealthChanged?.Invoke(); // 체력 변경 이벤트 발생
+            }
+
+            return applied; // 실제 회복량 반환
         }
     }
 

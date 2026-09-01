@@ -53,6 +53,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private string currentMainQuest = "MAIN_001"; // 현재 메인 목표
         [SerializeField] private List<string> partyCharacterIds = new List<string>(); // 파티 캐릭터 ID
         [SerializeField] private List<CharacterSaveData> characters = new List<CharacterSaveData>(); // 캐릭터 진행 목록
+        [SerializeField] private List<string> storyFlags = new List<string>(); // 활성 스토리 플래그 목록
 
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
@@ -61,6 +62,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public string CurrentMainQuest => currentMainQuest; // 현재 목표 반환
         public IReadOnlyList<string> PartyCharacterIds => partyCharacterIds; // 파티 목록 반환
         public IReadOnlyList<CharacterSaveData> Characters => characters; // 캐릭터 진행 반환
+        public IReadOnlyList<string> StoryFlags => storyFlags; // 스토리 플래그 반환
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -75,8 +77,45 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             return saveData; // 새 게임 데이터 반환
         }
 
+        public void EnsureDefaults() // 이전 저장 기본값 복원
+        {
+            if (saveVersion <= 0) // 저장 버전 확인
+            {
+                saveVersion = CurrentVersion; // 기본 저장 버전 적용
+            }
+
+            if (partyCharacterIds == null) // 파티 목록 확인
+            {
+                partyCharacterIds = new List<string>(); // 파티 목록 복원
+            }
+
+            if (characters == null) // 캐릭터 목록 확인
+            {
+                characters = new List<CharacterSaveData>(); // 캐릭터 목록 복원
+            }
+
+            if (storyFlags == null) // 플래그 목록 확인
+            {
+                storyFlags = new List<string>(); // 플래그 목록 복원
+            }
+
+            if (currentChapter == null) // 현재 챕터 확인
+            {
+                currentChapter = string.Empty; // 챕터 기본값 복원
+            }
+
+            if (currentMainQuest == null) // 현재 목표 확인
+            {
+                currentMainQuest = string.Empty; // 목표 기본값 복원
+            }
+
+            currentDay = Mathf.Max(1, currentDay); // 최소 일차 복원
+        }
+
         public CharacterSaveData FindCharacter(string characterId) // 캐릭터 진행 조회
         {
+            EnsureDefaults(); // 저장 기본값 확인
+
             foreach (CharacterSaveData character in characters) // 캐릭터 진행 순회
             {
                 if (character != null && string.Equals(character.CharacterId, characterId, StringComparison.Ordinal)) // 캐릭터 ID 비교
@@ -86,6 +125,63 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
 
             return null; // 조회 실패 반환
+        }
+
+        public bool HasStoryFlag(string flagId) // 스토리 플래그 확인
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+
+            if (string.IsNullOrWhiteSpace(flagId)) // 플래그 ID 확인
+            {
+                return false; // 잘못된 플래그 반환
+            }
+
+            foreach (string flag in storyFlags) // 플래그 목록 순회
+            {
+                if (string.Equals(flag, flagId, StringComparison.Ordinal)) // 플래그 ID 비교
+                {
+                    return true; // 플래그 존재 반환
+                }
+            }
+
+            return false; // 플래그 없음 반환
+        }
+
+        public bool SetStoryFlag(string flagId) // 스토리 플래그 활성화
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+
+            if (string.IsNullOrWhiteSpace(flagId)) // 플래그 ID 확인
+            {
+                return false; // 플래그 추가 실패
+            }
+
+            if (HasStoryFlag(flagId)) // 기존 플래그 확인
+            {
+                return false; // 중복 추가 중단
+            }
+
+            storyFlags.Add(flagId); // 새 플래그 추가
+            storyFlags.Sort(StringComparer.Ordinal); // 플래그 순서 정렬
+            return true; // 플래그 추가 성공
+        }
+
+        public bool RemoveStoryFlag(string flagId) // 스토리 플래그 비활성화
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+
+            for (int index = storyFlags.Count - 1; index >= 0; index--) // 플래그 역순 순회
+            {
+                if (!string.Equals(storyFlags[index], flagId, StringComparison.Ordinal)) // 플래그 ID 비교
+                {
+                    continue; // 다음 플래그 이동
+                }
+
+                storyFlags.RemoveAt(index); // 일치 플래그 제거
+                return true; // 플래그 제거 성공
+            }
+
+            return false; // 플래그 제거 실패
         }
 
         public void SetCurrentDay(int value) // 현재 일차 변경

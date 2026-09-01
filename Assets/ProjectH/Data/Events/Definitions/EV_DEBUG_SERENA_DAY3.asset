@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 777ed5c7ae09445ab9c56a8736aafa9b, type: 3}
+  m_Name: EV_DEBUG_SERENA_DAY3
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Events.EventDefinition
+  id: EV_DEBUG_SERENA_DAY3
+  displayName: "DEBUG \xB7 \uC138\uB808\uB098 Day 3"
+  groupMode: 0
+  conditions:
+  - conditionType: 1
+    stringValue: STORY_SERENA_JOINED
+    intValue: 0
+    boolValue: 1
+  - conditionType: 2
+    stringValue: 
+    intValue: 3
+    boolValue: 1
+  - conditionType: 5
+    stringValue: CH_SERENA
+    intValue: 2
+    boolValue: 1

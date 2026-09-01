@@ -1,4 +1,5 @@
 using ProjectH.Data; // 데이터 기능
+using ProjectH.Events; // 이벤트 기능
 using ProjectH.SaveSystem; // 저장 기능
 using UnityEngine; // Unity 기본 기능
 
@@ -8,12 +9,14 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
     [RequireComponent(typeof(SceneLoader))] // 씬 로더 자동 보장
     [RequireComponent(typeof(DataManager))] // 데이터 관리자 자동 보장
     [RequireComponent(typeof(SaveManager))] // 저장 관리자 자동 보장
+    [RequireComponent(typeof(EventManager))] // 이벤트 관리자 자동 보장
     public sealed class GameManager : MonoBehaviour // 게임 전역 관리자
     {
         public static GameManager Instance { get; private set; } // 전역 인스턴스
         public SceneLoader Scenes { get; private set; } // 씬 로더 참조
         public DataManager Data { get; private set; } // 데이터 관리자 참조
         public SaveManager Save { get; private set; } // 저장 관리자 참조
+        public EventManager Events { get; private set; } // 이벤트 관리자 참조
         public bool IsInitialized { get; private set; } // 초기화 상태
 
         private void Awake() // 관리자 초기 설정
@@ -28,6 +31,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             Scenes = GetComponent<SceneLoader>(); // 씬 로더 연결
             Data = GetComponent<DataManager>(); // 데이터 관리자 연결
             Save = GetComponent<SaveManager>(); // 저장 관리자 연결
+            Events = GetComponent<EventManager>(); // 이벤트 관리자 연결
             DontDestroyOnLoad(gameObject); // 씬 전환 유지
             Initialize(); // 공통 초기화 실행
         }
@@ -64,6 +68,20 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             if (!Save.IsInitialized) // 저장 초기화 결과 확인
             {
                 Debug.LogError("[Project H] SaveManager initialization failed."); // 저장 초기화 실패 로그
+                return; // 초기화 중단
+            }
+
+            if (Events == null) // 이벤트 관리자 확인
+            {
+                Debug.LogError("[Project H] EventManager is missing."); // 이벤트 관리자 오류
+                return; // 초기화 중단
+            }
+
+            Events.Initialize(Save); // 이벤트 관리자 초기화
+
+            if (!Events.IsInitialized) // 이벤트 초기화 결과 확인
+            {
+                Debug.LogError("[Project H] EventManager initialization failed."); // 이벤트 초기화 실패 로그
                 return; // 초기화 중단
             }
 

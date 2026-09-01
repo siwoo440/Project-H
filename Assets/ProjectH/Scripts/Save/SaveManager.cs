@@ -2,6 +2,7 @@ using System; // 예외 자료형
 using System.Collections.Generic; // 집합 자료형
 using System.IO; // 파일 입출력
 using ProjectH.Data; // 데이터 기능
+using ProjectH.Events; // 이벤트 기능
 using UnityEngine; // Unity 기본 기능
 
 namespace ProjectH.SaveSystem // 프로젝트 저장 영역
@@ -59,6 +60,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
 
             CurrentSave = SaveData.CreateNewGame(InitialCharacterIds); // 초기 저장 데이터 생성
+            ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.NewGameCreated)); // 새 게임 이벤트 발행
             Debug.Log("[Project H] New game save data created."); // 새 게임 생성 로그
             return SaveCurrent(); // 초기 데이터 저장
         }
@@ -78,9 +80,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             try // 파일 저장 시도
             {
+                CurrentSave.EnsureDefaults(); // 저장 기본값 확인
                 string json = JsonUtility.ToJson(CurrentSave, true); // 저장 데이터 JSON 변환
                 File.WriteAllText(SavePath, json); // JSON 파일 저장
                 HasSaveData = true; // 저장 존재 상태 갱신
+                ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Saved)); // 저장 완료 이벤트 발행
                 Debug.Log($"[Project H] Save complete. Path={SavePath}"); // 저장 완료 로그
                 return true; // 저장 성공
             }
@@ -110,6 +114,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 string json = File.ReadAllText(SavePath); // JSON 파일 읽기
                 SaveData loadedSave = JsonUtility.FromJson<SaveData>(json); // 저장 데이터 역직렬화
 
+                if (loadedSave != null) // 불러온 저장 확인
+                {
+                    loadedSave.EnsureDefaults(); // 이전 저장 기본값 보정
+                }
+
                 if (!ValidateLoadedSave(loadedSave)) // 불러온 데이터 검증
                 {
                     return false; // 불러오기 실패
@@ -117,7 +126,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
                 CurrentSave = loadedSave; // 현재 저장 데이터 교체
                 HasSaveData = true; // 저장 존재 상태 갱신
-                Debug.Log($"[Project H] Load complete. Day={CurrentSave.CurrentDay}, Characters={CurrentSave.Characters.Count}"); // 불러오기 완료 로그
+                ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Loaded)); // 불러오기 완료 이벤트 발행
+                Debug.Log($"[Project H] Load complete. Day={CurrentSave.CurrentDay}, Characters={CurrentSave.Characters.Count}, Flags={CurrentSave.StoryFlags.Count}"); // 불러오기 완료 로그
                 return true; // 불러오기 성공
             }
             catch (Exception exception) // 불러오기 예외 처리
@@ -143,6 +153,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
                 CurrentSave = null; // 현재 저장 데이터 제거
                 HasSaveData = false; // 저장 없음 상태 갱신
+                ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Deleted)); // 저장 삭제 이벤트 발행
                 Debug.Log("[Project H] Save deleted."); // 삭제 완료 로그
                 return true; // 삭제 성공
             }
@@ -186,7 +197,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             CharacterSaveData serena = CurrentSave.FindCharacter("CH_SERENA"); // 세레나 진행 조회
             string serenaState = serena == null ? "Missing" : $"Lv={serena.Level}, Exp={serena.Experience}"; // 세레나 상태 생성
-            Debug.Log($"[Project H] Save State: Day={CurrentSave.CurrentDay}, Time={CurrentSave.CurrentTime}, Serena={serenaState}"); // 현재 진행 로그
+            Debug.Log($"[Project H] Save State: Day={CurrentSave.CurrentDay}, Time={CurrentSave.CurrentTime}, Serena={serenaState}, Flags={CurrentSave.StoryFlags.Count}"); // 현재 진행 로그
         }
 
         private bool EnsureInitialized() // 초기화 상태 검증
@@ -247,6 +258,23 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 if (dataManager.GetCharacter(character.CharacterId) == null) // 정적 캐릭터 데이터 확인
                 {
                     Debug.LogError($"[Project H] Character data not found. ID={character.CharacterId}"); // 정적 데이터 누락 로그
+                    return false; // 검증 실패
+                }
+            }
+
+            HashSet<string> storyFlagIds = new HashSet<string>(StringComparer.Ordinal); // 플래그 중복 검사 집합
+
+            foreach (string flagId in loadedSave.StoryFlags) // 스토리 플래그 순회
+            {
+                if (string.IsNullOrWhiteSpace(flagId)) // 플래그 ID 확인
+                {
+                    Debug.LogError("[Project H] Empty story flag ID found."); // 빈 플래그 오류 로그
+                    return false; // 검증 실패
+                }
+
+                if (!storyFlagIds.Add(flagId)) // 중복 플래그 확인
+                {
+                    Debug.LogError($"[Project H] Duplicate story flag ID. ID={flagId}"); // 중복 플래그 오류 로그
                     return false; // 검증 실패
                 }
             }

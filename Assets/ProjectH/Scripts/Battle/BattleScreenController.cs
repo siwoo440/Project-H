@@ -38,6 +38,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private bool isAutoEnabled = true; // AUTO 표시 상태
         private bool buttonsBound; // 버튼 이벤트 연결 여부
         private bool isTransitioning; // 씬 전환 잠금 상태
+        private BattleOutcomeController outcomeController; // 전투 승패 컨트롤러
 
         public void Configure(BattleFormationAnchors formation, Transform allies, BattleUnitView template, BattleHudCardView[] cards, Text wave, Text time, Text status, Text autoLabel, GameObject menu, Button menuTarget, Button autoTarget, Button returnTarget, Button closeTarget) // 11일차 호환 에디터 참조 설정
         {
@@ -86,6 +87,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private void OnDestroy() // 전투 화면 종료
         {
+            outcomeController?.StopMonitoring(); // 전투 종료 시 승패 감시 해제
             ClearSpawnedCombatants(); // 생성 전투 객체 정리
         }
 
@@ -126,6 +128,21 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             ShowPartyDebugAction(BattleActionKind.Ultimate); // 아군 전체 궁극기 텍스트 표시
         }
 
+        public void HandleBattleOutcome(BattleOutcome outcome) // 전투 최종 승패 화면 처리
+        {
+            if (outcome != BattleOutcome.Victory && outcome != BattleOutcome.Defeat) // 최종 승패 상태 확인
+            {
+                return; // 잘못된 승패 처리 중단
+            }
+
+            initialized = false; // 전투 진행 상태 종료
+            menuPanel?.SetActive(false); // 전투 종료 시 기존 메뉴 숨김
+            SetInteraction(false); // 전투 종료 후 기존 전투 UI 입력 잠금
+            SetText(waveText, "BATTLE END"); // 전투 종료 표시 적용
+            SetText(statusText, outcome == BattleOutcome.Victory ? "VICTORY · 모든 적 전투 불능" : "DEFEAT · 파티 전원 전투 불능"); // 전투 종료 상태 표시
+            BattleResultOverlay.ShowRuntime(outcome, ReturnToDungeonSelect); // 임시 전투 결과 Overlay 표시
+        }
+
         public void ReturnToDungeonSelect() // 던전 선택 화면 복귀
         {
             if (isTransitioning) // 기존 씬 전환 확인
@@ -149,7 +166,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             initialized = false; // 전투 초기화 상태 초기화
             elapsedSeconds = 0f; // 경과 시간 초기화
             menuPanel?.SetActive(false); // 시작 시 전투 메뉴 숨김
-            SetText(waveText, "WAVE 1 / 3"); // 초기 웨이브 표시
+            SetText(waveText, "WAVE 1 / 1"); // 15일차 단일 테스트 웨이브 표시
             RefreshTime(); // 초기 시간 표시
             RefreshAutoLabel(); // 초기 AUTO 상태 표시
             HideAllHudCards(); // HUD 카드 초기 숨김
@@ -222,7 +239,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             initialized = true; // 전투 초기화 완료 기록
             SetInteraction(true); // 전투 UI 입력 활성화
-            SetText(statusText, $"아군 {spawnedUnits.Count}명 / 적군 {spawnedEnemies.Count}명 · 적 AI/사망 제외 활성화"); // 14일차 전투 행동 시작 표시
+            PrepareOutcomeController(); // 전투 승패 컨트롤러 준비
+            outcomeController.BeginBattle(); // 팀별 생존 수 승패 감시 시작
+
+            if (outcomeController.CurrentOutcome == BattleOutcome.Running) // 정상 전투 진행 상태 확인
+            {
+                SetText(statusText, $"아군 {spawnedUnits.Count}명 / 적군 {spawnedEnemies.Count}명 · 사망/승패 판정 활성화"); // 15일차 전투 행동 시작 표시
+            }
         }
 
         private bool SpawnAllies(BattleDeploymentPlan plan, Camera targetCamera, out string error) // 아군 전투 객체 생성
@@ -249,6 +272,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 BattleBasicAttackController attackController = unit.gameObject.AddComponent<BattleBasicAttackController>(); // 아군 기본 공격 컨트롤러 추가
                 attackController.Configure(unit.Actor, combatRegistry); // 아군 기본 공격 참조 연결
                 combatRegistry.Register(unit.Actor); // 아군 전투 레지스트리 등록
+                BattleDeathHandler deathHandler = unit.gameObject.AddComponent<BattleDeathHandler>(); // 아군 공통 사망 처리기 추가
+                deathHandler.Configure(unit.Actor, combatRegistry, attackController, null, unit, null); // 아군 사망 처리 참조 연결
                 unit.gameObject.SetActive(true); // 아군 전투 유닛 표시
                 spawnedUnits.Add(unit); // 생성 유닛 목록 등록
                 hudCards[index].Bind(entry.Stats); // 하단 HUD 카드 연결
@@ -312,14 +337,26 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 enemyBrain.Configure(enemy.Actor, combatRegistry, enemyStats.AIType); // 몬스터 AI 유형 기반 Brain 초기화
                 BattleBasicAttackController attackController = enemy.gameObject.AddComponent<BattleBasicAttackController>(); // 적군 기본 공격 컨트롤러 추가
                 attackController.Configure(enemy.Actor, combatRegistry, enemyBrain); // 적군 AI 기반 기본 공격 참조 연결
-                BattleEnemyDeathHandler deathHandler = enemy.gameObject.AddComponent<BattleEnemyDeathHandler>(); // 적군 사망 제외 처리기 추가
-                deathHandler.Configure(enemy.Actor, enemyStats, combatRegistry, attackController, enemyBrain, enemy); // 적군 사망 제외 참조 연결
                 combatRegistry.Register(enemy.Actor); // 적군 전투 레지스트리 등록
+                BattleDeathHandler deathHandler = enemy.gameObject.AddComponent<BattleDeathHandler>(); // 적군 공통 사망 처리기 추가
+                deathHandler.Configure(enemy.Actor, combatRegistry, attackController, enemyBrain, null, enemy); // 적군 사망 처리 참조 연결
                 enemy.gameObject.SetActive(true); // 적군 전투 View 표시
                 spawnedEnemies.Add(enemy); // 생성 적군 목록 등록
             }
 
             return true; // 적군 생성 성공
+        }
+
+        private void PrepareOutcomeController() // 전투 승패 컨트롤러 생성 또는 재사용
+        {
+            outcomeController = GetComponent<BattleOutcomeController>(); // 기존 승패 컨트롤러 조회
+
+            if (outcomeController == null) // 기존 승패 컨트롤러 존재 확인
+            {
+                outcomeController = gameObject.AddComponent<BattleOutcomeController>(); // 신규 승패 컨트롤러 추가
+            }
+
+            outcomeController.Configure(combatRegistry, this); // 현재 전투 화면 및 Registry 연결
         }
 
         private void BindButtons() // 전투 UI 버튼 이벤트 연결
@@ -435,6 +472,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private void ClearSpawnedCombatants() // 생성 전투 객체 전체 정리
         {
+            outcomeController?.StopMonitoring(); // 재초기화 및 Scene 종료 중 승패 이벤트 차단
+
             foreach (BattleUnitView unit in spawnedUnits) // 생성 아군 목록 순회
             {
                 if (unit == null) // 아군 View 존재 확인

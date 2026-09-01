@@ -101,6 +101,33 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
+        public void ShowDefeatedPreview() // 아군 전투 불능 임시 표시
+        {
+            if (Stats == null) // 아군 전투 스탯 확인
+            {
+                return; // 아군 전투 불능 표시 중단
+            }
+
+            SetText(characterText, $"[DOWN] {Stats.DisplayName}"); // 아군 전투 불능 이름 표시
+            SetText(runtimeIdText, $"{Stats.RuntimeId} · DOWN"); // 아군 전투 불능 상태 표시
+            SetText(hpText, $"0 / {Stats.MaxHp}"); // 아군 전투 불능 체력 표시
+
+            if (hpFillImage != null) // 아군 체력 게이지 확인
+            {
+                RectTransform fillRect = hpFillImage.rectTransform; // 아군 체력 게이지 조회
+                fillRect.anchorMax = new Vector2(0f, 1f); // 아군 체력 게이지 0 적용
+                fillRect.offsetMin = Vector2.zero; // 아군 체력 게이지 최소 오프셋 초기화
+                fillRect.offsetMax = Vector2.zero; // 아군 체력 게이지 최대 오프셋 초기화
+            }
+
+            if (bodyImage != null) // 아군 바디 이미지 확인
+            {
+                Color defeatedColor = bodyImage.color; // 현재 아군 바디 색상 복사
+                defeatedColor.a = 0.45f; // 전투 불능 투명도 적용
+                bodyImage.color = defeatedColor; // 전투 불능 바디 색상 적용
+            }
+        }
+
         public void ShowDebugAction(BattleActionKind actionKind) // 전투 행동 디버그 텍스트 표시
         {
             actor?.ShowAction(actionKind); // 공통 전투 액터 행동 텍스트 호출

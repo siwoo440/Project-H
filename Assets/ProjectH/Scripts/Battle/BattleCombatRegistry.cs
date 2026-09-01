@@ -1,3 +1,4 @@
+using System; // 이벤트 기능
 using System.Collections.Generic; // 목록 자료형
 using UnityEngine; // Unity 컴포넌트 기능
 
@@ -8,6 +9,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         private readonly List<BattleActor> actors = new List<BattleActor>(); // 전체 전투 객체 목록
         public IReadOnlyList<BattleActor> Actors => actors; // 전체 전투 객체 반환
+        public event Action<BattleActor> ActorUnregistered; // 전투 객체 Registry 제외 이벤트
 
         public void Register(BattleActor actor) // 전투 객체 등록
         {
@@ -26,7 +28,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 등록 해제 중단
             }
 
-            actors.Remove(actor); // 전투 객체 목록 제거
+            bool removed = actors.Remove(actor); // 전투 객체 목록 제거 및 결과 저장
+
+            if (removed) // 실제 Registry 제외 여부 확인
+            {
+                ActorUnregistered?.Invoke(actor); // 전투 객체 제외 이벤트 발생
+            }
         }
 
         public bool Contains(BattleActor actor) // 전투 객체 등록 여부 확인

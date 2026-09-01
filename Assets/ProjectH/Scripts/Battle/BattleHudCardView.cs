@@ -55,7 +55,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // HUD 갱신 중단
             }
 
-            SetText(hpText, $"{Stats.CurrentHp}/{Stats.MaxHp}"); // 현재 체력 수치 표시
+            SetText(hpText, Stats.IsAlive ? $"{Stats.CurrentHp}/{Stats.MaxHp}" : $"DOWN · 0/{Stats.MaxHp}"); // 현재 체력 또는 DOWN 상태 표시
             SetFill(hpFillImage, Stats.HealthRatio); // HP 게이지 비율 적용
             SetFill(gaugeFillImage, 0f); // 현재 스킬 게이지 자리 유지
         }

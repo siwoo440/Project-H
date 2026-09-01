@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.CharacterData
   id: CH_EVE
   displayName: "\uC774\uBE0C"
-  job: 4
+  job: 7
   position: 1
-  role: 4
-  baseHp: 820
-  baseAttack: 105
-  baseMagic: 35
-  baseDefense: 50
-  baseResistance: 60
-  attackSpeed: 1.2
-  criticalRate: 0.12
+  baseHp: 1750
+  baseAttack: 270
+  baseDefense: 105
+  attackSpeed: 1.25
+  accuracy: 0.94
+  baseMagic: 0
+  baseResistance: 0
+  criticalRate: 0.05

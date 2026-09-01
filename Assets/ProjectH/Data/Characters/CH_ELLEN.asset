@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.CharacterData
   id: CH_ELLEN
   displayName: "\uC5D8\uB80C"
-  job: 2
+  job: 5
   position: 0
-  role: 2
-  baseHp: 1350
-  baseAttack: 70
-  baseMagic: 35
-  baseDefense: 110
-  baseResistance: 75
+  baseHp: 3200
+  baseAttack: 230
+  baseDefense: 200
   attackSpeed: 0.85
-  criticalRate: 0.04
+  accuracy: 0.96
+  baseMagic: 0
+  baseResistance: 0
+  criticalRate: 0.05

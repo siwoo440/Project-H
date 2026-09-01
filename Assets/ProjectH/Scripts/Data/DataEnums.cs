@@ -6,22 +6,30 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         Cleric = 1, // 성직자 직군
         Guardian = 2, // 수호자 직군
         Mage = 3, // 마법사 직군
-        Ranger = 4 // 원거리 직군
+        Ranger = 4, // 원거리 직군
+        Knight = 5, // 기사 직군
+        Rogue = 6, // 도적 직군
+        Archer = 7, // 궁수 직군
+        Alchemist = 8, // 연금술사 직군
+        Gunner = 9, // 총사수 직군
+        Lancer = 10, // 창병 직군
+        Monk = 11, // 무도승 직군
+        Explorer = 12, // 탐험가 직군
+        Pilgrim = 13 // 순례자 직군
     }
 
-    public enum BattlePosition // 전투 위치
+    public enum BattlePosition // 전투 포지션
     {
-        Front = 0, // 전열 위치
-        Back = 1 // 후열 위치
+        Tank = 0, // 탱커 포지션
+        Dealer = 1, // 딜러 포지션
+        Healer = 2 // 힐러 포지션
     }
 
-    public enum CharacterRole // 전투 역할
+    public enum CharacterRole // 이전 역할 호환 열거형
     {
-        None = 0, // 미지정 역할
-        Healer = 1, // 회복 역할
-        Tank = 2, // 방어 역할
-        MagicDealer = 3, // 마법 공격 역할
-        RangedDealer = 4 // 원거리 공격 역할
+        Tank = 0, // 탱커 역할
+        Dealer = 1, // 딜러 역할
+        Healer = 2 // 힐러 역할
     }
 
     public enum ItemType // 아이템 유형

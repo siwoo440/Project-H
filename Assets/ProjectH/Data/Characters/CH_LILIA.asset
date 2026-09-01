@@ -16,11 +16,11 @@ MonoBehaviour:
   displayName: "\uB9B4\uB9AC\uC544"
   job: 3
   position: 1
-  role: 3
-  baseHp: 760
-  baseAttack: 35
-  baseMagic: 125
-  baseDefense: 40
-  baseResistance: 90
-  attackSpeed: 0.95
-  criticalRate: 0.08
+  baseHp: 1700
+  baseAttack: 300
+  baseDefense: 100
+  attackSpeed: 1
+  accuracy: 0.92
+  baseMagic: 0
+  baseResistance: 0
+  criticalRate: 0.05

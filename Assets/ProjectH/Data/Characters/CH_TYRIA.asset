@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1333d1323a04a624cbc4dfdf41050a13, type: 3}
-  m_Name: CH_SERENA
+  m_Name: CH_TYRIA
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.CharacterData
-  id: CH_SERENA
-  displayName: "\uC138\uB808\uB098"
-  job: 1
-  position: 2
-  baseHp: 2200
-  baseAttack: 180
-  baseDefense: 120
-  attackSpeed: 0.9
-  accuracy: 0.98
+  id: CH_TYRIA
+  displayName: "\uD2F0\uB9AC\uC544"
+  job: 2
+  position: 0
+  baseHp: 3500
+  baseAttack: 200
+  baseDefense: 220
+  attackSpeed: 0.8
+  accuracy: 0.95
   baseMagic: 0
   baseResistance: 0
   criticalRate: 0.05

@@ -1,3 +1,4 @@
+using System; // 시스템 자료형
 using System.Collections.Generic; // 목록 자료형
 using ProjectH.Core; // 프로젝트 핵심 기능
 using ProjectH.Data; // 프로젝트 데이터 기능
@@ -12,6 +13,7 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
     {
         private const string ProjectRoot = "Assets/ProjectH"; // 프로젝트 루트 경로
         private const string DataRoot = "Assets/ProjectH/Data"; // 데이터 루트 경로
+        private const string CharacterRoot = "Assets/ProjectH/Data/Characters"; // 캐릭터 루트 경로
         private const string BootstrapScenePath = "Assets/ProjectH/Scenes/Bootstrap.unity"; // 부트스트랩 씬 경로
         private const string BootstrapRootName = "[ProjectH] Bootstrap"; // 부트스트랩 객체 이름
         private const string CatalogPath = "Assets/ProjectH/Data/Database/ProjectHDataCatalog.asset"; // 카탈로그 경로
@@ -20,7 +22,8 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
         public static void Setup() // 2일차 설정 실행
         {
             EnsureFolders(); // 데이터 폴더 구성
-            List<CharacterData> characters = CreateCharacters(); // 캐릭터 샘플 생성
+            EnsureInitialCharacters(); // 초기 캐릭터 존재 보장
+            List<CharacterData> characters = LoadAllCharacters(); // 현재 전체 캐릭터 로드
             List<MonsterData> monsters = CreateMonsters(); // 몬스터 샘플 생성
             List<DungeonData> dungeons = CreateDungeons(); // 던전 샘플 생성
             List<ItemData> items = CreateItems(); // 아이템 샘플 생성
@@ -28,7 +31,7 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             ConfigureBootstrap(catalog); // 부트스트랩 데이터 연결
             AssetDatabase.SaveAssets(); // 에셋 변경 저장
             AssetDatabase.Refresh(); // 에셋 목록 갱신
-            Debug.Log("[Project H] Phase 0 Day 2 setup complete."); // 설정 완료 로그
+            Debug.Log($"[Project H] Phase 0 Day 2 setup complete. Characters={characters.Count}"); // 설정 완료 로그
         }
 
         private static void EnsureFolders() // 데이터 폴더 생성
@@ -54,36 +57,62 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             AssetDatabase.CreateFolder(parentPath, folderName); // 새 폴더 생성
         }
 
-        private static List<CharacterData> CreateCharacters() // 캐릭터 샘플 생성
+        private static void EnsureInitialCharacters() // 초기 4인 캐릭터 존재 보장
         {
-            List<CharacterData> result = new List<CharacterData>(); // 결과 목록 생성
-            result.Add(CreateCharacter("CH_SERENA", "세레나", CharacterJob.Cleric, BattlePosition.Back, CharacterRole.Healer, 900, 55, 95, 45, 80, 1f, 0.05f)); // 세레나 샘플 생성
-            result.Add(CreateCharacter("CH_ELLEN", "엘렌", CharacterJob.Guardian, BattlePosition.Front, CharacterRole.Tank, 1350, 70, 35, 110, 75, 0.85f, 0.04f)); // 엘렌 샘플 생성
-            result.Add(CreateCharacter("CH_LILIA", "릴리아", CharacterJob.Mage, BattlePosition.Back, CharacterRole.MagicDealer, 760, 35, 125, 40, 90, 0.95f, 0.08f)); // 릴리아 샘플 생성
-            result.Add(CreateCharacter("CH_EVE", "이브", CharacterJob.Ranger, BattlePosition.Back, CharacterRole.RangedDealer, 820, 105, 35, 50, 60, 1.2f, 0.12f)); // 이브 샘플 생성
-            return result; // 캐릭터 목록 반환
+            CreateCharacterIfMissing("CH_SERENA", "세레나", CharacterJob.Cleric, BattlePosition.Healer, 2200, 180, 120, 0.90f, 0.98f); // 세레나 기본 데이터 보장
+            CreateCharacterIfMissing("CH_ELLEN", "엘렌", CharacterJob.Knight, BattlePosition.Tank, 3200, 230, 200, 0.85f, 0.96f); // 엘렌 기본 데이터 보장
+            CreateCharacterIfMissing("CH_LILIA", "릴리아", CharacterJob.Mage, BattlePosition.Dealer, 1700, 300, 100, 1.00f, 0.92f); // 릴리아 기본 데이터 보장
+            CreateCharacterIfMissing("CH_EVE", "이브", CharacterJob.Archer, BattlePosition.Dealer, 1750, 270, 105, 1.25f, 0.94f); // 이브 기본 데이터 보장
         }
 
-        private static CharacterData CreateCharacter(string id, string displayName, CharacterJob job, BattlePosition position, CharacterRole role, int hp, int attack, int magic, int defense, int resistance, float attackSpeed, float criticalRate) // 캐릭터 단일 생성
+        private static void CreateCharacterIfMissing(string id, string displayName, CharacterJob job, BattlePosition position, int hp, int attack, int defense, float attackSpeed, float accuracy) // 누락 캐릭터 생성
         {
-            string path = $"{DataRoot}/Characters/{id}.asset"; // 캐릭터 에셋 경로
-            CharacterData asset = LoadOrCreateAsset<CharacterData>(path); // 캐릭터 에셋 준비
+            string path = $"{CharacterRoot}/{id}.asset"; // 캐릭터 에셋 경로 생성
+            CharacterData existing = AssetDatabase.LoadAssetAtPath<CharacterData>(path); // 기존 캐릭터 조회
+
+            if (existing != null) // 기존 캐릭터 확인
+            {
+                return; // 기존 7일차 데이터 보존
+            }
+
+            CharacterData asset = ScriptableObject.CreateInstance<CharacterData>(); // 새 캐릭터 인스턴스 생성
+            AssetDatabase.CreateAsset(asset, path); // 새 캐릭터 에셋 저장
             SerializedObject data = new SerializedObject(asset); // 직렬화 객체 생성
             data.FindProperty("id").stringValue = id; // 캐릭터 ID 설정
             data.FindProperty("displayName").stringValue = displayName; // 표시 이름 설정
             data.FindProperty("job").enumValueIndex = (int)job; // 직군 설정
-            data.FindProperty("position").enumValueIndex = (int)position; // 위치 설정
-            data.FindProperty("role").enumValueIndex = (int)role; // 역할 설정
+            data.FindProperty("position").enumValueIndex = (int)position; // 포지션 설정
             data.FindProperty("baseHp").intValue = hp; // 체력 설정
             data.FindProperty("baseAttack").intValue = attack; // 공격력 설정
-            data.FindProperty("baseMagic").intValue = magic; // 마력 설정
             data.FindProperty("baseDefense").intValue = defense; // 방어력 설정
-            data.FindProperty("baseResistance").intValue = resistance; // 저항력 설정
             data.FindProperty("attackSpeed").floatValue = attackSpeed; // 공격속도 설정
-            data.FindProperty("criticalRate").floatValue = criticalRate; // 치명타율 설정
+            data.FindProperty("accuracy").floatValue = accuracy; // 명중률 설정
+            data.FindProperty("baseMagic").intValue = 0; // 임시 마력 설정
+            data.FindProperty("baseResistance").intValue = 0; // 임시 저항력 설정
+            data.FindProperty("criticalRate").floatValue = 0.05f; // 임시 치명타율 설정
             data.ApplyModifiedPropertiesWithoutUndo(); // 캐릭터 값 적용
+            asset.name = id; // 에셋 이름 동기화
             EditorUtility.SetDirty(asset); // 캐릭터 변경 표시
-            return asset; // 캐릭터 에셋 반환
+        }
+
+        private static List<CharacterData> LoadAllCharacters() // 전체 캐릭터 데이터 로드
+        {
+            List<CharacterData> result = new List<CharacterData>(); // 결과 목록 생성
+            string[] guids = AssetDatabase.FindAssets("t:CharacterData", new[] { CharacterRoot }); // 캐릭터 GUID 검색
+
+            foreach (string guid in guids) // 캐릭터 GUID 순회
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid); // 캐릭터 에셋 경로 조회
+                CharacterData character = AssetDatabase.LoadAssetAtPath<CharacterData>(path); // 캐릭터 에셋 로드
+
+                if (character != null) // 캐릭터 존재 확인
+                {
+                    result.Add(character); // 캐릭터 목록 추가
+                }
+            }
+
+            result.Sort((left, right) => string.Compare(left.Id, right.Id, StringComparison.Ordinal)); // 캐릭터 ID 순 정렬
+            return result; // 전체 캐릭터 목록 반환
         }
 
         private static List<MonsterData> CreateMonsters() // 몬스터 샘플 생성
@@ -165,7 +194,7 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
         {
             ProjectHDataCatalog catalog = LoadOrCreateAsset<ProjectHDataCatalog>(CatalogPath); // 카탈로그 에셋 준비
             SerializedObject data = new SerializedObject(catalog); // 카탈로그 직렬화 객체
-            SetArray(data.FindProperty("characters"), characters); // 캐릭터 목록 설정
+            SetArray(data.FindProperty("characters"), characters); // 전체 캐릭터 목록 설정
             SetArray(data.FindProperty("monsters"), monsters); // 몬스터 목록 설정
             SetArray(data.FindProperty("dungeons"), dungeons); // 던전 목록 설정
             SetArray(data.FindProperty("items"), items); // 아이템 목록 설정
@@ -174,7 +203,7 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             return catalog; // 카탈로그 반환
         }
 
-        private static void SetArray<T>(SerializedProperty property, List<T> values) where T : Object // 오브젝트 배열 설정
+        private static void SetArray<T>(SerializedProperty property, List<T> values) where T : UnityEngine.Object // 오브젝트 배열 설정
         {
             property.arraySize = values.Count; // 배열 크기 설정
 

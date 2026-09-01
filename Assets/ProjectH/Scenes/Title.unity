@@ -374,8 +374,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1230403359}
-        m_TargetAssemblyTypeName: ProjectH.UI.PrototypeScreenController, ProjectH.Runtime
+      - m_Target: {fileID: 1230403364}
+        m_TargetAssemblyTypeName: ProjectH.UI.TitleScreenController, ProjectH.Runtime
         m_MethodName: ContinueGame
         m_Mode: 0
         m_Arguments:
@@ -527,8 +527,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1230403359}
-        m_TargetAssemblyTypeName: ProjectH.UI.PrototypeScreenController, ProjectH.Runtime
+      - m_Target: {fileID: 1230403364}
+        m_TargetAssemblyTypeName: ProjectH.UI.TitleScreenController, ProjectH.Runtime
         m_MethodName: QuitGame
         m_Mode: 0
         m_Arguments:
@@ -966,8 +966,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1230403359}
-        m_TargetAssemblyTypeName: ProjectH.UI.PrototypeScreenController, ProjectH.Runtime
+      - m_Target: {fileID: 1230403364}
+        m_TargetAssemblyTypeName: ProjectH.UI.TitleScreenController, ProjectH.Runtime
         m_MethodName: NewGame
         m_Mode: 0
         m_Arguments:
@@ -1863,7 +1863,7 @@ GameObject:
   - component: {fileID: 1230403362}
   - component: {fileID: 1230403361}
   - component: {fileID: 1230403360}
-  - component: {fileID: 1230403359}
+  - component: {fileID: 1230403364}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -1871,23 +1871,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1230403359
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1230403358}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6167fa2c4dd45ccb9d3f82fb3af7056, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.UI.PrototypeScreenController
-  screenKind: 0
-  statusText: {fileID: 1576613707}
-  bodyText: {fileID: 964803678}
-  auxiliaryText: {fileID: 760669632}
-  continueButton: {fileID: 313058472}
 --- !u!114 &1230403360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1974,6 +1957,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1230403364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230403358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f4058c40ef04df5b23cfeb1aa771aab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.UI.TitleScreenController
+  statusText: {fileID: 1576613707}
+  newGameButton: {fileID: 860048158}
+  continueButton: {fileID: 313058472}
+  quitButton: {fileID: 479161534}
 --- !u!1 &1290032653
 GameObject:
   m_ObjectHideFlags: 0

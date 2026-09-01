@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 1290373353}
   - component: {fileID: 1290373356}
   - component: {fileID: 1290373357}
+  - component: {fileID: 1290373358}
   m_Layer: 0
   m_Name: '[ProjectH] Bootstrap'
   m_TagString: Untagged
@@ -203,6 +204,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c3be45a07d443ab9518ddc65c068c45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.SaveSystem.SaveManager
+--- !u!114 &1290373358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290373352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ef184b5801b469c9b8d22d8fb5f32ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Core.BootstrapStartup
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

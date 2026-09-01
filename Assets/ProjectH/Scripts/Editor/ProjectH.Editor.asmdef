@@ -2,7 +2,9 @@
     "name": "ProjectH.Editor",
     "rootNamespace": "ProjectH",
     "references": [
-        "ProjectH.Runtime"
+        "ProjectH.Runtime",
+        "Unity.ugui",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [
         "Editor"

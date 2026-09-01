@@ -1,4 +1,7 @@
 {
     "name": "ProjectH.Runtime",
-    "rootNamespace": "ProjectH"
+    "rootNamespace": "ProjectH",
+    "references": [
+        "Unity.ugui"
+    ]
 }

@@ -16,6 +16,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Image hpFillImage; // 체력 게이지 이미지
         [SerializeField] private BattleActor actor; // 공통 전투 액터
         [SerializeField] private BattleActionDebugText actionDebugText; // 머리 위 행동 텍스트
+        [SerializeField] private bool showDebugInfo; // Runtime 개발 정보 표시 여부
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public BattleActor Actor => actor; // 공통 전투 액터 반환
 
@@ -67,6 +68,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Color roleColor = GetRoleColor(Stats.Position); // 역할 기반 캐릭터 색상 계산
             SetText(characterText, Stats.DisplayName); // 캐릭터 이름 표시
             SetText(runtimeIdText, Stats.RuntimeId); // 런타임 ID 표시
+            SetDebugInfoVisible(showDebugInfo); // Runtime 개발 정보 표시 상태 적용
             SetText(roleText, GetRoleLabel(Stats.Position)); // 역할 표시
 
             if (bodyImage != null) // 바디 이미지 확인
@@ -98,6 +100,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 fillRect.anchorMax = new Vector2(Stats.HealthRatio, 1f); // 현재 체력 비율 적용
                 fillRect.offsetMin = Vector2.zero; // 체력 게이지 최소 오프셋 초기화
                 fillRect.offsetMax = Vector2.zero; // 체력 게이지 최대 오프셋 초기화
+            }
+        }
+
+        public void SetDebugInfoVisible(bool visible) // 아군 Runtime 개발 정보 표시 설정
+        {
+            showDebugInfo = visible; // Runtime 개발 정보 표시 상태 저장
+
+            if (runtimeIdText != null) // Runtime ID 텍스트 확인
+            {
+                runtimeIdText.enabled = visible; // Runtime ID 개발 정보 표시 상태 적용
             }
         }
 

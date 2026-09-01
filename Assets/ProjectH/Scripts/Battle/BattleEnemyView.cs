@@ -14,6 +14,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Image hpFillImage; // 적군 체력 게이지
         [SerializeField] private BattleActor actor; // 공통 전투 액터
         [SerializeField] private BattleActionDebugText actionDebugText; // 머리 위 행동 텍스트
+        [SerializeField] private bool showDebugInfo; // 적군 Runtime 개발 정보 표시 여부
         public BattleEnemyStats Stats { get; private set; } // 연결된 적 전투 스탯
         public BattleActor Actor => actor; // 공통 전투 액터 반환
 
@@ -59,6 +60,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Color enemyColor = new Color(0.58f, 0.28f, 0.20f, 0.96f); // 임시 적군 기본색 생성
             SetText(nameText, Stats.DisplayName); // 적군 표시 이름 적용
             SetText(runtimeIdText, $"{Stats.RuntimeId} · {Stats.AIType.ToString().ToUpperInvariant()}"); // 적군 런타임 ID 및 AI 유형 적용
+            SetDebugInfoVisible(showDebugInfo); // 적군 Runtime 개발 정보 표시 상태 적용
 
             if (bodyImage != null) // 적군 바디 이미지 확인
             {
@@ -89,6 +91,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 fillRect.anchorMax = new Vector2(Stats.HealthRatio, 1f); // 적군 체력 비율 적용
                 fillRect.offsetMin = Vector2.zero; // 체력 게이지 최소 오프셋 초기화
                 fillRect.offsetMax = Vector2.zero; // 체력 게이지 최대 오프셋 초기화
+            }
+        }
+
+        public void SetDebugInfoVisible(bool visible) // 적군 Runtime 개발 정보 표시 설정
+        {
+            showDebugInfo = visible; // 적군 Runtime 개발 정보 표시 상태 저장
+
+            if (runtimeIdText != null) // 적군 Runtime ID 텍스트 확인
+            {
+                runtimeIdText.enabled = visible; // 적군 Runtime 개발 정보 표시 상태 적용
             }
         }
 

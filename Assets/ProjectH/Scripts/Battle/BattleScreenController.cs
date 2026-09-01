@@ -39,6 +39,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private bool buttonsBound; // 버튼 이벤트 연결 여부
         private bool isTransitioning; // 씬 전환 잠금 상태
         private BattleOutcomeController outcomeController; // 전투 승패 컨트롤러
+        [SerializeField] private BattleTimeController timeController; // 전투 속도 및 일시정지 컨트롤러
+        [SerializeField] private BattleDebugPanel debugPanel; // 전투 개발 UI 컨트롤러
+        public bool IsAutoEnabled => isAutoEnabled; // 향후 자동 스킬 사용 설정 반환
 
         public void Configure(BattleFormationAnchors formation, Transform allies, BattleUnitView template, BattleHudCardView[] cards, Text wave, Text time, Text status, Text autoLabel, GameObject menu, Button menuTarget, Button autoTarget, Button returnTarget, Button closeTarget) // 11일차 호환 에디터 참조 설정
         {
@@ -68,6 +71,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             debugUltimateButton = ultimateDebug; // 궁극기 디버그 버튼 연결
         }
 
+        public void ConfigureDay16(BattleTimeController battleTimeController, BattleDebugPanel battleDebugPanel) // 16일차 HUD Runtime 참조 설정
+        {
+            timeController = battleTimeController; // 전투 시간 컨트롤러 연결
+            debugPanel = battleDebugPanel; // 전투 개발 UI 컨트롤러 연결
+        }
+
         private void Start() // 전투 화면 시작
         {
             BindButtons(); // 버튼 이벤트 연결
@@ -88,17 +97,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private void OnDestroy() // 전투 화면 종료
         {
             outcomeController?.StopMonitoring(); // 전투 종료 시 승패 감시 해제
+            timeController?.ResetTimeScale(); // Scene 종료 시 전투 시간 배율 복원
             ClearSpawnedCombatants(); // 생성 전투 객체 정리
         }
 
         public void ToggleMenu() // 전투 메뉴 표시 전환
         {
-            if (menuPanel == null || isTransitioning) // 메뉴 상태 확인
+            if (menuPanel == null || isTransitioning || !initialized) // 메뉴 상태 확인
             {
                 return; // 메뉴 전환 중단
             }
 
-            menuPanel.SetActive(!menuPanel.activeSelf); // 메뉴 표시 상태 전환
+            bool opening = !menuPanel.activeSelf; // 메뉴 새 표시 상태 계산
+            menuPanel.SetActive(opening); // 메뉴 표시 상태 적용
+            timeController?.SetPaused(opening); // 메뉴 표시 중 전투 일시정지 적용
         }
 
         public void ToggleAutoPreview() // AUTO 표시 상태 전환
@@ -136,6 +148,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             initialized = false; // 전투 진행 상태 종료
+            timeController?.Pause(); // 전투 종료 시 전투 시간 정지
             menuPanel?.SetActive(false); // 전투 종료 시 기존 메뉴 숨김
             SetInteraction(false); // 전투 종료 후 기존 전투 UI 입력 잠금
             SetText(waveText, "BATTLE END"); // 전투 종료 표시 적용
@@ -157,6 +170,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             isTransitioning = true; // 씬 전환 잠금 활성화
+            timeController?.ResetTimeScale(); // Scene 전환 전 전투 시간 배율 복원
             SetInteraction(false); // 전투 UI 입력 잠금
             GameManager.Instance.Scenes.LoadScene(GameScenes.DungeonSelect); // 던전 선택 씬 이동
         }
@@ -171,6 +185,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             RefreshAutoLabel(); // 초기 AUTO 상태 표시
             HideAllHudCards(); // HUD 카드 초기 숨김
             ClearSpawnedCombatants(); // 기존 생성 전투 객체 정리
+            timeController?.ResetTimeScale(); // 신규 전투 시작 전 시간 배율 초기화
+            debugPanel?.SetVisible(false); // 신규 전투 시작 전 개발 UI 숨김
 
             if (GameManager.Instance == null) // 게임 관리자 확인
             {
@@ -468,6 +484,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 debugUltimateButton.interactable = enabled; // 궁극기 디버그 버튼 상태 적용
             }
+
+            timeController?.SetInteractable(enabled); // 전투 속도 버튼 입력 상태 적용
         }
 
         private void ClearSpawnedCombatants() // 생성 전투 객체 전체 정리

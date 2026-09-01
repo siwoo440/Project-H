@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
   id: MON_CORRUPTED_WOLF
   displayName: "\uCE68\uC2DD\uB41C \uB291\uB300"
+  aiType: 1
   maxHp: 420
   attack: 48
   defense: 24

@@ -222,7 +222,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             initialized = true; // 전투 초기화 완료 기록
             SetInteraction(true); // 전투 UI 입력 활성화
-            SetText(statusText, $"아군 {spawnedUnits.Count}명 / 적군 {spawnedEnemies.Count}명 자동 기본 공격 실행 · HP 감소는 13일차 연결"); // 전투 행동 시작 표시
+            SetText(statusText, $"아군 {spawnedUnits.Count}명 / 적군 {spawnedEnemies.Count}명 · 적 AI/사망 제외 활성화"); // 14일차 전투 행동 시작 표시
         }
 
         private bool SpawnAllies(BattleDeploymentPlan plan, Camera targetCamera, out string error) // 아군 전투 객체 생성
@@ -308,8 +308,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return false; // 적군 생성 실패
                 }
 
+                BattleEnemyBrain enemyBrain = enemy.gameObject.AddComponent<BattleEnemyBrain>(); // 적군 AI Brain 추가
+                enemyBrain.Configure(enemy.Actor, combatRegistry, enemyStats.AIType); // 몬스터 AI 유형 기반 Brain 초기화
                 BattleBasicAttackController attackController = enemy.gameObject.AddComponent<BattleBasicAttackController>(); // 적군 기본 공격 컨트롤러 추가
-                attackController.Configure(enemy.Actor, combatRegistry); // 적군 기본 공격 참조 연결
+                attackController.Configure(enemy.Actor, combatRegistry, enemyBrain); // 적군 AI 기반 기본 공격 참조 연결
+                BattleEnemyDeathHandler deathHandler = enemy.gameObject.AddComponent<BattleEnemyDeathHandler>(); // 적군 사망 제외 처리기 추가
+                deathHandler.Configure(enemy.Actor, enemyStats, combatRegistry, attackController, enemyBrain, enemy); // 적군 사망 제외 참조 연결
                 combatRegistry.Register(enemy.Actor); // 적군 전투 레지스트리 등록
                 enemy.gameObject.SetActive(true); // 적군 전투 View 표시
                 spawnedEnemies.Add(enemy); // 생성 적군 목록 등록

@@ -11,6 +11,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public string RuntimeId { get; } // 전투 인스턴스 ID
         public string MonsterId { get; } // 몬스터 원본 ID
         public string DisplayName { get; } // 몬스터 표시 이름
+        public EnemyAIType AIType { get; } // 적군 AI 유형
         public int MaxHp { get; } // 최대 체력
         public int CurrentHp => currentHp; // 현재 체력 반환
         public int Attack { get; } // 공격력
@@ -22,11 +23,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public bool IsAlive => currentHp > 0; // 생존 상태 반환
         public float HealthRatio => MaxHp <= 0 ? 0f : (float)currentHp / MaxHp; // 체력 비율 반환
 
-        public BattleEnemyStats(string runtimeId, string monsterId, string displayName, int maxHp, int attack, int defense, int resistance, float attackSpeed, float attackRange, float moveSpeed) // 적 전투 스탯 생성
+        public BattleEnemyStats(string runtimeId, string monsterId, string displayName, int maxHp, int attack, int defense, int resistance, float attackSpeed, float attackRange, float moveSpeed, EnemyAIType aiType = EnemyAIType.Normal) // 적 전투 스탯 생성
         {
             RuntimeId = runtimeId ?? string.Empty; // 런타임 ID 저장
             MonsterId = monsterId ?? string.Empty; // 몬스터 ID 저장
             DisplayName = displayName ?? string.Empty; // 표시 이름 저장
+            AIType = aiType; // 적군 AI 유형 저장
             MaxHp = Mathf.Max(1, maxHp); // 최소 최대 체력 적용
             currentHp = MaxHp; // 시작 체력 완전 회복
             Attack = Mathf.Max(0, attack); // 공격력 음수 방지
@@ -82,7 +84,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return null; // 몬스터 원본 누락 반환
             }
 
-            return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, monsterData.MaxHp, monsterData.Attack, monsterData.Defense, monsterData.Resistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed); // 적 전투 런타임 스탯 반환
+            return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, monsterData.MaxHp, monsterData.Attack, monsterData.Defense, monsterData.Resistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType); // 적 전투 런타임 스탯 반환
         }
     }
 }

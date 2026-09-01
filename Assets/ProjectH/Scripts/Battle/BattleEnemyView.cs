@@ -58,7 +58,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Stats.HealthChanged += Refresh; // 체력 변경 시 적군 View 갱신 연결
             Color enemyColor = new Color(0.58f, 0.28f, 0.20f, 0.96f); // 임시 적군 기본색 생성
             SetText(nameText, Stats.DisplayName); // 적군 표시 이름 적용
-            SetText(runtimeIdText, Stats.RuntimeId); // 적군 런타임 ID 적용
+            SetText(runtimeIdText, $"{Stats.RuntimeId} · {Stats.AIType.ToString().ToUpperInvariant()}"); // 적군 런타임 ID 및 AI 유형 적용
 
             if (bodyImage != null) // 적군 바디 이미지 확인
             {
@@ -89,6 +89,33 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 fillRect.anchorMax = new Vector2(Stats.HealthRatio, 1f); // 적군 체력 비율 적용
                 fillRect.offsetMin = Vector2.zero; // 체력 게이지 최소 오프셋 초기화
                 fillRect.offsetMax = Vector2.zero; // 체력 게이지 최대 오프셋 초기화
+            }
+        }
+
+        public void ShowDefeatedPreview() // 적군 전투 불능 임시 표시
+        {
+            if (Stats == null) // 적군 전투 스탯 확인
+            {
+                return; // 전투 불능 표시 중단
+            }
+
+            SetText(nameText, $"[DOWN] {Stats.DisplayName}"); // 적군 전투 불능 이름 표시
+            SetText(runtimeIdText, $"{Stats.RuntimeId} · {Stats.AIType.ToString().ToUpperInvariant()} · DOWN"); // 적군 전투 불능 상태 표시
+            SetText(hpText, $"0 / {Stats.MaxHp}"); // 적군 전투 불능 체력 표시
+
+            if (hpFillImage != null) // 적군 체력 게이지 확인
+            {
+                RectTransform fillRect = hpFillImage.rectTransform; // 적군 체력 게이지 조회
+                fillRect.anchorMax = new Vector2(0f, 1f); // 적군 체력 게이지 0 적용
+                fillRect.offsetMin = Vector2.zero; // 적군 체력 게이지 최소 오프셋 초기화
+                fillRect.offsetMax = Vector2.zero; // 적군 체력 게이지 최대 오프셋 초기화
+            }
+
+            if (bodyImage != null) // 적군 바디 이미지 확인
+            {
+                Color defeatedColor = bodyImage.color; // 현재 적군 바디 색상 복사
+                defeatedColor.a = 0.45f; // 전투 불능 투명도 적용
+                bodyImage.color = defeatedColor; // 전투 불능 바디 색상 적용
             }
         }
 

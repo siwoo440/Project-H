@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
   id: MON_CORRUPTED_SOLDIER
   displayName: "\uCE68\uC2DD \uBCD1\uC0AC"
+  aiType: 0
   maxHp: 650
   attack: 55
   defense: 55

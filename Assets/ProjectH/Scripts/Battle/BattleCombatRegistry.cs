@@ -29,6 +29,30 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             actors.Remove(actor); // 전투 객체 목록 제거
         }
 
+        public bool Contains(BattleActor actor) // 전투 객체 등록 여부 확인
+        {
+            return actor != null && actors.Contains(actor); // 전투 객체 등록 여부 반환
+        }
+
+        public int CountLiving(BattleTeam team) // 팀별 생존 등록 객체 수 계산
+        {
+            int count = 0; // 생존 객체 수 초기화
+
+            for (int index = 0; index < actors.Count; index++) // 전체 전투 객체 순회
+            {
+                BattleActor actor = actors[index]; // 현재 전투 객체 조회
+
+                if (actor == null || actor.Team != team || !actor.IsCombatReady || !actor.Stats.IsAlive) // 팀 및 생존 상태 확인
+                {
+                    continue; // 생존 집계 대상 제외
+                }
+
+                count++; // 생존 객체 수 증가
+            }
+
+            return count; // 팀별 생존 객체 수 반환
+        }
+
         public void Clear() // 전투 객체 등록 전체 초기화
         {
             actors.Clear(); // 전투 객체 목록 초기화

@@ -14,9 +14,17 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Text roleText; // 캐릭터 역할 표시
         [SerializeField] private Text hpText; // 체력 수치 표시
         [SerializeField] private Image hpFillImage; // 체력 게이지 이미지
+        [SerializeField] private BattleActor actor; // 공통 전투 액터
+        [SerializeField] private BattleActionDebugText actionDebugText; // 머리 위 행동 텍스트
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
+        public BattleActor Actor => actor; // 공통 전투 액터 반환
 
-        public void Configure(Canvas canvas, Image body, Text character, Text runtimeId, Text role, Text hp, Image hpFill) // 에디터 참조 설정
+        public void Configure(Canvas canvas, Image body, Text character, Text runtimeId, Text role, Text hp, Image hpFill) // 11일차 호환 에디터 참조 설정
+        {
+            Configure(canvas, body, character, runtimeId, role, hp, hpFill, null, null); // 확장 참조 설정 호출
+        }
+
+        public void Configure(Canvas canvas, Image body, Text character, Text runtimeId, Text role, Text hp, Image hpFill, BattleActor battleActor, BattleActionDebugText debugText) // 12일차 확장 에디터 참조 설정
         {
             worldCanvas = canvas; // 월드 Canvas 연결
             bodyImage = body; // 임시 바디 연결
@@ -25,6 +33,15 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             roleText = role; // 역할 텍스트 연결
             hpText = hp; // 체력 텍스트 연결
             hpFillImage = hpFill; // 체력 게이지 연결
+            actor = battleActor != null ? battleActor : GetComponent<BattleActor>(); // 기존 전투 액터 조회
+
+            if (actor == null) // 전투 액터 존재 확인
+            {
+                actor = gameObject.AddComponent<BattleActor>(); // 호환 전투 액터 자동 추가
+            }
+
+            actionDebugText = debugText; // 행동 디버그 텍스트 연결
+            actor.ConfigureVisuals(bodyImage, actionDebugText); // 전투 액터 시각 참조 연결
         }
 
         public void SetWorldCamera(Camera targetCamera) // 월드 UI 카메라 연결
@@ -45,13 +62,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 데이터 연결 중단
             }
 
+            Color roleColor = GetRoleColor(Stats.Position); // 역할 기반 캐릭터 색상 계산
             SetText(characterText, Stats.DisplayName); // 캐릭터 이름 표시
             SetText(runtimeIdText, Stats.RuntimeId); // 런타임 ID 표시
             SetText(roleText, GetRoleLabel(Stats.Position)); // 역할 표시
 
             if (bodyImage != null) // 바디 이미지 확인
             {
-                bodyImage.color = GetRoleColor(Stats.Position); // 역할 기반 임시 캐릭터 색상 적용
+                bodyImage.color = roleColor; // 역할 기반 임시 캐릭터 색상 적용
+            }
+
+            if (actor != null) // 전투 액터 확인
+            {
+                actor.SetBodyColor(roleColor); // 전투 액터 기본 바디색 적용
+                actor.Initialize(BattleTeam.Ally, Stats, transform.position); // 아군 전투 액터 초기화
             }
 
             Refresh(); // 현재 전투 상태 표시
@@ -75,9 +99,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
+        public void ShowDebugAction(BattleActionKind actionKind) // 전투 행동 디버그 텍스트 표시
+        {
+            actor?.ShowAction(actionKind); // 공통 전투 액터 행동 텍스트 호출
+        }
+
         private static Color GetRoleColor(BattlePosition position) // 역할 기반 캐릭터 색상 반환
         {
-            switch (position) // 캐릭터 역할 분기
+            switch (position) // 역할 종류 분기
             {
                 case BattlePosition.Tank: // 탱커 역할 처리
                     return new Color(0.28f, 0.50f, 0.82f, 0.95f); // 탱커 파랑 반환
@@ -90,14 +119,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private static string GetRoleLabel(BattlePosition position) // 역할 표시 이름 반환
         {
-            switch (position) // 캐릭터 역할 분기
+            switch (position) // 역할 종류 분기
             {
                 case BattlePosition.Tank: // 탱커 역할 처리
-                    return "TANK"; // 탱커 표시 반환
+                    return "TANK"; // 탱커 라벨 반환
                 case BattlePosition.Healer: // 힐러 역할 처리
-                    return "HEALER"; // 힐러 표시 반환
+                    return "HEALER"; // 힐러 라벨 반환
                 default: // 딜러 역할 처리
-                    return "DEALER"; // 딜러 표시 반환
+                    return "DEALER"; // 딜러 라벨 반환
             }
         }
 

@@ -37,8 +37,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             int maxHp = BattleGrowthFormula.ScaleStat(characterData.BaseHp, safeLevel); // 최대 체력 성장 적용
             int attack = BattleGrowthFormula.ScaleStat(characterData.BaseAttack, safeLevel); // 공격력 성장 적용
             int defense = BattleGrowthFormula.ScaleStat(characterData.BaseDefense, safeLevel); // 방어력 성장 적용
-
-            return new BattleStats(runtimeId, characterData.Id, characterData.DisplayName, characterData.Position, safeLevel, maxHp, attack, defense, characterData.AttackSpeed, characterData.Accuracy, characterData.CriticalRate); // 런타임 스탯 반환
+            return new BattleStats(runtimeId, characterData.Id, characterData.DisplayName, characterData.Position, safeLevel, maxHp, attack, defense, characterData.AttackSpeed, characterData.Accuracy, characterData.CriticalRate, characterData.AttackRange, characterData.MoveSpeed); // 런타임 스탯 반환
         }
     }
 }

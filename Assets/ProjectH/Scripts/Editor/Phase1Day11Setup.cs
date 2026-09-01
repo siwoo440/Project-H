@@ -88,18 +88,18 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             BattleFormationAnchors formation = formationObject.AddComponent<BattleFormationAnchors>(); // 진형 앵커 컴포넌트 추가
             Vector3[] allyPositions = // 아군 배치 좌표 정의
             {
-                new Vector3(-3.00f, 0.05f, 0f), // 아군 슬롯 0 좌표
-                new Vector3(-4.05f, -1.10f, 0f), // 아군 슬롯 1 좌표
-                new Vector3(-4.25f, 1.10f, 0f), // 아군 슬롯 2 좌표
-                new Vector3(-3.35f, 1.75f, 0f) // 아군 슬롯 3 좌표
+                new Vector3(-3.20f, -0.25f, 0f), // 아군 슬롯 0 좌표
+                new Vector3(-3.50f, -0.05f, 0f), // 아군 슬롯 1 좌표
+                new Vector3(-3.75f, 0.20f, 0f), // 아군 슬롯 2 좌표
+                new Vector3(-4.00f, 0.40f, 0f) // 아군 슬롯 3 좌표
             }; // 아군 좌표 정의 종료
             Vector3[] enemyPositions = // 적군 배치 좌표 정의
             {
-                new Vector3(3.00f, 0.05f, 0f), // 적군 슬롯 0 좌표
-                new Vector3(4.05f, 1.20f, 0f), // 적군 슬롯 1 좌표
-                new Vector3(4.15f, -1.10f, 0f), // 적군 슬롯 2 좌표
-                new Vector3(3.15f, 1.85f, 0f), // 적군 슬롯 3 좌표
-                new Vector3(5.00f, 0.10f, 0f) // 적군 슬롯 4 좌표
+                new Vector3(3.10f, -0.15f, 0f), // 적군 슬롯 0 좌표
+                new Vector3(3.45f, 0.15f, 0f), // 적군 슬롯 1 좌표
+                new Vector3(3.75f, 0.35f, 0f), // 적군 슬롯 2 좌표
+                new Vector3(4.05f, 0.50f, 0f), // 적군 슬롯 3 좌표
+                new Vector3(4.35f, 0.05f, 0f) // 적군 슬롯 4 좌표
             }; // 적군 좌표 정의 종료
             Transform[] allies = CreateAnchorArray(formationObject.transform, "AllySlot", allyPositions); // 아군 앵커 배열 생성
             Transform[] enemies = CreateAnchorArray(formationObject.transform, "EnemySlot", enemyPositions); // 적군 앵커 배열 생성

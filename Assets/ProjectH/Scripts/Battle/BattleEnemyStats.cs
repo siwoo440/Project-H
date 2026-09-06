@@ -1,5 +1,6 @@
 using System; // 이벤트 기능
 using ProjectH.Data; // 몬스터 데이터 기능
+using ProjectH.UI; // 던전 선택 상태 기능
 using UnityEngine; // Unity 수학 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -86,7 +87,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return null; // 몬스터 원본 누락 반환
             }
 
-            return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, monsterData.MaxHp, monsterData.Attack, monsterData.Defense, monsterData.Resistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType, 1f); // 적 전투 런타임 스탯 반환
+            DungeonBattleTestProfile profile = DungeonBattleTestProfile.Get(DungeonSelectionRuntimeState.SelectedDungeonId); // 선택 던전 테스트 프로필 조회
+            int scaledMaxHp = Mathf.Max(1, Mathf.RoundToInt(monsterData.MaxHp * profile.HealthMultiplier)); // 던전별 최대 체력 배율 적용
+            int scaledAttack = Mathf.Max(0, Mathf.RoundToInt(monsterData.Attack * profile.AttackMultiplier)); // 던전별 공격력 배율 적용
+            int scaledDefense = Mathf.Max(0, Mathf.RoundToInt(monsterData.Defense * profile.DefenseMultiplier)); // 던전별 방어력 배율 적용
+            int scaledResistance = Mathf.Max(0, Mathf.RoundToInt(monsterData.Resistance * profile.ResistanceMultiplier)); // 던전별 저항력 배율 적용
+            return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, scaledMaxHp, scaledAttack, scaledDefense, scaledResistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType, 1f); // 원본 이름 및 던전 배율 적용 적 전투 스탯 반환
         }
     }
 }

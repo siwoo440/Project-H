@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af8d17c05274a54eb3ff5eee4e7fd7a, type: 3}
+  m_Name: DG004
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.DungeonData
+  id: DG004
+  displayName: "심연의 관문"
+  regionId: REG_ABYSS
+  recommendedLevel: 8
+  rewardGold: 320
+  rewardExp: 220

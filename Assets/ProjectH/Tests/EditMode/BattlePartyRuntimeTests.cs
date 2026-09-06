@@ -1,3 +1,5 @@
+using System.Collections.Generic; // 목록 자료형
+using System.Reflection; // 비정상 저장 데이터 테스트 주입 기능
 using NUnit.Framework; // NUnit 테스트 기능
 using ProjectH.Battle; // 전투 런타임 기능
 using ProjectH.Data; // 데이터 관리자 기능
@@ -61,13 +63,21 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [Test] // 테스트 표시
         public void TryCreate_FailsWhenPartyExceedsFourMembers() // 최대 파티 인원 검증
         {
-            SaveData saveData = SaveData.CreateNewGame(new[] { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE", "CH_NATASHA" }); // 5인 저장 데이터 생성
+            SaveData saveData = SaveData.CreateNewGame(new[] { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE", "CH_NATASHA" }); // 보유 캐릭터 5명 저장 데이터 생성
+            ForceActiveParty(saveData, new[] { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE", "CH_NATASHA" }); // 손상 저장을 가정한 5인 활성 파티 강제 주입
 
             bool created = BattlePartyRuntime.TryCreate(dataManager, saveData, out BattlePartyRuntime party, out string error); // 런타임 파티 생성 시도
 
             Assert.That(created, Is.False); // 파티 생성 실패 검증
             Assert.That(party, Is.Null); // 실패 파티 null 검증
             Assert.That(error, Does.Contain("4")); // 최대 인원 오류 검증
+        }
+
+        private static void ForceActiveParty(SaveData saveData, IEnumerable<string> characterIds) // 비정상 저장 데이터 활성 파티 강제 주입
+        {
+            FieldInfo partyField = typeof(SaveData).GetField("partyCharacterIds", BindingFlags.Instance | BindingFlags.NonPublic); // 비공개 활성 파티 필드 조회
+            Assert.That(partyField, Is.Not.Null); // 활성 파티 필드 존재 검증
+            partyField.SetValue(saveData, new List<string>(characterIds)); // 정규화 전 비정상 활성 파티 데이터 주입
         }
     }
 }

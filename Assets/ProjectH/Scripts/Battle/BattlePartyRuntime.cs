@@ -37,6 +37,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return false; // 파티 생성 실패
             }
 
+            if (saveData.PartyCharacterIds != null && saveData.PartyCharacterIds.Count > MaxPartySize) // 정규화 전 최대 파티 인원 확인
+            {
+                error = $"Party cannot exceed {MaxPartySize} characters."; // 최대 파티 실패 사유 설정
+                return false; // 비정상 5인 이상 저장 데이터 거부
+            }
+
             saveData.EnsureDefaults(); // 저장 기본값 보정
 
             if (saveData.PartyCharacterIds.Count == 0) // 빈 파티 확인
@@ -45,7 +51,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return false; // 파티 생성 실패
             }
 
-            if (saveData.PartyCharacterIds.Count > MaxPartySize) // 최대 파티 인원 확인
+            if (saveData.PartyCharacterIds.Count > MaxPartySize) // 보정 후 최대 파티 인원 안전 확인
             {
                 error = $"Party cannot exceed {MaxPartySize} characters."; // 최대 파티 실패 사유 설정
                 return false; // 파티 생성 실패

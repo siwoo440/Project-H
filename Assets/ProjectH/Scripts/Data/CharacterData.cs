@@ -1,3 +1,4 @@
+using System.Collections.Generic; // 읽기 전용 스킬 목록 기능
 using UnityEngine; // Unity 기본 기능
 
 namespace ProjectH.Data // 프로젝트 데이터 영역
@@ -19,6 +20,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField, Min(0)] private int baseMagic; // 임시 마력 수치
         [SerializeField, Min(0)] private int baseResistance; // 임시 저항력 수치
         [SerializeField, Range(0f, 1f)] private float criticalRate = 0.05f; // 임시 치명타율
+        [SerializeField] private SkillData[] skills = new SkillData[3]; // 캐릭터 Skill 1·2·3 참조
         public string Id => id; // 고유 ID 반환
         public string DisplayName => displayName; // 표시 이름 반환
         public CharacterJob Job => job; // 직군 반환
@@ -34,5 +36,16 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public int BaseMagic => baseMagic; // 임시 마력 반환
         public int BaseResistance => baseResistance; // 임시 저항력 반환
         public float CriticalRate => criticalRate; // 임시 치명타율 반환
+        public IReadOnlyList<SkillData> Skills => skills; // 캐릭터 스킬 목록 반환
+
+        public SkillData GetSkill(int skillSlot) // 스킬 슬롯 번호로 SkillData 조회
+        {
+            if (skills == null || skillSlot < 1 || skillSlot > skills.Length) // 스킬 목록 및 슬롯 범위 확인
+            {
+                return null; // 잘못된 스킬 슬롯 반환
+            }
+
+            return skills[skillSlot - 1]; // 1기준 슬롯의 SkillData 반환
+        }
     }
 }

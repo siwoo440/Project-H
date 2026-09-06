@@ -20,7 +20,13 @@ MonoBehaviour:
   baseAttack: 250
   baseDefense: 130
   attackSpeed: 1.1
+  attackRange: 1.6
+  moveSpeed: 2
   accuracy: 0.94
   baseMagic: 0
   baseResistance: 0
   criticalRate: 0.05
+  skills:
+  - {fileID: 11400000, guid: 9148dfdf6dd52eb45a7d76b919f8d62d, type: 2}
+  - {fileID: 11400000, guid: b63eecb2f9abeba48afe471c32c65e31, type: 2}
+  - {fileID: 11400000, guid: 31921678a4a908048aed8809b1df33a9, type: 2}

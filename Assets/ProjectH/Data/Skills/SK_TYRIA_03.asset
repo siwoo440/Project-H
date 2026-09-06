@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7629b01d41bb4962a358a6455f14fe07, type: 3}
+  m_Name: SK_TYRIA_03
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.SkillData
+  id: SK_TYRIA_03
+  ownerCharacterId: CH_TYRIA
+  skillSlot: 3
+  displayName: "\uD2F0\uB9AC\uC544 \uC2A4\uD0AC 3"
+  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
+    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
+    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
+  targetType: 1
+  effectType: 0
+  enhancements:
+  - powerRatio: 1
+    flatValue: 0
+    ultimateGaugeGain: 10
+  - powerRatio: 1.25
+    flatValue: 0
+    ultimateGaugeGain: 20
+  - powerRatio: 1.6
+    flatValue: 0
+    ultimateGaugeGain: 30

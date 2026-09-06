@@ -126,11 +126,21 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             if (Random.value <= hitChance) // 기본 공격 명중 판정
             {
-                BattleDamageResult damageResult = BattleDamageResolver.ResolveBasicAttack(actor.Stats, currentTarget.Stats); // 기본 공격 실제 피해 계산
-                currentTarget.ApplyDamage(damageResult); // 대상 실제 체력 감소 적용
+                float criticalChance = BattlePassiveSystem.GetBasicAttackCriticalChance(actor); // 기본 및 패시브 반영 치명타율 계산
+                bool isCritical = Random.value <= criticalChance; // 기본 공격 치명타 판정
+                float powerMultiplier = isCritical ? BattlePassiveSystem.GetBasicAttackCriticalDamageMultiplier() : 1f; // 치명타 위력 배율 계산
+                BattleDamageResult damageResult = BattleDamageResolver.ResolveBasicAttack(actor.Stats, currentTarget.Stats, powerMultiplier); // 치명타 배율 반영 기본 공격 피해 계산
+                int appliedDamage = currentTarget.ApplyDamage(damageResult); // 대상 실제 체력 감소 적용
+                BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateBasicAttackHit(actor, currentTarget, appliedDamage)); // 기본 공격 적중 패시브 Trigger 처리
+
+                if (isCritical) // 치명타 발생 확인
+                {
+                    Debug.Log($"[Project H][CRIT] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Chance={criticalChance:0.00}, Damage={appliedDamage}"); // 기본 공격 치명타 로그
+                }
             }
             else // 기본 공격 빗나감 처리
             {
+                BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateBasicAttackMiss(actor, currentTarget)); // 기본 공격 빗나감 패시브 Trigger 처리
                 Debug.Log($"[Project H][MISS] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Accuracy={hitChance:0.00}"); // 명중 감소 기반 빗나감 디버그 로그
             }
 

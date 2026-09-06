@@ -139,7 +139,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return 0; // 체력 변경 불가 대상 차단
             }
 
-            int applied = mutableStats.TakeDamage(result.Damage); // 실제 피해 적용
+            int remainingDamage = BattlePassiveRuntimeState.AbsorbShield(Stats.RuntimeId, result.Damage, out int absorbedDamage); // 패시브 보호막 우선 피해 흡수
+
+            if (absorbedDamage > 0) // 보호막 피해 흡수 확인
+            {
+                FlashHitPreview(); // 보호막 피격 표시
+                Debug.Log($"[Project H][SHIELD] {Stats.RuntimeId}, Absorbed={absorbedDamage}, Remaining={remainingDamage}"); // 보호막 흡수 로그
+            }
+
+            if (remainingDamage <= 0) // 보호막 완전 흡수 확인
+            {
+                return 0; // 체력 피해 없음 반환
+            }
+
+            int applied = mutableStats.TakeDamage(remainingDamage); // 실제 피해 적용
 
             if (applied <= 0) // 실제 피해 발생 확인
             {
@@ -148,6 +161,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             FlashHitPreview(); // 피해 피격 표시
             floatingValueText?.ShowDamage(applied); // 피해 숫자 표시
+            BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateDamageTaken(this, applied)); // 피해 수신 패시브 Trigger 처리
 
             if (Stats.IsAlive) // 피해 후 생존 여부 확인
             {

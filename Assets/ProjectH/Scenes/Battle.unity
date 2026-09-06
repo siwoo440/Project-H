@@ -3778,6 +3778,7 @@ GameObject:
   - component: {fileID: 676008384}
   - component: {fileID: 676008387}
   - component: {fileID: 676008386}
+  - component: {fileID: 676008388}
   m_Layer: 0
   m_Name: BattleController
   m_TagString: Untagged
@@ -3927,6 +3928,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9321ce1541704c3b872d8f0ed8d41c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Battle.SkillBlock.BattleSkillExecutor
+  registry: {fileID: 676008382}
+--- !u!114 &676008388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 676008379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9a5af65a0924094bc86d90070aa7d88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Battle.BattlePassiveDriver
   registry: {fileID: 676008382}
 --- !u!1 &683032776
 GameObject:

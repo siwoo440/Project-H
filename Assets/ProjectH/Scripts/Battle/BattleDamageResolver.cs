@@ -43,12 +43,19 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         public static BattleDamageResult ResolveBasicAttack(IBattleCombatantStats attacker, IBattleCombatantStats target) // 기본 공격 피해 계산
         {
+            return ResolveBasicAttack(attacker, target, 1f); // 기본 1배 위력 기본 공격 계산 반환
+        }
+
+        public static BattleDamageResult ResolveBasicAttack(IBattleCombatantStats attacker, IBattleCombatantStats target, float powerMultiplier) // 배율 적용 기본 공격 피해 계산
+        {
             if (attacker == null) // 공격자 확인
             {
                 throw new ArgumentNullException(nameof(attacker)); // 공격자 누락 예외 발생
             }
 
-            return Resolve(new BattleDamageRequest(attacker, target, BattleDamageType.Physical, attacker.Attack)); // 물리 기본 공격 피해 계산 반환
+            float safeMultiplier = Mathf.Max(0f, powerMultiplier); // 공격 배율 음수 방지
+            int power = Mathf.RoundToInt(attacker.Attack * safeMultiplier); // 공격력 기반 최종 원본 위력 계산
+            return Resolve(new BattleDamageRequest(attacker, target, BattleDamageType.Physical, power)); // 물리 기본 공격 피해 계산 반환
         }
 
         public static BattleDamageResult Resolve(BattleDamageRequest request) // 피해 요청 계산
@@ -91,7 +98,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case BattleDamageType.True: // 방어 무시 피해 처리
                     return 0; // 방어 수치 미적용
                 default: // 물리 피해 처리
-                    return BattleSkillRuntimeState.GetEffectiveDefense(target); // 스킬 방어 증가 반영 물리 방어력 반환
+                    int effectiveDefense = BattleSkillRuntimeState.GetEffectiveDefense(target); // 스킬 방어 증가 반영 물리 방어력 조회
+                    float passiveReduction = BattlePassiveRuntimeState.GetDefenseReduction(target.RuntimeId); // 패시브 방어 감소율 조회
+                    return Mathf.Max(0, Mathf.RoundToInt(effectiveDefense * (1f - passiveReduction))); // 패시브 방어 감소 반영 최종 방어력 반환
             }
         }
     }

@@ -42,7 +42,8 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
             ShowSkillAction(owner, request.Skill.DisplayName); // 사용하는 캐릭터 머리 위에 실제 스킬명 표시
             BattleSkillEffectExecutionResult effectResult = BattleSkillEffectExecutor.Execute(request, owner, registry); // SkillData 강화도별 실제 효과 실행
-            SkillRequested?.Invoke(request); // 이후 궁극기 게이지 및 패시브 연결 이벤트 발생
+            BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateSkillUsed(owner, request)); // 스킬 사용 완료 패시브 Trigger 처리
+            SkillRequested?.Invoke(request); // 이후 궁극기 게이지 연결 이벤트 발생
             Debug.Log($"[Project H][SKILL] Character={request.CharacterId}, Skill={request.SkillId}, Slot={request.SkillSlot}, Enhancement={request.EnhancementLevel}, Blocks={request.BlockCount}, Effects={effectResult.AppliedEffectCount}, Targets={effectResult.AffectedTargetCount}"); // 스킬 사용 및 효과 적용 로그
             return true; // 스킬 사용 요청 성공 반환
         }

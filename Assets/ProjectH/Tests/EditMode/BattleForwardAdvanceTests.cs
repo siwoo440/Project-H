@@ -33,6 +33,17 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         }
 
         [Test] // 테스트 표시
+        public void AllyMoveToward_CanReturnToCloserOpponentBehind() // 수동 이동 후 뒤쪽 최근접 적 복귀 이동 검증
+        {
+            BattleActor ally = CreateActor("ALLY_0", BattleTeam.Ally, new Vector3(4f, 1.25f, 0f), 1f, 20f); // 우측으로 이동한 아군 생성
+            BattleActor enemy = CreateActor("ENEMY_0", BattleTeam.Enemy, new Vector3(1f, -1f, 0f), 1f, 20f); // 현재 위치 기준 왼쪽 적군 생성
+            ally.MoveToward(enemy, 1f); // 방향 제한 없는 최근접 적 이동 실행
+
+            Assert.That(ally.transform.position.x, Is.EqualTo(2f).Within(0.001f)); // 왼쪽 적 공격 사거리 앞 정지 검증
+            Assert.That(ally.transform.position.y, Is.EqualTo(1.25f).Within(0.001f)); // 기존 세로 Lane 유지 검증
+        }
+
+        [Test] // 테스트 표시
         public void EnemyMoveForwardToward_StopsAtAttackRangeWithoutPassingAlly() // 적군 전진 정지선 검증
         {
             BattleActor ally = CreateActor("ALLY_0", BattleTeam.Ally, new Vector3(0f, 0f, 0f), 1f, 20f); // 아군 생성

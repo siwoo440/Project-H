@@ -21,27 +21,27 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         }
 
         [Test] // 테스트 표시
-        public void SelectNearest_ReturnsClosestLivingOpponentAhead() // 가장 가까운 생존 전방 적 선택 검증
+        public void SelectNearest_ReturnsClosestLivingOpponentFromCurrentPosition() // 현재 위치 기준 가장 가까운 생존 적 선택 검증
         {
             BattleActor source = CreateActor("ALLY_0", BattleTeam.Ally, new Vector3(-3f, 0f, 0f), true); // 아군 전투 객체 생성
             BattleActor farEnemy = CreateActor("ENEMY_0", BattleTeam.Enemy, new Vector3(4f, 0f, 0f), true); // 먼 적군 생성
-            BattleActor nearEnemy = CreateActor("ENEMY_1", BattleTeam.Enemy, new Vector3(1f, 2f, 0f), true); // 가까운 전방 적군 생성
+            BattleActor nearEnemy = CreateActor("ENEMY_1", BattleTeam.Enemy, new Vector3(1f, 2f, 0f), true); // 가까운 적군 생성
             BattleActor ally = CreateActor("ALLY_1", BattleTeam.Ally, new Vector3(-2f, 0f, 0f), true); // 같은 팀 전투 객체 생성
             BattleActor deadEnemy = CreateActor("ENEMY_2", BattleTeam.Enemy, new Vector3(-2.5f, 0f, 0f), false); // 사망 적군 생성
-            BattleActor selected = BattleTargetSelector.SelectNearest(source, new[] { farEnemy, nearEnemy, ally, deadEnemy }); // 가장 가까운 전방 적 선택
+            BattleActor selected = BattleTargetSelector.SelectNearest(source, new[] { farEnemy, nearEnemy, ally, deadEnemy }); // 현재 위치 기준 가장 가까운 적 선택
 
-            Assert.That(selected, Is.SameAs(nearEnemy)); // 가까운 생존 전방 적 선택 검증
+            Assert.That(selected, Is.SameAs(nearEnemy)); // 가까운 생존 적 선택 검증
         }
 
         [Test] // 테스트 표시
-        public void SelectNearest_PrefersOpponentAheadOverOpponentBehind() // 전방 상대 우선 선택 검증
+        public void SelectNearest_PicksCloserOpponentEvenWhenBehind() // 방향과 무관한 실제 최근접 상대 선택 검증
         {
             BattleActor source = CreateActor("ALLY_0", BattleTeam.Ally, Vector3.zero, true); // 아군 전투 객체 생성
-            BattleActor behindEnemy = CreateActor("ENEMY_BEHIND", BattleTeam.Enemy, new Vector3(-0.2f, 0f, 0f), true); // 비정상 뒤쪽 적군 생성
-            BattleActor aheadEnemy = CreateActor("ENEMY_AHEAD", BattleTeam.Enemy, new Vector3(1.5f, 0f, 0f), true); // 정상 전방 적군 생성
-            BattleActor selected = BattleTargetSelector.SelectNearest(source, new[] { behindEnemy, aheadEnemy }); // 전방 우선 타겟 선택
+            BattleActor behindEnemy = CreateActor("ENEMY_BEHIND", BattleTeam.Enemy, new Vector3(-0.2f, 0f, 0f), true); // 매우 가까운 뒤쪽 적군 생성
+            BattleActor aheadEnemy = CreateActor("ENEMY_AHEAD", BattleTeam.Enemy, new Vector3(1.5f, 0f, 0f), true); // 더 먼 전방 적군 생성
+            BattleActor selected = BattleTargetSelector.SelectNearest(source, new[] { behindEnemy, aheadEnemy }); // 방향 무관 최근접 타겟 선택
 
-            Assert.That(selected, Is.SameAs(aheadEnemy)); // 전방 적군 우선 선택 검증
+            Assert.That(selected, Is.SameAs(behindEnemy)); // 현재 위치 중심 실제 최근접 적 선택 검증
         }
 
         [Test] // 테스트 표시

@@ -2,6 +2,7 @@
     "name": "ProjectH.Runtime",
     "rootNamespace": "ProjectH",
     "references": [
-        "Unity.ugui"
+        "Unity.ugui",
+        "Unity.InputSystem"
     ]
 }

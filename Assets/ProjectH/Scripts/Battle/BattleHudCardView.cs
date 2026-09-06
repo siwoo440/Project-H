@@ -18,10 +18,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Text ultimateText; // 궁극기 게이지 텍스트
         private float ultimateRatio; // 현재 궁극기 게이지 비율
         private Button ultimateButton; // 궁극기 텍스트 Runtime 입력 버튼
+        [SerializeField] private Outline portraitSelectionOutline; // 선택 캐릭터 초상화 윤곽 효과
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
         public bool IsUltimateReady => Stats != null && Stats.IsAlive && ultimateRatio >= 1f; // 생존 캐릭터 궁극기 Ready 상태 반환
         public bool IsUltimateButtonInteractable => ultimateButton != null && ultimateButton.interactable; // 궁극기 입력 버튼 활성 상태 반환
+        public bool IsSelectionHighlighted => portraitSelectionOutline != null && portraitSelectionOutline.enabled; // HUD 초상화 선택 윤곽 상태 반환
         public BattleHudHealthState HealthState { get; private set; } = BattleHudHealthState.Normal; // 현재 HUD 체력 상태
 
         public void Configure(Text displayName, Text level, Text portrait, Text hp, Image hpFill, Image gaugeFill) // 기존 에디터 참조 설정
@@ -29,6 +31,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             nameText = displayName; // 캐릭터 이름 연결
             levelText = level; // 캐릭터 레벨 연결
             portraitText = portrait; // 임시 초상화 연결
+            EnsurePortraitSelectionOutline(); // 초상화 선택 윤곽 효과 준비
             hpText = hp; // 체력 텍스트 연결
             hpFillImage = hpFill; // HP 게이지 연결
             gaugeFillImage = gaugeFill; // 궁극기 게이지 연결
@@ -49,6 +52,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public void Bind(BattleStats stats) // HUD 전투 스탯 연결
         {
             UnbindRuntimeEvents(); // 기존 Runtime 이벤트 연결 해제
+            SetSelectionHighlighted(false); // 이전 캐릭터 초상화 선택 윤곽 해제
             Stats = stats; // 전투 스탯 저장
             ultimateRatio = 0f; // 신규 연결 궁극기 게이지 초기화
 
@@ -61,11 +65,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             EnsureUltimateButton(); // 현재 HUD 궁극기 입력 버튼 준비
             Stats.HealthChanged += Refresh; // 체력 변경 시 HUD 갱신 연결
             BattleUltimateGaugeRuntimeState.GaugeChanged += HandleUltimateGaugeChanged; // 궁극기 게이지 변경 이벤트 연결
+            BattleSelectionRuntimeState.SelectionChanged += HandleSelectionChanged; // 캐릭터 선택 변경 이벤트 연결
             ultimateRatio = BattleUltimateGaugeRuntimeState.GetGaugeRatio(Stats.CharacterId); // 현재 캐릭터 Runtime 게이지 비율 동기화
             SetVisible(true); // HUD 카드 표시
             SetText(nameText, Stats.DisplayName); // 캐릭터 이름 표시
             SetText(levelText, $"Lv.{Stats.Level}"); // 캐릭터 레벨 표시
             SetText(portraitText, Stats.DisplayName); // 임시 초상화 이름 표시
+            EnsurePortraitSelectionOutline(); // 현재 초상화 선택 윤곽 효과 준비
             Refresh(); // 현재 HUD 상태 표시
         }
 
@@ -87,6 +93,17 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetFill(hpFillImage, Stats.HealthRatio); // HP 게이지 비율 적용
             RefreshSkillState(); // 현재 스킬 자리 상태 갱신
             RefreshUltimate(); // 생존 상태 기반 궁극기 Ready 표시 갱신
+            RefreshSelectionHighlight(); // 생존 및 선택 상태 기반 초상화 윤곽 갱신
+        }
+
+        public void SetSelectionHighlighted(bool highlighted) // HUD 초상화 선택 윤곽 표시 설정
+        {
+            EnsurePortraitSelectionOutline(); // 초상화 선택 윤곽 효과 준비
+
+            if (portraitSelectionOutline != null) // 초상화 선택 윤곽 효과 존재 확인
+            {
+                portraitSelectionOutline.enabled = highlighted; // 선택 여부 기반 초상화 윤곽 활성 상태 적용
+            }
         }
 
         public bool TryUseUltimate() // 현재 HUD 캐릭터 궁극기 사용 시도
@@ -121,6 +138,36 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             ultimateRatio = Mathf.Clamp01((float)currentGauge / BattleUltimateGaugeRuntimeState.MaxGauge); // 변경 게이지 HUD 비율 계산
             RefreshUltimate(); // 궁극기 게이지와 Ready 표시 갱신
+        }
+
+        private void HandleSelectionChanged(string selectedRuntimeId) // 캐릭터 선택 변경 이벤트 처리
+        {
+            RefreshSelectionHighlight(); // 현재 HUD 초상화 선택 윤곽 갱신
+        }
+
+        private void RefreshSelectionHighlight() // HUD 초상화 선택 윤곽 상태 반영
+        {
+            bool highlighted = Stats != null && Stats.IsAlive && BattleSelectionRuntimeState.IsSelected(Stats.RuntimeId); // 현재 HUD 캐릭터 생존 및 선택 여부 계산
+            SetSelectionHighlighted(highlighted); // 현재 초상화 선택 윤곽 상태 적용
+        }
+
+        private void EnsurePortraitSelectionOutline() // HUD 초상화 선택 윤곽 효과 준비
+        {
+            if (portraitText == null) // 현재 임시 초상화 Graphic 존재 확인
+            {
+                return; // 초상화 없음 윤곽 준비 중단
+            }
+
+            if (portraitSelectionOutline != null && portraitSelectionOutline.gameObject == portraitText.gameObject) // 기존 초상화 윤곽 재사용 가능 여부 확인
+            {
+                return; // 기존 초상화 윤곽 유지
+            }
+
+            portraitSelectionOutline = portraitText.gameObject.AddComponent<Outline>(); // 현재 초상화 Graphic에 선택 윤곽 추가
+            portraitSelectionOutline.effectColor = new Color(1f, 0.78f, 0.12f, 1f); // 금색 초상화 선택 윤곽 색상 적용
+            portraitSelectionOutline.effectDistance = new Vector2(3f, -3f); // 초상화 선택 윤곽 선 두께 적용
+            portraitSelectionOutline.useGraphicAlpha = true; // 초상화 Graphic 알파 기반 윤곽 적용
+            portraitSelectionOutline.enabled = false; // 생성 직후 초상화 선택 윤곽 숨김
         }
 
         private void EnsureUltimateButton() // 궁극기 텍스트 Runtime 입력 버튼 준비
@@ -197,6 +244,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             BattleUltimateGaugeRuntimeState.GaugeChanged -= HandleUltimateGaugeChanged; // 궁극기 게이지 변경 이벤트 해제
+            BattleSelectionRuntimeState.SelectionChanged -= HandleSelectionChanged; // 캐릭터 선택 변경 이벤트 해제
         }
 
         private static void SetFill(Image target, float ratio) // 가로 게이지 비율 설정

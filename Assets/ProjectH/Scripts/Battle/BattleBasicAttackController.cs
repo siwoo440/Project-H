@@ -12,8 +12,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private BattleActor currentTarget; // 현재 공격 대상
         private BattleAttackState state = BattleAttackState.Idle; // 현재 공격 상태
         private float stateTimer; // 현재 상태 시간
+        private bool manualMoveSuspended; // 수동 이동 중 자동 전투 일시정지 상태
         public BattleAttackState State => state; // 현재 공격 상태 반환
         public BattleActor CurrentTarget => currentTarget; // 현재 공격 대상 반환
+        public bool IsManualMoveSuspended => manualMoveSuspended; // 수동 이동 자동 전투 정지 여부 반환
 
         public void Configure(BattleActor owner, BattleCombatRegistry combatRegistry) // 기존 공통 기본 공격 참조 설정
         {
@@ -28,6 +30,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             currentTarget = null; // 현재 타겟 초기화
             state = BattleAttackState.Idle; // 공격 상태 초기화
             stateTimer = 0f; // 공격 상태 시간 초기화
+            manualMoveSuspended = false; // 수동 이동 정지 상태 초기화
+            RegisterManualMoveSupport(); // 아군 수동 이동 입력 시스템 자동 연결
+        }
+
+        public void BeginManualMove() // 수동 이동 시작 시 자동 전투 일시정지
+        {
+            manualMoveSuspended = true; // 수동 이동 자동 전투 정지 활성화
+            ResetTarget(); // 기존 공격 타겟 및 진행 상태 초기화
+        }
+
+        public void EndManualMove() // 수동 이동 종료 후 자동 전투 복귀
+        {
+            manualMoveSuspended = false; // 수동 이동 자동 전투 정지 해제
+            ResetTarget(); // 새 위치 기준 타겟 재탐색 준비
         }
 
         private void Update() // 자동 기본 공격 상태 갱신
@@ -35,6 +51,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (actor == null || registry == null || !actor.IsCombatReady || !actor.Stats.IsAlive) // 공격 실행 가능 상태 확인
             {
                 return; // 자동 기본 공격 중단
+            }
+
+            if (manualMoveSuspended) // 수동 이동 중 자동 전투 정지 여부 확인
+            {
+                return; // 수동 이동 종료까지 자동 이동 및 공격 중단
             }
 
             if (BattleSkillRuntimeState.IsStunned(actor.Stats.RuntimeId)) // 현재 기절 상태 확인
@@ -49,7 +70,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     break; // 전진 상태 처리 종료
                 case BattleAttackState.Attack: // 기본 공격 상태 처리
                     UpdateAttack(); // 기본 공격 갱신
-                    break; // 기본 공격 상태 처리 종료
+                    break; // 공격 상태 처리 종료
                 case BattleAttackState.Cooldown: // 공격 대기 상태 처리
                     UpdateCooldown(); // 공격 대기 갱신
                     break; // 공격 대기 상태 처리 종료
@@ -92,7 +113,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 전진 처리 종료
             }
 
-            actor.MoveForwardToward(currentTarget, Time.deltaTime); // 현재 타겟 정지선까지 가로 전진
+            if (actor.Team == BattleTeam.Ally) // 아군 현재 위치 중심 추적 여부 확인
+            {
+                actor.MoveToward(currentTarget, Time.deltaTime); // 아군 최근접 적 방향 좌우 이동 허용
+            }
+            else // 적군 기존 전진 규칙 처리
+            {
+                actor.MoveForwardToward(currentTarget, Time.deltaTime); // 적군 기존 전방 정지선 이동 유지
+            }
 
             if (actor.IsWithinAttackRange(currentTarget)) // 이동 후 공격 사거리 진입 확인
             {
@@ -179,7 +207,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return enemyBrain.SelectTarget(); // 적군 AI 판단 타겟 반환
             }
 
-            return registry.FindNearestOpponent(actor); // 아군 기본 가장 가까운 타겟 반환
+            return registry.FindNearestOpponent(actor); // 아군 현재 위치 기준 가장 가까운 타겟 반환
         }
 
         private bool IsTargetValid() // 현재 타겟 유효성 확인
@@ -192,6 +220,24 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             currentTarget = null; // 현재 타겟 초기화
             state = BattleAttackState.Idle; // 타겟 탐색 대기 상태 설정
             stateTimer = 0f; // 상태 시간 초기화
+        }
+
+        private void RegisterManualMoveSupport() // 아군 수동 이동 시스템 자동 연결
+        {
+            if (actor == null || actor.Team != BattleTeam.Ally || registry == null) // 아군 및 Registry 연결 상태 확인
+            {
+                return; // 적군 또는 잘못된 참조 수동 이동 연결 제외
+            }
+
+            BattleManualMoveController manualMoveController = registry.GetComponent<BattleManualMoveController>(); // Registry의 기존 수동 이동 컨트롤러 조회
+
+            if (manualMoveController == null) // 기존 수동 이동 컨트롤러 존재 확인
+            {
+                manualMoveController = registry.gameObject.AddComponent<BattleManualMoveController>(); // Registry 객체에 수동 이동 컨트롤러 자동 추가
+            }
+
+            manualMoveController.Configure(registry, Camera.main); // 현재 Registry 및 전장 카메라 연결
+            manualMoveController.RegisterAlly(actor, this); // 파티 생성 순서 기반 숫자키 슬롯 등록
         }
     }
 }

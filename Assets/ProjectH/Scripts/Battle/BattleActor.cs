@@ -12,10 +12,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private BattleFloatingValueText floatingValueText; // 피해 회복 숫자 디버그 텍스트
         private Color baseBodyColor = Color.white; // 기본 바디 색상
         private Coroutine flashRoutine; // 피격 미리보기 코루틴
+        [SerializeField] private Outline selectionOutline; // 선택 캐릭터 바디 윤곽 효과
         public BattleTeam Team { get; private set; } // 전투 팀
         public IBattleCombatantStats Stats { get; private set; } // 공통 전투 스탯
         public Vector3 HomePosition { get; private set; } // 최초 진형 위치
         public bool IsCombatReady => Stats != null; // 전투 초기화 완료 여부
+        public bool IsSelectionHighlighted => selectionOutline != null && selectionOutline.enabled; // 선택 캐릭터 윤곽 활성 상태 반환
         public float ForwardDirection => Team == BattleTeam.Ally ? 1f : -1f; // 팀별 전진 방향 반환
 
         public void ConfigureVisuals(Image body, BattleActionDebugText debugText) // 이전 전투 시각 참조 설정
@@ -33,6 +35,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 baseBodyColor = bodyImage.color; // 현재 바디 색상 저장
             }
+
+            EnsureSelectionOutline(); // 선택 캐릭터 바디 윤곽 효과 준비
+            RefreshSelectionHighlight(); // 현재 선택 상태 바디 윤곽 반영
         }
 
         public void Initialize(BattleTeam team, IBattleCombatantStats stats, Vector3 homePosition) // 전투 액터 초기화
@@ -40,6 +45,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Team = team; // 전투 팀 저장
             Stats = stats; // 공통 전투 스탯 저장
             HomePosition = homePosition; // 최초 진형 위치 저장
+            BattleSelectionRuntimeState.SelectionChanged -= HandleSelectionChanged; // 기존 선택 변경 이벤트 중복 구독 제거
+            BattleSelectionRuntimeState.SelectionChanged += HandleSelectionChanged; // 선택 변경 이벤트 구독
+            EnsureSelectionOutline(); // 전투 초기화 시 바디 윤곽 효과 준비
+            RefreshSelectionHighlight(); // 현재 선택 상태 바디 윤곽 반영
+        }
+
+        public void SetSelectionHighlighted(bool highlighted) // 전장 캐릭터 선택 윤곽 표시 설정
+        {
+            EnsureSelectionOutline(); // 선택 윤곽 효과 준비
+
+            if (selectionOutline != null) // 선택 윤곽 효과 존재 확인
+            {
+                selectionOutline.enabled = highlighted; // 선택 여부 기반 윤곽 활성 상태 적용
+            }
         }
 
         public void SetBodyColor(Color color) // 전투 바디 기본색 설정
@@ -118,6 +137,31 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Vector3 nextPosition = transform.position; // 현재 위치 복사
             nextPosition.x = nextX; // 가로 전진 위치 적용
             transform.position = nextPosition; // 전투 객체 전진 위치 저장
+        }
+
+        public void MoveToward(BattleActor target, float deltaTime) // 현재 위치에서 방향과 무관하게 타겟 쪽 횡스크롤 이동
+        {
+            if (!IsCombatReady || target == null) // 전투 상태 및 타겟 확인
+            {
+                return; // 방향 무관 이동 중단
+            }
+
+            float safeRange = Mathf.Max(0.2f, Stats.AttackRange); // 최소 공격 사거리 보정
+            float currentX = transform.position.x; // 현재 X 위치 저장
+            float targetX = target.transform.position.x; // 타겟 X 위치 저장
+            float signedDistance = targetX - currentX; // 현재 위치 기준 타겟 방향 거리 계산
+
+            if (Mathf.Abs(signedDistance) <= safeRange) // 이미 공격 사거리 내부 여부 확인
+            {
+                return; // 추가 이동 불필요 처리
+            }
+
+            float direction = Mathf.Sign(signedDistance); // 현재 위치에서 타겟 방향 계산
+            float stopX = targetX - (direction * safeRange); // 현재 접근 방향 기준 공격 정지선 계산
+            float maxStep = Mathf.Max(0.01f, Stats.MoveSpeed) * Mathf.Max(0f, deltaTime); // 프레임 최대 이동 거리 계산
+            Vector3 nextPosition = transform.position; // 현재 위치 복사
+            nextPosition.x = Mathf.MoveTowards(currentX, stopX, maxStep); // 좌우 방향 모두 허용한 정지선 이동 계산
+            transform.position = nextPosition; // 최근접 타겟 방향 위치 저장
         }
 
         public int ApplyDamage(BattleDamageResult result) // 계산 완료 피해 적용
@@ -226,6 +270,41 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             yield return new WaitForSeconds(0.08f); // 짧은 피격 표시 대기
             bodyImage.color = baseBodyColor; // 기본 바디 색상 복원
             flashRoutine = null; // 피격 코루틴 참조 초기화
+        }
+
+        private void HandleSelectionChanged(string selectedRuntimeId) // 전투 선택 변경 이벤트 처리
+        {
+            RefreshSelectionHighlight(); // 현재 액터 선택 윤곽 상태 갱신
+        }
+
+        private void RefreshSelectionHighlight() // 현재 액터 선택 윤곽 상태 반영
+        {
+            bool highlighted = Team == BattleTeam.Ally && Stats != null && Stats.IsAlive && BattleSelectionRuntimeState.IsSelected(Stats.RuntimeId); // 생존 아군 선택 여부 계산
+            SetSelectionHighlighted(highlighted); // 현재 바디 선택 윤곽 상태 적용
+        }
+
+        private void EnsureSelectionOutline() // 전장 캐릭터 선택 윤곽 효과 준비
+        {
+            if (bodyImage == null) // 캐릭터 바디 이미지 존재 확인
+            {
+                return; // 바디 없음 윤곽 준비 중단
+            }
+
+            if (selectionOutline != null && selectionOutline.gameObject == bodyImage.gameObject) // 기존 선택 윤곽 재사용 가능 여부 확인
+            {
+                return; // 기존 선택 윤곽 유지
+            }
+
+            selectionOutline = bodyImage.gameObject.AddComponent<Outline>(); // 캐릭터 바디 전용 선택 윤곽 추가
+            selectionOutline.effectColor = new Color(1f, 0.78f, 0.12f, 1f); // 금색 선택 윤곽 색상 적용
+            selectionOutline.effectDistance = new Vector2(3f, -3f); // 선택 윤곽 선 두께 적용
+            selectionOutline.useGraphicAlpha = true; // 캐릭터 이미지 알파 기반 윤곽 적용
+            selectionOutline.enabled = false; // 생성 직후 선택 윤곽 숨김
+        }
+
+        private void OnDestroy() // 전투 액터 제거 처리
+        {
+            BattleSelectionRuntimeState.SelectionChanged -= HandleSelectionChanged; // 선택 변경 이벤트 구독 해제
         }
     }
 }

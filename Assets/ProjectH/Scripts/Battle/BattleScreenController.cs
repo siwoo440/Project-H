@@ -1,3 +1,4 @@
+using System; // 고유 결과 ID 생성 기능
 using System.Collections.Generic; // 목록 자료형
 using ProjectH.Core; // 프로젝트 핵심 기능
 using ProjectH.Data; // 몬스터 데이터 기능
@@ -34,6 +35,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private readonly List<BattleEnemyView> spawnedEnemies = new List<BattleEnemyView>(); // 생성된 적군 유닛 목록
         private BattlePartyRuntime partyRuntime; // 현재 전투 파티 런타임
         private float elapsedSeconds; // 전투 경과 시간
+        private string currentBattleResultId = string.Empty; // 현재 전투 결과 고유 ID
         private bool initialized; // 전투 초기화 완료 상태
         private bool isAutoEnabled = true; // AUTO 표시 상태
         private bool buttonsBound; // 버튼 이벤트 연결 여부
@@ -153,8 +155,18 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetInteraction(false); // 전투 종료 후 기존 전투 UI 입력 잠금
             SetText(waveText, "BATTLE END"); // 전투 종료 표시 적용
             SetText(statusText, outcome == BattleOutcome.Victory ? "VICTORY · 모든 적 전투 불능" : "DEFEAT · 파티 전원 전투 불능"); // 전투 종료 상태 표시
-            BattleResultData resultData = BattleResultData.Create(outcome, partyRuntime == null ? null : partyRuntime.Members); // 현재 파티 전투 종료 스냅샷 생성
-            BattleResultOverlay.ShowRuntime(resultData, ReturnToDungeonSelect); // 24일차 전투 결과 화면 표시
+            string resultId = string.IsNullOrWhiteSpace(currentBattleResultId) ? Guid.NewGuid().ToString("N") : currentBattleResultId; // 현재 전투 결과 고유 ID 보정
+            currentBattleResultId = resultId; // 보정 결과 ID 저장
+            BattleResultData resultData = BattleResultData.Create(outcome, partyRuntime == null ? null : partyRuntime.Members, resultId); // 현재 파티 전투 종료 스냅샷 생성
+            SaveData saveData = GameManager.Instance == null || GameManager.Instance.Save == null ? null : GameManager.Instance.Save.CurrentSave; // 현재 영구 저장 데이터 조회
+            bool committed = BattleResultCommitService.CommitOnce(saveData, resultData); // 전투 결과 보상 및 진행 1회 반영
+
+            if (committed && GameManager.Instance != null && GameManager.Instance.Save != null) // 영구 저장 가능 상태 확인
+            {
+                GameManager.Instance.Save.SaveCurrent(); // 전투 결과 즉시 저장
+            }
+
+            BattleResultOverlay.ShowRuntime(resultData, ReturnToDungeonSelect); // 전투 결과 화면 표시
         }
 
         public void ReturnToDungeonSelect() // 던전 선택 화면 복귀
@@ -180,6 +192,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         {
             initialized = false; // 전투 초기화 상태 초기화
             elapsedSeconds = 0f; // 경과 시간 초기화
+            currentBattleResultId = Guid.NewGuid().ToString("N"); // 신규 전투 결과 고유 ID 생성
             menuPanel?.SetActive(false); // 시작 시 전투 메뉴 숨김
             SetText(waveText, "WAVE 1 / 1"); // 15일차 단일 테스트 웨이브 표시
             RefreshTime(); // 초기 시간 표시

@@ -1,3 +1,4 @@
+using System; // 고유 결과 ID 생성 기능
 using System.Collections.Generic; // 목록 자료형
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -5,14 +6,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     public sealed class BattleResultData // 전투 종료 결과 데이터
     {
         private readonly List<BattleResultPartyMember> members; // 종료 파티원 스냅샷 목록
+        public string ResultId { get; } // 전투 결과 고유 ID 반환
         public BattleOutcome Outcome { get; } // 최종 승패 상태 반환
         public int Gold { get; } // 획득 골드 반환
         public int Experience { get; } // 획득 경험치 반환
         public int StarCount { get; } // 결과 별 개수 반환
         public IReadOnlyList<BattleResultPartyMember> Members => members; // 종료 파티원 목록 반환
 
-        private BattleResultData(BattleOutcome outcome, BattleReward reward, List<BattleResultPartyMember> partyMembers) // 전투 결과 데이터 생성
+        private BattleResultData(string resultId, BattleOutcome outcome, BattleReward reward, List<BattleResultPartyMember> partyMembers) // 전투 결과 데이터 생성
         {
+            ResultId = resultId ?? string.Empty; // 결과 고유 ID 저장
             Outcome = outcome; // 최종 승패 저장
             Gold = reward == null ? 0 : reward.Gold; // 획득 골드 저장
             Experience = reward == null ? 0 : reward.Experience; // 획득 경험치 저장
@@ -21,6 +24,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         }
 
         public static BattleResultData Create(BattleOutcome outcome, IReadOnlyList<BattleStats> battleMembers) // 현재 파티 상태 기반 전투 결과 생성
+        {
+            return Create(outcome, battleMembers, Guid.NewGuid().ToString("N")); // 신규 고유 ID 기반 결과 생성
+        }
+
+        public static BattleResultData Create(BattleOutcome outcome, IReadOnlyList<BattleStats> battleMembers, string resultId) // 지정 결과 ID 기반 전투 결과 생성
         {
             BattleReward reward = BattleRewardCalculator.Calculate(outcome); // 승패 기반 임시 보상 계산
             List<BattleResultPartyMember> snapshots = new List<BattleResultPartyMember>(); // 파티원 스냅샷 목록 생성
@@ -38,7 +46,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 }
             }
 
-            return new BattleResultData(outcome, reward, snapshots); // 완성 전투 결과 데이터 반환
+            return new BattleResultData(resultId, outcome, reward, snapshots); // 완성 전투 결과 데이터 반환
         }
     }
 }

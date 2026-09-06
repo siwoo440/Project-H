@@ -153,7 +153,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetInteraction(false); // 전투 종료 후 기존 전투 UI 입력 잠금
             SetText(waveText, "BATTLE END"); // 전투 종료 표시 적용
             SetText(statusText, outcome == BattleOutcome.Victory ? "VICTORY · 모든 적 전투 불능" : "DEFEAT · 파티 전원 전투 불능"); // 전투 종료 상태 표시
-            BattleResultOverlay.ShowRuntime(outcome, ReturnToDungeonSelect); // 임시 전투 결과 Overlay 표시
+            BattleResultData resultData = BattleResultData.Create(outcome, partyRuntime == null ? null : partyRuntime.Members); // 현재 파티 전투 종료 스냅샷 생성
+            BattleResultOverlay.ShowRuntime(resultData, ReturnToDungeonSelect); // 24일차 전투 결과 화면 표시
         }
 
         public void ReturnToDungeonSelect() // 던전 선택 화면 복귀

@@ -16,6 +16,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private BattleStats allyStats; // 아군 전투 스탯
         private BattleEnemyStats enemyStats; // 적군 전투 스탯
         private bool defeated; // 사망 처리 완료 상태
+        private Coroutine hideRoutine; // 전투 불능 숨김 코루틴
+        public BattleStats AllyStats => allyStats; // 아군 부활용 전투 스탯 반환
+        public bool CanRevive => defeated && actor != null && actor.Team == BattleTeam.Ally && allyStats != null && !allyStats.IsAlive; // 현재 아군 부활 가능 상태 반환
 
         public void Configure(BattleActor owner, BattleCombatRegistry combatRegistry, BattleBasicAttackController basicAttackController, BattleEnemyBrain brain, BattleUnitView unitView, BattleEnemyView monsterView) // 공통 사망 처리 참조 설정
         {
@@ -29,6 +32,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             allyStats = actor == null ? null : actor.Stats as BattleStats; // 아군 전투 스탯 변환
             enemyStats = actor == null ? null : actor.Stats as BattleEnemyStats; // 적군 전투 스탯 변환
             defeated = false; // 사망 처리 상태 초기화
+            hideRoutine = null; // 숨김 코루틴 참조 초기화
             BindHealthEvent(); // 현재 전투 스탯 체력 이벤트 연결
             EvaluateDeathState(); // 초기 사망 상태 확인
         }
@@ -64,7 +68,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             if (Application.isPlaying) // Play Mode 실행 여부 확인
             {
-                StartCoroutine(HideAfterDelay()); // 짧은 DOWN 표시 후 전장 객체 숨김
+                hideRoutine = StartCoroutine(HideAfterDelay()); // 짧은 DOWN 표시 후 전장 객체 숨김
             }
             else // EditMode 테스트 처리
             {
@@ -72,6 +76,36 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             return true; // 신규 사망 처리 완료 반환
+        }
+
+        public bool TryRevive(int reviveHp) // 전투불능 아군 부활 시도
+        {
+            if (!CanRevive || reviveHp <= 0) // 부활 가능 상태와 체력 확인
+            {
+                return false; // 부활 불가 상태 실패 반환
+            }
+
+            if (hideRoutine != null) // 진행 중 숨김 코루틴 확인
+            {
+                StopCoroutine(hideRoutine); // 전투불능 숨김 코루틴 중단
+                hideRoutine = null; // 숨김 코루틴 참조 초기화
+            }
+
+            int safeHp = Mathf.Clamp(reviveHp, 1, allyStats.MaxHp); // 부활 체력 범위 보정
+            UnbindHealthEvent(); // 부활 체력 변경 전 기존 이벤트 안전 해제
+            defeated = false; // 부활 전투불능 상태 해제
+            gameObject.SetActive(true); // 부활 아군 전장 객체 표시
+            allyStats.SetCurrentHp(safeHp); // 부활 아군 체력 복원
+            allyView?.Bind(allyStats); // 부활 아군 View와 Actor 상태 복원
+            registry?.Register(actor); // 부활 아군 전투 Registry 재등록
+
+            if (attackController != null) // 부활 아군 기본 공격 컨트롤러 확인
+            {
+                attackController.enabled = true; // 부활 아군 기본 공격 재개
+            }
+
+            BindHealthEvent(); // 부활 후 체력 변경 이벤트 재연결
+            return true; // 아군 부활 성공 반환
         }
 
         private void BindHealthEvent() // 현재 전투 스탯 체력 이벤트 연결
@@ -95,6 +129,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private IEnumerator HideAfterDelay() // 전장 사망 객체 화면 제외 지연
         {
             yield return new WaitForSecondsRealtime(hideDelaySeconds); // DOWN 표시 시간 대기
+            hideRoutine = null; // 숨김 코루틴 완료 참조 초기화
 
             if (gameObject != null) // 사망 GameObject 존재 확인
             {

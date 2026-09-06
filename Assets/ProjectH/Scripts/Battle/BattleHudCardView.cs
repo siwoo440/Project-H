@@ -17,9 +17,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Text skillText; // 스킬 상태 텍스트
         [SerializeField] private Text ultimateText; // 궁극기 게이지 텍스트
         private float ultimateRatio; // 현재 궁극기 게이지 비율
+        private Button ultimateButton; // 궁극기 텍스트 Runtime 입력 버튼
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
         public bool IsUltimateReady => Stats != null && Stats.IsAlive && ultimateRatio >= 1f; // 생존 캐릭터 궁극기 Ready 상태 반환
+        public bool IsUltimateButtonInteractable => ultimateButton != null && ultimateButton.interactable; // 궁극기 입력 버튼 활성 상태 반환
         public BattleHudHealthState HealthState { get; private set; } = BattleHudHealthState.Normal; // 현재 HUD 체력 상태
 
         public void Configure(Text displayName, Text level, Text portrait, Text hp, Image hpFill, Image gaugeFill) // 기존 에디터 참조 설정
@@ -39,6 +41,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             skillButton = skillTarget; // 스킬 자리 버튼 연결
             skillText = skillLabel; // 스킬 상태 텍스트 연결
             ultimateText = ultimateLabel; // 궁극기 게이지 텍스트 연결
+            EnsureUltimateButton(); // 궁극기 텍스트 Runtime 버튼 연결
             RefreshSkillState(); // 스킬 자리 초기 상태 갱신
             RefreshUltimate(); // 궁극기 게이지 초기 상태 갱신
         }
@@ -55,6 +58,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // HUD 연결 중단
             }
 
+            EnsureUltimateButton(); // 현재 HUD 궁극기 입력 버튼 준비
             Stats.HealthChanged += Refresh; // 체력 변경 시 HUD 갱신 연결
             BattleUltimateGaugeRuntimeState.GaugeChanged += HandleUltimateGaugeChanged; // 궁극기 게이지 변경 이벤트 연결
             ultimateRatio = BattleUltimateGaugeRuntimeState.GetGaugeRatio(Stats.CharacterId); // 현재 캐릭터 Runtime 게이지 비율 동기화
@@ -85,6 +89,23 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             RefreshUltimate(); // 생존 상태 기반 궁극기 Ready 표시 갱신
         }
 
+        public bool TryUseUltimate() // 현재 HUD 캐릭터 궁극기 사용 시도
+        {
+            if (!IsUltimateReady || Stats == null) // 생존 및 Ready 상태 확인
+            {
+                return false; // 사용 불가 상태 실행 차단
+            }
+
+            BattleUltimateExecutionResult result = BattleUltimateExecutor.TryExecute(Stats.CharacterId); // 현재 전투 Registry 기반 궁극기 실행
+
+            if (!result.Succeeded) // 궁극기 실행 실패 여부 확인
+            {
+                Debug.LogWarning($"[Project H][ULTIMATE] {Stats.CharacterId}, {result.Message}"); // 궁극기 사용 실패 로그 출력
+            }
+
+            return result.Succeeded; // 궁극기 실행 성공 여부 반환
+        }
+
         public void SetUltimatePreview(float ratio) // 궁극기 게이지 UI 미리보기 설정
         {
             ultimateRatio = Mathf.Clamp01(ratio); // 궁극기 게이지 범위 보정
@@ -100,6 +121,31 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             ultimateRatio = Mathf.Clamp01((float)currentGauge / BattleUltimateGaugeRuntimeState.MaxGauge); // 변경 게이지 HUD 비율 계산
             RefreshUltimate(); // 궁극기 게이지와 Ready 표시 갱신
+        }
+
+        private void EnsureUltimateButton() // 궁극기 텍스트 Runtime 입력 버튼 준비
+        {
+            if (ultimateText == null) // 궁극기 텍스트 참조 확인
+            {
+                return; // 궁극기 버튼 준비 중단
+            }
+
+            ultimateButton = ultimateText.GetComponent<Button>(); // 기존 궁극기 텍스트 버튼 조회
+
+            if (ultimateButton == null) // 기존 궁극기 버튼 존재 확인
+            {
+                ultimateButton = ultimateText.gameObject.AddComponent<Button>(); // 궁극기 텍스트에 Runtime 버튼 추가
+            }
+
+            ultimateText.raycastTarget = true; // 궁극기 텍스트 포인터 입력 활성화
+            ultimateButton.targetGraphic = ultimateText; // 궁극기 텍스트를 버튼 TargetGraphic으로 연결
+            ultimateButton.onClick.RemoveListener(HandleUltimateClicked); // 기존 동일 궁극기 클릭 이벤트 제거
+            ultimateButton.onClick.AddListener(HandleUltimateClicked); // 궁극기 클릭 실행 이벤트 연결
+        }
+
+        private void HandleUltimateClicked() // 궁극기 HUD 클릭 처리
+        {
+            TryUseUltimate(); // 현재 HUD 캐릭터 궁극기 사용 시도
         }
 
         private void RefreshSkillState() // 스킬 자리 표시 갱신
@@ -121,6 +167,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         {
             SetFill(gaugeFillImage, ultimateRatio); // 궁극기 게이지 비율 적용
 
+            if (ultimateButton != null) // 궁극기 Runtime 버튼 확인
+            {
+                ultimateButton.interactable = IsUltimateReady; // 생존 및 Ready 상태 기반 궁극기 입력 활성화
+            }
+
             if (ultimateText != null) // 궁극기 게이지 텍스트 확인
             {
                 int percent = Mathf.RoundToInt(ultimateRatio * 100f); // 궁극기 게이지 퍼센트 계산
@@ -131,6 +182,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private void OnDestroy() // HUD 카드 제거
         {
             UnbindRuntimeEvents(); // Runtime 이벤트 연결 해제
+
+            if (ultimateButton != null) // 궁극기 Runtime 버튼 확인
+            {
+                ultimateButton.onClick.RemoveListener(HandleUltimateClicked); // 궁극기 클릭 이벤트 안전 해제
+            }
         }
 
         private void UnbindRuntimeEvents() // HUD Runtime 이벤트 안전 해제

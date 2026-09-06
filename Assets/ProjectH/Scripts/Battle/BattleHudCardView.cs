@@ -16,9 +16,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Button skillButton; // 스킬 자리 버튼
         [SerializeField] private Text skillText; // 스킬 상태 텍스트
         [SerializeField] private Text ultimateText; // 궁극기 게이지 텍스트
-        private float ultimateRatio; // 현재 궁극기 게이지 미리보기 비율
+        private float ultimateRatio; // 현재 궁극기 게이지 비율
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
+        public bool IsUltimateReady => Stats != null && Stats.IsAlive && ultimateRatio >= 1f; // 생존 캐릭터 궁극기 Ready 상태 반환
         public BattleHudHealthState HealthState { get; private set; } = BattleHudHealthState.Normal; // 현재 HUD 체력 상태
 
         public void Configure(Text displayName, Text level, Text portrait, Text hp, Image hpFill, Image gaugeFill) // 기존 에디터 참조 설정
@@ -44,9 +45,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public void Bind(BattleStats stats) // HUD 전투 스탯 연결
         {
-            UnbindHealthEvent(); // 기존 체력 이벤트 연결 해제
+            UnbindRuntimeEvents(); // 기존 Runtime 이벤트 연결 해제
             Stats = stats; // 전투 스탯 저장
-            ultimateRatio = 0f; // 신규 전투 궁극기 게이지 초기화
+            ultimateRatio = 0f; // 신규 연결 궁극기 게이지 초기화
 
             if (Stats == null) // 전투 스탯 확인
             {
@@ -55,12 +56,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             Stats.HealthChanged += Refresh; // 체력 변경 시 HUD 갱신 연결
+            BattleUltimateGaugeRuntimeState.GaugeChanged += HandleUltimateGaugeChanged; // 궁극기 게이지 변경 이벤트 연결
+            ultimateRatio = BattleUltimateGaugeRuntimeState.GetGaugeRatio(Stats.CharacterId); // 현재 캐릭터 Runtime 게이지 비율 동기화
             SetVisible(true); // HUD 카드 표시
             SetText(nameText, Stats.DisplayName); // 캐릭터 이름 표시
             SetText(levelText, $"Lv.{Stats.Level}"); // 캐릭터 레벨 표시
             SetText(portraitText, Stats.DisplayName); // 임시 초상화 이름 표시
             Refresh(); // 현재 HUD 상태 표시
-            RefreshUltimate(); // 현재 궁극기 게이지 표시
         }
 
         public void SetVisible(bool visible) // HUD 카드 표시 상태 설정
@@ -80,6 +82,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetText(healthStateText, BattleHudHealthStateEvaluator.GetLabel(HealthState)); // 현재 체력 상태 문구 표시
             SetFill(hpFillImage, Stats.HealthRatio); // HP 게이지 비율 적용
             RefreshSkillState(); // 현재 스킬 자리 상태 갱신
+            RefreshUltimate(); // 생존 상태 기반 궁극기 Ready 표시 갱신
         }
 
         public void SetUltimatePreview(float ratio) // 궁극기 게이지 UI 미리보기 설정
@@ -88,18 +91,29 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             RefreshUltimate(); // 궁극기 게이지 표시 갱신
         }
 
+        private void HandleUltimateGaugeChanged(string characterId, int currentGauge) // Runtime 궁극기 게이지 변경 처리
+        {
+            if (Stats == null || Stats.CharacterId != characterId) // 연결 캐릭터 ID 일치 확인
+            {
+                return; // 다른 캐릭터 게이지 변경 무시
+            }
+
+            ultimateRatio = Mathf.Clamp01((float)currentGauge / BattleUltimateGaugeRuntimeState.MaxGauge); // 변경 게이지 HUD 비율 계산
+            RefreshUltimate(); // 궁극기 게이지와 Ready 표시 갱신
+        }
+
         private void RefreshSkillState() // 스킬 자리 표시 갱신
         {
             bool alive = Stats == null || Stats.IsAlive; // 현재 캐릭터 생존 상태 계산
 
             if (skillButton != null) // 스킬 자리 버튼 확인
             {
-                skillButton.interactable = false; // 16일차 스킬 입력 잠금 유지
+                skillButton.interactable = false; // 블록 방식 스킬 입력과 중복되지 않도록 카드 버튼 잠금 유지
             }
 
             if (skillText != null) // 스킬 자리 텍스트 확인
             {
-                skillText.text = alive ? "SKILL\nLOCKED" : "DOWN"; // 17일차 연결 전 스킬 상태 표시
+                skillText.text = alive ? "SKILL\nLOCKED" : "DOWN"; // 블록 방식 스킬과 중복되지 않는 카드 상태 표시
             }
         }
 
@@ -110,21 +124,23 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (ultimateText != null) // 궁극기 게이지 텍스트 확인
             {
                 int percent = Mathf.RoundToInt(ultimateRatio * 100f); // 궁극기 게이지 퍼센트 계산
-                ultimateText.text = $"ULT {percent}%"; // 궁극기 게이지 퍼센트 표시
+                ultimateText.text = Stats != null && !Stats.IsAlive ? $"ULT {percent}% · DOWN" : IsUltimateReady ? "ULT READY" : $"ULT {percent}%"; // 생존 및 완충 상태 기반 궁극기 문구 표시
             }
         }
 
         private void OnDestroy() // HUD 카드 제거
         {
-            UnbindHealthEvent(); // 체력 이벤트 연결 해제
+            UnbindRuntimeEvents(); // Runtime 이벤트 연결 해제
         }
 
-        private void UnbindHealthEvent() // HUD 체력 이벤트 안전 해제
+        private void UnbindRuntimeEvents() // HUD Runtime 이벤트 안전 해제
         {
             if (Stats != null) // 기존 전투 스탯 확인
             {
                 Stats.HealthChanged -= Refresh; // 기존 체력 변경 이벤트 해제
             }
+
+            BattleUltimateGaugeRuntimeState.GaugeChanged -= HandleUltimateGaugeChanged; // 궁극기 게이지 변경 이벤트 해제
         }
 
         private static void SetFill(Image target, float ratio) // 가로 게이지 비율 설정

@@ -7,13 +7,14 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
     public sealed class BattleSkillExecutor : MonoBehaviour // 데이터 기반 실제 스킬 실행기
     {
         [SerializeField] private BattleCombatRegistry registry; // 전투 객체 레지스트리
-        public event Action<BattleSkillRequest> SkillRequested; // 스킬 사용 완료 요청 이벤트
+        public event Action<BattleSkillRequest> SkillRequested; // 성공한 스킬 사용 완료 이벤트
 
         public void Configure(BattleCombatRegistry combatRegistry) // 스킬 실행기 참조 설정
         {
             registry = combatRegistry; // 전투 레지스트리 연결
             BattleSkillRuntimeState.SetRegistry(registry); // 스킬 Runtime 상태에 현재 Registry 연결
             BattleSkillRuntimeState.ResetAll(); // 신규 전투 스킬 Runtime 상태 초기화
+            BattleUltimateGaugeRuntimeState.ResetAll(); // 신규 전투 궁극기 게이지 Runtime 상태 초기화
 
             if (registry != null && registry.GetComponent<BattleSkillRuntimeDriver>() == null) // 주기 효과 Runtime Driver 존재 확인
             {
@@ -23,7 +24,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
         public bool TryExecute(BattleSkillRequest request) // 블록 소비 스킬 사용 요청 실행
         {
-            if (!request.IsValid || registry == null) // 스킬 요청 및 레지스트리 확인
+            if (!request.IsValid || request.Skill == null || registry == null) // 스킬 요청과 데이터 및 레지스트리 확인
             {
                 return false; // 스킬 사용 요청 실패 반환
             }
@@ -43,9 +44,22 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             ShowSkillAction(owner, request.Skill.DisplayName); // 사용하는 캐릭터 머리 위에 실제 스킬명 표시
             BattleSkillEffectExecutionResult effectResult = BattleSkillEffectExecutor.Execute(request, owner, registry); // SkillData 강화도별 실제 효과 실행
             BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateSkillUsed(owner, request)); // 스킬 사용 완료 패시브 Trigger 처리
-            SkillRequested?.Invoke(request); // 이후 궁극기 게이지 연결 이벤트 발생
+            ApplyUltimateGaugeGain(request); // 성공한 스킬 사용 1회 기준 궁극기 게이지 충전
+            SkillRequested?.Invoke(request); // 성공한 스킬 사용 완료 이벤트 발생
             Debug.Log($"[Project H][SKILL] Character={request.CharacterId}, Skill={request.SkillId}, Slot={request.SkillSlot}, Enhancement={request.EnhancementLevel}, Blocks={request.BlockCount}, Effects={effectResult.AppliedEffectCount}, Targets={effectResult.AffectedTargetCount}"); // 스킬 사용 및 효과 적용 로그
             return true; // 스킬 사용 요청 성공 반환
+        }
+
+        private static void ApplyUltimateGaugeGain(BattleSkillRequest request) // 강화도 데이터 기반 궁극기 게이지 충전
+        {
+            int gaugeGain = BattleUltimateGaugeGainResolver.Resolve(request); // SkillData 강화도별 충전량 조회
+
+            if (gaugeGain <= 0) // 유효 충전량 확인
+            {
+                return; // 충전량 없음 처리 중단
+            }
+
+            BattleUltimateGaugeRuntimeState.AddGauge(request.CharacterId, gaugeGain); // 스킬 사용자 자신의 게이지만 충전
         }
 
         private static void ShowSkillAction(BattleActor owner, string skillDisplayName) // 실제 스킬명 행동 텍스트 표시

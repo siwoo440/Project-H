@@ -32,9 +32,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return new BattleHealingResult(target.RuntimeId, safeAmount, 0); // 일반 회복 부활 차단
             }
 
+            float healingMultiplier = BattleSkillRuntimeState.GetHealingReceivedMultiplier(target.RuntimeId); // 스킬 기반 받는 회복량 배율 조회
+            int modifiedAmount = Mathf.Max(0, Mathf.RoundToInt(safeAmount * healingMultiplier)); // 받는 회복량 증가 반영 요청량 계산
             int missingHp = Mathf.Max(0, target.MaxHp - target.CurrentHp); // 손실 체력 계산
-            int healing = Mathf.Min(safeAmount, missingHp); // 최대 체력 범위 회복량 계산
-            return new BattleHealingResult(target.RuntimeId, safeAmount, healing); // 회복 결과 반환
+            int healing = Mathf.Min(modifiedAmount, missingHp); // 최대 체력 범위 회복량 계산
+            return new BattleHealingResult(target.RuntimeId, modifiedAmount, healing); // 회복 결과 반환
         }
     }
 }

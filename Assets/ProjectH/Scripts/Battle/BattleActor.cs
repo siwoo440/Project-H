@@ -148,6 +148,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             FlashHitPreview(); // 피해 피격 표시
             floatingValueText?.ShowDamage(applied); // 피해 숫자 표시
+
+            if (Stats.IsAlive) // 피해 후 생존 여부 확인
+            {
+                BattleSkillRuntimeState.TryCounter(this, result); // 활성 반격 효과 기반 원 공격자 반격 시도
+            }
+
             return applied; // 실제 피해량 반환
         }
 

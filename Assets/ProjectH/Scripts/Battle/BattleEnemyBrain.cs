@@ -31,6 +31,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return null; // AI 타겟 없음 반환
             }
 
+            if (BattleSkillRuntimeState.TryGetTauntTarget(actor, out BattleActor tauntTarget)) // 활성 도발 타겟 존재 확인
+            {
+                DesiredTarget = tauntTarget; // 도발 대상 희망 타겟 적용
+                CurrentTarget = BattleFrontBlockerResolver.Resolve(actor, DesiredTarget, registry.Actors); // 전선 차단 규칙을 유지한 실제 타겟 계산
+                return CurrentTarget; // 도발 반영 실제 타겟 반환
+            }
+
             DesiredTarget = BattleEnemyTargetPolicy.SelectDesiredTarget(actor, registry.Actors, AIType); // AI 유형별 희망 타겟 선택
             CurrentTarget = BattleFrontBlockerResolver.Resolve(actor, DesiredTarget, registry.Actors); // 전선 차단 반영 실제 타겟 선택
             return CurrentTarget; // 실제 공격 타겟 반환

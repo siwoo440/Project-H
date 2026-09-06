@@ -17,6 +17,18 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
         private CanvasGroup panelCanvasGroup; // 패널 입력 제어 CanvasGroup
         private int currentBlockCount; // 현재 표시 블록 수
         private bool interactable; // 현재 블록 UI 입력 상태
+        private bool lifecycleBlocked; // Disable 및 Destroy 중 Runtime UI 갱신 차단 상태
+
+        private void OnEnable() // 스킬 블록 패널 활성화 처리
+        {
+            lifecycleBlocked = false; // Runtime UI 갱신 허용
+        }
+
+        private void OnDisable() // 스킬 블록 패널 비활성화 처리
+        {
+            lifecycleBlocked = true; // Scene 종료 및 비활성 중 Runtime UI 갱신 차단
+            interactable = false; // 비활성 상태 입력 차단
+        }
 
         public void Configure(RectTransform runtimeBlockLayer, Text counter, Text hint, int maximumSlots) // 에디터 생성 UI 참조 설정
         {
@@ -42,12 +54,23 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
         public void Refresh(IReadOnlyList<BattleSkillBlock> blocks) // Queue 데이터 기반 블록 UI 전체 갱신
         {
+            if (lifecycleBlocked || !isActiveAndEnabled || blockLayer == null) // Scene 종료 및 UI 생명주기 상태 확인
+            {
+                return; // 종료 중 Runtime UI 재생성 및 접근 차단
+            }
+
+            RemoveDestroyedViews(); // Unity에서 이미 제거된 Runtime View 참조 정리
             currentBlockCount = blocks == null ? 0 : blocks.Count; // 현재 블록 수 저장
             EnsureViewCount(currentBlockCount); // 필요한 Runtime 블록 View 개수 확보
 
             for (int index = 0; index < views.Count; index++) // 전체 블록 View 순회
             {
                 BattleSkillBlockView view = views[index]; // 현재 블록 View 조회
+
+                if (view == null) // Unity Destroy 완료 View 참조 확인
+                {
+                    continue; // 파괴된 View 접근 차단
+                }
 
                 if (index >= currentBlockCount) // 현재 Queue 밖 View 확인
                 {
@@ -75,6 +98,12 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
         public void SetInteractable(bool enabled) // 스킬 블록 패널 입력 상태 설정
         {
+            if (lifecycleBlocked) // 패널 종료 상태 확인
+            {
+                interactable = false; // 종료 상태 입력 차단
+                return; // CanvasGroup 재접근 중단
+            }
+
             interactable = enabled; // 블록 입력 상태 저장
 
             if (panelCanvasGroup == null) // 패널 CanvasGroup 확인
@@ -92,12 +121,12 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
         public bool BeginBlockDrag(BattleSkillBlockView view) // 블록 드래그 시작 가능 여부 확인
         {
-            return interactable && controller != null && controller.CanInteract && view != null; // 현재 전투 및 입력 상태 기반 드래그 허용 반환
+            return !lifecycleBlocked && interactable && controller != null && controller.CanInteract && view != null; // 현재 전투 및 입력 상태 기반 드래그 허용 반환
         }
 
         public void DragBlock(BattleSkillBlockView view, PointerEventData eventData) // 드래그 중 블록 화면 위치 이동
         {
-            if (!interactable || view == null || eventData == null) // 드래그 입력 유효성 확인
+            if (lifecycleBlocked || !interactable || view == null || eventData == null) // 드래그 입력 유효성 확인
             {
                 return; // 블록 드래그 이동 중단
             }
@@ -112,6 +141,11 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
         public void EndBlockDrag(BattleSkillBlockView view, PointerEventData eventData) // 블록 드롭 위치 기반 Queue 순서 변경
         {
+            if (lifecycleBlocked) // 패널 종료 상태 확인
+            {
+                return; // 종료 중 드롭 처리 차단
+            }
+
             if (controller == null || view == null || eventData == null) // 드롭 처리 참조 확인
             {
                 Refresh(controller?.Queue?.Blocks); // 가능한 현재 Queue UI 복원
@@ -128,7 +162,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
         public void HandleBlockClick(BattleSkillBlockView view) // 블록 클릭 스킬 사용 처리
         {
-            if (!interactable || controller == null || view == null) // 클릭 사용 가능 상태 확인
+            if (lifecycleBlocked || !interactable || controller == null || view == null) // 클릭 사용 가능 상태 확인
             {
                 return; // 블록 클릭 사용 중단
             }
@@ -154,8 +188,24 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             return Mathf.Clamp(slotIndex, 0, currentBlockCount - 1); // 현재 블록 수 기준 이동 인덱스 보정
         }
 
+        private void RemoveDestroyedViews() // Unity Destroy 완료 Runtime View 참조 정리
+        {
+            for (int index = views.Count - 1; index >= 0; index--) // Runtime View 목록 역순 순회
+            {
+                if (views[index] == null) // Unity Destroy 완료 View 확인
+                {
+                    views.RemoveAt(index); // 파괴된 View 참조 목록 제거
+                }
+            }
+        }
+
         private void EnsureViewCount(int requiredCount) // 필요한 Runtime 블록 View 개수 확보
         {
+            if (lifecycleBlocked || blockLayer == null) // 종료 상태 및 Runtime 블록 레이어 확인
+            {
+                return; // 종료 중 Runtime View 생성 차단
+            }
+
             while (views.Count < requiredCount) // 부족한 블록 View 생성 반복
             {
                 views.Add(CreateBlockView(views.Count)); // 신규 Runtime 블록 View 생성 및 등록
@@ -164,6 +214,11 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
         private BattleSkillBlockView CreateBlockView(int index) // Runtime 스킬 블록 View 생성
         {
+            if (lifecycleBlocked || blockLayer == null) // 종료 상태 및 Runtime 블록 레이어 확인
+            {
+                return null; // 종료 중 Runtime View 생성 실패 반환
+            }
+
             GameObject blockObject = new GameObject($"SkillBlock_{index}", typeof(RectTransform), typeof(Image), typeof(CanvasGroup), typeof(BattleSkillBlockView)); // Runtime 블록 UI 객체 생성
             blockObject.transform.SetParent(blockLayer, false); // Runtime 블록 레이어 연결
             Image image = blockObject.GetComponent<Image>(); // 블록 배경 Image 조회

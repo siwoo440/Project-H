@@ -60,6 +60,26 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return count; // 팀별 생존 객체 수 반환
         }
 
+        public BattleActor FindByRuntimeId(string runtimeId) // Runtime ID 기반 전투 객체 조회
+        {
+            if (string.IsNullOrWhiteSpace(runtimeId)) // Runtime ID 유효성 확인
+            {
+                return null; // 빈 Runtime ID 조회 실패 반환
+            }
+
+            for (int index = 0; index < actors.Count; index++) // 전체 전투 객체 순회
+            {
+                BattleActor actor = actors[index]; // 현재 전투 객체 조회
+
+                if (actor != null && actor.IsCombatReady && actor.Stats.RuntimeId == runtimeId) // Runtime ID 일치 확인
+                {
+                    return actor; // 일치 전투 객체 반환
+                }
+            }
+
+            return null; // Runtime ID 조회 실패 반환
+        }
+
         public void Clear() // 전투 객체 등록 전체 초기화
         {
             actors.Clear(); // 전투 객체 목록 초기화

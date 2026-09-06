@@ -15,19 +15,74 @@ MonoBehaviour:
   id: SK_ELLEN_03
   ownerCharacterId: CH_ELLEN
   skillSlot: 3
-  displayName: "\uC5D8\uB80C \uC2A4\uD0AC 3"
-  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
-    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
-    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
-  targetType: 1
-  effectType: 0
+  displayName: "철의 맹세"
+  description: "자신의 방어력과 피해 감소를 크게 높이고 피격 시 기본 공격력 기준 반격 확률을 부여한다."
+  targetType: 0
+  effectType: 3
   enhancements:
   - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 10
-  - powerRatio: 1.25
+    effects:
+    - kind: 3
+      targetType: 0
+      value: 0.3
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 4
+      targetType: 0
+      value: 0.15
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 7
+      targetType: 0
+      value: 0.5
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 20
-  - powerRatio: 1.6
+    effects:
+    - kind: 3
+      targetType: 0
+      value: 0.4
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 4
+      targetType: 0
+      value: 0.2
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 7
+      targetType: 0
+      value: 0.7
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 30
+    effects:
+    - kind: 3
+      targetType: 0
+      value: 0.5
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 4
+      targetType: 0
+      value: 0.25
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 7
+      targetType: 0
+      value: 0.9
+      duration: 6
+      count: 0
+      requirePreviousSuccess: 0

@@ -4,14 +4,16 @@ using UnityEngine; // Unity 컴포넌트 기능
 namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 {
     [DisallowMultipleComponent] // 중복 스킬 실행기 방지
-    public sealed class BattleSkillExecutor : MonoBehaviour // 17일차 스킬 사용 요청 전달 실행기
+    public sealed class BattleSkillExecutor : MonoBehaviour // 데이터 기반 실제 스킬 실행기
     {
         [SerializeField] private BattleCombatRegistry registry; // 전투 객체 레지스트리
-        public event Action<BattleSkillRequest> SkillRequested; // 실제 스킬 효과 연결용 요청 이벤트
+        public event Action<BattleSkillRequest> SkillRequested; // 스킬 사용 완료 요청 이벤트
 
         public void Configure(BattleCombatRegistry combatRegistry) // 스킬 실행기 참조 설정
         {
             registry = combatRegistry; // 전투 레지스트리 연결
+            BattleSkillRuntimeState.SetRegistry(registry); // 스킬 Runtime 상태에 현재 Registry 연결
+            BattleSkillRuntimeState.ResetAll(); // 신규 전투 스킬 Runtime 상태 초기화
         }
 
         public bool TryExecute(BattleSkillRequest request) // 블록 소비 스킬 사용 요청 실행
@@ -29,8 +31,9 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             }
 
             owner.ShowAction(BattleActionKind.Skill); // 기존 스킬 행동 디버그 표시
-            SkillRequested?.Invoke(request); // 18~19일차 실제 효과 연결 이벤트 발생
-            Debug.Log($"[Project H][SKILL] Character={request.CharacterId}, Skill={request.SkillId}, Slot={request.SkillSlot}, Enhancement={request.EnhancementLevel}, Blocks={request.BlockCount}"); // 스킬 종류와 강화도 사용 로그
+            BattleSkillEffectExecutionResult effectResult = BattleSkillEffectExecutor.Execute(request, owner, registry); // SkillData 강화도별 실제 효과 실행
+            SkillRequested?.Invoke(request); // 이후 궁극기 게이지 및 패시브 연결 이벤트 발생
+            Debug.Log($"[Project H][SKILL] Character={request.CharacterId}, Skill={request.SkillId}, Slot={request.SkillSlot}, Enhancement={request.EnhancementLevel}, Blocks={request.BlockCount}, Effects={effectResult.AppliedEffectCount}, Targets={effectResult.AffectedTargetCount}"); // 스킬 사용 및 효과 적용 로그
             return true; // 스킬 사용 요청 성공 반환
         }
 

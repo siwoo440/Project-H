@@ -15,19 +15,74 @@ MonoBehaviour:
   id: SK_ELLEN_02
   ownerCharacterId: CH_ELLEN
   skillSlot: 2
-  displayName: "\uC5D8\uB80C \uC2A4\uD0AC 2"
-  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
-    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
-    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
-  targetType: 1
-  effectType: 0
+  displayName: "도발"
+  description: "생존 적 전체의 공격 목표를 엘렌 쪽으로 유도하고 자신에게 방어 증가와 조건부 회복을 부여한다."
+  targetType: 3
+  effectType: 4
   enhancements:
   - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 10
-  - powerRatio: 1.25
+    effects:
+    - kind: 6
+      targetType: 3
+      value: 1
+      duration: 2.5
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 1
+      targetType: 0
+      value: 0.03
+      duration: 0
+      count: 0
+      requirePreviousSuccess: 1
+    - kind: 3
+      targetType: 0
+      value: 0.1
+      duration: 2.5
+      count: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 20
-  - powerRatio: 1.6
+    effects:
+    - kind: 6
+      targetType: 3
+      value: 1
+      duration: 3.5
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 1
+      targetType: 0
+      value: 0.05
+      duration: 0
+      count: 0
+      requirePreviousSuccess: 1
+    - kind: 3
+      targetType: 0
+      value: 0.15
+      duration: 3.5
+      count: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 30
+    effects:
+    - kind: 6
+      targetType: 3
+      value: 1
+      duration: 4.5
+      count: 0
+      requirePreviousSuccess: 0
+    - kind: 1
+      targetType: 0
+      value: 0.07
+      duration: 0
+      count: 0
+      requirePreviousSuccess: 1
+    - kind: 3
+      targetType: 0
+      value: 0.2
+      duration: 4.5
+      count: 0
+      requirePreviousSuccess: 0

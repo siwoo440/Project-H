@@ -70,8 +70,15 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return new BattleDamageResult(request.Type, request.Attacker.RuntimeId, request.Target.RuntimeId, rawPower, 0, 0); // 전투 불능 대상 피해 0 반환
             }
 
-            int mitigation = GetMitigation(request.Target, request.Type); // 피해 종류별 방어 수치 계산
-            int damage = request.Type == BattleDamageType.True ? rawPower : Mathf.Max(1, rawPower - mitigation); // 최종 피해량 계산
+            int mitigation = GetMitigation(request.Target, request.Type); // 피해 종류별 Modifier 반영 방어 수치 계산
+            int damage = request.Type == BattleDamageType.True ? rawPower : Mathf.Max(1, rawPower - mitigation); // 방어 적용 기본 피해량 계산
+
+            if (request.Type != BattleDamageType.True && damage > 0) // 일반 피해 및 양수 피해 확인
+            {
+                float reduction = BattleSkillRuntimeState.GetDamageReduction(request.Target.RuntimeId); // 스킬 기반 최종 피해 감소율 조회
+                damage = Mathf.Max(1, Mathf.RoundToInt(damage * (1f - reduction))); // 최종 피해 감소 적용
+            }
+
             return new BattleDamageResult(request.Type, request.Attacker.RuntimeId, request.Target.RuntimeId, rawPower, mitigation, damage); // 피해 결과 반환
         }
 
@@ -84,7 +91,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case BattleDamageType.True: // 방어 무시 피해 처리
                     return 0; // 방어 수치 미적용
                 default: // 물리 피해 처리
-                    return Mathf.Max(0, target.Defense); // 물리 방어력 반환
+                    return BattleSkillRuntimeState.GetEffectiveDefense(target); // 스킬 방어 증가 반영 물리 방어력 반환
             }
         }
     }

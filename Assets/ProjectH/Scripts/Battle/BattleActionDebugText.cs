@@ -21,7 +21,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
-        public void Show(BattleActionKind actionKind) // 전투 행동 텍스트 표시
+        public void Show(BattleActionKind actionKind) // 기존 전투 행동 텍스트 표시
+        {
+            Show(actionKind, string.Empty); // 커스텀 라벨 없는 공통 표시 호출
+        }
+
+        public void Show(BattleActionKind actionKind, string customLabel) // 실제 스킬명 포함 전투 행동 텍스트 표시
         {
             if (actionText == null) // 행동 텍스트 참조 확인
             {
@@ -33,18 +38,28 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 StopCoroutine(hideRoutine); // 기존 숨김 코루틴 중단
             }
 
-            actionText.text = GetLabel(actionKind); // 행동 라벨 적용
+            actionText.text = GetLabel(actionKind, customLabel); // 실제 스킬명 또는 기본 행동 라벨 적용
             actionText.color = GetColor(actionKind); // 행동 라벨 색상 적용
             actionText.enabled = true; // 행동 텍스트 표시
             hideRoutine = StartCoroutine(HideAfterDelay()); // 행동 텍스트 자동 숨김 시작
         }
 
-        public static string GetLabel(BattleActionKind actionKind) // 행동 종류별 디버그 라벨 반환
+        public static string GetLabel(BattleActionKind actionKind) // 행동 종류별 기본 디버그 라벨 반환
         {
+            return GetLabel(actionKind, string.Empty); // 커스텀 라벨 없는 공통 라벨 반환
+        }
+
+        public static string GetLabel(BattleActionKind actionKind, string customLabel) // 실제 스킬명 우선 행동 라벨 반환
+        {
+            if (actionKind == BattleActionKind.Skill && !string.IsNullOrWhiteSpace(customLabel)) // 스킬 행동과 실제 스킬명 존재 확인
+            {
+                return customLabel; // 실제 스킬명 반환
+            }
+
             switch (actionKind) // 행동 종류 분기
             {
                 case BattleActionKind.Skill: // 스킬 행동 처리
-                    return "스킬!"; // 스킬 라벨 반환
+                    return "스킬!"; // 스킬명 누락 시 기본 라벨 반환
                 case BattleActionKind.Ultimate: // 궁극기 행동 처리
                     return "궁극기!"; // 궁극기 라벨 반환
                 default: // 기본 공격 행동 처리

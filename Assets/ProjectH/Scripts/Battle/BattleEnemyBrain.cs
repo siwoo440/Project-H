@@ -31,6 +31,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return null; // AI 타겟 없음 반환
             }
 
+            if (BattleSkillRuntimeState.IsStunned(actor.Stats.RuntimeId)) // 적군 기절 상태 확인
+            {
+                DesiredTarget = null; // 기절 중 희망 타겟 초기화
+                CurrentTarget = null; // 기절 중 실제 타겟 초기화
+                return null; // 기절 중 AI 타겟 없음 반환
+            }
+
             if (BattleSkillRuntimeState.TryGetTauntTarget(actor, out BattleActor tauntTarget)) // 활성 도발 타겟 존재 확인
             {
                 DesiredTarget = tauntTarget; // 도발 대상 희망 타겟 적용

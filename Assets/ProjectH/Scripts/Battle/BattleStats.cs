@@ -4,7 +4,7 @@ using UnityEngine; // Unity 수학 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
 {
-    public sealed class BattleStats : IBattleMutableCombatantStats, IBattleResistanceStats // 단일 전투 런타임 스탯
+    public sealed class BattleStats : IBattleMutableCombatantStats, IBattleResistanceStats, IBattleAccuracyStats // 단일 전투 런타임 스탯
     {
         private int currentHp; // 현재 체력
         public event Action HealthChanged; // 체력 변경 이벤트

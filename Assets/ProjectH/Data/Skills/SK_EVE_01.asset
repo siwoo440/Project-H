@@ -15,19 +15,54 @@ MonoBehaviour:
   id: SK_EVE_01
   ownerCharacterId: CH_EVE
   skillSlot: 1
-  displayName: "\uC774\uBE0C \uC2A4\uD0AC 1"
-  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
-    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
-    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
+  displayName: "\uC5F0\uC18D \uC0AC\uACA9"
+  description: "\uAC00\uC7A5 \uAC00\uAE4C\uC6B4 \uC801\uC5D0\uAC8C \uBB3C\uB9AC \uD53C\uD574\uB97C
+    3\uD68C \uC5F0\uC18D \uC801\uC6A9\uD55C\uB2E4."
   targetType: 1
-  effectType: 0
+  effectType: 1
   enhancements:
   - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 10
-  - powerRatio: 1.25
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 0
+      value: 1.1
+      duration: 0
+      count: 3
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 20
-  - powerRatio: 1.6
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 0
+      value: 1.35
+      duration: 0
+      count: 3
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 30
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 0
+      value: 1.6
+      duration: 0
+      count: 3
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0

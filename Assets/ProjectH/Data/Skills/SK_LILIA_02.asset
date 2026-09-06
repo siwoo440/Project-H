@@ -15,19 +15,87 @@ MonoBehaviour:
   id: SK_LILIA_02
   ownerCharacterId: CH_LILIA
   skillSlot: 2
-  displayName: "\uB9B4\uB9AC\uC544 \uC2A4\uD0AC 2"
-  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
-    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
-    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
-  targetType: 1
-  effectType: 0
+  displayName: "\uBCC4\uBE5B \uD3ED\uC6B0"
+  description: "\uC0DD\uC874 \uC801 \uC804\uCCB4\uC5D0 \uB9C8\uBC95 \uD53C\uD574\uB97C
+    \uC8FC\uACE0 6\uCD08 \uB3D9\uC548 \uB9C8\uBC95 \uC800\uD56D\uC744 \uAC10\uC18C\uC2DC\uD0A8\uB2E4."
+  targetType: 3
+  effectType: 1
   enhancements:
   - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 10
-  - powerRatio: 1.25
+    effects:
+    - kind: 8
+      targetType: 3
+      damageType: 1
+      value: 1.8
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 10
+      targetType: 3
+      damageType: 1
+      value: 0.1
+      duration: 6
+      count: 0
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 20
-  - powerRatio: 1.6
+    effects:
+    - kind: 8
+      targetType: 3
+      damageType: 1
+      value: 2.25
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 10
+      targetType: 3
+      damageType: 1
+      value: 0.12
+      duration: 6
+      count: 0
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 30
+    effects:
+    - kind: 8
+      targetType: 3
+      damageType: 1
+      value: 2.7
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 10
+      targetType: 3
+      damageType: 1
+      value: 0.15
+      duration: 6
+      count: 0
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0

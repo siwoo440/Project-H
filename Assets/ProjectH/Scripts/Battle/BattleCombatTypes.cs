@@ -53,4 +53,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         int Resistance { get; } // 마법 저항력
     }
+
+    public interface IBattleAccuracyStats // 명중률 선택 계약
+    {
+        float Accuracy { get; } // 기본 명중률
+    }
 }

@@ -15,8 +15,8 @@ MonoBehaviour:
   id: MON_CORRUPTED_SOLDIER
   displayName: "\uCE68\uC2DD \uBCD1\uC0AC"
   aiType: 0
-  maxHp: 650
-  attack: 55
+  maxHp: 3250
+  attack: 11
   defense: 55
   resistance: 35
   attackSpeed: 0.9

@@ -37,6 +37,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 자동 기본 공격 중단
             }
 
+            if (BattleSkillRuntimeState.IsStunned(actor.Stats.RuntimeId)) // 현재 기절 상태 확인
+            {
+                return; // 기절 지속 중 이동·공격·상태 시간 진행 중단
+            }
+
             switch (state) // 현재 공격 상태 분기
             {
                 case BattleAttackState.Approach: // 전선 전진 상태 처리
@@ -117,8 +122,18 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 공격 적중 대기 유지
             }
 
-            BattleDamageResult damageResult = BattleDamageResolver.ResolveBasicAttack(actor.Stats, currentTarget.Stats); // 기본 공격 실제 피해 계산
-            currentTarget.ApplyDamage(damageResult); // 대상 실제 체력 감소 적용
+            float hitChance = BattleSkillRuntimeState.GetEffectiveAccuracy(actor.Stats); // 명중 감소 반영 최종 기본 공격 명중률 계산
+
+            if (Random.value <= hitChance) // 기본 공격 명중 판정
+            {
+                BattleDamageResult damageResult = BattleDamageResolver.ResolveBasicAttack(actor.Stats, currentTarget.Stats); // 기본 공격 실제 피해 계산
+                currentTarget.ApplyDamage(damageResult); // 대상 실제 체력 감소 적용
+            }
+            else // 기본 공격 빗나감 처리
+            {
+                Debug.Log($"[Project H][MISS] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Accuracy={hitChance:0.00}"); // 명중 감소 기반 빗나감 디버그 로그
+            }
+
             state = BattleAttackState.Cooldown; // 현재 위치에서 공격 대기 상태 전환
             stateTimer = BattleBasicAttackTiming.GetInterval(actor.Stats.AttackSpeed); // 공격속도 기반 다음 공격 시간 설정
         }

@@ -8,7 +8,9 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         NearestEnemy = 1, // 가장 가까운 적 대상
         LowestHpAlly = 2, // 체력이 가장 낮은 아군 대상
         AllEnemies = 3, // 모든 적 대상
-        AllAllies = 4 // 모든 아군 대상
+        AllAllies = 4, // 모든 아군 대상
+        LineEnemies = 5, // 전방 직선 적 전체 대상
+        NearbyEnemiesFromPrimary = 6 // 주 대상 위치 주변 적 대상
     }
 
     public enum SkillEffectType // 스킬 대표 효과 종류
@@ -22,6 +24,13 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         Special = 6 // 특수 효과
     }
 
+    public enum SkillDamageType // 데이터 계층 스킬 피해 종류
+    {
+        Physical = 0, // 물리 피해
+        Magic = 1, // 마법 피해
+        True = 2 // 방어 무시 피해
+    }
+
     public enum SkillEffectKind // 실제 데이터 기반 스킬 효과 종류
     {
         None = 0, // 효과 없음
@@ -31,7 +40,12 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         DamageReductionPercent = 4, // 최종 피해 감소
         HealingReceivedPercent = 5, // 받는 회복량 증가
         Taunt = 6, // 적군 강제 타겟 지정
-        CounterChance = 7 // 피격 시 반격 확률
+        CounterChance = 7, // 피격 시 반격 확률
+        DamageAttackRatio = 8, // 공격력 계수 직접 피해
+        PeriodicDamageAttackRatio = 9, // 공격력 계수 주기 피해
+        ResistanceReductionPercent = 10, // 마법 저항 비율 감소
+        AccuracyReductionPercent = 11, // 명중률 비율 감소
+        Stun = 12 // 행동 불가 기절
     }
 
     [System.Serializable] // 스킬 효과 정의 직렬화
@@ -39,24 +53,44 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
     {
         [SerializeField] private SkillEffectKind kind; // 실제 효과 종류
         [SerializeField] private SkillTargetType targetType = SkillTargetType.Self; // 효과 대상 종류
+        [SerializeField] private SkillDamageType damageType = SkillDamageType.Physical; // 피해 계열 효과의 피해 종류
         [SerializeField] private float value; // 효과 비율 또는 확률
         [SerializeField, Min(0f)] private float duration; // 효과 지속시간
-        [SerializeField, Min(0)] private int count; // 제거 개수 등 정수 효과값
+        [SerializeField, Min(0)] private int count; // Hit 수·Tick 수·정화 수
+        [SerializeField, Range(0f, 1f)] private float chance = 1f; // 확률 효과 발동 확률
+        [SerializeField, Min(0f)] private float interval = 1f; // 주기 피해 Tick 간격
+        [SerializeField, Min(0f)] private float radius; // 주변 대상 판정 반경
+        [SerializeField] private bool excludePrimary; // 주변 대상에서 주 대상 제외 여부
         [SerializeField] private bool requirePreviousSuccess; // 앞선 효과 성공 요구 여부
         public SkillEffectKind Kind => kind; // 효과 종류 반환
         public SkillTargetType TargetType => targetType; // 효과 대상 종류 반환
+        public SkillDamageType DamageType => damageType; // 피해 종류 반환
         public float Value => value; // 효과 수치 반환
         public float Duration => duration; // 효과 지속시간 반환
         public int Count => count; // 정수 효과값 반환
+        public float Chance => chance; // 효과 발동 확률 반환
+        public float Interval => interval; // 주기 피해 간격 반환
+        public float Radius => radius; // 주변 대상 판정 반경 반환
+        public bool ExcludePrimary => excludePrimary; // 주 대상 제외 여부 반환
         public bool RequirePreviousSuccess => requirePreviousSuccess; // 앞선 효과 성공 요구 여부 반환
 
-        public SkillEffectDefinition(SkillEffectKind effectKind, SkillTargetType effectTargetType, float effectValue, float effectDuration, int effectCount, bool needsPreviousSuccess) // 스킬 효과 데이터 생성
+        public SkillEffectDefinition(SkillEffectKind effectKind, SkillTargetType effectTargetType, float effectValue, float effectDuration, int effectCount, bool needsPreviousSuccess) // 18일차 호환 스킬 효과 데이터 생성
+            : this(effectKind, effectTargetType, SkillDamageType.Physical, effectValue, effectDuration, effectCount, 1f, 1f, 0f, false, needsPreviousSuccess) // 기존 생성 규칙을 확장 생성자로 전달
+        {
+        }
+
+        public SkillEffectDefinition(SkillEffectKind effectKind, SkillTargetType effectTargetType, SkillDamageType effectDamageType, float effectValue, float effectDuration, int effectCount, float effectChance, float effectInterval, float effectRadius, bool shouldExcludePrimary, bool needsPreviousSuccess) // 19일차 확장 스킬 효과 데이터 생성
         {
             kind = effectKind; // 효과 종류 저장
             targetType = effectTargetType; // 효과 대상 저장
+            damageType = effectDamageType; // 피해 종류 저장
             value = effectValue; // 효과 수치 저장
             duration = Mathf.Max(0f, effectDuration); // 지속시간 음수 방지
             count = Mathf.Max(0, effectCount); // 정수 효과값 음수 방지
+            chance = Mathf.Clamp01(effectChance); // 발동 확률 범위 보정
+            interval = Mathf.Max(0f, effectInterval); // Tick 간격 음수 방지
+            radius = Mathf.Max(0f, effectRadius); // 주변 반경 음수 방지
+            excludePrimary = shouldExcludePrimary; // 주 대상 제외 여부 저장
             requirePreviousSuccess = needsPreviousSuccess; // 앞선 효과 성공 요구 저장
         }
     }

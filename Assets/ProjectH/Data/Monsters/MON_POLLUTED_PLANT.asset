@@ -15,8 +15,8 @@ MonoBehaviour:
   id: MON_POLLUTED_PLANT
   displayName: "\uC624\uC5FC \uC2DD\uBB3C"
   aiType: 2
-  maxHp: 520
-  attack: 42
+  maxHp: 2600
+  attack: 8
   defense: 38
   resistance: 42
   attackSpeed: 0.75

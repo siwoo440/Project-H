@@ -15,8 +15,8 @@ MonoBehaviour:
   id: MON_CORRUPTED_WOLF
   displayName: "\uCE68\uC2DD\uB41C \uB291\uB300"
   aiType: 1
-  maxHp: 420
-  attack: 48
+  maxHp: 2100
+  attack: 10
   defense: 24
   resistance: 18
   attackSpeed: 1.15

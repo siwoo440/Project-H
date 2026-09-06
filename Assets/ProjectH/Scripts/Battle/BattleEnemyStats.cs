@@ -4,7 +4,7 @@ using UnityEngine; // Unity 수학 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
 {
-    public sealed class BattleEnemyStats : IBattleMutableCombatantStats, IBattleResistanceStats // 적 전투 런타임 스탯
+    public sealed class BattleEnemyStats : IBattleMutableCombatantStats, IBattleResistanceStats, IBattleAccuracyStats // 적 전투 런타임 스탯
     {
         private int currentHp; // 현재 체력
         public event Action HealthChanged; // 체력 변경 이벤트
@@ -20,10 +20,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public float AttackSpeed { get; } // 공격속도
         public float AttackRange { get; } // 기본 공격 사거리
         public float MoveSpeed { get; } // 전투 이동속도
+        public float Accuracy { get; } // 기본 명중률
         public bool IsAlive => currentHp > 0; // 생존 상태 반환
         public float HealthRatio => MaxHp <= 0 ? 0f : (float)currentHp / MaxHp; // 체력 비율 반환
 
-        public BattleEnemyStats(string runtimeId, string monsterId, string displayName, int maxHp, int attack, int defense, int resistance, float attackSpeed, float attackRange, float moveSpeed, EnemyAIType aiType = EnemyAIType.Normal) // 적 전투 스탯 생성
+        public BattleEnemyStats(string runtimeId, string monsterId, string displayName, int maxHp, int attack, int defense, int resistance, float attackSpeed, float attackRange, float moveSpeed, EnemyAIType aiType = EnemyAIType.Normal, float accuracy = 1f) // 적 전투 스탯 생성
         {
             RuntimeId = runtimeId ?? string.Empty; // 런타임 ID 저장
             MonsterId = monsterId ?? string.Empty; // 몬스터 ID 저장
@@ -37,6 +38,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             AttackSpeed = Mathf.Max(0.01f, attackSpeed); // 공격속도 최소값 적용
             AttackRange = Mathf.Max(0.2f, attackRange); // 공격 사거리 최소값 적용
             MoveSpeed = Mathf.Max(0.01f, moveSpeed); // 이동속도 최소값 적용
+            Accuracy = Mathf.Clamp01(accuracy); // 적군 기본 명중률 범위 보정
         }
 
         public int TakeDamage(int amount) // 계산 완료 피해 적용
@@ -84,7 +86,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return null; // 몬스터 원본 누락 반환
             }
 
-            return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, monsterData.MaxHp, monsterData.Attack, monsterData.Defense, monsterData.Resistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType); // 적 전투 런타임 스탯 반환
+            return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, monsterData.MaxHp, monsterData.Attack, monsterData.Defense, monsterData.Resistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType, 1f); // 적 전투 런타임 스탯 반환
         }
     }
 }

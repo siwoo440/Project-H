@@ -87,7 +87,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             switch (type) // 피해 종류 분기
             {
                 case BattleDamageType.Magic: // 마법 피해 처리
-                    return target is IBattleResistanceStats resistanceStats ? Mathf.Max(0, resistanceStats.Resistance) : Mathf.Max(0, target.Defense); // 저항력 또는 방어력 대체 반환
+                    return BattleSkillRuntimeState.GetEffectiveResistance(target); // 스킬 저항 감소 반영 마법 저항력 반환
                 case BattleDamageType.True: // 방어 무시 피해 처리
                     return 0; // 방어 수치 미적용
                 default: // 물리 피해 처리

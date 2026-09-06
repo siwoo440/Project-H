@@ -15,19 +15,122 @@ MonoBehaviour:
   id: SK_LILIA_03
   ownerCharacterId: CH_LILIA
   skillSlot: 3
-  displayName: "\uB9B4\uB9AC\uC544 \uC2A4\uD0AC 3"
-  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
-    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
-    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
+  displayName: "\uCE74\uC624\uC2A4 \uC624\uBE0C"
+  description: "\uAC00\uC7A5 \uAC00\uAE4C\uC6B4 \uC801\uC5D0\uAC8C \uAC15\uD55C \uB9C8\uBC95
+    \uD53C\uD574\uC640 \uB9C8\uBC95 \uC800\uD56D \uAC10\uC18C\uB97C \uC801\uC6A9\uD558\uACE0
+    \uC8FC \uB300\uC0C1 \uC8FC\uBCC0\uC758 \uB2E4\uB978 \uC801\uC5D0\uAC8C \uD3ED\uBC1C
+    \uD53C\uD574\uB97C \uC900\uB2E4."
   targetType: 1
-  effectType: 0
+  effectType: 1
   enhancements:
   - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 10
-  - powerRatio: 1.25
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 1
+      value: 3.2
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 10
+      targetType: 1
+      damageType: 1
+      value: 0.15
+      duration: 6
+      count: 0
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 8
+      targetType: 6
+      damageType: 1
+      value: 0.9
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 2.4
+      excludePrimary: 1
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 20
-  - powerRatio: 1.6
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 1
+      value: 4
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 10
+      targetType: 1
+      damageType: 1
+      value: 0.18
+      duration: 6
+      count: 0
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 8
+      targetType: 6
+      damageType: 1
+      value: 1.15
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 2.4
+      excludePrimary: 1
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 30
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 1
+      value: 4.8
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 10
+      targetType: 1
+      damageType: 1
+      value: 0.2
+      duration: 6
+      count: 0
+      chance: 1
+      interval: 1
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 8
+      targetType: 6
+      damageType: 1
+      value: 1.4
+      duration: 0
+      count: 1
+      chance: 1
+      interval: 1
+      radius: 2.4
+      excludePrimary: 1
+      requirePreviousSuccess: 0

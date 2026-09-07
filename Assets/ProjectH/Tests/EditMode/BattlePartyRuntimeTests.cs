@@ -49,6 +49,26 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         }
 
         [Test] // 테스트 표시
+        public void TryCreate_RebuildsRuntimeStatsFromUpdatedSavedLevel() // 저장 레벨 변경 후 런타임 스탯 재계산 검증
+        {
+            SaveData saveData = SaveData.CreateNewGame(new[] { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE" }); // 초기 4인 저장 데이터 생성
+            CharacterSaveData serenaSave = saveData.FindCharacter("CH_SERENA"); // 세레나 저장 데이터 조회
+
+            bool firstCreated = BattlePartyRuntime.TryCreate(dataManager, saveData, out BattlePartyRuntime firstParty, out string firstError); // 1레벨 런타임 파티 생성
+            serenaSave.SetLevel(5); // 저장 레벨 5 설정
+            bool secondCreated = BattlePartyRuntime.TryCreate(dataManager, saveData, out BattlePartyRuntime secondParty, out string secondError); // 5레벨 런타임 파티 재생성
+
+            Assert.That(firstCreated, Is.True, firstError); // 첫 파티 생성 성공 검증
+            Assert.That(secondCreated, Is.True, secondError); // 두 번째 파티 생성 성공 검증
+            Assert.That(firstParty[0].Level, Is.EqualTo(1)); // 첫 런타임 레벨 검증
+            Assert.That(firstParty[0].MaxHp, Is.EqualTo(2200)); // 첫 런타임 체력 검증
+            Assert.That(secondParty[0].Level, Is.EqualTo(5)); // 재생성 런타임 레벨 검증
+            Assert.That(secondParty[0].MaxHp, Is.EqualTo(2640)); // 재계산 런타임 체력 검증
+            Assert.That(secondParty[0].Attack, Is.EqualTo(216)); // 재계산 런타임 공격력 검증
+            Assert.That(secondParty[0].Defense, Is.EqualTo(144)); // 재계산 런타임 방어력 검증
+        }
+
+        [Test] // 테스트 표시
         public void TryCreate_FailsForUnknownCharacterId() // 알 수 없는 캐릭터 실패 검증
         {
             SaveData saveData = SaveData.CreateNewGame(new[] { "CH_UNKNOWN" }); // 잘못된 저장 데이터 생성

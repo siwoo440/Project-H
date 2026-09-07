@@ -23,7 +23,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 throw new ArgumentException($"Character ID mismatch. Data={characterData.Id}, Save={saveData.CharacterId}.", nameof(saveData)); // ID 불일치 예외 발생
             }
 
-            return CreateCharacter(characterData, saveData.Level, runtimeId); // 레벨 기반 스탯 생성
+            return CreateCharacter(characterData, saveData.Level, runtimeId); // 저장 레벨 기반 스탯 재계산
         }
 
         public static BattleStats CreateCharacter(CharacterData characterData, int level, string runtimeId) // 레벨 기반 캐릭터 스탯 생성
@@ -33,7 +33,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 throw new ArgumentNullException(nameof(characterData)); // 원본 누락 예외 발생
             }
 
-            int safeLevel = Math.Max(1, level); // 최소 레벨 보정
+            int safeLevel = BattleGrowthFormula.NormalizeLevel(level); // 성장 적용 레벨 범위 보정
             int maxHp = BattleGrowthFormula.ScaleStat(characterData.BaseHp, safeLevel); // 최대 체력 성장 적용
             int attack = BattleGrowthFormula.ScaleStat(characterData.BaseAttack, safeLevel); // 공격력 성장 적용
             int defense = BattleGrowthFormula.ScaleStat(characterData.BaseDefense, safeLevel); // 방어력 성장 적용

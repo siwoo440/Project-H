@@ -2,14 +2,21 @@ using UnityEngine; // Unity 수학 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
 {
-    public static class BattleGrowthFormula // 프로토타입 성장 공식
+    public static class BattleGrowthFormula // 캐릭터 기본 스탯 성장 공식
     {
+        public const int MinLevel = 1; // 최소 성장 적용 레벨
+        public const int MaxLevel = CharacterLevelProgression.MaxLevel; // 최대 성장 적용 레벨
         public const float GrowthPerLevel = 0.05f; // 레벨당 성장 비율
+
+        public static int NormalizeLevel(int level) // 성장 적용 레벨 범위 보정
+        {
+            return Mathf.Clamp(level, MinLevel, MaxLevel); // 최소·최대 레벨 범위 반환
+        }
 
         public static float GetLevelMultiplier(int level) // 레벨 성장 배율 계산
         {
-            int safeLevel = Mathf.Max(1, level); // 최소 레벨 보정
-            return 1f + ((safeLevel - 1) * GrowthPerLevel); // 성장 배율 반환
+            int safeLevel = NormalizeLevel(level); // 성장 적용 레벨 보정
+            return 1f + ((safeLevel - MinLevel) * GrowthPerLevel); // 선형 성장 배율 반환
         }
 
         public static int ScaleStat(int baseValue, int level) // 정수 스탯 성장 계산

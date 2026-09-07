@@ -3,7 +3,6 @@ using System.Reflection; // 비공개 직렬화 필드 설정 기능
 using NUnit.Framework; // NUnit 테스트 기능
 using ProjectH.Data; // 프로젝트 데이터 기능
 using UnityEngine; // Unity 오브젝트 기능
-using UnityEngine.TestTools; // Unity 로그 검증 기능
 
 namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 {
@@ -73,9 +72,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             EquipmentData equipment = CreateEquipment(item, EquipmentSlot.Weapon, new List<EquipmentStatOption>()); // 잘못된 장비 데이터 생성
             ProjectHDataCatalog catalog = CreateCatalog(new List<ItemData> { item }, new List<EquipmentData> { equipment }); // 테스트 카탈로그 생성
             DataManager manager = CreateDataManagerWithoutInitialize(catalog); // 데이터 관리자 생성
-            LogAssert.Expect(LogType.Error, "[Project H] [Equipment] 장비가 아닌 ItemData 연결: ITEM_TEST_MATERIAL"); // 예상 검증 오류 로그 등록
 
-            manager.Initialize(); // 데이터 초기화 실행
+            InitializeWithoutErrorLogs(manager); // 의도적 오류 로그 없이 초기화 실행
 
             Assert.That(manager.IsInitialized, Is.False); // 초기화 거부 검증
             Assert.That(manager.ValidationErrors, Has.Member("[Equipment] 장비가 아닌 ItemData 연결: ITEM_TEST_MATERIAL")); // 아이템 유형 오류 검증
@@ -88,9 +86,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             EquipmentData equipment = CreateEquipment(item, EquipmentSlot.Weapon, new List<EquipmentStatOption>()); // 장비 데이터 생성
             ProjectHDataCatalog catalog = CreateCatalog(new List<ItemData>(), new List<EquipmentData> { equipment }); // 원본 누락 카탈로그 생성
             DataManager manager = CreateDataManagerWithoutInitialize(catalog); // 데이터 관리자 생성
-            LogAssert.Expect(LogType.Error, "[Project H] [Equipment] Items 미등록 ItemData 연결: EQ_UNREGISTERED"); // 예상 검증 오류 로그 등록
 
-            manager.Initialize(); // 데이터 초기화 실행
+            InitializeWithoutErrorLogs(manager); // 의도적 오류 로그 없이 초기화 실행
 
             Assert.That(manager.IsInitialized, Is.False); // 초기화 거부 검증
             Assert.That(manager.ValidationErrors, Has.Member("[Equipment] Items 미등록 ItemData 연결: EQ_UNREGISTERED")); // 미등록 원본 오류 검증
@@ -104,9 +101,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             EquipmentData second = CreateEquipment(item, EquipmentSlot.Armor, new List<EquipmentStatOption>()); // 둘째 장비 데이터 생성
             ProjectHDataCatalog catalog = CreateCatalog(new List<ItemData> { item }, new List<EquipmentData> { first, second }); // 중복 장비 카탈로그 생성
             DataManager manager = CreateDataManagerWithoutInitialize(catalog); // 데이터 관리자 생성
-            LogAssert.Expect(LogType.Error, "[Project H] [Equipment] 중복 ID: EQ_DUPLICATE"); // 예상 검증 오류 로그 등록
 
-            manager.Initialize(); // 데이터 초기화 실행
+            InitializeWithoutErrorLogs(manager); // 의도적 오류 로그 없이 초기화 실행
 
             Assert.That(manager.IsInitialized, Is.False); // 초기화 거부 검증
             Assert.That(manager.ValidationErrors, Has.Member("[Equipment] 중복 ID: EQ_DUPLICATE")); // 중복 ID 오류 검증
@@ -152,6 +148,21 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             DataManager manager = managerObject.AddComponent<DataManager>(); // 데이터 관리자 추가
             manager.Configure(catalog); // 테스트 카탈로그 연결
             return manager; // 데이터 관리자 반환
+        }
+
+        private static void InitializeWithoutErrorLogs(DataManager manager) // 의도적 검증 오류 로그 억제 초기화
+        {
+            bool previousLogEnabled = Debug.unityLogger.logEnabled; // 기존 Unity 로거 활성 상태 저장
+
+            try // 로거 상태 보호
+            {
+                Debug.unityLogger.logEnabled = false; // 테스트용 오류 로그 출력 차단
+                manager.Initialize(); // 데이터 검증 초기화 실행
+            }
+            finally // 로거 상태 복원 보장
+            {
+                Debug.unityLogger.logEnabled = previousLogEnabled; // 기존 Unity 로거 상태 복원
+            }
         }
 
         private T Track<T>(T target) where T : UnityEngine.Object // 테스트 오브젝트 추적

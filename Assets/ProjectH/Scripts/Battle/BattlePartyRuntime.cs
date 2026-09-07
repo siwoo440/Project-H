@@ -92,8 +92,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return false; // 파티 생성 실패
                 }
 
+                if (!BattleEquipmentStatCalculator.TryCalculate(characterSave, saveData, dataManager, out BattleEquipmentStatBonus equipmentBonus, out error)) // 장착 장비 전투 보정값 계산
+                {
+                    return false; // 장비 계산 실패로 파티 생성 중단
+                }
+
                 string runtimeId = $"ALLY_{index}"; // 전투 인스턴스 ID 생성
-                BattleStats stats = BattleStatsFactory.CreateCharacter(characterData, characterSave, runtimeId); // 캐릭터 런타임 스탯 생성
+                BattleStats stats = BattleStatsFactory.CreateCharacter(characterData, characterSave, runtimeId, equipmentBonus); // 레벨 및 장비 기반 런타임 스탯 생성
                 battleMembers.Add(stats); // 전투 파티 구성원 추가
             }
 

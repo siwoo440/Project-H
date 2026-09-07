@@ -10,10 +10,12 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField] private List<MonsterData> monsters = new List<MonsterData>(); // 몬스터 목록
         [SerializeField] private List<DungeonData> dungeons = new List<DungeonData>(); // 던전 목록
         [SerializeField] private List<ItemData> items = new List<ItemData>(); // 아이템 목록
+        [SerializeField] private List<EquipmentData> equipments = new List<EquipmentData>(); // 장비 목록
 
         public IReadOnlyList<CharacterData> Characters => characters; // 캐릭터 목록 반환
         public IReadOnlyList<MonsterData> Monsters => monsters; // 몬스터 목록 반환
         public IReadOnlyList<DungeonData> Dungeons => dungeons; // 던전 목록 반환
         public IReadOnlyList<ItemData> Items => items; // 아이템 목록 반환
+        public IReadOnlyList<EquipmentData> Equipments => equipments; // 장비 목록 반환
     }
 }

@@ -49,4 +49,23 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         Epic = 3, // 영웅 등급
         Legendary = 4 // 전설 등급
     }
+
+    public enum EquipmentSlot // 장비 착용 슬롯
+    {
+        Weapon = 0, // 무기 슬롯
+        Armor = 1 // 방어구 슬롯
+    }
+
+    public enum EquipmentStatType // 장비 능력치 종류
+    {
+        MaxHp = 0, // 최대 체력
+        Attack = 1, // 공격력
+        Defense = 2, // 방어력
+        Resistance = 3, // 저항력
+        AttackSpeed = 4, // 공격 속도
+        Accuracy = 5, // 명중률
+        CriticalRate = 6, // 치명타율
+        AttackRange = 7, // 공격 사거리
+        MoveSpeed = 8 // 이동 속도
+    }
 }

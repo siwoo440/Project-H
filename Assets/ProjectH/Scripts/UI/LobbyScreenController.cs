@@ -17,6 +17,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         [SerializeField] private Button partyButton; // 파티 이동 버튼
         [SerializeField] private Button dungeonButton; // 던전 이동 버튼
         [SerializeField] private Button titleButton; // 타이틀 이동 버튼
+        [SerializeField] private Button characterButton; // 기존 하단 캐릭터 이동 버튼
 
         private bool isTransitioning; // 씬 전환 잠금 상태
 
@@ -44,6 +45,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private void Start() // 로비 초기 표시
         {
+            BindCharacterButton(); // 기존 하단 캐릭터 버튼 연결
             Refresh(); // 화면 상태 갱신
         }
 
@@ -54,6 +56,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 SetText(statusText, "Bootstrap 씬부터 실행해 주세요."); // 실행 안내 표시
                 SetPlayable(false); // 진행 버튼 잠금
                 return; // 화면 갱신 중단
+            }
+
+            if (characterButton == null) // 캐릭터 버튼 연결 여부 확인
+            {
+                BindCharacterButton(); // 기존 하단 캐릭터 버튼 재탐색
             }
 
             SaveManager saveManager = GameManager.Instance.Save; // 저장 관리자 조회
@@ -106,9 +113,54 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             BeginSceneTransition(GameScenes.DungeonSelect); // 던전 선택 씬 전환
         }
 
+        public void GoCharacter() // 캐릭터 화면 이동
+        {
+            BeginSceneTransition(GameScenes.Character); // 캐릭터 씬 전환
+        }
+
         public void GoTitle() // 타이틀 화면 이동
         {
             BeginSceneTransition(GameScenes.Title); // 타이틀 씬 전환
+        }
+
+        private void BindCharacterButton() // 기존 하단 캐릭터 버튼 Runtime 연결
+        {
+            GameObject staleButton = GameObject.Find("CharacterSceneEntryButton"); // 이전 Runtime 추가 버튼 조회
+
+            if (staleButton != null) // 이전 Runtime 추가 버튼 존재 확인
+            {
+                Destroy(staleButton); // 이전 Runtime 추가 버튼 제거
+            }
+
+            if (characterButton == null) // 기존 캐릭터 버튼 참조 확인
+            {
+                Transform navigationRoot = transform.Find("BottomNavigation"); // 하단 내비게이션 루트 조회
+                Transform searchRoot = navigationRoot == null ? transform : navigationRoot; // 캐릭터 버튼 검색 루트 결정
+                Button[] navigationButtons = searchRoot.GetComponentsInChildren<Button>(true); // 기존 하단 버튼 목록 조회
+
+                for (int index = 0; index < navigationButtons.Length; index++) // 하단 버튼 목록 순회
+                {
+                    Button candidate = navigationButtons[index]; // 현재 버튼 조회
+                    Text label = candidate == null ? null : candidate.GetComponentInChildren<Text>(true); // 현재 버튼 라벨 조회
+
+                    if (label == null || label.text == null || label.text.Trim() != "캐릭터") // 캐릭터 버튼 라벨 확인
+                    {
+                        continue; // 다른 버튼 건너뛰기
+                    }
+
+                    characterButton = candidate; // 기존 캐릭터 버튼 참조 저장
+                    break; // 캐릭터 버튼 검색 종료
+                }
+            }
+
+            if (characterButton == null) // 기존 캐릭터 버튼 검색 결과 확인
+            {
+                Debug.LogWarning("[Project H] Lobby character button was not found."); // 캐릭터 버튼 누락 로그
+                return; // 캐릭터 버튼 연결 중단
+            }
+
+            characterButton.onClick.RemoveListener(GoCharacter); // 중복 캐릭터 이동 이벤트 제거
+            characterButton.onClick.AddListener(GoCharacter); // 기존 하단 캐릭터 버튼 이동 이벤트 연결
         }
 
         private void BeginSceneTransition(string sceneName) // 공통 씬 전환 처리
@@ -154,6 +206,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (dungeonButton != null) // 던전 버튼 확인
             {
                 dungeonButton.interactable = canNavigate; // 던전 버튼 상태 적용
+            }
+
+            if (characterButton != null) // 캐릭터 버튼 확인
+            {
+                characterButton.interactable = canNavigate; // 캐릭터 버튼 상태 적용
             }
 
             if (titleButton != null) // 타이틀 버튼 확인

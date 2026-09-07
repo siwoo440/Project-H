@@ -18,15 +18,43 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private string characterId; // 캐릭터 ID
         [SerializeField] private int level = 1; // 캐릭터 레벨
         [SerializeField] private int experience; // 캐릭터 경험치
+        [SerializeField] private CharacterEquipmentSaveData equipment = new CharacterEquipmentSaveData(); // 캐릭터 장착 장비 저장
         public string CharacterId => characterId; // 캐릭터 ID 반환
         public int Level => level; // 레벨 반환
         public int Experience => experience; // 경험치 반환
+        public CharacterEquipmentSaveData Equipment // 캐릭터 장착 장비 반환
+        {
+            get
+            {
+                EnsureDefaults(); // 캐릭터 저장 기본값 확인
+                return equipment; // 장착 장비 저장 반환
+            }
+        }
 
         public CharacterSaveData(string id) // 캐릭터 저장 데이터 생성
         {
             characterId = id; // 캐릭터 ID 저장
             level = 1; // 초기 레벨 설정
             experience = 0; // 초기 경험치 설정
+            equipment = new CharacterEquipmentSaveData(); // 초기 장착 장비 저장 생성
+        }
+
+        public void EnsureDefaults() // 캐릭터 저장 기본값 복원
+        {
+            if (characterId == null) // 캐릭터 ID null 확인
+            {
+                characterId = string.Empty; // 캐릭터 ID 기본값 복원
+            }
+
+            level = Mathf.Max(1, level); // 최소 레벨 복원
+            experience = Mathf.Max(0, experience); // 최소 경험치 복원
+
+            if (equipment == null) // 장착 장비 저장 확인
+            {
+                equipment = new CharacterEquipmentSaveData(); // 장착 장비 저장 복원
+            }
+
+            equipment.EnsureDefaults(); // 장착 장비 내부 기본값 복원
         }
 
         public void SetLevel(int value) // 레벨 변경
@@ -143,6 +171,14 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             if (characters == null) // 캐릭터 목록 확인
             {
                 characters = new List<CharacterSaveData>(); // 캐릭터 목록 복원
+            }
+
+            for (int index = 0; index < characters.Count; index++) // 캐릭터 저장 목록 순회
+            {
+                if (characters[index] != null) // 캐릭터 저장 존재 확인
+                {
+                    characters[index].EnsureDefaults(); // 캐릭터 장착 상태 포함 기본값 복원
+                }
             }
 
             if (storyFlags == null) // 플래그 목록 확인
@@ -287,6 +323,14 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             {
                 error = "장비 인스턴스 ID가 비어 있습니다."; // 빈 인스턴스 ID 오류 설정
                 return false; // 장비 제거 실패
+            }
+
+            CharacterSaveData equippedCharacter = FindEquippedCharacterInternal(instanceId); // 장비 착용 캐릭터 조회
+
+            if (equippedCharacter != null) // 장착 중 장비 확인
+            {
+                error = $"장착 중인 장비는 제거할 수 없습니다. Character={equippedCharacter.CharacterId}, Instance={instanceId}"; // 장착 중 제거 오류 설정
+                return false; // 장착 중 장비 제거 차단
             }
 
             for (int index = 0; index < equipmentInventory.Count; index++) // 장비 인벤토리 순회
@@ -460,6 +504,24 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
 
             return null; // 장비 인스턴스 조회 실패 반환
+        }
+
+        private CharacterSaveData FindEquippedCharacterInternal(string instanceId) // 내부 장비 착용 캐릭터 조회
+        {
+            if (string.IsNullOrWhiteSpace(instanceId)) // 장비 인스턴스 ID 확인
+            {
+                return null; // 빈 장비 인스턴스 미착용 반환
+            }
+
+            foreach (CharacterSaveData character in characters) // 캐릭터 저장 목록 순회
+            {
+                if (character != null && character.Equipment.ContainsInstance(instanceId)) // 장비 인스턴스 착용 여부 확인
+                {
+                    return character; // 장비 착용 캐릭터 반환
+                }
+            }
+
+            return null; // 장비 미착용 반환
         }
 
         private string CreateUniqueEquipmentInstanceId() // 고유 장비 인스턴스 ID 생성

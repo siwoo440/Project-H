@@ -38,3 +38,12 @@ MonoBehaviour:
   items:
   - {fileID: 11400000, guid: 2f6003cce6372624aaf768320e5718a8, type: 2}
   - {fileID: 11400000, guid: 67e6d8747a459ba468c5a65a732583f0, type: 2}
+  - {fileID: 11400000, guid: 3f155bc1de5b48fda040f9891a2dc014, type: 2}
+  - {fileID: 11400000, guid: 9ecb797b3ee64020a17b5bf691245703, type: 2}
+  - {fileID: 11400000, guid: bf73d80b20194b76bf0486c6964404ae, type: 2}
+  - {fileID: 11400000, guid: 5b0986bbffcd48daa7bc5dd9f3554c57, type: 2}
+  equipments:
+  - {fileID: 11400000, guid: 3f91e3de97744bd7b67f1624ce367ad7, type: 2}
+  - {fileID: 11400000, guid: a7172939444b4c718465f35d40eff84b, type: 2}
+  - {fileID: 11400000, guid: ab4606b7103a4b60a8c343e40531ac7f, type: 2}
+  - {fileID: 11400000, guid: ebbccafe00c4411db3bd6e7dbc018b44, type: 2}

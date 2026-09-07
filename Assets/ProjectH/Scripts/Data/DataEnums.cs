@@ -38,7 +38,8 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         Material = 1, // 재료 아이템
         Equipment = 2, // 장비 아이템
         Gift = 3, // 선물 아이템
-        Special = 4 // 특수 아이템
+        Special = 4, // 특수 아이템
+        Quest = 5 // 퀘스트 아이템
     }
 
     public enum ItemGrade // 아이템 등급

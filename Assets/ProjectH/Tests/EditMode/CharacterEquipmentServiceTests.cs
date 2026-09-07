@@ -162,6 +162,7 @@ namespace ProjectH.Tests.EditMode // 프로젝트 EditMode 테스트 영역
             SetPrivateField(item, "displayName", displayName); // 테스트 아이템 이름 설정
             SetPrivateField(item, "itemType", ItemType.Equipment); // 테스트 아이템 유형 장비 설정
             SetPrivateField(item, "grade", ItemGrade.Common); // 테스트 아이템 등급 설정
+            SetPrivateField(item, "maxStack", 1); // 장비 최대 보유 수량 정책 적용
             return item; // 테스트 ItemData 반환
         }
 

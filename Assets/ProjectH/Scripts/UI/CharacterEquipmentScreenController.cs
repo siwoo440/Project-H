@@ -124,7 +124,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             portraitText = CreateText(portraitPanel.transform, "PortraitText", "CHARACTER", 28, FontStyle.Bold, new Color(0.65f, 0.28f, 0.28f, 1f)); // 캐릭터 임시 초상 텍스트 생성
             Stretch(portraitText.rectTransform, 8f); // 캐릭터 임시 초상 텍스트 확장
             CreateLockedSlot(panel.transform, "HelmetPlaceholder", "투구\n준비 중", new Vector2(0.04f, 0.68f), new Vector2(0.24f, 0.81f)); // 투구 준비 슬롯 생성
-            CreateLockedSlot(panel.transform, "BootsPlaceholder", "신발\n준비 중", new Vector2(0.76f, 0.68f), new Vector2(0.96f, 0.81f)); // 신발 준비 슬롯 생성
+            CreateLockedSlot(panel.transform, "BootsPlaceholder", "신발\n준비 중", new Vector2(0.76f, 0.53f), new Vector2(0.96f, 0.66f)); // 신발 준비 슬롯 생성
             Button armorSlot = CreateButton(panel.transform, "ArmorSlot", "방어구\n비어 있음", new Color(0.82f, 0.87f, 0.92f, 1f)); // 방어구 슬롯 버튼 생성
             SetRect(armorSlot.GetComponent<RectTransform>(), new Vector2(0.04f, 0.53f), new Vector2(0.24f, 0.66f)); // 방어구 슬롯 버튼 배치
             armorSlotText = armorSlot.GetComponentInChildren<Text>(); // 방어구 슬롯 라벨 조회
@@ -133,7 +133,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetRect(weaponSlot.GetComponent<RectTransform>(), new Vector2(0.38f, 0.41f), new Vector2(0.62f, 0.53f)); // 무기 슬롯 버튼 배치
             weaponSlotText = weaponSlot.GetComponentInChildren<Text>(); // 무기 슬롯 라벨 조회
             weaponSlot.onClick.AddListener(SelectEquippedWeapon); // 무기 슬롯 선택 이벤트 연결
-            CreateLockedSlot(panel.transform, "GlovesPlaceholder", "장갑\n준비 중", new Vector2(0.76f, 0.53f), new Vector2(0.96f, 0.66f)); // 장갑 준비 슬롯 생성
+            CreateLockedSlot(panel.transform, "GlovesPlaceholder", "장갑\n준비 중", new Vector2(0.76f, 0.68f), new Vector2(0.96f, 0.81f)); // 장갑 준비 슬롯 생성
             Text statsLabel = CreateText(panel.transform, "CurrentStatsLabel", "현재 최종 능력치", 20, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 현재 능력치 라벨 생성
             SetRect(statsLabel.rectTransform, new Vector2(0.06f, 0.345f), new Vector2(0.94f, 0.40f)); // 현재 능력치 라벨 배치
             currentStatsText = CreateText(panel.transform, "CurrentStats", "-", 16, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 현재 능력치 텍스트 생성
@@ -149,15 +149,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetRect(panel.rectTransform, new Vector2(0.41f, 0.05f), new Vector2(0.98f, 0.90f)); // 장비 관리 패널 배치
             AddOutline(panel.gameObject); // 장비 관리 패널 외곽선 추가
             Text inventoryLabel = CreateText(panel.transform, "InventoryLabel", "보유 장비", 22, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 장비 목록 라벨 생성
-            SetRect(inventoryLabel.rectTransform, new Vector2(0.03f, 0.91f), new Vector2(0.22f, 0.98f)); // 장비 목록 라벨 배치
+            SetRect(inventoryLabel.rectTransform, new Vector2(0.57f, 0.91f), new Vector2(0.72f, 0.98f)); // 오른쪽 장비 목록 라벨 배치
             inventoryCountText = CreateText(panel.transform, "InventoryCount", "0개", 17, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 장비 개수 텍스트 생성
-            SetRect(inventoryCountText.rectTransform, new Vector2(0.21f, 0.91f), new Vector2(0.34f, 0.98f)); // 장비 개수 텍스트 배치
+            SetRect(inventoryCountText.rectTransform, new Vector2(0.72f, 0.91f), new Vector2(0.80f, 0.98f)); // 오른쪽 장비 개수 텍스트 배치
             Button grantButton = CreateButton(panel.transform, "GrantDemoEquipment", "테스트 장비 지급", new Color(0.88f, 0.83f, 0.66f, 1f)); // 테스트 장비 지급 버튼 생성
-            SetRect(grantButton.GetComponent<RectTransform>(), new Vector2(0.70f, 0.915f), new Vector2(0.97f, 0.975f)); // 테스트 장비 지급 버튼 배치
+            SetRect(grantButton.GetComponent<RectTransform>(), new Vector2(0.80f, 0.915f), new Vector2(0.97f, 0.975f)); // 오른쪽 테스트 장비 지급 버튼 배치
             grantButton.onClick.AddListener(GrantDemoEquipment); // 테스트 장비 지급 이벤트 연결
             BuildInventoryScroll(panel.transform); // 장비 스크롤 목록 구성
             Image detailPanel = CreateImage(panel.transform, "DetailPanel", new Color(0.92f, 0.92f, 0.92f, 1f)); // 장비 상세 패널 생성
-            SetRect(detailPanel.rectTransform, new Vector2(0.45f, 0.52f), new Vector2(0.98f, 0.90f)); // 장비 상세 패널 배치
+            SetRect(detailPanel.rectTransform, new Vector2(0.02f, 0.52f), new Vector2(0.54f, 0.90f)); // 왼쪽 장비 상세 패널 배치
             AddOutline(detailPanel.gameObject); // 장비 상세 패널 외곽선 추가
             detailTitleText = CreateText(detailPanel.transform, "DetailTitle", "장비를 선택하세요", 23, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 장비 상세 이름 생성
             detailTitleText.alignment = TextAnchor.MiddleLeft; // 장비 상세 이름 왼쪽 정렬
@@ -170,7 +170,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             detailStatsText.verticalOverflow = VerticalWrapMode.Truncate; // 장비 옵션 세로 영역 제한
             SetRect(detailStatsText.rectTransform, new Vector2(0.05f, 0.07f), new Vector2(0.95f, 0.80f)); // 장비 옵션 텍스트 배치
             Image comparisonPanel = CreateImage(panel.transform, "ComparisonPanel", new Color(0.90f, 0.93f, 0.95f, 1f)); // 능력치 비교 패널 생성
-            SetRect(comparisonPanel.rectTransform, new Vector2(0.45f, 0.13f), new Vector2(0.98f, 0.50f)); // 능력치 비교 패널 배치
+            SetRect(comparisonPanel.rectTransform, new Vector2(0.02f, 0.13f), new Vector2(0.54f, 0.50f)); // 왼쪽 능력치 비교 패널 배치
             AddOutline(comparisonPanel.gameObject); // 능력치 비교 패널 외곽선 추가
             Text comparisonLabel = CreateText(comparisonPanel.transform, "ComparisonLabel", "변경 전 → 변경 후", 19, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 능력치 비교 라벨 생성
             SetRect(comparisonLabel.rectTransform, new Vector2(0.04f, 0.84f), new Vector2(0.96f, 0.98f)); // 능력치 비교 라벨 배치
@@ -194,7 +194,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             scrollObject.transform.SetParent(parent, false); // 스크롤 영역 부모 연결
             Image scrollImage = scrollObject.GetComponent<Image>(); // 스크롤 배경 이미지 조회
             scrollImage.color = new Color(0.92f, 0.92f, 0.92f, 1f); // 스크롤 배경 색상 적용
-            SetRect(scrollObject.GetComponent<RectTransform>(), new Vector2(0.02f, 0.13f), new Vector2(0.43f, 0.90f)); // 스크롤 영역 배치
+            SetRect(scrollObject.GetComponent<RectTransform>(), new Vector2(0.56f, 0.13f), new Vector2(0.98f, 0.90f)); // 오른쪽 장비 스크롤 영역 배치
             AddOutline(scrollObject); // 스크롤 영역 외곽선 추가
             GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask)); // 스크롤 뷰포트 생성
             viewportObject.transform.SetParent(scrollObject.transform, false); // 스크롤 뷰포트 부모 연결

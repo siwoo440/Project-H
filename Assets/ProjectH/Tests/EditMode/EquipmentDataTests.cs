@@ -68,7 +68,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [Test] // 테스트 표시
         public void Initialize_NonEquipmentBackingItemReportsValidationError() // 비장비 아이템 연결 거부 검증
         {
-            ItemData item = CreateItem("ITEM_TEST_MATERIAL", "테스트 재료", ItemType.Material, ItemGrade.Common); // 재료 아이템 생성
+            ItemData item = CreateItem("IT_TEST_MATERIAL", "테스트 재료", ItemType.Material, ItemGrade.Common); // 재료 아이템 생성
             EquipmentData equipment = CreateEquipment(item, EquipmentSlot.Weapon, new List<EquipmentStatOption>()); // 잘못된 장비 데이터 생성
             ProjectHDataCatalog catalog = CreateCatalog(new List<ItemData> { item }, new List<EquipmentData> { equipment }); // 테스트 카탈로그 생성
             DataManager manager = CreateDataManagerWithoutInitialize(catalog); // 데이터 관리자 생성
@@ -76,7 +76,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             InitializeWithoutErrorLogs(manager); // 의도적 오류 로그 없이 초기화 실행
 
             Assert.That(manager.IsInitialized, Is.False); // 초기화 거부 검증
-            Assert.That(manager.ValidationErrors, Has.Member("[Equipment] 장비가 아닌 ItemData 연결: ITEM_TEST_MATERIAL")); // 아이템 유형 오류 검증
+            Assert.That(manager.ValidationErrors, Has.Member("[Equipment] 장비가 아닌 ItemData 연결: IT_TEST_MATERIAL")); // 아이템 유형 오류 검증
         }
 
         [Test] // 테스트 표시
@@ -115,6 +115,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             SetPrivateField(item, "displayName", displayName); // 아이템 이름 설정
             SetPrivateField(item, "itemType", itemType); // 아이템 종류 설정
             SetPrivateField(item, "grade", grade); // 아이템 등급 설정
+            SetPrivateField(item, "maxStack", itemType == ItemType.Equipment ? 1 : 99); // 아이템 유형별 최대 보유 수량 적용
             return item; // 테스트 아이템 반환
         }
 

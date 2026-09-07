@@ -50,6 +50,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
             dungeons.Build(catalog.Dungeons, validationErrors, "Dungeon"); // 던전 저장소 생성
             items.Build(catalog.Items, validationErrors, "Item"); // 아이템 저장소 생성
             equipments.Build(catalog.Equipments, validationErrors, "Equipment"); // 장비 저장소 생성
+            ValidateItemDefinitions(); // 아이템 공통 정책 검증
             ValidateEquipmentLinks(); // 장비 연결 상태 검증
 
             if (validationErrors.Count > 0) // 검증 오류 확인
@@ -85,6 +86,26 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public EquipmentData GetEquipment(string id) // 장비 데이터 조회
         {
             return equipments.GetOrDefault(id); // 장비 조회 결과 반환
+        }
+
+        private void ValidateItemDefinitions() // 아이템 공통 정의 검증
+        {
+            if (catalog.Items == null) // 아이템 목록 존재 확인
+            {
+                return; // 공통 목록 오류만 유지
+            }
+
+            for (int index = 0; index < catalog.Items.Count; index++) // 아이템 목록 순회
+            {
+                ItemData item = catalog.Items[index]; // 현재 아이템 조회
+
+                if (item == null) // 아이템 참조 확인
+                {
+                    continue; // 공통 null 오류만 유지
+                }
+
+                ItemDataPolicy.Validate(item, validationErrors); // 아이템 ID 및 수량 정책 검증
+            }
         }
 
         private void ValidateEquipmentLinks() // 장비 원본 연결 검증

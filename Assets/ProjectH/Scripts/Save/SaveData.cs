@@ -77,6 +77,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public const int CurrentVersion = 1; // 현재 저장 버전
         public const int MaxPartySize = 4; // 최대 파티 인원
         public const int PartyPresetCount = 4; // 편성 프리셋 개수
+        private const string EquipmentInstancePrefix = "EQI_"; // 장비 인스턴스 ID 접두사
         [SerializeField] private int saveVersion = CurrentVersion; // 저장 버전
         [SerializeField] private int currentDay = 1; // 현재 일차
         [SerializeField] private SaveTimeOfDay currentTime = SaveTimeOfDay.Morning; // 현재 시간대
@@ -87,6 +88,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private List<PartyPresetSaveData> partyPresets = new List<PartyPresetSaveData>(); // 편성 프리셋 목록
         [SerializeField] private List<CharacterSaveData> characters = new List<CharacterSaveData>(); // 캐릭터 진행 목록
         [SerializeField] private List<string> storyFlags = new List<string>(); // 활성 스토리 플래그 목록
+        [SerializeField] private List<EquipmentInstanceSaveData> equipmentInventory = new List<EquipmentInstanceSaveData>(); // 보유 장비 인스턴스 목록
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -97,6 +99,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public IReadOnlyList<PartyPresetSaveData> PartyPresets => partyPresets; // 프리셋 목록 반환
         public IReadOnlyList<CharacterSaveData> Characters => characters; // 캐릭터 진행 반환
         public IReadOnlyList<string> StoryFlags => storyFlags; // 스토리 플래그 반환
+        public IReadOnlyList<EquipmentInstanceSaveData> EquipmentInventory => equipmentInventory; // 장비 인벤토리 반환
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -152,6 +155,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 partyPresets = new List<PartyPresetSaveData>(); // 프리셋 목록 복원
             }
 
+            if (equipmentInventory == null) // 장비 인벤토리 확인
+            {
+                equipmentInventory = new List<EquipmentInstanceSaveData>(); // 장비 인벤토리 복원
+            }
+
             if (currentChapter == null) // 현재 챕터 확인
             {
                 currentChapter = string.Empty; // 챕터 기본값 복원
@@ -189,6 +197,114 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         {
             EnsureDefaults(); // 저장 기본값 확인
             return ContainsOwnedCharacterInternal(characterId); // 캐릭터 보유 결과 반환
+        }
+
+        public EquipmentInstanceSaveData FindEquipmentInstance(string instanceId) // 장비 인스턴스 조회
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            return FindEquipmentInstanceInternal(instanceId); // 장비 인스턴스 조회 결과 반환
+        }
+
+        public int GetEquipmentCount(string equipmentId) // 장비 원본 ID별 보유 수량 조회
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+
+            if (string.IsNullOrWhiteSpace(equipmentId)) // 장비 원본 ID 확인
+            {
+                return 0; // 잘못된 ID 보유 수량 반환
+            }
+
+            int count = 0; // 장비 보유 수량 초기화
+
+            foreach (EquipmentInstanceSaveData equipmentInstance in equipmentInventory) // 장비 인벤토리 순회
+            {
+                if (equipmentInstance != null && string.Equals(equipmentInstance.EquipmentId, equipmentId, StringComparison.Ordinal)) // 장비 원본 ID 일치 확인
+                {
+                    count++; // 동일 장비 보유 수량 증가
+                }
+            }
+
+            return count; // 장비 보유 수량 반환
+        }
+
+        public bool TryCreateEquipmentInstance(string equipmentId, out EquipmentInstanceSaveData equipmentInstance, out string error) // 신규 장비 인스턴스 획득
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            equipmentInstance = null; // 획득 장비 결과 초기화
+            error = string.Empty; // 오류 문구 초기화
+
+            if (string.IsNullOrWhiteSpace(equipmentId)) // 장비 원본 ID 확인
+            {
+                error = "장비 ID가 비어 있습니다."; // 빈 장비 ID 오류 설정
+                return false; // 장비 획득 실패
+            }
+
+            string instanceId = CreateUniqueEquipmentInstanceId(); // 고유 장비 인스턴스 ID 생성
+
+            if (!TryAddEquipmentInstance(instanceId, equipmentId, out error)) // 장비 인벤토리 추가 시도
+            {
+                return false; // 장비 획득 실패
+            }
+
+            equipmentInstance = FindEquipmentInstanceInternal(instanceId); // 추가된 장비 인스턴스 조회
+            return equipmentInstance != null; // 장비 획득 결과 반환
+        }
+
+        public bool TryAddEquipmentInstance(string instanceId, string equipmentId, out string error) // 지정 ID 장비 인스턴스 추가
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            error = string.Empty; // 오류 문구 초기화
+
+            if (string.IsNullOrWhiteSpace(instanceId)) // 장비 인스턴스 ID 확인
+            {
+                error = "장비 인스턴스 ID가 비어 있습니다."; // 빈 인스턴스 ID 오류 설정
+                return false; // 장비 추가 실패
+            }
+
+            if (string.IsNullOrWhiteSpace(equipmentId)) // 장비 원본 ID 확인
+            {
+                error = "장비 ID가 비어 있습니다."; // 빈 장비 ID 오류 설정
+                return false; // 장비 추가 실패
+            }
+
+            if (FindEquipmentInstanceInternal(instanceId) != null) // 장비 인스턴스 중복 확인
+            {
+                error = $"이미 존재하는 장비 인스턴스 ID입니다. ID={instanceId}"; // 중복 인스턴스 오류 설정
+                return false; // 장비 추가 실패
+            }
+
+            equipmentInventory.Add(new EquipmentInstanceSaveData(instanceId, equipmentId)); // 장비 인스턴스 인벤토리 추가
+            return true; // 장비 추가 성공
+        }
+
+        public bool TryRemoveEquipmentInstance(string instanceId, out EquipmentInstanceSaveData removedInstance, out string error) // 장비 인스턴스 제거
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            removedInstance = null; // 제거 장비 결과 초기화
+            error = string.Empty; // 오류 문구 초기화
+
+            if (string.IsNullOrWhiteSpace(instanceId)) // 장비 인스턴스 ID 확인
+            {
+                error = "장비 인스턴스 ID가 비어 있습니다."; // 빈 인스턴스 ID 오류 설정
+                return false; // 장비 제거 실패
+            }
+
+            for (int index = 0; index < equipmentInventory.Count; index++) // 장비 인벤토리 순회
+            {
+                EquipmentInstanceSaveData equipmentInstance = equipmentInventory[index]; // 현재 장비 인스턴스 조회
+
+                if (equipmentInstance == null || !string.Equals(equipmentInstance.InstanceId, instanceId, StringComparison.Ordinal)) // 대상 장비 인스턴스 확인
+                {
+                    continue; // 다음 장비 이동
+                }
+
+                removedInstance = equipmentInstance; // 제거 대상 장비 저장
+                equipmentInventory.RemoveAt(index); // 장비 인벤토리에서 제거
+                return true; // 장비 제거 성공
+            }
+
+            error = $"장비 인스턴스를 찾을 수 없습니다. ID={instanceId}"; // 미보유 장비 오류 설정
+            return false; // 장비 제거 실패
         }
 
         public IReadOnlyList<string> GetPartyPreset(int presetIndex) // 편성 프리셋 조회
@@ -325,7 +441,38 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
         public void SetCurrentMainQuest(string value) // 현재 목표 변경
         {
-            currentMainQuest = value ?? string.Empty; // null 문자열 방지
+            currentMainQuest = value ?? string.Empty; // 목표 기본값 방지
+        }
+
+        private EquipmentInstanceSaveData FindEquipmentInstanceInternal(string instanceId) // 내부 장비 인스턴스 조회
+        {
+            if (string.IsNullOrWhiteSpace(instanceId)) // 장비 인스턴스 ID 확인
+            {
+                return null; // 빈 ID 조회 실패 반환
+            }
+
+            foreach (EquipmentInstanceSaveData equipmentInstance in equipmentInventory) // 장비 인벤토리 순회
+            {
+                if (equipmentInstance != null && string.Equals(equipmentInstance.InstanceId, instanceId, StringComparison.Ordinal)) // 장비 인스턴스 ID 비교
+                {
+                    return equipmentInstance; // 일치 장비 인스턴스 반환
+                }
+            }
+
+            return null; // 장비 인스턴스 조회 실패 반환
+        }
+
+        private string CreateUniqueEquipmentInstanceId() // 고유 장비 인스턴스 ID 생성
+        {
+            string instanceId; // 생성 장비 인스턴스 ID 선언
+
+            do // 고유 ID 생성 반복
+            {
+                instanceId = $"{EquipmentInstancePrefix}{Guid.NewGuid():N}".ToUpperInvariant(); // GUID 기반 장비 인스턴스 ID 생성
+            }
+            while (FindEquipmentInstanceInternal(instanceId) != null); // 기존 인스턴스와 중복 시 재생성
+
+            return instanceId; // 고유 장비 인스턴스 ID 반환
         }
 
         private void InitializePartyPresetsFromActiveParty() // 활성 파티 기반 프리셋 초기화

@@ -7,6 +7,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         public static bool TryCalculate(CharacterSaveData characterSave, SaveData saveData, DataManager dataManager, out BattleEquipmentStatBonus bonus, out string error) // 장착 장비 보정값 계산
         {
+            return TryCalculateInternal(characterSave, saveData, dataManager, false, EquipmentSlot.Weapon, string.Empty, out bonus, out error); // 현재 장착 상태 계산 반환
+        }
+
+        public static bool TryCalculateWithSlotOverride(CharacterSaveData characterSave, SaveData saveData, DataManager dataManager, EquipmentSlot overrideSlot, string overrideInstanceId, out BattleEquipmentStatBonus bonus, out string error) // 단일 슬롯 가상 교체 보정값 계산
+        {
+            return TryCalculateInternal(characterSave, saveData, dataManager, true, overrideSlot, overrideInstanceId, out bonus, out error); // 가상 교체 상태 계산 반환
+        }
+
+        private static bool TryCalculateInternal(CharacterSaveData characterSave, SaveData saveData, DataManager dataManager, bool hasOverride, EquipmentSlot overrideSlot, string overrideInstanceId, out BattleEquipmentStatBonus bonus, out string error) // 장비 보정 공통 계산
+        {
             bonus = BattleEquipmentStatBonus.Empty; // 실패 기본 보정값 설정
             error = string.Empty; // 실패 사유 초기화
 
@@ -29,13 +39,15 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             StatAccumulator accumulator = new StatAccumulator(); // 장비 보정 누산기 생성
+            string weaponInstanceId = ResolveInstanceId(characterSave, EquipmentSlot.Weapon, hasOverride, overrideSlot, overrideInstanceId); // 무기 계산 인스턴스 결정
+            string armorInstanceId = ResolveInstanceId(characterSave, EquipmentSlot.Armor, hasOverride, overrideSlot, overrideInstanceId); // 방어구 계산 인스턴스 결정
 
-            if (!TryAddSlot(characterSave, saveData, dataManager, EquipmentSlot.Weapon, accumulator, out error)) // 무기 보정값 계산
+            if (!TryAddSlot(characterSave, saveData, dataManager, EquipmentSlot.Weapon, weaponInstanceId, accumulator, out error)) // 무기 보정값 계산
             {
                 return false; // 무기 계산 실패 반환
             }
 
-            if (!TryAddSlot(characterSave, saveData, dataManager, EquipmentSlot.Armor, accumulator, out error)) // 방어구 보정값 계산
+            if (!TryAddSlot(characterSave, saveData, dataManager, EquipmentSlot.Armor, armorInstanceId, accumulator, out error)) // 방어구 보정값 계산
             {
                 return false; // 방어구 계산 실패 반환
             }
@@ -44,10 +56,19 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return true; // 계산 성공 반환
         }
 
-        private static bool TryAddSlot(CharacterSaveData characterSave, SaveData saveData, DataManager dataManager, EquipmentSlot slot, StatAccumulator accumulator, out string error) // 단일 슬롯 보정값 누산
+        private static string ResolveInstanceId(CharacterSaveData characterSave, EquipmentSlot slot, bool hasOverride, EquipmentSlot overrideSlot, string overrideInstanceId) // 슬롯 계산 인스턴스 결정
+        {
+            if (hasOverride && slot == overrideSlot) // 가상 교체 대상 슬롯 확인
+            {
+                return overrideInstanceId ?? string.Empty; // 가상 교체 인스턴스 반환
+            }
+
+            return characterSave.Equipment.GetInstanceId(slot); // 실제 장착 인스턴스 반환
+        }
+
+        private static bool TryAddSlot(CharacterSaveData characterSave, SaveData saveData, DataManager dataManager, EquipmentSlot slot, string instanceId, StatAccumulator accumulator, out string error) // 단일 슬롯 보정값 누산
         {
             error = string.Empty; // 슬롯 오류 초기화
-            string instanceId = characterSave.Equipment.GetInstanceId(slot); // 장착 인스턴스 ID 조회
 
             if (string.IsNullOrWhiteSpace(instanceId)) // 빈 슬롯 확인
             {

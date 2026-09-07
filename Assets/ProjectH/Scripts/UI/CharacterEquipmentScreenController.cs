@@ -1,4 +1,5 @@
-using System; // 문자열 비교 기능
+using System; // 문자열 비교 및 수학 기능
+using ProjectH.Battle; // 장비 최종 능력치 비교 기능
 using ProjectH.Core; // 전역 게임 관리자 기능
 using ProjectH.Data; // 캐릭터 및 장비 데이터 기능
 using ProjectH.SaveSystem; // 저장 및 장착 기능
@@ -10,7 +11,7 @@ using UnityEngine.UI; // Unity UI 기능
 namespace ProjectH.UI // 프로젝트 UI 영역
 {
     [DisallowMultipleComponent] // 중복 캐릭터 화면 방지
-    public sealed class CharacterEquipmentScreenController : MonoBehaviour // 임시 캐릭터 상세 장비 화면
+    public sealed class CharacterEquipmentScreenController : MonoBehaviour // Day36 캐릭터 장비 관리 화면
     {
         private static readonly string[] DemoEquipmentIds = // 임시 테스트 장비 ID 목록
         {
@@ -24,23 +25,25 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text characterNameText; // 캐릭터 이름 텍스트
         private Text characterLevelText; // 캐릭터 레벨 텍스트
         private Text portraitText; // 캐릭터 임시 초상 텍스트
+        private Text currentStatsText; // 현재 최종 능력치 텍스트
         private Text weaponSlotText; // 무기 슬롯 텍스트
         private Text armorSlotText; // 방어구 슬롯 텍스트
-        private Text detailTitleText; // 장비 상세 제목 텍스트
-        private Text detailGradeText; // 장비 등급 텍스트
-        private Text detailStatsText; // 장비 상세 능력치 텍스트
-        private Text statusText; // 화면 상태 텍스트
         private Text inventoryCountText; // 인벤토리 개수 텍스트
         private RectTransform inventoryContent; // 장비 인벤토리 목록 영역
-        private Button actionButton; // 장착 또는 해제 버튼
-        private Text actionButtonText; // 장착 또는 해제 버튼 라벨
+        private Text detailTitleText; // 선택 장비 이름 텍스트
+        private Text detailGradeText; // 선택 장비 등급 텍스트
+        private Text detailStatsText; // 선택 장비 옵션 텍스트
+        private Text comparisonText; // 장비 교체 비교 텍스트
+        private Text statusText; // 화면 상태 텍스트
+        private Button actionButton; // 장착 액션 버튼
+        private Text actionButtonText; // 장착 액션 라벨
         private int selectedCharacterIndex; // 현재 캐릭터 목록 번호
         private string selectedInstanceId = string.Empty; // 선택 장비 인스턴스 ID
 
         private void Start() // 캐릭터 장비 화면 시작
         {
             EnsureEventSystem(); // UI 입력 시스템 보장
-            BuildUi(); // 임시 캐릭터 UI 구성
+            BuildUi(); // Day36 장비 UI 구성
             Refresh(); // 초기 화면 데이터 갱신
         }
 
@@ -54,7 +57,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
                 if (legacyInputModule != null) // 구형 입력 모듈 존재 확인
                 {
-                    legacyInputModule.enabled = false; // 구형 입력 모듈 즉시 비활성화
+                    legacyInputModule.enabled = false; // 구형 입력 모듈 비활성화
                     Destroy(legacyInputModule); // 구형 입력 모듈 제거 예약
                 }
 
@@ -70,7 +73,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             eventSystemObject.transform.SetParent(transform, false); // 캐릭터 화면 하위 입력 시스템 연결
         }
 
-        private void BuildUi() // 전체 캐릭터 화면 UI 구성
+        private void BuildUi() // 전체 캐릭터 장비 화면 구성
         {
             GameObject canvasObject = new GameObject("CharacterCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster)); // Runtime Canvas 생성
             canvasObject.transform.SetParent(transform, false); // 캐릭터 화면 하위 Canvas 연결
@@ -86,36 +89,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Stretch(background.rectTransform); // 전체 배경 확장
             BuildHeader(background.transform); // 상단 메뉴 구성
             BuildCharacterPanel(background.transform); // 좌측 캐릭터 패널 구성
-            BuildEquipmentPanel(background.transform); // 우측 장비 패널 구성
+            BuildEquipmentPanel(background.transform); // 우측 장비 관리 패널 구성
         }
 
         private void BuildHeader(Transform parent) // 상단 메뉴 구성
         {
-            Button backButton = CreateButton(parent, "BackButton", "◀  캐릭터", new Color(0.78f, 0.87f, 0.94f, 1f)); // 로비 복귀 버튼 생성
-            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.025f, 0.92f), new Vector2(0.18f, 0.975f)); // 로비 복귀 버튼 배치
+            Button backButton = CreateButton(parent, "BackButton", "◀  로비", new Color(0.78f, 0.87f, 0.94f, 1f)); // 로비 복귀 버튼 생성
+            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.025f, 0.92f), new Vector2(0.16f, 0.975f)); // 로비 복귀 버튼 배치
             backButton.onClick.AddListener(ReturnToLobby); // 로비 복귀 이벤트 연결
-            Button helpButton = CreateButton(parent, "HelpButton", "?", new Color(0.80f, 0.88f, 0.94f, 1f)); // 도움말 버튼 생성
-            SetRect(helpButton.GetComponent<RectTransform>(), new Vector2(0.71f, 0.92f), new Vector2(0.755f, 0.975f)); // 도움말 버튼 배치
-            helpButton.onClick.AddListener(ShowHelp); // 도움말 이벤트 연결
-            Text prototypeText = CreateText(parent, "PrototypeText", "DAY34 · CHARACTER EQUIPMENT", 18, FontStyle.Bold, new Color(0.20f, 0.22f, 0.25f, 1f)); // 임시 화면 표시 생성
-            SetRect(prototypeText.rectTransform, new Vector2(0.765f, 0.92f), new Vector2(0.975f, 0.975f)); // 임시 화면 표시 배치
-            string[] tabNames = { "스탯", "장비", "룬", "스킬", "프로필" }; // 상단 탭 이름 목록
-            float tabStart = 0.41f; // 탭 시작 위치 설정
-            float tabWidth = 0.105f; // 탭 너비 설정
-
-            for (int index = 0; index < tabNames.Length; index++) // 상단 탭 순회
-            {
-                string tabName = tabNames[index]; // 현재 탭 이름 저장
-                Color tabColor = tabName == "장비" ? new Color(0.78f, 0.87f, 0.94f, 1f) : new Color(0.94f, 0.94f, 0.94f, 1f); // 장비 탭 활성 색상 선택
-                Button tabButton = CreateButton(parent, $"Tab_{index}", tabName, tabColor); // 상단 탭 버튼 생성
-                float minX = tabStart + (tabWidth * index); // 현재 탭 최소 X 계산
-                SetRect(tabButton.GetComponent<RectTransform>(), new Vector2(minX, 0.84f), new Vector2(minX + tabWidth - 0.006f, 0.90f)); // 현재 탭 버튼 배치
-
-                if (tabName != "장비") // 미구현 탭 여부 확인
-                {
-                    tabButton.onClick.AddListener(ShowPrototypeOnly); // 미구현 탭 안내 이벤트 연결
-                }
-            }
+            Text titleText = CreateText(parent, "Title", "캐릭터 장비 관리", 27, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 화면 제목 생성
+            SetRect(titleText.rectTransform, new Vector2(0.20f, 0.92f), new Vector2(0.52f, 0.975f)); // 화면 제목 배치
+            Text dayText = CreateText(parent, "DayLabel", "DAY36 · EQUIPMENT MANAGEMENT", 18, FontStyle.Bold, new Color(0.25f, 0.30f, 0.36f, 1f)); // Day36 화면 표시 생성
+            SetRect(dayText.rectTransform, new Vector2(0.69f, 0.92f), new Vector2(0.975f, 0.975f)); // Day36 화면 표시 배치
         }
 
         private void BuildCharacterPanel(Transform parent) // 좌측 캐릭터 영역 구성
@@ -123,75 +108,127 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = CreateImage(parent, "CharacterPanel", new Color(0.96f, 0.96f, 0.96f, 1f)); // 캐릭터 패널 배경 생성
             SetRect(panel.rectTransform, new Vector2(0.02f, 0.05f), new Vector2(0.39f, 0.90f)); // 캐릭터 패널 배치
             AddOutline(panel.gameObject); // 캐릭터 패널 외곽선 추가
-            characterNameText = CreateText(panel.transform, "CharacterName", "CHARACTER", 30, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 캐릭터 이름 텍스트 생성
-            SetRect(characterNameText.rectTransform, new Vector2(0.08f, 0.02f), new Vector2(0.92f, 0.10f)); // 캐릭터 이름 배치
-            characterLevelText = CreateText(panel.transform, "CharacterLevel", "Lv. 1", 20, FontStyle.Bold, new Color(0.25f, 0.30f, 0.36f, 1f)); // 캐릭터 레벨 텍스트 생성
-            SetRect(characterLevelText.rectTransform, new Vector2(0.36f, 0.10f), new Vector2(0.64f, 0.16f)); // 캐릭터 레벨 배치
+            characterNameText = CreateText(panel.transform, "CharacterName", "CHARACTER", 30, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 캐릭터 이름 생성
+            SetRect(characterNameText.rectTransform, new Vector2(0.16f, 0.91f), new Vector2(0.84f, 0.985f)); // 캐릭터 이름 배치
+            characterLevelText = CreateText(panel.transform, "CharacterLevel", "Lv. 1", 19, FontStyle.Bold, new Color(0.25f, 0.30f, 0.36f, 1f)); // 캐릭터 레벨 생성
+            SetRect(characterLevelText.rectTransform, new Vector2(0.39f, 0.855f), new Vector2(0.61f, 0.91f)); // 캐릭터 레벨 배치
             Button previousButton = CreateButton(panel.transform, "PreviousCharacter", "◀", new Color(0.90f, 0.90f, 0.90f, 1f)); // 이전 캐릭터 버튼 생성
-            SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(0.06f, 0.10f), new Vector2(0.17f, 0.17f)); // 이전 캐릭터 버튼 배치
+            SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(0.04f, 0.855f), new Vector2(0.16f, 0.925f)); // 이전 캐릭터 버튼 배치
             previousButton.onClick.AddListener(SelectPreviousCharacter); // 이전 캐릭터 이벤트 연결
             Button nextButton = CreateButton(panel.transform, "NextCharacter", "▶", new Color(0.90f, 0.90f, 0.90f, 1f)); // 다음 캐릭터 버튼 생성
-            SetRect(nextButton.GetComponent<RectTransform>(), new Vector2(0.83f, 0.10f), new Vector2(0.94f, 0.17f)); // 다음 캐릭터 버튼 배치
+            SetRect(nextButton.GetComponent<RectTransform>(), new Vector2(0.84f, 0.855f), new Vector2(0.96f, 0.925f)); // 다음 캐릭터 버튼 배치
             nextButton.onClick.AddListener(SelectNextCharacter); // 다음 캐릭터 이벤트 연결
             Image portraitPanel = CreateImage(panel.transform, "PortraitPlaceholder", Color.white); // 캐릭터 임시 초상 배경 생성
-            SetRect(portraitPanel.rectTransform, new Vector2(0.24f, 0.28f), new Vector2(0.76f, 0.83f)); // 캐릭터 임시 초상 배치
+            SetRect(portraitPanel.rectTransform, new Vector2(0.28f, 0.55f), new Vector2(0.72f, 0.84f)); // 캐릭터 임시 초상 배치
             AddOutline(portraitPanel.gameObject); // 캐릭터 임시 초상 외곽선 추가
-            portraitText = CreateText(portraitPanel.transform, "PortraitText", "CHARACTER", 34, FontStyle.Bold, new Color(0.65f, 0.28f, 0.28f, 1f)); // 캐릭터 임시 초상 텍스트 생성
-            Stretch(portraitText.rectTransform, 10f); // 캐릭터 임시 초상 텍스트 확장
-            CreateLockedSlot(panel.transform, "HelmetPlaceholder", "투구\n준비 중", new Vector2(0.04f, 0.66f), new Vector2(0.22f, 0.80f)); // 투구 준비중 슬롯 생성
-            CreateLockedSlot(panel.transform, "BootsPlaceholder", "신발\n준비 중", new Vector2(0.78f, 0.66f), new Vector2(0.96f, 0.80f)); // 신발 준비중 슬롯 생성
-            CreateLockedSlot(panel.transform, "GlovesPlaceholder", "장갑\n준비 중", new Vector2(0.78f, 0.35f), new Vector2(0.96f, 0.49f)); // 장갑 준비중 슬롯 생성
+            portraitText = CreateText(portraitPanel.transform, "PortraitText", "CHARACTER", 28, FontStyle.Bold, new Color(0.65f, 0.28f, 0.28f, 1f)); // 캐릭터 임시 초상 텍스트 생성
+            Stretch(portraitText.rectTransform, 8f); // 캐릭터 임시 초상 텍스트 확장
+            CreateLockedSlot(panel.transform, "HelmetPlaceholder", "투구\n준비 중", new Vector2(0.04f, 0.68f), new Vector2(0.24f, 0.81f)); // 투구 준비 슬롯 생성
+            CreateLockedSlot(panel.transform, "BootsPlaceholder", "신발\n준비 중", new Vector2(0.76f, 0.68f), new Vector2(0.96f, 0.81f)); // 신발 준비 슬롯 생성
             Button armorSlot = CreateButton(panel.transform, "ArmorSlot", "방어구\n비어 있음", new Color(0.82f, 0.87f, 0.92f, 1f)); // 방어구 슬롯 버튼 생성
-            SetRect(armorSlot.GetComponent<RectTransform>(), new Vector2(0.04f, 0.35f), new Vector2(0.22f, 0.49f)); // 방어구 슬롯 버튼 배치
+            SetRect(armorSlot.GetComponent<RectTransform>(), new Vector2(0.04f, 0.53f), new Vector2(0.24f, 0.66f)); // 방어구 슬롯 버튼 배치
             armorSlotText = armorSlot.GetComponentInChildren<Text>(); // 방어구 슬롯 라벨 조회
             armorSlot.onClick.AddListener(SelectEquippedArmor); // 방어구 슬롯 선택 이벤트 연결
             Button weaponSlot = CreateButton(panel.transform, "WeaponSlot", "무기\n비어 있음", new Color(0.88f, 0.83f, 0.76f, 1f)); // 무기 슬롯 버튼 생성
-            SetRect(weaponSlot.GetComponent<RectTransform>(), new Vector2(0.38f, 0.18f), new Vector2(0.62f, 0.30f)); // 무기 슬롯 버튼 배치
+            SetRect(weaponSlot.GetComponent<RectTransform>(), new Vector2(0.38f, 0.41f), new Vector2(0.62f, 0.53f)); // 무기 슬롯 버튼 배치
             weaponSlotText = weaponSlot.GetComponentInChildren<Text>(); // 무기 슬롯 라벨 조회
             weaponSlot.onClick.AddListener(SelectEquippedWeapon); // 무기 슬롯 선택 이벤트 연결
+            CreateLockedSlot(panel.transform, "GlovesPlaceholder", "장갑\n준비 중", new Vector2(0.76f, 0.53f), new Vector2(0.96f, 0.66f)); // 장갑 준비 슬롯 생성
+            Text statsLabel = CreateText(panel.transform, "CurrentStatsLabel", "현재 최종 능력치", 20, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 현재 능력치 라벨 생성
+            SetRect(statsLabel.rectTransform, new Vector2(0.06f, 0.345f), new Vector2(0.94f, 0.40f)); // 현재 능력치 라벨 배치
+            currentStatsText = CreateText(panel.transform, "CurrentStats", "-", 16, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 현재 능력치 텍스트 생성
+            currentStatsText.alignment = TextAnchor.UpperLeft; // 현재 능력치 왼쪽 정렬
+            currentStatsText.horizontalOverflow = HorizontalWrapMode.Wrap; // 현재 능력치 가로 줄바꿈 적용
+            currentStatsText.verticalOverflow = VerticalWrapMode.Truncate; // 현재 능력치 세로 영역 제한
+            SetRect(currentStatsText.rectTransform, new Vector2(0.08f, 0.04f), new Vector2(0.92f, 0.34f)); // 현재 능력치 텍스트 배치
         }
 
-        private void BuildEquipmentPanel(Transform parent) // 우측 장비 영역 구성
+        private void BuildEquipmentPanel(Transform parent) // 우측 장비 관리 영역 구성
         {
-            Image outerPanel = CreateImage(parent, "EquipmentPanel", new Color(0.91f, 0.91f, 0.91f, 1f)); // 장비 전체 패널 생성
-            SetRect(outerPanel.rectTransform, new Vector2(0.41f, 0.05f), new Vector2(0.98f, 0.82f)); // 장비 전체 패널 배치
-            AddOutline(outerPanel.gameObject); // 장비 전체 패널 외곽선 추가
-            Image sideLabel = CreateImage(outerPanel.transform, "EquipmentSideLabel", new Color(0.83f, 0.83f, 0.83f, 1f)); // 장비 좌측 라벨 생성
-            SetRect(sideLabel.rectTransform, new Vector2(0.02f, 0.88f), new Vector2(0.13f, 0.98f)); // 장비 좌측 라벨 배치
-            Text sideText = CreateText(sideLabel.transform, "Text", "장비", 24, FontStyle.Normal, new Color(0.10f, 0.10f, 0.10f, 1f)); // 장비 좌측 라벨 텍스트 생성
-            Stretch(sideText.rectTransform, 4f); // 장비 좌측 라벨 텍스트 확장
-            Image contentPanel = CreateImage(outerPanel.transform, "EquipmentContent", new Color(0.85f, 0.85f, 0.85f, 1f)); // 장비 콘텐츠 패널 생성
-            SetRect(contentPanel.rectTransform, new Vector2(0.15f, 0.02f), new Vector2(0.98f, 0.98f)); // 장비 콘텐츠 패널 배치
-            AddOutline(contentPanel.gameObject); // 장비 콘텐츠 패널 외곽선 추가
-            Image detailHeader = CreateImage(contentPanel.transform, "DetailHeader", new Color(0.82f, 0.82f, 0.82f, 1f)); // 장비 상세 헤더 생성
-            SetRect(detailHeader.rectTransform, new Vector2(0.02f, 0.82f), new Vector2(0.98f, 0.98f)); // 장비 상세 헤더 배치
-            detailGradeText = CreateText(detailHeader.transform, "Grade", "☆☆☆☆☆", 25, FontStyle.Bold, new Color(0.20f, 0.18f, 0.10f, 1f)); // 장비 등급 텍스트 생성
-            SetRect(detailGradeText.rectTransform, new Vector2(0.02f, 0.08f), new Vector2(0.27f, 0.92f)); // 장비 등급 텍스트 배치
-            detailTitleText = CreateText(detailHeader.transform, "Title", "장비를 선택하세요", 24, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 장비 상세 제목 생성
-            SetRect(detailTitleText.rectTransform, new Vector2(0.28f, 0.08f), new Vector2(0.72f, 0.92f)); // 장비 상세 제목 배치
-            actionButton = CreateButton(detailHeader.transform, "ActionButton", "장착", new Color(0.78f, 0.87f, 0.94f, 1f)); // 장착 액션 버튼 생성
-            SetRect(actionButton.GetComponent<RectTransform>(), new Vector2(0.76f, 0.16f), new Vector2(0.97f, 0.84f)); // 장착 액션 버튼 배치
-            actionButtonText = actionButton.GetComponentInChildren<Text>(); // 장착 액션 버튼 라벨 조회
-            actionButton.onClick.AddListener(ApplySelectedEquipmentAction); // 장비 액션 이벤트 연결
-            Image statsPanel = CreateImage(contentPanel.transform, "StatsPanel", new Color(0.88f, 0.88f, 0.88f, 1f)); // 장비 스탯 상세 패널 생성
-            SetRect(statsPanel.rectTransform, new Vector2(0.02f, 0.47f), new Vector2(0.98f, 0.80f)); // 장비 스탯 상세 패널 배치
-            detailStatsText = CreateText(statsPanel.transform, "Stats", "장비 능력치", 21, FontStyle.Normal, new Color(0.12f, 0.14f, 0.17f, 1f)); // 장비 능력치 텍스트 생성
-            detailStatsText.alignment = TextAnchor.UpperLeft; // 장비 능력치 좌상단 정렬
-            detailStatsText.resizeTextForBestFit = false; // 장비 능력치 자동 크기 비활성화
-            SetRect(detailStatsText.rectTransform, new Vector2(0.04f, 0.06f), new Vector2(0.96f, 0.94f)); // 장비 능력치 텍스트 배치
-            Text inventoryLabel = CreateText(contentPanel.transform, "InventoryLabel", "보유 장비", 22, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 보유 장비 라벨 생성
-            SetRect(inventoryLabel.rectTransform, new Vector2(0.03f, 0.40f), new Vector2(0.28f, 0.46f)); // 보유 장비 라벨 배치
-            inventoryCountText = CreateText(contentPanel.transform, "InventoryCount", "0개", 18, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 장비 보유 개수 텍스트 생성
-            SetRect(inventoryCountText.rectTransform, new Vector2(0.28f, 0.40f), new Vector2(0.43f, 0.46f)); // 장비 보유 개수 배치
-            Button grantButton = CreateButton(contentPanel.transform, "GrantDemoEquipment", "테스트 장비 지급", new Color(0.88f, 0.83f, 0.66f, 1f)); // 테스트 장비 지급 버튼 생성
-            SetRect(grantButton.GetComponent<RectTransform>(), new Vector2(0.72f, 0.40f), new Vector2(0.97f, 0.46f)); // 테스트 장비 지급 버튼 배치
+            Image panel = CreateImage(parent, "EquipmentPanel", new Color(0.96f, 0.96f, 0.96f, 1f)); // 장비 관리 패널 생성
+            SetRect(panel.rectTransform, new Vector2(0.41f, 0.05f), new Vector2(0.98f, 0.90f)); // 장비 관리 패널 배치
+            AddOutline(panel.gameObject); // 장비 관리 패널 외곽선 추가
+            Text inventoryLabel = CreateText(panel.transform, "InventoryLabel", "보유 장비", 22, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 장비 목록 라벨 생성
+            SetRect(inventoryLabel.rectTransform, new Vector2(0.03f, 0.91f), new Vector2(0.22f, 0.98f)); // 장비 목록 라벨 배치
+            inventoryCountText = CreateText(panel.transform, "InventoryCount", "0개", 17, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 장비 개수 텍스트 생성
+            SetRect(inventoryCountText.rectTransform, new Vector2(0.21f, 0.91f), new Vector2(0.34f, 0.98f)); // 장비 개수 텍스트 배치
+            Button grantButton = CreateButton(panel.transform, "GrantDemoEquipment", "테스트 장비 지급", new Color(0.88f, 0.83f, 0.66f, 1f)); // 테스트 장비 지급 버튼 생성
+            SetRect(grantButton.GetComponent<RectTransform>(), new Vector2(0.70f, 0.915f), new Vector2(0.97f, 0.975f)); // 테스트 장비 지급 버튼 배치
             grantButton.onClick.AddListener(GrantDemoEquipment); // 테스트 장비 지급 이벤트 연결
-            Image inventoryPanel = CreateImage(contentPanel.transform, "InventoryPanel", new Color(0.92f, 0.92f, 0.92f, 1f)); // 보유 장비 목록 패널 생성
-            SetRect(inventoryPanel.rectTransform, new Vector2(0.02f, 0.10f), new Vector2(0.98f, 0.39f)); // 보유 장비 목록 패널 배치
-            inventoryContent = inventoryPanel.rectTransform; // 보유 장비 목록 부모 저장
-            statusText = CreateText(contentPanel.transform, "Status", "장비를 선택하세요.", 17, FontStyle.Normal, new Color(0.25f, 0.28f, 0.32f, 1f)); // 화면 상태 텍스트 생성
+            BuildInventoryScroll(panel.transform); // 장비 스크롤 목록 구성
+            Image detailPanel = CreateImage(panel.transform, "DetailPanel", new Color(0.92f, 0.92f, 0.92f, 1f)); // 장비 상세 패널 생성
+            SetRect(detailPanel.rectTransform, new Vector2(0.45f, 0.52f), new Vector2(0.98f, 0.90f)); // 장비 상세 패널 배치
+            AddOutline(detailPanel.gameObject); // 장비 상세 패널 외곽선 추가
+            detailTitleText = CreateText(detailPanel.transform, "DetailTitle", "장비를 선택하세요", 23, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 장비 상세 이름 생성
+            detailTitleText.alignment = TextAnchor.MiddleLeft; // 장비 상세 이름 왼쪽 정렬
+            SetRect(detailTitleText.rectTransform, new Vector2(0.04f, 0.80f), new Vector2(0.72f, 0.97f)); // 장비 상세 이름 배치
+            detailGradeText = CreateText(detailPanel.transform, "DetailGrade", string.Empty, 20, FontStyle.Bold, new Color(0.63f, 0.48f, 0.14f, 1f)); // 장비 등급 텍스트 생성
+            SetRect(detailGradeText.rectTransform, new Vector2(0.72f, 0.80f), new Vector2(0.96f, 0.97f)); // 장비 등급 텍스트 배치
+            detailStatsText = CreateText(detailPanel.transform, "DetailStats", "-", 16, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 장비 옵션 텍스트 생성
+            detailStatsText.alignment = TextAnchor.UpperLeft; // 장비 옵션 왼쪽 정렬
+            detailStatsText.horizontalOverflow = HorizontalWrapMode.Wrap; // 장비 옵션 가로 줄바꿈 적용
+            detailStatsText.verticalOverflow = VerticalWrapMode.Truncate; // 장비 옵션 세로 영역 제한
+            SetRect(detailStatsText.rectTransform, new Vector2(0.05f, 0.07f), new Vector2(0.95f, 0.80f)); // 장비 옵션 텍스트 배치
+            Image comparisonPanel = CreateImage(panel.transform, "ComparisonPanel", new Color(0.90f, 0.93f, 0.95f, 1f)); // 능력치 비교 패널 생성
+            SetRect(comparisonPanel.rectTransform, new Vector2(0.45f, 0.13f), new Vector2(0.98f, 0.50f)); // 능력치 비교 패널 배치
+            AddOutline(comparisonPanel.gameObject); // 능력치 비교 패널 외곽선 추가
+            Text comparisonLabel = CreateText(comparisonPanel.transform, "ComparisonLabel", "변경 전 → 변경 후", 19, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 능력치 비교 라벨 생성
+            SetRect(comparisonLabel.rectTransform, new Vector2(0.04f, 0.84f), new Vector2(0.96f, 0.98f)); // 능력치 비교 라벨 배치
+            comparisonText = CreateText(comparisonPanel.transform, "ComparisonText", "장비를 선택하면 예상 능력치가 표시됩니다.", 15, FontStyle.Normal, new Color(0.18f, 0.22f, 0.27f, 1f)); // 능력치 비교 텍스트 생성
+            comparisonText.alignment = TextAnchor.UpperLeft; // 능력치 비교 왼쪽 정렬
+            comparisonText.horizontalOverflow = HorizontalWrapMode.Wrap; // 능력치 비교 가로 줄바꿈 적용
+            comparisonText.verticalOverflow = VerticalWrapMode.Truncate; // 능력치 비교 세로 영역 제한
+            SetRect(comparisonText.rectTransform, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.84f)); // 능력치 비교 텍스트 배치
+            actionButton = CreateButton(panel.transform, "ActionButton", "사용 불가", new Color(0.72f, 0.82f, 0.72f, 1f)); // 장비 액션 버튼 생성
+            SetRect(actionButton.GetComponent<RectTransform>(), new Vector2(0.70f, 0.035f), new Vector2(0.97f, 0.105f)); // 장비 액션 버튼 배치
+            actionButtonText = actionButton.GetComponentInChildren<Text>(); // 장비 액션 라벨 조회
+            actionButton.onClick.AddListener(ApplySelectedEquipmentAction); // 장비 액션 이벤트 연결
+            statusText = CreateText(panel.transform, "Status", "장비를 선택하세요.", 16, FontStyle.Normal, new Color(0.25f, 0.28f, 0.32f, 1f)); // 화면 상태 텍스트 생성
             statusText.alignment = TextAnchor.MiddleLeft; // 화면 상태 왼쪽 정렬
-            SetRect(statusText.rectTransform, new Vector2(0.03f, 0.02f), new Vector2(0.97f, 0.085f)); // 화면 상태 텍스트 배치
+            SetRect(statusText.rectTransform, new Vector2(0.03f, 0.035f), new Vector2(0.67f, 0.105f)); // 화면 상태 텍스트 배치
+        }
+
+        private void BuildInventoryScroll(Transform parent) // 장비 인벤토리 스크롤 구성
+        {
+            GameObject scrollObject = new GameObject("InventoryScroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect)); // 스크롤 영역 생성
+            scrollObject.transform.SetParent(parent, false); // 스크롤 영역 부모 연결
+            Image scrollImage = scrollObject.GetComponent<Image>(); // 스크롤 배경 이미지 조회
+            scrollImage.color = new Color(0.92f, 0.92f, 0.92f, 1f); // 스크롤 배경 색상 적용
+            SetRect(scrollObject.GetComponent<RectTransform>(), new Vector2(0.02f, 0.13f), new Vector2(0.43f, 0.90f)); // 스크롤 영역 배치
+            AddOutline(scrollObject); // 스크롤 영역 외곽선 추가
+            GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask)); // 스크롤 뷰포트 생성
+            viewportObject.transform.SetParent(scrollObject.transform, false); // 스크롤 뷰포트 부모 연결
+            Image viewportImage = viewportObject.GetComponent<Image>(); // 뷰포트 이미지 조회
+            viewportImage.color = new Color(1f, 1f, 1f, 0.02f); // 뷰포트 투명 배경 적용
+            Mask viewportMask = viewportObject.GetComponent<Mask>(); // 뷰포트 마스크 조회
+            viewportMask.showMaskGraphic = false; // 뷰포트 마스크 그래픽 숨김
+            Stretch(viewportObject.GetComponent<RectTransform>(), 8f); // 뷰포트 영역 확장
+            GameObject contentObject = new GameObject("InventoryContent", typeof(RectTransform), typeof(VerticalLayoutGroup), typeof(ContentSizeFitter)); // 장비 목록 컨텐츠 생성
+            contentObject.transform.SetParent(viewportObject.transform, false); // 장비 목록 컨텐츠 부모 연결
+            inventoryContent = contentObject.GetComponent<RectTransform>(); // 장비 목록 RectTransform 저장
+            inventoryContent.anchorMin = new Vector2(0f, 1f); // 장비 목록 최소 앵커 설정
+            inventoryContent.anchorMax = new Vector2(1f, 1f); // 장비 목록 최대 앵커 설정
+            inventoryContent.pivot = new Vector2(0.5f, 1f); // 장비 목록 피벗 설정
+            inventoryContent.anchoredPosition = Vector2.zero; // 장비 목록 위치 초기화
+            inventoryContent.sizeDelta = Vector2.zero; // 장비 목록 크기 초기화
+            VerticalLayoutGroup layout = contentObject.GetComponent<VerticalLayoutGroup>(); // 장비 목록 레이아웃 조회
+            layout.padding = new RectOffset(6, 6, 6, 6); // 장비 목록 여백 설정
+            layout.spacing = 7f; // 장비 목록 간격 설정
+            layout.childAlignment = TextAnchor.UpperCenter; // 장비 목록 상단 정렬
+            layout.childControlWidth = true; // 장비 버튼 너비 제어
+            layout.childControlHeight = false; // 장비 버튼 높이 직접 사용
+            layout.childForceExpandWidth = true; // 장비 버튼 가로 확장
+            layout.childForceExpandHeight = false; // 장비 버튼 세로 확장 차단
+            ContentSizeFitter fitter = contentObject.GetComponent<ContentSizeFitter>(); // 장비 목록 크기 조절기 조회
+            fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained; // 장비 목록 가로 크기 유지
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize; // 장비 목록 세로 크기 자동 조절
+            ScrollRect scrollRect = scrollObject.GetComponent<ScrollRect>(); // ScrollRect 조회
+            scrollRect.viewport = viewportObject.GetComponent<RectTransform>(); // ScrollRect 뷰포트 연결
+            scrollRect.content = inventoryContent; // ScrollRect 컨텐츠 연결
+            scrollRect.horizontal = false; // 가로 스크롤 비활성화
+            scrollRect.vertical = true; // 세로 스크롤 활성화
+            scrollRect.movementType = ScrollRect.MovementType.Clamped; // 스크롤 범위 제한
+            scrollRect.scrollSensitivity = 30f; // 스크롤 감도 설정
         }
 
         private void Refresh() // 캐릭터 및 장비 화면 갱신
@@ -205,23 +242,24 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (saveData.Characters.Count == 0) // 보유 캐릭터 존재 확인
             {
-                SetStatus("보유 캐릭터가 없습니다."); // 보유 캐릭터 누락 안내
+                SetStatus("보유 캐릭터가 없습니다."); // 캐릭터 없음 안내
                 SetAction(false, "사용 불가"); // 장비 액션 비활성화
                 return; // 화면 갱신 중단
             }
 
-            selectedCharacterIndex = Mathf.Clamp(selectedCharacterIndex, 0, saveData.Characters.Count - 1); // 선택 캐릭터 번호 범위 보정
-            CharacterSaveData characterSave = saveData.Characters[selectedCharacterIndex]; // 선택 캐릭터 저장 조회
-            CharacterData characterData = characterSave == null ? null : dataManager.GetCharacter(characterSave.CharacterId); // 선택 캐릭터 원본 조회
+            selectedCharacterIndex = Mathf.Clamp(selectedCharacterIndex, 0, saveData.Characters.Count - 1); // 선택 캐릭터 번호 보정
+            CharacterSaveData characterSave = GetSelectedCharacter(saveData); // 선택 캐릭터 저장 조회
+            CharacterData characterData = dataManager.GetCharacter(characterSave.CharacterId); // 선택 캐릭터 원본 조회
             string displayName = characterData == null ? characterSave.CharacterId : characterData.DisplayName; // 캐릭터 표시 이름 결정
-            characterNameText.text = string.IsNullOrWhiteSpace(displayName) ? characterSave.CharacterId : displayName; // 캐릭터 이름 화면 반영
-            characterLevelText.text = $"Lv. {characterSave.Level}"; // 캐릭터 레벨 화면 반영
-            portraitText.text = string.IsNullOrWhiteSpace(displayName) ? "CHARACTER" : $"{displayName}\n\nCHARACTER"; // 캐릭터 임시 초상 문구 반영
-            UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Weapon, weaponSlotText, "무기"); // 무기 슬롯 화면 갱신
-            UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Armor, armorSlotText, "방어구"); // 방어구 슬롯 화면 갱신
-            BuildInventoryButtons(saveData, dataManager, characterSave); // 보유 장비 목록 버튼 구성
+            characterNameText.text = displayName; // 캐릭터 이름 갱신
+            characterLevelText.text = $"Lv. {characterSave.Level}"; // 캐릭터 레벨 갱신
+            portraitText.text = displayName; // 임시 초상 텍스트 갱신
+            UpdateCurrentStats(saveData, dataManager, characterSave, characterData); // 현재 최종 능력치 갱신
+            UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Weapon, weaponSlotText, "무기"); // 무기 슬롯 갱신
+            UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Armor, armorSlotText, "방어구"); // 방어구 슬롯 갱신
             EnsureSelectedInstance(saveData); // 선택 장비 인스턴스 보정
-            UpdateDetail(saveData, dataManager, characterSave); // 장비 상세 정보 갱신
+            BuildInventoryButtons(saveData, dataManager, characterSave); // 보유 장비 목록 구성
+            UpdateDetail(saveData, dataManager, characterSave); // 선택 장비 상세 갱신
         }
 
         private bool TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData) // 전역 장비 화면 컨텍스트 조회
@@ -241,6 +279,24 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return dataManager != null && dataManager.IsInitialized && saveManager != null && saveData != null; // 전역 컨텍스트 사용 가능 여부 반환
         }
 
+        private void UpdateCurrentStats(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave, CharacterData characterData) // 현재 최종 능력치 갱신
+        {
+            if (characterData == null) // 캐릭터 원본 존재 확인
+            {
+                currentStatsText.text = "CharacterData를 찾을 수 없습니다."; // 캐릭터 원본 누락 표시
+                return; // 현재 능력치 갱신 중단
+            }
+
+            if (!BattleEquipmentStatCalculator.TryCalculate(characterSave, saveData, dataManager, out BattleEquipmentStatBonus bonus, out string error)) // 현재 장비 보정 계산
+            {
+                currentStatsText.text = error; // 현재 장비 계산 오류 표시
+                return; // 현재 능력치 갱신 중단
+            }
+
+            BattleStats stats = BattleStatsFactory.CreateCharacter(characterData, characterSave, "CHARACTER_SCREEN", bonus); // 현재 최종 능력치 생성
+            currentStatsText.text = BuildStatsDescription(stats); // 현재 최종 능력치 표시
+        }
+
         private void UpdateSlotText(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave, EquipmentSlot slot, Text target, string slotLabel) // 장착 슬롯 텍스트 갱신
         {
             EquipmentInstanceSaveData instance = CharacterEquipmentService.GetEquippedInstance(saveData, characterSave.CharacterId, slot); // 슬롯 장착 장비 조회
@@ -251,22 +307,21 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 슬롯 갱신 종료
             }
 
-            EquipmentData equipmentData = dataManager.GetEquipment(instance.EquipmentId); // 장착 장비 원본 조회
-            string equipmentName = equipmentData == null ? instance.EquipmentId : equipmentData.DisplayName; // 장착 장비 이름 결정
+            EquipmentData equipment = dataManager.GetEquipment(instance.EquipmentId); // 장착 장비 원본 조회
+            string equipmentName = equipment == null ? instance.EquipmentId : equipment.DisplayName; // 장착 장비 표시 이름 결정
             target.text = $"{slotLabel}\n{equipmentName}"; // 장착 장비 슬롯 표시
         }
 
         private void BuildInventoryButtons(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave) // 보유 장비 목록 버튼 구성
         {
-            for (int childIndex = inventoryContent.childCount - 1; childIndex >= 0; childIndex--) // 기존 장비 버튼 역순 순회
+            for (int index = inventoryContent.childCount - 1; index >= 0; index--) // 기존 장비 버튼 역순 순회
             {
-                Destroy(inventoryContent.GetChild(childIndex).gameObject); // 기존 장비 버튼 제거
+                Destroy(inventoryContent.GetChild(index).gameObject); // 기존 장비 버튼 제거 예약
             }
 
-            inventoryCountText.text = $"{saveData.EquipmentInventory.Count}개"; // 장비 보유 개수 표시
-            int visibleCount = Mathf.Min(8, saveData.EquipmentInventory.Count); // 임시 화면 최대 표시 수 계산
+            inventoryCountText.text = $"{saveData.EquipmentInventory.Count}개"; // 보유 장비 개수 갱신
 
-            for (int index = 0; index < visibleCount; index++) // 표시 장비 인스턴스 순회
+            for (int index = 0; index < saveData.EquipmentInventory.Count; index++) // 장비 인벤토리 순회
             {
                 EquipmentInstanceSaveData instance = saveData.EquipmentInventory[index]; // 현재 장비 인스턴스 조회
 
@@ -275,105 +330,118 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     continue; // 빈 장비 인스턴스 제외
                 }
 
-                EquipmentData equipmentData = dataManager.GetEquipment(instance.EquipmentId); // 장비 원본 데이터 조회
-                string equipmentName = equipmentData == null ? instance.EquipmentId : equipmentData.DisplayName; // 장비 표시 이름 결정
+                EquipmentData equipment = dataManager.GetEquipment(instance.EquipmentId); // 장비 원본 데이터 조회
+                string equipmentName = equipment == null ? instance.EquipmentId : equipment.DisplayName; // 장비 표시 이름 결정
                 CharacterSaveData owner = CharacterEquipmentService.FindEquippedCharacter(saveData, instance.InstanceId); // 장비 착용 캐릭터 조회
-                string state = owner == null ? "미착용" : owner.CharacterId == characterSave.CharacterId ? "장착 중" : $"{owner.CharacterId} 장착"; // 장비 착용 상태 문구 생성
-                string slotName = equipmentData == null ? "?" : equipmentData.Slot == EquipmentSlot.Weapon ? "W" : "A"; // 장비 슬롯 축약 문구 생성
-                string grade = equipmentData == null ? string.Empty : GetGradeStars(equipmentData.Grade); // 장비 등급 별 문구 생성
-                Button itemButton = CreateButton(inventoryContent, $"Equipment_{index}", $"[{slotName}] {grade} {equipmentName}\n{state}", new Color(0.90f, 0.90f, 0.90f, 1f)); // 장비 목록 버튼 생성
-                float rowHeight = 0.12f; // 장비 목록 행 높이 설정
-                float top = 0.96f - (rowHeight * index); // 장비 목록 행 상단 계산
-                SetRect(itemButton.GetComponent<RectTransform>(), new Vector2(0.02f, top - rowHeight + 0.01f), new Vector2(0.98f, top)); // 장비 목록 버튼 배치
-                string capturedInstanceId = instance.InstanceId; // 버튼 이벤트용 인스턴스 ID 저장
-                itemButton.onClick.AddListener(() => SelectEquipment(capturedInstanceId)); // 장비 목록 선택 이벤트 연결
+                string state = BuildEquipmentState(owner, characterSave); // 장비 착용 상태 문구 생성
+                string slotName = equipment == null ? "?" : equipment.Slot == EquipmentSlot.Weapon ? "W" : "A"; // 장비 슬롯 축약 문구 생성
+                string grade = equipment == null ? string.Empty : GetGradeStars(equipment.Grade); // 장비 등급 별 문구 생성
+                string optionSummary = equipment == null ? "원본 데이터 없음" : BuildCompactStatDescription(equipment); // 장비 옵션 축약 문구 생성
+                Button itemButton = CreateButton(inventoryContent, $"Equipment_{index}", $"[{slotName}] {grade} {equipmentName}\n{optionSummary}\n{state}", new Color(0.90f, 0.90f, 0.90f, 1f)); // 장비 목록 버튼 생성
+                RectTransform itemRect = itemButton.GetComponent<RectTransform>(); // 장비 버튼 RectTransform 조회
+                itemRect.sizeDelta = new Vector2(0f, 82f); // 장비 버튼 높이 설정
+                LayoutElement layoutElement = itemButton.gameObject.AddComponent<LayoutElement>(); // 장비 버튼 레이아웃 요소 추가
+                layoutElement.preferredHeight = 82f; // 장비 버튼 선호 높이 설정
+                string capturedInstanceId = instance.InstanceId; // 장비 버튼 선택 ID 복사
+                itemButton.onClick.AddListener(() => SelectEquipment(capturedInstanceId)); // 장비 선택 이벤트 연결
+
+                if (string.Equals(selectedInstanceId, instance.InstanceId, StringComparison.Ordinal)) // 현재 선택 장비 여부 확인
+                {
+                    itemButton.GetComponent<Image>().color = new Color(0.75f, 0.86f, 0.94f, 1f); // 선택 장비 버튼 강조
+                }
             }
         }
 
-        private void EnsureSelectedInstance(SaveData saveData) // 선택 장비 인스턴스 유효성 보정
+        private static string BuildEquipmentState(CharacterSaveData owner, CharacterSaveData selectedCharacter) // 장비 착용 상태 문구 생성
+        {
+            if (owner == null) // 장비 미착용 여부 확인
+            {
+                return "미착용"; // 미착용 상태 반환
+            }
+
+            if (selectedCharacter != null && string.Equals(owner.CharacterId, selectedCharacter.CharacterId, StringComparison.Ordinal)) // 현재 캐릭터 착용 여부 확인
+            {
+                return "현재 캐릭터 장착 중"; // 현재 캐릭터 착용 상태 반환
+            }
+
+            return $"{owner.CharacterId} 장착 중"; // 다른 캐릭터 착용 상태 반환
+        }
+
+        private void EnsureSelectedInstance(SaveData saveData) // 선택 장비 인스턴스 보정
         {
             if (!string.IsNullOrWhiteSpace(selectedInstanceId) && saveData.FindEquipmentInstance(selectedInstanceId) != null) // 기존 선택 장비 유효성 확인
             {
                 return; // 기존 선택 장비 유지
             }
 
-            selectedInstanceId = string.Empty; // 기존 선택 장비 초기화
+            selectedInstanceId = string.Empty; // 선택 장비 초기화
+            CharacterSaveData characterSave = GetSelectedCharacter(saveData); // 선택 캐릭터 저장 조회
 
-            if (saveData.EquipmentInventory.Count > 0 && saveData.EquipmentInventory[0] != null) // 첫 장비 존재 확인
+            if (characterSave != null && !string.IsNullOrWhiteSpace(characterSave.Equipment.WeaponInstanceId)) // 현재 무기 장착 여부 확인
             {
-                selectedInstanceId = saveData.EquipmentInventory[0].InstanceId; // 첫 보유 장비 자동 선택
+                selectedInstanceId = characterSave.Equipment.WeaponInstanceId; // 현재 무기 우선 선택
+                return; // 선택 장비 보정 종료
+            }
+
+            if (characterSave != null && !string.IsNullOrWhiteSpace(characterSave.Equipment.ArmorInstanceId)) // 현재 방어구 장착 여부 확인
+            {
+                selectedInstanceId = characterSave.Equipment.ArmorInstanceId; // 현재 방어구 선택
+                return; // 선택 장비 보정 종료
+            }
+
+            if (saveData.EquipmentInventory.Count > 0 && saveData.EquipmentInventory[0] != null) // 첫 보유 장비 존재 확인
+            {
+                selectedInstanceId = saveData.EquipmentInventory[0].InstanceId; // 첫 보유 장비 선택
             }
         }
 
-        private void UpdateDetail(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave) // 선택 장비 상세 갱신
+        private void UpdateDetail(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave) // 선택 장비 상세 정보 갱신
         {
             EquipmentInstanceSaveData instance = saveData.FindEquipmentInstance(selectedInstanceId); // 선택 장비 인스턴스 조회
 
             if (instance == null) // 선택 장비 존재 확인
             {
                 detailTitleText.text = "장비를 선택하세요"; // 선택 장비 없음 제목 표시
-                detailGradeText.text = "☆☆☆☆☆"; // 선택 장비 없음 등급 표시
-                detailStatsText.text = "보유 장비를 선택하면 상세 정보가 표시됩니다."; // 선택 장비 없음 설명 표시
-                SetAction(false, "장착"); // 선택 장비 없음 액션 비활성화
+                detailGradeText.text = string.Empty; // 선택 장비 없음 등급 초기화
+                detailStatsText.text = "보유 장비를 선택하면 상세 정보가 표시됩니다."; // 선택 장비 없음 안내 표시
+                comparisonText.text = "장비를 선택하면 예상 능력치가 표시됩니다."; // 선택 장비 없음 비교 안내 표시
+                SetAction(false, "사용 불가"); // 장비 액션 비활성화
                 return; // 상세 갱신 종료
             }
 
-            EquipmentData equipmentData = dataManager.GetEquipment(instance.EquipmentId); // 선택 장비 원본 조회
+            EquipmentData equipment = dataManager.GetEquipment(instance.EquipmentId); // 선택 장비 원본 조회
 
-            if (equipmentData == null) // 장비 원본 존재 확인
+            if (equipment == null) // 선택 장비 원본 존재 확인
             {
                 detailTitleText.text = instance.EquipmentId; // 누락 장비 ID 표시
-                detailGradeText.text = "?????"; // 누락 장비 등급 표시
-                detailStatsText.text = "EquipmentData가 등록되지 않았습니다."; // 누락 장비 안내
-                SetAction(false, "사용 불가"); // 누락 장비 액션 비활성화
+                detailGradeText.text = "?"; // 누락 장비 등급 표시
+                detailStatsText.text = "EquipmentData를 찾을 수 없습니다."; // 장비 원본 누락 안내
+                comparisonText.text = "비교 계산을 수행할 수 없습니다."; // 비교 계산 불가 안내
+                SetAction(false, "사용 불가"); // 장비 액션 비활성화
                 return; // 상세 갱신 종료
             }
 
-            detailTitleText.text = equipmentData.DisplayName; // 장비 이름 상세 표시
-            detailGradeText.text = GetGradeStars(equipmentData.Grade); // 장비 등급 상세 표시
-            detailStatsText.text = BuildStatDescription(equipmentData); // 장비 능력치 상세 표시
-            CharacterSaveData owner = CharacterEquipmentService.FindEquippedCharacter(saveData, instance.InstanceId); // 장비 착용 캐릭터 조회
+            CharacterSaveData owner = CharacterEquipmentService.FindEquippedCharacter(saveData, instance.InstanceId); // 선택 장비 착용 캐릭터 조회
+            detailTitleText.text = equipment.DisplayName; // 장비 이름 상세 표시
+            detailGradeText.text = GetGradeStars(equipment.Grade); // 장비 등급 상세 표시
+            detailStatsText.text = $"슬롯: {GetSlotDisplayName(equipment.Slot)}\n상태: {BuildEquipmentState(owner, characterSave)}\n\n{BuildStatDescription(equipment)}\n\n{equipment.Description}"; // 장비 상세 정보 표시
 
-            if (owner != null && owner.CharacterId != characterSave.CharacterId) // 다른 캐릭터 장착 여부 확인
+            if (owner != null && !string.Equals(owner.CharacterId, characterSave.CharacterId, StringComparison.Ordinal)) // 다른 캐릭터 장착 여부 확인
             {
+                comparisonText.text = $"{owner.CharacterId}가 장착 중인 장비입니다.\n현재 캐릭터에는 바로 장착할 수 없습니다."; // 다른 캐릭터 장착 비교 안내
                 SetAction(false, "다른 캐릭터 장착 중"); // 다른 캐릭터 장비 액션 비활성화
-                return; // 액션 갱신 종료
+                return; // 상세 갱신 종료
             }
 
-            if (owner != null) // 현재 캐릭터 장착 여부 확인
+            if (!CharacterEquipmentPreviewService.TryCreate(saveData, dataManager, characterSave.CharacterId, instance.InstanceId, out CharacterEquipmentPreview preview, out string error)) // 장비 변경 미리보기 계산
             {
-                SetAction(true, "해제"); // 현재 캐릭터 장착 장비 해제 액션 설정
-                return; // 액션 갱신 종료
+                comparisonText.text = error; // 미리보기 계산 오류 표시
+                SetAction(false, "사용 불가"); // 장비 액션 비활성화
+                return; // 상세 갱신 종료
             }
 
-            string equippedInstanceId = characterSave.Equipment.GetInstanceId(equipmentData.Slot); // 동일 슬롯 기존 장비 조회
-            SetAction(true, string.IsNullOrWhiteSpace(equippedInstanceId) ? "장착" : "교체"); // 장착 또는 교체 액션 설정
-        }
-
-        private string BuildStatDescription(EquipmentData equipmentData) // 장비 상세 능력치 문구 생성
-        {
-            string description = $"슬롯 : {(equipmentData.Slot == EquipmentSlot.Weapon ? "무기" : "방어구")}\nID : {equipmentData.Id}\n\n"; // 장비 기본 상세 문구 생성
-            bool hasStat = false; // 장비 옵션 존재 상태 초기화
-
-            foreach (EquipmentStatType statType in Enum.GetValues(typeof(EquipmentStatType))) // 전체 장비 능력치 종류 순회
-            {
-                float value = equipmentData.GetStatValue(statType); // 현재 능력치 옵션 합계 조회
-
-                if (Mathf.Approximately(value, 0f)) // 능력치 옵션 존재 확인
-                {
-                    continue; // 값 없는 능력치 제외
-                }
-
-                description += $"{GetStatDisplayName(statType)}  +{FormatStatValue(statType, value)}\n"; // 능력치 옵션 상세 문구 추가
-                hasStat = true; // 장비 옵션 존재 기록
-            }
-
-            if (!hasStat) // 장비 옵션 없음 확인
-            {
-                description += "등록된 능력치 옵션이 없습니다.\n"; // 빈 장비 옵션 안내 추가
-            }
-
-            return description; // 장비 상세 문구 반환
+            comparisonText.text = BuildComparisonDescription(preview.CurrentStats, preview.PreviewStats); // 변경 전후 능력치 비교 표시
+            SetAction(true, preview.ActionLabel); // 장비 액션 활성화
         }
 
         private void ApplySelectedEquipmentAction() // 선택 장비 장착 또는 해제 처리
@@ -385,17 +453,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             CharacterSaveData characterSave = GetSelectedCharacter(saveData); // 선택 캐릭터 저장 조회
-            EquipmentInstanceSaveData instance = saveData.FindEquipmentInstance(selectedInstanceId); // 선택 장비 조회
+            EquipmentInstanceSaveData instance = saveData.FindEquipmentInstance(selectedInstanceId); // 선택 장비 인스턴스 조회
 
-            if (characterSave == null || instance == null) // 캐릭터 및 장비 선택 상태 확인
+            if (characterSave == null || instance == null) // 캐릭터 및 장비 존재 확인
             {
-                SetStatus("캐릭터와 장비를 먼저 선택하세요."); // 선택 상태 오류 안내
+                SetStatus("장비 변경 대상을 찾을 수 없습니다."); // 변경 대상 누락 안내
                 return; // 장비 액션 중단
             }
 
-            EquipmentData equipmentData = dataManager.GetEquipment(instance.EquipmentId); // 선택 장비 원본 조회
+            EquipmentData equipment = dataManager.GetEquipment(instance.EquipmentId); // 선택 장비 원본 조회
 
-            if (equipmentData == null) // 장비 원본 존재 확인
+            if (equipment == null) // 장비 원본 존재 확인
             {
                 SetStatus($"EquipmentData 누락: {instance.EquipmentId}"); // 장비 원본 누락 안내
                 return; // 장비 액션 중단
@@ -405,19 +473,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             bool succeeded; // 장비 액션 성공 상태 선언
             string error; // 장비 액션 오류 문구 선언
 
-            if (owner != null && owner.CharacterId == characterSave.CharacterId) // 현재 캐릭터 장착 여부 확인
+            if (owner != null && string.Equals(owner.CharacterId, characterSave.CharacterId, StringComparison.Ordinal)) // 현재 캐릭터 장착 여부 확인
             {
-                succeeded = CharacterEquipmentService.TryUnequip(saveData, characterSave.CharacterId, equipmentData.Slot, out EquipmentInstanceSaveData removedInstance, out error); // 현재 슬롯 장비 해제 실행
+                succeeded = CharacterEquipmentService.TryUnequip(saveData, characterSave.CharacterId, equipment.Slot, out EquipmentInstanceSaveData removedInstance, out error); // 현재 슬롯 장비 해제 실행
             }
             else // 미착용 장비 처리
             {
-                succeeded = CharacterEquipmentService.TryEquip(saveData, dataManager, characterSave.CharacterId, instance.InstanceId, out error); // 장비 착용 또는 교체 실행
+                succeeded = CharacterEquipmentService.TryEquip(saveData, dataManager, characterSave.CharacterId, instance.InstanceId, out error); // 장비 장착 또는 교체 실행
             }
 
             if (!succeeded) // 장비 액션 실패 확인
             {
                 SetStatus(error); // 장비 액션 오류 표시
-                Refresh(); // 장비 화면 재갱신
                 return; // 장비 액션 종료
             }
 
@@ -445,14 +512,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     continue; // 미등록 임시 장비 제외
                 }
 
-                if (saveData.GetEquipmentCount(equipmentId) > 0) // 기존 동일 장비 보유 확인
+                if (saveData.GetEquipmentCount(equipmentId) > 0) // 동일 장비 보유 여부 확인
                 {
-                    continue; // 이미 보유한 임시 장비 재지급 제외
+                    continue; // 이미 보유한 테스트 장비 제외
                 }
 
-                if (saveData.TryCreateEquipmentInstance(equipmentId, out EquipmentInstanceSaveData addedInstance, out string error)) // 신규 임시 장비 인스턴스 생성
+                if (saveData.TryCreateEquipmentInstance(equipmentId, out EquipmentInstanceSaveData createdInstance, out string error)) // 테스트 장비 인스턴스 생성
                 {
                     addedCount++; // 신규 지급 장비 개수 증가
+                }
+                else // 테스트 장비 생성 실패 처리
+                {
+                    SetStatus(error); // 테스트 장비 생성 오류 표시
                 }
             }
 
@@ -464,17 +535,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 SetStatus("테스트 장비는 지급되었지만 저장에 실패했습니다."); // 테스트 장비 저장 실패 안내
             }
 
-            Refresh(); // 장비 인벤토리 화면 갱신
+            Refresh(); // 테스트 장비 지급 화면 갱신
         }
 
         private CharacterSaveData GetSelectedCharacter(SaveData saveData) // 선택 캐릭터 저장 조회
         {
-            if (saveData == null || saveData.Characters.Count == 0) // 저장 데이터 및 캐릭터 목록 확인
+            if (saveData == null || saveData.Characters.Count == 0) // 캐릭터 저장 목록 확인
             {
-                return null; // 선택 캐릭터 조회 실패
+                return null; // 선택 캐릭터 없음 반환
             }
 
-            selectedCharacterIndex = Mathf.Clamp(selectedCharacterIndex, 0, saveData.Characters.Count - 1); // 선택 캐릭터 번호 범위 보정
+            selectedCharacterIndex = Mathf.Clamp(selectedCharacterIndex, 0, saveData.Characters.Count - 1); // 선택 캐릭터 번호 보정
             return saveData.Characters[selectedCharacterIndex]; // 선택 캐릭터 저장 반환
         }
 
@@ -486,7 +557,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             selectedCharacterIndex = (selectedCharacterIndex - 1 + saveData.Characters.Count) % saveData.Characters.Count; // 이전 캐릭터 번호 순환 계산
-            selectedInstanceId = string.Empty; // 캐릭터 변경 시 장비 선택 초기화
+            selectedInstanceId = string.Empty; // 캐릭터 변경 선택 장비 초기화
+            SetStatus("이전 캐릭터를 선택했습니다."); // 캐릭터 선택 상태 표시
             Refresh(); // 캐릭터 화면 갱신
         }
 
@@ -498,18 +570,26 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             selectedCharacterIndex = (selectedCharacterIndex + 1) % saveData.Characters.Count; // 다음 캐릭터 번호 순환 계산
-            selectedInstanceId = string.Empty; // 캐릭터 변경 시 장비 선택 초기화
+            selectedInstanceId = string.Empty; // 캐릭터 변경 선택 장비 초기화
+            SetStatus("다음 캐릭터를 선택했습니다."); // 캐릭터 선택 상태 표시
             Refresh(); // 캐릭터 화면 갱신
         }
 
-        private void SelectEquippedWeapon() // 현재 무기 슬롯 장비 선택
+        private void SelectEquipment(string instanceId) // 장비 인벤토리 선택
         {
-            SelectEquippedSlot(EquipmentSlot.Weapon); // 무기 슬롯 장비 선택 실행
+            selectedInstanceId = instanceId ?? string.Empty; // 선택 장비 인스턴스 저장
+            SetStatus("선택 장비의 변경 전후 능력치를 계산했습니다."); // 장비 선택 상태 표시
+            Refresh(); // 장비 상세 화면 갱신
         }
 
-        private void SelectEquippedArmor() // 현재 방어구 슬롯 장비 선택
+        private void SelectEquippedWeapon() // 현재 무기 슬롯 선택
         {
-            SelectEquippedSlot(EquipmentSlot.Armor); // 방어구 슬롯 장비 선택 실행
+            SelectEquippedSlot(EquipmentSlot.Weapon); // 무기 슬롯 선택 실행
+        }
+
+        private void SelectEquippedArmor() // 현재 방어구 슬롯 선택
+        {
+            SelectEquippedSlot(EquipmentSlot.Armor); // 방어구 슬롯 선택 실행
         }
 
         private void SelectEquippedSlot(EquipmentSlot slot) // 현재 슬롯 장비 선택
@@ -520,26 +600,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             CharacterSaveData characterSave = GetSelectedCharacter(saveData); // 선택 캐릭터 저장 조회
+            EquipmentInstanceSaveData instance = CharacterEquipmentService.GetEquippedInstance(saveData, characterSave.CharacterId, slot); // 현재 슬롯 장비 조회
 
-            if (characterSave == null) // 선택 캐릭터 존재 확인
+            if (instance == null) // 현재 슬롯 장비 존재 확인
             {
-                return; // 슬롯 장비 선택 중단
+                SetStatus($"{GetSlotDisplayName(slot)} 슬롯이 비어 있습니다."); // 빈 슬롯 안내
+                return; // 슬롯 선택 중단
             }
 
-            string instanceId = characterSave.Equipment.GetInstanceId(slot); // 슬롯 장착 장비 ID 조회
-
-            if (string.IsNullOrWhiteSpace(instanceId)) // 슬롯 장비 존재 확인
-            {
-                SetStatus(slot == EquipmentSlot.Weapon ? "무기 슬롯이 비어 있습니다." : "방어구 슬롯이 비어 있습니다."); // 빈 슬롯 상태 표시
-                return; // 슬롯 장비 선택 종료
-            }
-
-            SelectEquipment(instanceId); // 슬롯 장비 상세 선택
-        }
-
-        private void SelectEquipment(string instanceId) // 장비 인스턴스 상세 선택
-        {
-            selectedInstanceId = instanceId ?? string.Empty; // 선택 장비 인스턴스 저장
+            selectedInstanceId = instance.InstanceId; // 현재 슬롯 장비 선택
+            SetStatus($"현재 {GetSlotDisplayName(slot)} 장비를 선택했습니다."); // 슬롯 선택 상태 표시
             Refresh(); // 장비 상세 화면 갱신
         }
 
@@ -554,77 +624,171 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameManager.Instance.Scenes.LoadScene(GameScenes.Lobby); // 로비 씬 이동
         }
 
-        private void ShowHelp() // 임시 장비 화면 도움말 표시
+        private void SetAction(bool interactable, string label) // 장비 액션 상태 설정
         {
-            SetStatus("테스트 장비 지급 → 보유 장비 선택 → 장착/교체/해제 순서로 확인할 수 있습니다."); // 임시 화면 사용법 표시
+            actionButton.interactable = interactable; // 장비 액션 활성 상태 적용
+            actionButtonText.text = label ?? string.Empty; // 장비 액션 문구 적용
         }
 
-        private void ShowPrototypeOnly() // 미구현 탭 안내
+        private void SetStatus(string value) // 화면 상태 문구 설정
         {
-            SetStatus("현재 Day34 임시 화면에서는 장비 탭만 동작합니다."); // 미구현 탭 범위 안내
-        }
-
-        private void SetAction(bool interactable, string label) // 장비 액션 버튼 상태 설정
-        {
-            actionButton.interactable = interactable; // 장비 액션 버튼 입력 상태 적용
-            actionButtonText.text = label; // 장비 액션 버튼 라벨 적용
-        }
-
-        private void SetStatus(string message) // 화면 상태 문구 설정
-        {
-            if (statusText != null) // 화면 상태 텍스트 존재 확인
+            if (statusText != null) // 상태 텍스트 존재 확인
             {
-                statusText.text = message ?? string.Empty; // 화면 상태 문구 적용
+                statusText.text = value ?? string.Empty; // 상태 문구 적용
             }
         }
 
-        private static string GetGradeStars(ItemGrade grade) // 장비 등급 별 문구 생성
+        private static string BuildStatsDescription(BattleStats stats) // 현재 최종 능력치 문구 생성
         {
-            int starCount = Mathf.Clamp(((int)grade) + 1, 1, 5); // 장비 등급 별 개수 계산
-            return new string('★', starCount) + new string('☆', 5 - starCount); // 장비 등급 별 문구 반환
+            if (stats == null) // 전투 능력치 존재 확인
+            {
+                return "능력치를 계산할 수 없습니다."; // 능력치 누락 문구 반환
+            }
+
+            return $"HP        {stats.MaxHp}\nATK       {stats.Attack}\nDEF       {stats.Defense}\nRES       {stats.Resistance}\n공격속도   {stats.AttackSpeed:0.00}\n명중률     {stats.Accuracy * 100f:0.#}%\n치명타율   {stats.CriticalRate * 100f:0.#}%\n사거리     {stats.AttackRange:0.00}\n이동속도   {stats.MoveSpeed:0.00}"; // 최종 능력치 문구 반환
         }
 
-        private static string GetStatDisplayName(EquipmentStatType statType) // 장비 능력치 표시 이름 반환
+        private static string BuildComparisonDescription(BattleStats currentStats, BattleStats previewStats) // 변경 전후 능력치 비교 문구 생성
         {
-            switch (statType) // 장비 능력치 종류 분기
+            if (currentStats == null || previewStats == null) // 비교 능력치 존재 확인
             {
-                case EquipmentStatType.MaxHp: return "최대 HP"; // 최대 체력 표시 이름 반환
-                case EquipmentStatType.Attack: return "공격력"; // 공격력 표시 이름 반환
-                case EquipmentStatType.Defense: return "방어력"; // 방어력 표시 이름 반환
-                case EquipmentStatType.Resistance: return "저항력"; // 저항력 표시 이름 반환
-                case EquipmentStatType.AttackSpeed: return "공격 속도"; // 공격 속도 표시 이름 반환
-                case EquipmentStatType.Accuracy: return "명중률"; // 명중률 표시 이름 반환
-                case EquipmentStatType.CriticalRate: return "치명타율"; // 치명타율 표시 이름 반환
-                case EquipmentStatType.AttackRange: return "공격 사거리"; // 공격 사거리 표시 이름 반환
-                case EquipmentStatType.MoveSpeed: return "이동 속도"; // 이동 속도 표시 이름 반환
-                default: return statType.ToString(); // 미지원 능력치 이름 반환
+                return "비교 능력치를 계산할 수 없습니다."; // 비교 능력치 누락 문구 반환
             }
+
+            string hp = BuildIntComparison("HP", currentStats.MaxHp, previewStats.MaxHp); // 최대 체력 비교 문구 생성
+            string attack = BuildIntComparison("ATK", currentStats.Attack, previewStats.Attack); // 공격력 비교 문구 생성
+            string defense = BuildIntComparison("DEF", currentStats.Defense, previewStats.Defense); // 방어력 비교 문구 생성
+            string resistance = BuildIntComparison("RES", currentStats.Resistance, previewStats.Resistance); // 저항력 비교 문구 생성
+            string attackSpeed = BuildFloatComparison("공격속도", currentStats.AttackSpeed, previewStats.AttackSpeed, false); // 공격속도 비교 문구 생성
+            string accuracy = BuildFloatComparison("명중률", currentStats.Accuracy, previewStats.Accuracy, true); // 명중률 비교 문구 생성
+            string criticalRate = BuildFloatComparison("치명타율", currentStats.CriticalRate, previewStats.CriticalRate, true); // 치명타율 비교 문구 생성
+            string attackRange = BuildFloatComparison("사거리", currentStats.AttackRange, previewStats.AttackRange, false); // 공격 사거리 비교 문구 생성
+            string moveSpeed = BuildFloatComparison("이동속도", currentStats.MoveSpeed, previewStats.MoveSpeed, false); // 이동속도 비교 문구 생성
+            return $"{hp}\n{attack}\n{defense}\n{resistance}\n{attackSpeed}\n{accuracy}\n{criticalRate}\n{attackRange}\n{moveSpeed}"; // 전체 능력치 비교 문구 반환
+        }
+
+        private static string BuildIntComparison(string label, int currentValue, int previewValue) // 정수 능력치 비교 문구 생성
+        {
+            int delta = previewValue - currentValue; // 정수 변화량 계산
+            string deltaText = delta == 0 ? "=" : delta > 0 ? $"+{delta}" : delta.ToString(); // 정수 변화량 문구 생성
+            return $"{label,-6} {currentValue} → {previewValue}   ({deltaText})"; // 정수 비교 문구 반환
+        }
+
+        private static string BuildFloatComparison(string label, float currentValue, float previewValue, bool percentage) // 실수 능력치 비교 문구 생성
+        {
+            float multiplier = percentage ? 100f : 1f; // 백분율 배율 결정
+            float currentDisplay = currentValue * multiplier; // 현재 표시값 계산
+            float previewDisplay = previewValue * multiplier; // 예상 표시값 계산
+            float delta = previewDisplay - currentDisplay; // 실수 변화량 계산
+            string suffix = percentage ? "%" : string.Empty; // 실수 표시 접미사 결정
+            string deltaText = Mathf.Abs(delta) < 0.0001f ? "=" : delta > 0f ? $"+{delta:0.##}{suffix}" : $"{delta:0.##}{suffix}"; // 실수 변화량 문구 생성
+            return $"{label,-6} {currentDisplay:0.##}{suffix} → {previewDisplay:0.##}{suffix}   ({deltaText})"; // 실수 비교 문구 반환
+        }
+
+        private static string BuildStatDescription(EquipmentData equipment) // 장비 상세 능력치 문구 생성
+        {
+            if (equipment == null || equipment.StatOptions == null || equipment.StatOptions.Count == 0) // 장비 옵션 존재 확인
+            {
+                return "추가 능력치 없음"; // 장비 옵션 없음 문구 반환
+            }
+
+            string description = string.Empty; // 장비 옵션 문구 초기화
+
+            for (int index = 0; index < equipment.StatOptions.Count; index++) // 장비 옵션 순회
+            {
+                EquipmentStatOption option = equipment.StatOptions[index]; // 현재 장비 옵션 조회
+                string value = FormatStatValue(option.StatType, option.Value); // 장비 옵션 수치 문구 생성
+                string separator = index == 0 ? string.Empty : "\n"; // 장비 옵션 줄바꿈 결정
+                description += $"{separator}{GetStatDisplayName(option.StatType)}  {value}"; // 장비 옵션 문구 누적
+            }
+
+            return description; // 장비 상세 문구 반환
+        }
+
+        private static string BuildCompactStatDescription(EquipmentData equipment) // 장비 목록 축약 능력치 문구 생성
+        {
+            if (equipment == null || equipment.StatOptions == null || equipment.StatOptions.Count == 0) // 장비 옵션 존재 확인
+            {
+                return "옵션 없음"; // 장비 옵션 없음 문구 반환
+            }
+
+            string description = string.Empty; // 장비 축약 옵션 문구 초기화
+            int count = Mathf.Min(2, equipment.StatOptions.Count); // 장비 축약 옵션 최대 개수 결정
+
+            for (int index = 0; index < count; index++) // 장비 축약 옵션 순회
+            {
+                EquipmentStatOption option = equipment.StatOptions[index]; // 현재 장비 옵션 조회
+                string separator = index == 0 ? string.Empty : " / "; // 장비 축약 옵션 구분자 결정
+                description += $"{separator}{GetStatDisplayName(option.StatType)} {FormatStatValue(option.StatType, option.Value)}"; // 장비 축약 옵션 문구 누적
+            }
+
+            if (equipment.StatOptions.Count > count) // 추가 장비 옵션 존재 확인
+            {
+                description += $" 외 {equipment.StatOptions.Count - count}"; // 추가 옵션 개수 표시
+            }
+
+            return description; // 장비 축약 문구 반환
         }
 
         private static string FormatStatValue(EquipmentStatType statType, float value) // 장비 능력치 수치 문구 생성
         {
-            if (statType == EquipmentStatType.Accuracy || statType == EquipmentStatType.CriticalRate) // 비율 능력치 여부 확인
-            {
-                return $"{value * 100f:0.#}%"; // 비율 능력치 백분율 문구 반환
-            }
-
-            return Mathf.Approximately(value, Mathf.Round(value)) ? Mathf.RoundToInt(value).ToString() : value.ToString("0.##"); // 일반 능력치 문구 반환
+            bool percentage = statType == EquipmentStatType.Accuracy || statType == EquipmentStatType.CriticalRate; // 백분율 능력치 여부 계산
+            float displayValue = percentage ? value * 100f : value; // 장비 능력치 표시값 계산
+            string suffix = percentage ? "%" : string.Empty; // 장비 능력치 접미사 결정
+            string sign = displayValue >= 0f ? "+" : string.Empty; // 양수 장비 능력치 부호 생성
+            return $"{sign}{displayValue:0.##}{suffix}"; // 장비 능력치 수치 문구 반환
         }
 
-        private static void CreateLockedSlot(Transform parent, string name, string label, Vector2 min, Vector2 max) // 준비중 장비 슬롯 생성
+        private static string GetStatDisplayName(EquipmentStatType statType) // 장비 능력치 표시 이름 조회
         {
-            Image image = CreateImage(parent, name, new Color(0.83f, 0.83f, 0.83f, 1f)); // 준비중 슬롯 배경 생성
-            SetRect(image.rectTransform, min, max); // 준비중 슬롯 배치
-            AddOutline(image.gameObject); // 준비중 슬롯 외곽선 추가
-            Text text = CreateText(image.transform, "Label", label, 18, FontStyle.Bold, new Color(0.38f, 0.38f, 0.38f, 1f)); // 준비중 슬롯 라벨 생성
-            Stretch(text.rectTransform, 4f); // 준비중 슬롯 라벨 확장
+            switch (statType) // 장비 능력치 유형 분기
+            {
+                case EquipmentStatType.MaxHp: // 최대 체력 유형 처리
+                    return "HP"; // 최대 체력 이름 반환
+                case EquipmentStatType.Attack: // 공격력 유형 처리
+                    return "공격력"; // 공격력 이름 반환
+                case EquipmentStatType.Defense: // 방어력 유형 처리
+                    return "방어력"; // 방어력 이름 반환
+                case EquipmentStatType.Resistance: // 저항력 유형 처리
+                    return "저항력"; // 저항력 이름 반환
+                case EquipmentStatType.AttackSpeed: // 공격속도 유형 처리
+                    return "공격속도"; // 공격속도 이름 반환
+                case EquipmentStatType.Accuracy: // 명중률 유형 처리
+                    return "명중률"; // 명중률 이름 반환
+                case EquipmentStatType.CriticalRate: // 치명타율 유형 처리
+                    return "치명타율"; // 치명타율 이름 반환
+                case EquipmentStatType.AttackRange: // 공격 사거리 유형 처리
+                    return "사거리"; // 공격 사거리 이름 반환
+                case EquipmentStatType.MoveSpeed: // 이동속도 유형 처리
+                    return "이동속도"; // 이동속도 이름 반환
+                default: // 알 수 없는 유형 처리
+                    return statType.ToString(); // 열거형 이름 반환
+            }
+        }
+
+        private static string GetSlotDisplayName(EquipmentSlot slot) // 장비 슬롯 표시 이름 조회
+        {
+            return slot == EquipmentSlot.Weapon ? "무기" : "방어구"; // 장비 슬롯 이름 반환
+        }
+
+        private static string GetGradeStars(ItemGrade grade) // 장비 등급 별 문구 생성
+        {
+            int starCount = Mathf.Clamp((int)grade + 1, 1, 5); // 장비 등급 별 개수 계산
+            return new string('★', starCount) + new string('☆', 5 - starCount); // 장비 등급 별 문구 반환
+        }
+
+        private static void CreateLockedSlot(Transform parent, string name, string label, Vector2 anchorMin, Vector2 anchorMax) // 준비 중 장비 슬롯 생성
+        {
+            Button slot = CreateButton(parent, name, label, new Color(0.88f, 0.88f, 0.88f, 1f)); // 준비 중 슬롯 버튼 생성
+            SetRect(slot.GetComponent<RectTransform>(), anchorMin, anchorMax); // 준비 중 슬롯 배치
+            slot.interactable = false; // 준비 중 슬롯 입력 비활성화
         }
 
         private static Image CreateImage(Transform parent, string name, Color color) // 공통 UI 이미지 생성
         {
             GameObject imageObject = new GameObject(name, typeof(RectTransform), typeof(Image)); // UI 이미지 객체 생성
             imageObject.transform.SetParent(parent, false); // UI 이미지 부모 연결
-            Image image = imageObject.GetComponent<Image>(); // UI 이미지 컴포넌트 조회
+            Image image = imageObject.GetComponent<Image>(); // UI Image 컴포넌트 조회
             image.color = color; // UI 이미지 색상 적용
             return image; // 생성 UI 이미지 반환
         }
@@ -640,11 +804,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             text.fontStyle = fontStyle; // UI 텍스트 스타일 적용
             text.color = color; // UI 텍스트 색상 적용
             text.alignment = TextAnchor.MiddleCenter; // UI 텍스트 중앙 정렬
-            text.alignByGeometry = true; // UI 텍스트 글리프 정렬 활성화
-            text.resizeTextForBestFit = true; // UI 텍스트 자동 크기 활성화
-            text.resizeTextMinSize = 10; // UI 텍스트 최소 크기 설정
-            text.resizeTextMaxSize = fontSize; // UI 텍스트 최대 크기 설정
-            text.raycastTarget = false; // UI 텍스트 입력 비활성화
+            text.raycastTarget = false; // UI 텍스트 레이캐스트 비활성화
             return text; // 생성 UI 텍스트 반환
         }
 
@@ -653,50 +813,36 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)); // UI 버튼 객체 생성
             buttonObject.transform.SetParent(parent, false); // UI 버튼 부모 연결
             Image image = buttonObject.GetComponent<Image>(); // UI 버튼 이미지 조회
-            image.color = color; // UI 버튼 배경색 적용
+            image.color = color; // UI 버튼 색상 적용
             Button button = buttonObject.GetComponent<Button>(); // UI Button 컴포넌트 조회
-            button.targetGraphic = image; // UI 버튼 대상 그래픽 연결
-            AddOutline(buttonObject); // UI 버튼 외곽선 추가
-            Text text = CreateText(buttonObject.transform, "Label", label, 20, FontStyle.Normal, new Color(0.08f, 0.09f, 0.11f, 1f)); // UI 버튼 라벨 생성
-            Stretch(text.rectTransform, 5f); // UI 버튼 라벨 확장
+            Text text = CreateText(buttonObject.transform, "Text", label, 16, FontStyle.Bold, new Color(0.10f, 0.10f, 0.10f, 1f)); // UI 버튼 라벨 생성
+            text.horizontalOverflow = HorizontalWrapMode.Wrap; // UI 버튼 라벨 줄바꿈 적용
+            text.verticalOverflow = VerticalWrapMode.Truncate; // UI 버튼 라벨 세로 영역 제한
+            Stretch(text.rectTransform, 7f); // UI 버튼 라벨 확장
             return button; // 생성 UI 버튼 반환
         }
 
-        private static void AddOutline(GameObject target) // 공통 UI 외곽선 추가
+        private static void AddOutline(GameObject target) // UI 외곽선 추가
         {
-            Outline outline = target.GetComponent<Outline>(); // 기존 UI 외곽선 조회
-
-            if (outline == null) // 기존 UI 외곽선 존재 확인
-            {
-                outline = target.AddComponent<Outline>(); // UI 외곽선 컴포넌트 추가
-            }
-
-            outline.effectColor = new Color(0.18f, 0.18f, 0.18f, 0.65f); // UI 외곽선 색상 적용
-            outline.effectDistance = new Vector2(1f, -1f); // UI 외곽선 두께 적용
+            Outline outline = target.AddComponent<Outline>(); // UI 외곽선 컴포넌트 추가
+            outline.effectColor = new Color(0.25f, 0.25f, 0.25f, 0.35f); // UI 외곽선 색상 설정
+            outline.effectDistance = new Vector2(1f, -1f); // UI 외곽선 거리 설정
         }
 
-        private static void Stretch(RectTransform rect) // RectTransform 전체 확장
+        private static void SetRect(RectTransform rectTransform, Vector2 anchorMin, Vector2 anchorMax) // 앵커 기반 UI 배치
         {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 전체 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 전체 설정
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
+            rectTransform.anchorMin = anchorMin; // 최소 앵커 적용
+            rectTransform.anchorMax = anchorMax; // 최대 앵커 적용
+            rectTransform.offsetMin = Vector2.zero; // 최소 오프셋 초기화
+            rectTransform.offsetMax = Vector2.zero; // 최대 오프셋 초기화
         }
 
-        private static void Stretch(RectTransform rect, float padding) // RectTransform 내부 여백 확장
+        private static void Stretch(RectTransform rectTransform, float padding = 0f) // 부모 전체 영역 확장
         {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 전체 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 전체 설정
-            rect.offsetMin = new Vector2(padding, padding); // 최소 내부 여백 설정
-            rect.offsetMax = new Vector2(-padding, -padding); // 최대 내부 여백 설정
-        }
-
-        private static void SetRect(RectTransform rect, Vector2 min, Vector2 max) // RectTransform 앵커 배치
-        {
-            rect.anchorMin = min; // 최소 앵커 설정
-            rect.anchorMax = max; // 최대 앵커 설정
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
+            rectTransform.anchorMin = Vector2.zero; // 최소 앵커 전체 확장 설정
+            rectTransform.anchorMax = Vector2.one; // 최대 앵커 전체 확장 설정
+            rectTransform.offsetMin = new Vector2(padding, padding); // 최소 여백 적용
+            rectTransform.offsetMax = new Vector2(-padding, -padding); // 최대 여백 적용
         }
     }
 }

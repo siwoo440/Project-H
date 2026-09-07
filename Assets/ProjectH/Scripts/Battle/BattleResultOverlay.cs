@@ -116,15 +116,23 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             cardOutline.effectColor = member.IsAlive ? new Color(0.28f, 0.38f, 0.50f, 0.65f) : new Color(0.55f, 0.22f, 0.24f, 0.78f); // 생존 상태별 카드 외곽선 적용
             cardOutline.effectDistance = new Vector2(2f, -2f); // 카드 외곽선 두께 설정
             Image portrait = CreateImage(card.transform, "PortraitPlaceholder", GetPortraitColor(index, member.IsAlive)); // 임시 캐릭터 스탠딩 영역 생성
-            SetRect(portrait.rectTransform, new Vector2(0.08f, 0.36f), new Vector2(0.92f, 0.91f)); // 임시 캐릭터 영역 배치
+            SetRect(portrait.rectTransform, new Vector2(0.08f, 0.38f), new Vector2(0.92f, 0.91f)); // 성장 정보 공간 포함 임시 캐릭터 영역 배치
             Text portraitLabel = CreateText(portrait.transform, "PortraitLabel", GetPortraitLabel(member.DisplayName), 58, FontStyle.Bold, new Color(1f, 1f, 1f, 0.94f)); // 임시 캐릭터 이름 문자 생성
             Stretch(portraitLabel.rectTransform, 4f); // 임시 캐릭터 문자 확장
             Text nameText = CreateText(card.transform, "Name", member.DisplayName, 24, FontStyle.Bold, NavyColor); // 캐릭터 이름 생성
             SetRect(nameText.rectTransform, new Vector2(0.05f, 0.88f), new Vector2(0.95f, 0.99f)); // 캐릭터 이름 배치
-            Text levelText = CreateText(card.transform, "Level", $"Lv. {member.Level}", 22, FontStyle.Bold, NavyColor); // 캐릭터 레벨 생성
-            SetRect(levelText.rectTransform, new Vector2(0.06f, 0.25f), new Vector2(0.94f, 0.35f)); // 캐릭터 레벨 배치
+            Text levelText = CreateText(card.transform, "Level", GetLevelText(member), 22, FontStyle.Bold, NavyColor); // 실제 성장 반영 레벨 텍스트 생성
+            SetRect(levelText.rectTransform, new Vector2(0.06f, 0.275f), new Vector2(0.94f, 0.355f)); // 성장 반영 레벨 텍스트 배치
+
+            if (member.HasGrowthResult) // 실제 성장 결과 존재 확인
+            {
+                Color growthColor = member.LevelsGained > 0 ? GoldColor : NavyColor; // 레벨업 여부별 성장 글자 색상 선택
+                Text growthText = CreateText(card.transform, "Growth", GetGrowthText(member), 18, FontStyle.Bold, growthColor); // 경험치 및 레벨업 결과 텍스트 생성
+                SetRect(growthText.rectTransform, new Vector2(0.04f, 0.205f), new Vector2(0.96f, 0.275f)); // 성장 결과 텍스트 배치
+            }
+
             Image hpBack = CreateImage(card.transform, "HpBack", new Color(0.25f, 0.27f, 0.29f, 0.28f)); // 결과 HP 배경 생성
-            SetRect(hpBack.rectTransform, new Vector2(0.08f, 0.16f), new Vector2(0.92f, 0.22f)); // 결과 HP 배경 배치
+            SetRect(hpBack.rectTransform, new Vector2(0.08f, 0.135f), new Vector2(0.92f, 0.19f)); // 성장 정보 아래 결과 HP 배경 배치
             Image hpFill = CreateImage(hpBack.transform, "HpFill", member.IsAlive ? HpColor : DownColor); // 결과 HP 채움 생성
             Stretch(hpFill.rectTransform); // 결과 HP 채움 확장
             hpFill.type = Image.Type.Filled; // 결과 HP Filled 타입 설정
@@ -132,9 +140,46 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             hpFill.fillOrigin = 0; // 결과 HP 왼쪽 시작 설정
             hpFill.fillAmount = Mathf.Clamp01(member.HealthRatio); // 결과 HP 비율 적용
             Text hpText = CreateText(card.transform, "HpText", $"HP {member.CurrentHp} / {member.MaxHp}", 18, FontStyle.Bold, NavyColor); // 종료 체력 텍스트 생성
-            SetRect(hpText.rectTransform, new Vector2(0.05f, 0.075f), new Vector2(0.95f, 0.15f)); // 종료 체력 텍스트 배치
+            SetRect(hpText.rectTransform, new Vector2(0.05f, 0.06f), new Vector2(0.95f, 0.13f)); // 종료 체력 텍스트 배치
             Text stateText = CreateText(card.transform, "State", member.IsAlive ? "ALIVE" : "DOWN", 18, FontStyle.Bold, member.IsAlive ? HpColor : DownColor); // 종료 생존 상태 텍스트 생성
-            SetRect(stateText.rectTransform, new Vector2(0.05f, 0.005f), new Vector2(0.95f, 0.075f)); // 종료 생존 상태 텍스트 배치
+            SetRect(stateText.rectTransform, new Vector2(0.05f, 0.005f), new Vector2(0.95f, 0.06f)); // 종료 생존 상태 텍스트 배치
+        }
+
+        private static string GetLevelText(BattleResultPartyMember member) // 결과 카드 레벨 문구 생성
+        {
+            if (!member.HasGrowthResult) // 성장 결과 미존재 확인
+            {
+                return $"Lv. {member.Level}"; // 기존 전투 적용 레벨 반환
+            }
+
+            if (member.LevelsGained > 0) // 레벨 상승 여부 확인
+            {
+                string maxSuffix = member.ReachedMaxLevel ? " · MAX" : string.Empty; // 최대 레벨 접미사 생성
+                return $"Lv. {member.GrowthStartLevel} → Lv. {member.GrowthEndLevel}{maxSuffix}"; // 레벨 상승 전후 문구 반환
+            }
+
+            return member.ReachedMaxLevel ? $"Lv. {member.GrowthEndLevel} · MAX" : $"Lv. {member.GrowthEndLevel}"; // 레벨 유지 또는 최대 레벨 문구 반환
+        }
+
+        private static string GetGrowthText(BattleResultPartyMember member) // 결과 카드 성장 문구 생성
+        {
+            if (member.ReachedMaxLevel) // 최대 레벨 상태 확인
+            {
+                return $"EXP +{member.GainedExperience} · MAX"; // 최대 레벨 경험치 결과 반환
+            }
+
+            if (member.LevelsGained > 1) // 다중 레벨업 여부 확인
+            {
+                return $"LEVEL UP ×{member.LevelsGained} · EXP +{member.GainedExperience}"; // 다중 레벨업 결과 반환
+            }
+
+            if (member.LevelsGained == 1) // 단일 레벨업 여부 확인
+            {
+                return $"LEVEL UP! · EXP +{member.GainedExperience}"; // 단일 레벨업 결과 반환
+            }
+
+            int requiredExperience = CharacterLevelProgression.GetRequiredExperience(member.GrowthEndLevel); // 현재 레벨 다음 필요 경험치 조회
+            return $"EXP +{member.GainedExperience} · {member.GrowthEndExperience} / {requiredExperience}"; // 레벨 유지 경험치 진행도 반환
         }
 
         private static Color GetPortraitColor(int index, bool isAlive) // 임시 캐릭터 영역 색상 반환

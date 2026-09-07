@@ -54,9 +54,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     continue; // 미보유 캐릭터 경험치 지급 제외
                 }
 
-                CharacterLevelProgressionResult progression = CharacterLevelProgression.Apply(character.Level, character.Experience, result.Experience); // 현재 성장 상태와 획득 경험치 계산
+                int startLevel = character.Level; // 성장 적용 전 레벨 저장
+                int startExperience = character.Experience; // 성장 적용 전 경험치 저장
+                CharacterLevelProgressionResult progression = CharacterLevelProgression.Apply(startLevel, startExperience, result.Experience); // 현재 성장 상태와 획득 경험치 계산
                 character.SetLevel(progression.Level); // 계산된 캐릭터 레벨 저장
                 character.SetExperience(progression.Experience); // 계산된 잔여 경험치 저장
+                member.ApplyGrowthResult(startLevel, startExperience, result.Experience, progression); // 결과 화면용 실제 성장 결과 연결
             }
         }
     }

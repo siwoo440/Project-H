@@ -6,12 +6,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 {
     public static class DungeonSelectionRuntimeState // 던전 선택 런타임 상태
     {
-        private static readonly string[] DungeonIds = { "DG001", "DG002", "DG003", "DG004" }; // 26일차 지원 던전 ID 목록
+        private static readonly string[] DungeonIds = { "DG001", "DG002", "DG003", "DG004" }; // 지원 던전 ID 목록
         private static string selectedDungeonId = string.Empty; // 현재 선택 던전 ID
+        private static Func<string, bool> unlockEvaluator; // 현재 던전 해금 검사 함수
 
         public static IReadOnlyList<string> SupportedDungeonIds => DungeonIds; // 지원 던전 ID 목록 반환
         public static string SelectedDungeonId => selectedDungeonId; // 현재 선택 던전 ID 반환
         public static event Action<string> SelectionChanged; // 던전 선택 변경 이벤트
+
+        public static void SetUnlockEvaluator(Func<string, bool> evaluator) // 던전 해금 검사 함수 설정
+        {
+            unlockEvaluator = evaluator; // 현재 해금 검사 함수 저장
+        }
 
         public static bool TrySelect(string dungeonId, Func<string, bool> dungeonExists) // 던전 선택 시도
         {
@@ -23,6 +29,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (dungeonExists == null || !dungeonExists(dungeonId)) // 던전 데이터 존재 확인
             {
                 return false; // 누락 데이터 선택 차단
+            }
+
+            if (!IsUnlockedForSelection(dungeonId)) // 던전 해금 상태 확인
+            {
+                return false; // 잠긴 던전 선택 차단
             }
 
             if (string.Equals(selectedDungeonId, dungeonId, StringComparison.Ordinal)) // 동일 선택 여부 확인
@@ -45,6 +56,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (!IsSupportedDungeonId(selectedDungeonId)) // 지원 던전 여부 확인
             {
                 return false; // 미지원 선택 진입 차단
+            }
+
+            if (!IsUnlockedForSelection(selectedDungeonId)) // 현재 선택 던전 해금 상태 확인
+            {
+                return false; // 잠긴 선택 진입 차단
             }
 
             return dungeonExists != null && dungeonExists(selectedDungeonId); // 실제 던전 데이터 존재 결과 반환
@@ -82,12 +98,19 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public static void ResetAll() // 전체 선택 상태 초기화
         {
             selectedDungeonId = string.Empty; // 선택 ID 초기화
+            unlockEvaluator = null; // 해금 검사 함수 초기화
+        }
+
+        private static bool IsUnlockedForSelection(string dungeonId) // 현재 던전 해금 여부 확인
+        {
+            return unlockEvaluator == null || unlockEvaluator(dungeonId); // 해금 검사 미설정 또는 허용 결과 반환
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] // 플레이 세션 상태 초기화 지정
-        private static void ResetRuntime() // 플레이 세션 상태 초기화
+        private static void ResetRuntime() // 플레이 세션 던전 선택 상태 초기화
         {
             selectedDungeonId = string.Empty; // 선택 ID 초기화
+            unlockEvaluator = null; // 해금 검사 함수 초기화
             SelectionChanged = null; // 이전 이벤트 구독 해제
         }
     }

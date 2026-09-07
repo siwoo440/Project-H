@@ -1,4 +1,4 @@
-using System; // 숫자 범위 보정 기능
+using System; // 문자열 및 숫자 범위 기능
 using System.Collections.Generic; // 중복 검사 집합 기능
 using ProjectH.SaveSystem; // 저장 데이터 기능
 
@@ -21,14 +21,15 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (result.Outcome == BattleOutcome.Victory) // 승리 결과 여부 확인
             {
                 BattleProgressSaveAdapter.AddGold(saveData, result.Gold); // 승리 골드 영구 반영
-                ApplyExperience(saveData, result); // 참가 캐릭터 경험치 영구 반영
+                ApplyExperience(saveData, result); // 참가 캐릭터 경험치 및 레벨 영구 반영
+                DungeonProgressSaveAdapter.MarkCleared(saveData, result.DungeonId); // 승리 던전 클리어 영구 반영
             }
 
             BattleProgressSaveAdapter.MarkBattleResultCommitted(saveData, result.ResultId); // 전투 결과 반영 완료 기록
             return true; // 결과 반영 성공 반환
         }
 
-        private static void ApplyExperience(SaveData saveData, BattleResultData result) // 참가 캐릭터 경험치 반영
+        private static void ApplyExperience(SaveData saveData, BattleResultData result) // 참가 캐릭터 경험치 및 레벨 반영
         {
             if (result.Experience <= 0 || result.Members == null) // 경험치 및 파티 결과 확인
             {
@@ -53,9 +54,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     continue; // 미보유 캐릭터 경험치 지급 제외
                 }
 
-                long summedExperience = (long)character.Experience + result.Experience; // 경험치 오버플로 방지 합산
-                int nextExperience = summedExperience > int.MaxValue ? int.MaxValue : (int)summedExperience; // 최대 정수 범위 보정
-                character.SetExperience(nextExperience); // 참가 캐릭터 경험치 저장
+                CharacterLevelProgressionResult progression = CharacterLevelProgression.Apply(character.Level, character.Experience, result.Experience); // 현재 성장 상태와 획득 경험치 계산
+                character.SetLevel(progression.Level); // 계산된 캐릭터 레벨 저장
+                character.SetExperience(progression.Experience); // 계산된 잔여 경험치 저장
             }
         }
     }

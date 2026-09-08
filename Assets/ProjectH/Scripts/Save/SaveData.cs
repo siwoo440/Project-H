@@ -117,6 +117,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private List<CharacterSaveData> characters = new List<CharacterSaveData>(); // 캐릭터 진행 목록
         [SerializeField] private List<string> storyFlags = new List<string>(); // 활성 스토리 플래그 목록
         [SerializeField] private List<EquipmentInstanceSaveData> equipmentInventory = new List<EquipmentInstanceSaveData>(); // 보유 장비 인스턴스 목록
+        [SerializeField] private List<ItemStackSaveData> itemInventory = new List<ItemStackSaveData>(); // 보유 일반 아이템 스택 목록
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -128,6 +129,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public IReadOnlyList<CharacterSaveData> Characters => characters; // 캐릭터 진행 반환
         public IReadOnlyList<string> StoryFlags => storyFlags; // 스토리 플래그 반환
         public IReadOnlyList<EquipmentInstanceSaveData> EquipmentInventory => equipmentInventory; // 장비 인벤토리 반환
+        public IReadOnlyList<ItemStackSaveData> ItemInventory => itemInventory; // 일반 아이템 인벤토리 반환
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -196,6 +198,13 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 equipmentInventory = new List<EquipmentInstanceSaveData>(); // 장비 인벤토리 복원
             }
 
+            if (itemInventory == null) // 일반 아이템 인벤토리 확인
+            {
+                itemInventory = new List<ItemStackSaveData>(); // 일반 아이템 인벤토리 복원
+            }
+
+            NormalizeItemInventory(); // 일반 아이템 스택 정규화
+
             if (currentChapter == null) // 현재 챕터 확인
             {
                 currentChapter = string.Empty; // 챕터 기본값 복원
@@ -239,6 +248,52 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         {
             EnsureDefaults(); // 저장 기본값 확인
             return FindEquipmentInstanceInternal(instanceId); // 장비 인스턴스 조회 결과 반환
+        }
+
+        public int GetItemCount(string itemId) // 일반 아이템 보유 수량 조회
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            ItemStackSaveData stack = FindItemStackInternal(itemId); // 일반 아이템 스택 조회
+            return stack == null ? 0 : stack.Quantity; // 일반 아이템 수량 반환
+        }
+
+        internal bool TrySetItemCountInternal(string itemId, int quantity, out string error) // 일반 아이템 수량 내부 변경
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            error = string.Empty; // 오류 문구 초기화
+
+            if (string.IsNullOrWhiteSpace(itemId)) // 아이템 ID 확인
+            {
+                error = "아이템 ID가 비어 있습니다."; // 빈 아이템 ID 오류 설정
+                return false; // 아이템 수량 변경 실패
+            }
+
+            if (quantity < 0) // 아이템 수량 확인
+            {
+                error = "아이템 수량은 0 이상이어야 합니다."; // 음수 수량 오류 설정
+                return false; // 아이템 수량 변경 실패
+            }
+
+            ItemStackSaveData stack = FindItemStackInternal(itemId); // 기존 아이템 스택 조회
+
+            if (quantity == 0) // 스택 제거 여부 확인
+            {
+                if (stack != null) // 기존 스택 존재 확인
+                {
+                    itemInventory.Remove(stack); // 일반 아이템 스택 제거
+                }
+
+                return true; // 수량 0 적용 성공
+            }
+
+            if (stack == null) // 기존 스택 존재 확인
+            {
+                itemInventory.Add(new ItemStackSaveData(itemId, quantity)); // 신규 일반 아이템 스택 추가
+                return true; // 신규 스택 추가 성공
+            }
+
+            stack.SetQuantity(quantity); // 기존 일반 아이템 수량 변경
+            return true; // 기존 스택 변경 성공
         }
 
         public int GetEquipmentCount(string equipmentId) // 장비 원본 ID별 보유 수량 조회
@@ -486,6 +541,65 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public void SetCurrentMainQuest(string value) // 현재 목표 변경
         {
             currentMainQuest = value ?? string.Empty; // 목표 기본값 방지
+        }
+
+        private ItemStackSaveData FindItemStackInternal(string itemId) // 내부 일반 아이템 스택 조회
+        {
+            if (string.IsNullOrWhiteSpace(itemId)) // 아이템 ID 확인
+            {
+                return null; // 빈 아이템 ID 조회 실패 반환
+            }
+
+            foreach (ItemStackSaveData stack in itemInventory) // 일반 아이템 인벤토리 순회
+            {
+                if (stack != null && string.Equals(stack.ItemId, itemId, StringComparison.Ordinal)) // 아이템 ID 비교
+                {
+                    return stack; // 일치 아이템 스택 반환
+                }
+            }
+
+            return null; // 일반 아이템 스택 조회 실패 반환
+        }
+
+        private void NormalizeItemInventory() // 일반 아이템 인벤토리 정규화
+        {
+            Dictionary<string, int> mergedCounts = new Dictionary<string, int>(StringComparer.Ordinal); // 아이템 ID별 병합 수량 생성
+
+            for (int index = 0; index < itemInventory.Count; index++) // 일반 아이템 스택 순회
+            {
+                ItemStackSaveData stack = itemInventory[index]; // 현재 아이템 스택 조회
+
+                if (stack == null) // null 스택 확인
+                {
+                    continue; // 잘못된 스택 제외
+                }
+
+                stack.EnsureDefaults(); // 아이템 스택 기본값 복원
+
+                if (string.IsNullOrWhiteSpace(stack.ItemId) || stack.Quantity <= 0) // 아이템 스택 유효성 확인
+                {
+                    continue; // 빈 ID 및 0 수량 스택 제외
+                }
+
+                if (mergedCounts.TryGetValue(stack.ItemId, out int existingCount)) // 동일 아이템 기존 수량 확인
+                {
+                    mergedCounts[stack.ItemId] = existingCount + stack.Quantity; // 중복 아이템 수량 병합
+                }
+                else // 신규 아이템 ID 처리
+                {
+                    mergedCounts.Add(stack.ItemId, stack.Quantity); // 신규 아이템 수량 등록
+                }
+            }
+
+            List<string> itemIds = new List<string>(mergedCounts.Keys); // 정규화 아이템 ID 목록 생성
+            itemIds.Sort(StringComparer.Ordinal); // 아이템 ID 정렬
+            itemInventory.Clear(); // 기존 일반 아이템 스택 제거
+
+            for (int index = 0; index < itemIds.Count; index++) // 정렬 아이템 ID 순회
+            {
+                string itemId = itemIds[index]; // 현재 아이템 ID 조회
+                itemInventory.Add(new ItemStackSaveData(itemId, mergedCounts[itemId])); // 정규화 아이템 스택 추가
+            }
         }
 
         private EquipmentInstanceSaveData FindEquipmentInstanceInternal(string instanceId) // 내부 장비 인스턴스 조회

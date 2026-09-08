@@ -11,12 +11,13 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField] private ItemGrade grade; // 아이템 등급
         [SerializeField, Min(1)] private int maxStack = 99; // 최대 보유 수량
         [SerializeField, TextArea] private string description; // 아이템 설명
-
+        [SerializeField] private Sprite icon; // 가방 상세용 아이템 일러스트
         public string Id => id; // 고유 ID 반환
         public string DisplayName => displayName; // 표시 이름 반환
         public ItemType Type => itemType; // 아이템 유형 반환
         public ItemGrade Grade => grade; // 아이템 등급 반환
         public int MaxStack => maxStack; // 최대 수량 반환
         public string Description => description; // 설명 반환
+        public Sprite Icon => icon; // 아이템 일러스트 반환
     }
 }

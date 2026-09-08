@@ -1,3 +1,4 @@
+using System.Collections.Generic; // 하단 내비게이션 버튼 목록 기능
 using ProjectH.Core; // 프로젝트 핵심 기능
 using ProjectH.Events; // 프로젝트 이벤트 기능
 using ProjectH.SaveSystem; // 프로젝트 저장 기능
@@ -18,6 +19,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         [SerializeField] private Button dungeonButton; // 던전 이동 버튼
         [SerializeField] private Button titleButton; // 타이틀 이동 버튼
         [SerializeField] private Button characterButton; // 기존 하단 캐릭터 이동 버튼
+        [SerializeField] private Button bagButton; // Runtime 가방 이동 버튼
 
         private bool isTransitioning; // 씬 전환 잠금 상태
 
@@ -46,6 +48,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void Start() // 로비 초기 표시
         {
             BindCharacterButton(); // 기존 하단 캐릭터 버튼 연결
+            BindBagButton(); // 하단 가방 버튼 연결
             Refresh(); // 화면 상태 갱신
         }
 
@@ -61,6 +64,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (characterButton == null) // 캐릭터 버튼 연결 여부 확인
             {
                 BindCharacterButton(); // 기존 하단 캐릭터 버튼 재탐색
+            }
+
+            if (bagButton == null) // 가방 버튼 연결 여부 확인
+            {
+                BindBagButton(); // 하단 가방 버튼 재탐색 및 생성
             }
 
             SaveManager saveManager = GameManager.Instance.Save; // 저장 관리자 조회
@@ -118,6 +126,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             BeginSceneTransition(GameScenes.Character); // 캐릭터 씬 전환
         }
 
+        public void GoBag() // 가방 화면 이동
+        {
+            BeginSceneTransition(GameScenes.Bag); // 가방 씬 전환
+        }
+
         public void GoTitle() // 타이틀 화면 이동
         {
             BeginSceneTransition(GameScenes.Title); // 타이틀 씬 전환
@@ -161,6 +174,139 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             characterButton.onClick.RemoveListener(GoCharacter); // 중복 캐릭터 이동 이벤트 제거
             characterButton.onClick.AddListener(GoCharacter); // 기존 하단 캐릭터 버튼 이동 이벤트 연결
+        }
+
+        private void BindBagButton() // 하단 가방 버튼 Runtime 연결
+        {
+            Transform navigationRoot = transform.Find("BottomNavigation"); // 하단 내비게이션 루트 조회
+
+            if (navigationRoot == null) // 내비게이션 루트 존재 확인
+            {
+                Debug.LogWarning("[Project H] Lobby BottomNavigation was not found."); // 하단 내비게이션 누락 로그
+                return; // 가방 버튼 연결 중단
+            }
+
+            Button[] navigationButtons = navigationRoot.GetComponentsInChildren<Button>(true); // 하단 버튼 목록 조회
+
+            for (int index = 0; index < navigationButtons.Length; index++) // 기존 하단 버튼 순회
+            {
+                Button candidate = navigationButtons[index]; // 현재 버튼 조회
+                Text label = candidate == null ? null : candidate.GetComponentInChildren<Text>(true); // 현재 버튼 라벨 조회
+
+                if (label == null || label.text == null || label.text.Trim() != "가방") // 가방 버튼 라벨 확인
+                {
+                    continue; // 다른 버튼 건너뛰기
+                }
+
+                bagButton = candidate; // 기존 가방 버튼 참조 저장
+                break; // 가방 버튼 검색 종료
+            }
+
+            if (bagButton == null) // 기존 가방 버튼 존재 확인
+            {
+                bagButton = CreateRuntimeBagButton(navigationRoot, navigationButtons); // Runtime 가방 버튼 생성
+            }
+
+            if (bagButton == null) // 가방 버튼 생성 결과 확인
+            {
+                Debug.LogWarning("[Project H] Lobby bag button could not be created."); // 가방 버튼 생성 실패 로그
+                return; // 가방 버튼 연결 중단
+            }
+
+            bagButton.onClick.RemoveListener(GoBag); // 중복 가방 이동 이벤트 제거
+            bagButton.onClick.AddListener(GoBag); // 가방 씬 이동 이벤트 연결
+            NormalizeBottomNavigation(navigationRoot); // 하단 내비게이션 6칸 재배치
+        }
+
+        private Button CreateRuntimeBagButton(Transform navigationRoot, Button[] navigationButtons) // Runtime 가방 버튼 생성
+        {
+            Button template = characterButton; // 캐릭터 버튼 템플릿 우선 선택
+
+            if (template == null && navigationButtons != null && navigationButtons.Length > 0) // 캐릭터 버튼 템플릿 누락 확인
+            {
+                template = navigationButtons[0]; // 첫 하단 버튼 템플릿 선택
+            }
+
+            GameObject buttonObject = new GameObject("BagSceneEntryButton", typeof(RectTransform), typeof(Image), typeof(Button)); // 가방 버튼 객체 생성
+            buttonObject.transform.SetParent(navigationRoot, false); // 하단 내비게이션 부모 연결
+            Image image = buttonObject.GetComponent<Image>(); // 가방 버튼 이미지 조회
+            Button button = buttonObject.GetComponent<Button>(); // 가방 버튼 컴포넌트 조회
+
+            if (template != null) // 기존 버튼 템플릿 존재 확인
+            {
+                Image templateImage = template.GetComponent<Image>(); // 템플릿 버튼 이미지 조회
+
+                if (templateImage != null) // 템플릿 이미지 존재 확인
+                {
+                    image.sprite = templateImage.sprite; // 기존 하단 버튼 스프라이트 복사
+                    image.type = templateImage.type; // 기존 하단 버튼 이미지 유형 복사
+                    image.color = templateImage.color; // 기존 하단 버튼 색상 복사
+                }
+
+                button.colors = template.colors; // 기존 하단 버튼 전환 색상 복사
+                button.transition = template.transition; // 기존 하단 버튼 전환 방식 복사
+            }
+            else // 기존 버튼 템플릿 누락 처리
+            {
+                image.color = new Color(0.90f, 0.95f, 1f, 1f); // 기본 가방 버튼 색상 적용
+            }
+
+            button.targetGraphic = image; // 가방 버튼 대상 그래픽 연결
+            GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(Text)); // 가방 버튼 라벨 객체 생성
+            labelObject.transform.SetParent(buttonObject.transform, false); // 가방 버튼 라벨 부모 연결
+            Text label = labelObject.GetComponent<Text>(); // 가방 버튼 라벨 조회
+            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            label.text = "가방"; // 가방 버튼 라벨 설정
+            label.fontSize = 21; // 가방 버튼 글자 크기 설정
+            label.fontStyle = FontStyle.Bold; // 가방 버튼 글자 스타일 설정
+            label.color = new Color(0.18f, 0.27f, 0.40f, 1f); // 가방 버튼 글자 색상 설정
+            label.alignment = TextAnchor.MiddleCenter; // 가방 버튼 글자 중앙 정렬
+            label.resizeTextForBestFit = true; // 가방 버튼 글자 자동 크기 활성화
+            label.resizeTextMinSize = 12; // 가방 버튼 최소 글자 크기 설정
+            label.resizeTextMaxSize = 21; // 가방 버튼 최대 글자 크기 설정
+            label.raycastTarget = false; // 가방 버튼 라벨 입력 비활성화
+            RectTransform labelRect = labelObject.GetComponent<RectTransform>(); // 가방 버튼 라벨 RectTransform 조회
+            labelRect.anchorMin = Vector2.zero; // 가방 버튼 라벨 최소 앵커 설정
+            labelRect.anchorMax = Vector2.one; // 가방 버튼 라벨 최대 앵커 설정
+            labelRect.offsetMin = new Vector2(8f, 8f); // 가방 버튼 라벨 최소 여백 설정
+            labelRect.offsetMax = new Vector2(-8f, -8f); // 가방 버튼 라벨 최대 여백 설정
+            return button; // 생성 가방 버튼 반환
+        }
+
+        private static void NormalizeBottomNavigation(Transform navigationRoot) // 하단 내비게이션 버튼 균등 배치
+        {
+            List<Button> buttons = new List<Button>(); // 직접 하위 버튼 목록 생성
+
+            for (int index = 0; index < navigationRoot.childCount; index++) // 하단 내비게이션 자식 순회
+            {
+                Transform child = navigationRoot.GetChild(index); // 현재 하위 객체 조회
+                Button button = child.GetComponent<Button>(); // 현재 하위 버튼 조회
+
+                if (button != null && child.gameObject.activeSelf) // 활성 버튼 여부 확인
+                {
+                    buttons.Add(button); // 하단 버튼 목록 추가
+                }
+            }
+
+            if (buttons.Count == 0) // 하단 버튼 존재 확인
+            {
+                return; // 균등 배치 중단
+            }
+
+            const float margin = 0.02f; // 내비게이션 좌우 여백
+            const float gap = 0.02f; // 내비게이션 버튼 사이 간격
+            float usableWidth = 1f - (margin * 2f) - (gap * (buttons.Count - 1)); // 버튼 사용 가능 전체 너비 계산
+            float buttonWidth = usableWidth / buttons.Count; // 버튼별 너비 계산
+
+            for (int index = 0; index < buttons.Count; index++) // 하단 버튼 순회
+            {
+                RectTransform rect = buttons[index].GetComponent<RectTransform>(); // 현재 버튼 RectTransform 조회
+                float minX = margin + (index * (buttonWidth + gap)); // 현재 버튼 최소 X 계산
+                rect.anchorMin = new Vector2(minX, 0.12f); // 현재 버튼 최소 앵커 적용
+                rect.anchorMax = new Vector2(minX + buttonWidth, 0.88f); // 현재 버튼 최대 앵커 적용
+                rect.offsetMin = Vector2.zero; // 현재 버튼 최소 오프셋 초기화
+                rect.offsetMax = Vector2.zero; // 현재 버튼 최대 오프셋 초기화
+            }
         }
 
         private void BeginSceneTransition(string sceneName) // 공통 씬 전환 처리
@@ -211,6 +357,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (characterButton != null) // 캐릭터 버튼 확인
             {
                 characterButton.interactable = canNavigate; // 캐릭터 버튼 상태 적용
+            }
+
+            if (bagButton != null) // 가방 버튼 확인
+            {
+                bagButton.interactable = canNavigate; // 가방 버튼 상태 적용
             }
 
             if (titleButton != null) // 타이틀 버튼 확인

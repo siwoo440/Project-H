@@ -25,6 +25,16 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         Healer = 2 // 힐러 포지션
     }
 
+    public enum ElementType // 데이터 계층 전투 속성 (Day52 추가, BattleElement와 같은 순서 유지)
+    {
+        None = 0, // 무속성 (빛·어둠에 약점)
+        Fire = 1, // 불 속성
+        Water = 2, // 물 속성
+        Grass = 3, // 풀 속성
+        Light = 4, // 빛 속성
+        Dark = 5 // 어둠 속성
+    }
+
     public enum CharacterRole // 이전 역할 호환 열거형
     {
         Tank = 0, // 탱커 역할

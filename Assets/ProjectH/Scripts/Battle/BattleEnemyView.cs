@@ -90,10 +90,22 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (statusStrip != null) // 기존 상태이상 표시 존재 확인
             {
                 statusStrip.Bind(Stats.RuntimeId); // 표시 대상만 갱신
+                RefreshElementChip(); // 적군 속성 칩 표시 갱신 (Day52 추가)
                 return; // 중복 생성 차단
             }
 
             statusStrip = BattleStatusEffectStripView.AttachBelow(anchorRect, Stats.RuntimeId); // 적군 아래쪽에 상태이상 표시 부착
+            RefreshElementChip(); // 적군 속성 칩 표시 갱신 (Day52 추가)
+        }
+
+        private void RefreshElementChip() // 적군 속성 칩 표시 갱신 (Day52 추가)
+        {
+            if (statusStrip == null || Stats == null) // 상태이상 표시 및 적군 스탯 확인
+            {
+                return; // 속성 칩 갱신 중단
+            }
+
+            statusStrip.ShowElementChip(BattleElementRuntimeState.GetElement(Stats.RuntimeId)); // 등록 속성 기반 속성 칩 표시
         }
 
         private RectTransform GetStatusAnchorRect() // 상태이상 표시 부착 기준 RectTransform 조회 (Day51 추가)

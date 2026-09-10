@@ -10,6 +10,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Text valueText; // 체력 변화 숫자 텍스트
         [SerializeField, Min(0.05f)] private float visibleSeconds = 0.75f; // 체력 변화 숫자 표시 시간
         private Coroutine hideRoutine; // 숨김 코루틴 참조
+        private const float WeakEmphasisScale = 1.3f; // 약점 적중 숫자 확대 배율 (Day52 추가)
 
         public void Configure(Text targetText) // 에디터 텍스트 참조 설정
         {
@@ -23,20 +24,30 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public void ShowDamage(int amount) // 피해 숫자 표시
         {
-            ShowValue($"-{Mathf.Max(0, amount)}", new Color(1f, 0.35f, 0.30f, 1f)); // 붉은 피해 숫자 표시
+            ShowDamage(amount, BattleElementAffinity.Neutral); // 상성 없는 기본 피해 숫자 표시
+        }
+
+        public void ShowDamage(int amount, BattleElementAffinity affinity) // 속성 상성 반영 피해 숫자 표시 (Day52 추가)
+        {
+            Color baseColor = new Color(1f, 0.35f, 0.30f, 1f); // 기본 붉은 피해 색상
+            string suffix = BattleElementAffinityTable.GetAffinityLabel(affinity); // 약점·저항 표시 문구 조회
+            string value = string.IsNullOrEmpty(suffix) ? $"-{Mathf.Max(0, amount)}" : $"-{Mathf.Max(0, amount)} {suffix}"; // 상성 문구 포함 피해 문구 구성
+            ShowValue(value, BattleElementAffinityTable.GetAffinityColor(affinity, baseColor), affinity == BattleElementAffinity.Weak ? WeakEmphasisScale : 1f); // 약점 강조 배율 포함 피해 숫자 표시
         }
 
         public void ShowHealing(int amount) // 회복 숫자 표시
         {
-            ShowValue($"+{Mathf.Max(0, amount)}", new Color(0.38f, 1f, 0.52f, 1f)); // 초록 회복 숫자 표시
+            ShowValue($"+{Mathf.Max(0, amount)}", new Color(0.38f, 1f, 0.52f, 1f), 1f); // 초록 회복 숫자 표시
         }
 
-        private void ShowValue(string value, Color color) // 체력 변화 숫자 공통 표시
+        private void ShowValue(string value, Color color, float emphasisScale) // 체력 변화 숫자 공통 표시
         {
             if (valueText == null) // 체력 변화 텍스트 확인
             {
                 return; // 체력 변화 표시 중단
             }
+
+            valueText.rectTransform.localScale = new Vector3(emphasisScale, emphasisScale, 1f); // 약점 강조 배율 적용 (Day52 추가)
 
             if (hideRoutine != null) // 기존 숨김 코루틴 확인
             {

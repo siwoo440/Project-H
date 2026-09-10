@@ -16,6 +16,7 @@ MonoBehaviour:
   displayName: "\uC5D8\uB80C"
   job: 5
   position: 0
+  element: 3
   baseHp: 3200
   baseAttack: 230
   baseDefense: 200

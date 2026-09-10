@@ -205,6 +205,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             int hitCount = Mathf.Max(1, effect.Count); // 최소 1Hit 보정
             bool anyApplied = false; // 실제 피해 발생 여부 초기화
             BattleDamageType damageType = ConvertDamageType(effect.DamageType); // 데이터 피해 타입 전투 피해 타입 변환
+            BattleElement element = (BattleElement)effect.Element; // 데이터 속성을 전투 속성으로 변환 (Day52 추가)
 
             for (int hitIndex = 0; hitIndex < hitCount; hitIndex++) // 다단히트 횟수 순회
             {
@@ -213,7 +214,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
                     break; // 남은 Hit 중단
                 }
 
-                BattleDamageResult result = BattleDamageResolver.Resolve(new BattleDamageRequest(owner.Stats, target.Stats, damageType, power)); // 현재 Hit 피해 계산
+                BattleDamageResult result = BattleDamageResolver.Resolve(new BattleDamageRequest(owner.Stats, target.Stats, damageType, power, element)); // 속성 포함 현재 Hit 피해 계산 (Day52 수정)
                 int applied = target.ApplyDamage(result); // 현재 Hit 실제 피해 적용
                 anyApplied |= applied > 0; // 실제 피해 발생 여부 누적
             }

@@ -204,7 +204,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             FlashHitPreview(); // 피해 피격 표시
-            floatingValueText?.ShowDamage(applied); // 피해 숫자 표시
+            floatingValueText?.ShowDamage(applied, result.Affinity); // 속성 상성 반영 피해 숫자 표시 (Day52 수정)
             BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateDamageTaken(this, applied)); // 피해 수신 패시브 Trigger 처리
 
             if (Stats.IsAlive) // 피해 후 생존 여부 확인

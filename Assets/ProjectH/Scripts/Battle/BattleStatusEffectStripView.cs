@@ -14,12 +14,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private const float TimerBarHeightPixels = 3f; // 잔여 시간 바 높이(px)
         private const float RefreshIntervalSeconds = 0.1f; // 상태이상 표시 갱신 간격
         private const float TimerBarReferenceSeconds = 10f; // 잔여 시간 바 기준 최대 지속시간
+        private const float ElementChipOffsetPixels = 46f; // 속성 칩 좌측 고정 오프셋(px) (Day52 추가)
 
         private readonly List<BattleStatusEffectSnapshot> snapshotBuffer = new List<BattleStatusEffectSnapshot>(); // 상태이상 수집 재사용 버퍼 (GC 할당 방지)
         private readonly List<ChipRuntime> chips = new List<ChipRuntime>(); // 생성 칩 런타임 목록
         private string boundRuntimeId; // 표시 대상 Runtime ID
         private Text overflowText; // 초과 상태이상 표시 텍스트
         private float refreshTimer; // 갱신 간격 누적 타이머
+        private ChipRuntime elementChip; // 고정 속성 칩 런타임 상태 (Day52 추가)
 
         private sealed class ChipRuntime // 단일 상태이상 칩 런타임 상태
         {
@@ -82,6 +84,28 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             return null; // 기존 상태이상 표시 없음 반환
+        }
+
+        public void ShowElementChip(BattleElement element) // 고정 속성 칩 표시 (Day52 추가, 상태이상과 같은 디자인 재사용)
+        {
+            if (elementChip == null) // 속성 칩 존재 확인
+            {
+                elementChip = CreateChip(MaxVisibleChips); // 상태이상 칩과 동일한 규격으로 속성 칩 생성
+                elementChip.Background.rectTransform.pivot = new Vector2(1f, 0.5f); // 속성 칩 우측 기준 피벗 설정 (상태이상 칩 왼쪽에 고정 배치)
+            }
+
+            bool visible = element != BattleElement.None; // 무속성 제외 표시 여부 판정
+            elementChip.Root.SetActive(visible); // 속성 칩 표시 여부 적용
+
+            if (!visible) // 무속성 여부 확인
+            {
+                return; // 속성 칩 갱신 중단
+            }
+
+            elementChip.Background.color = BattleElementAffinityTable.GetColor(element); // 속성 색상 적용
+            elementChip.Label.text = BattleElementAffinityTable.GetShortLabel(element); // 속성 축약 문구 적용
+            elementChip.TimerFill.anchorMax = new Vector2(1f, 1f); // 고정 표시 항목이므로 잔여 시간 바 가득 채움
+            elementChip.Background.rectTransform.anchoredPosition = new Vector2(-ElementChipOffsetPixels, 0f); // 상태이상 칩 왼쪽 고정 위치 적용
         }
 
         public void Bind(string runtimeId) // 상태이상 표시 대상 연결

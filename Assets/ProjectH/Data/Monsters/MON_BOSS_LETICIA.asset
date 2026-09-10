@@ -15,6 +15,7 @@ MonoBehaviour:
   id: MON_BOSS_LETICIA
   displayName: "침식의 파수꾼"
   aiType: 7
+  element: 5
   maxHp: 15000
   attack: 28
   defense: 90

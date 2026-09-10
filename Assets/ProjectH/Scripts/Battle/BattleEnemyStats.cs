@@ -95,6 +95,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             int scaledAttack = Mathf.Max(0, Mathf.RoundToInt(monsterData.Attack * profile.AttackMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 공격력
             int scaledDefense = Mathf.Max(0, Mathf.RoundToInt(monsterData.Defense * profile.DefenseMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 방어력
             int scaledResistance = Mathf.Max(0, Mathf.RoundToInt(monsterData.Resistance * profile.ResistanceMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 저항력
+            BattleElementRuntimeState.Register(runtimeId, (BattleElement)monsterData.Element); // 몬스터 전투 속성 Runtime 등록 (Day52 추가)
             return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, scaledMaxHp, scaledAttack, scaledDefense, scaledResistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType, 1f); // 원본 이름 및 전투 컨텍스트 배율 적용 적 스탯 반환
         }
 

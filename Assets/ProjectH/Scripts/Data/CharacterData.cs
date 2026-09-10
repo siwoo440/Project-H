@@ -10,6 +10,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField] private string displayName; // 캐릭터 표시 이름
         [SerializeField] private CharacterJob job; // 캐릭터 직군
         [SerializeField] private BattlePosition position = BattlePosition.Dealer; // 단순 전투 포지션
+        [SerializeField] private ElementType element = ElementType.None; // 캐릭터 전투 속성 (Day52 추가)
         [SerializeField, Min(1)] private int baseHp = 100; // 기본 체력
         [SerializeField, Min(0)] private int baseAttack = 10; // 기본 공격력
         [SerializeField, Min(0)] private int baseDefense = 5; // 기본 방어력
@@ -25,6 +26,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public string DisplayName => displayName; // 표시 이름 반환
         public CharacterJob Job => job; // 직군 반환
         public BattlePosition Position => position; // 포지션 반환
+        public ElementType Element => element; // 전투 속성 반환 (Day52 추가)
         public CharacterRole Role => (CharacterRole)position; // 이전 역할 호환 반환
         public int BaseHp => baseHp; // 체력 반환
         public int BaseAttack => baseAttack; // 공격력 반환

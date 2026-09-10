@@ -54,6 +54,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField] private SkillEffectKind kind; // 실제 효과 종류
         [SerializeField] private SkillTargetType targetType = SkillTargetType.Self; // 효과 대상 종류
         [SerializeField] private SkillDamageType damageType = SkillDamageType.Physical; // 피해 계열 효과의 피해 종류
+        [SerializeField] private ElementType element = ElementType.None; // 효과 공격 속성 (Day52 추가, None이면 시전자 속성 상속)
         [SerializeField] private float value; // 효과 비율 또는 확률
         [SerializeField, Min(0f)] private float duration; // 효과 지속시간
         [SerializeField, Min(0)] private int count; // Hit 수·Tick 수·정화 수
@@ -65,6 +66,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public SkillEffectKind Kind => kind; // 효과 종류 반환
         public SkillTargetType TargetType => targetType; // 효과 대상 종류 반환
         public SkillDamageType DamageType => damageType; // 피해 종류 반환
+        public ElementType Element => element; // 효과 공격 속성 반환 (Day52 추가)
         public float Value => value; // 효과 수치 반환
         public float Duration => duration; // 효과 지속시간 반환
         public int Count => count; // 정수 효과값 반환

@@ -70,7 +70,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 throw new ArgumentNullException(nameof(request.Target)); // 대상 누락 예외 발생
             }
 
-            int rawPower = Mathf.Max(0, request.Power); // 공격 원본 위력 보정
+            float attackMultiplier = BattleSkillRuntimeState.GetAttackMultiplier(request.Attacker.RuntimeId); // 공격력 증가 버프 배율 조회 (Day51 추가, 버프가 없으면 1.0이라 기존 계산과 동일)
+            int rawPower = Mathf.Max(0, Mathf.RoundToInt(request.Power * attackMultiplier)); // 공격력 버프 반영 원본 위력 보정
 
             if (!request.Target.IsAlive) // 대상 생존 상태 확인
             {

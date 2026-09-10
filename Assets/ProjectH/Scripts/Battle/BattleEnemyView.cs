@@ -17,6 +17,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private bool showDebugInfo; // 적군 Runtime 개발 정보 표시 여부
         public BattleEnemyStats Stats { get; private set; } // 연결된 적 전투 스탯
         public BattleActor Actor => actor; // 공통 전투 액터 반환
+        private BattleStatusEffectStripView statusStrip; // 적군 하단 상태이상 표시 (Day51 추가)
 
         public void Configure(Canvas canvas, Image body, Text displayName, Text runtimeId, Text hp, Image hpFill, BattleActor battleActor, BattleActionDebugText debugText) // 에디터 참조 설정
         {
@@ -73,7 +74,41 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 actor.Initialize(BattleTeam.Enemy, Stats, transform.position); // 적군 전투 액터 초기화
             }
 
+            EnsureStatusStrip(); // 적군 하단 상태이상 표시 준비 (Day51 추가)
             Refresh(); // 적군 현재 상태 표시
+        }
+
+        private void EnsureStatusStrip() // 적군 하단 상태이상 표시 준비 (Day51 추가)
+        {
+            RectTransform anchorRect = GetStatusAnchorRect(); // 상태이상 표시 부착 기준 RectTransform 조회
+
+            if (anchorRect == null || Stats == null) // 부착 기준 및 적군 스탯 확인
+            {
+                return; // 상태이상 표시 준비 중단
+            }
+
+            if (statusStrip != null) // 기존 상태이상 표시 존재 확인
+            {
+                statusStrip.Bind(Stats.RuntimeId); // 표시 대상만 갱신
+                return; // 중복 생성 차단
+            }
+
+            statusStrip = BattleStatusEffectStripView.AttachBelow(anchorRect, Stats.RuntimeId); // 적군 아래쪽에 상태이상 표시 부착
+        }
+
+        private RectTransform GetStatusAnchorRect() // 상태이상 표시 부착 기준 RectTransform 조회 (Day51 추가)
+        {
+            if (worldCanvas != null) // 적군 월드 Canvas 확인
+            {
+                RectTransform canvasRect = worldCanvas.transform as RectTransform; // 월드 Canvas RectTransform 변환
+
+                if (canvasRect != null) // 월드 Canvas RectTransform 확인
+                {
+                    return canvasRect; // 적군 전체 영역 기준 반환
+                }
+            }
+
+            return hpFillImage == null ? null : hpFillImage.rectTransform; // 월드 Canvas 부재 시 체력 게이지 기준 반환
         }
 
         public void Refresh() // 적군 전투 표시 갱신

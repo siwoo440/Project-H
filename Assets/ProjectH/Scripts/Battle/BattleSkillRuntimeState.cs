@@ -11,7 +11,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         CounterChance = 3, // 반격 확률 증가
         ResistanceReductionPercent = 4, // 마법 저항 비율 감소
         AccuracyReductionPercent = 5, // 명중률 비율 감소
-        Stun = 6 // 행동 불가 기절
+        Stun = 6, // 행동 불가 기절
+        Silence = 7, // 스킬 사용 불가 침묵 (Day51 추가)
+        AttackSpeedReductionPercent = 8, // 공격 속도 비율 감소 둔화 (Day51 추가)
+        AttackPercent = 9 // 공격력 비율 증가 (Day51 추가)
     }
 
     public static class BattleSkillRuntimeState // 스킬 기반 전투 Runtime 상태 저장소
@@ -51,6 +54,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private static readonly Dictionary<string, List<string>> removableDebuffs = new Dictionary<string, List<string>>(); // 제거 가능 Debuff 출처 목록
         private static BattleCombatRegistry registry; // 현재 전투 Registry
         private static bool resolvingCounter; // 반격 재귀 처리 방지 상태
+        private const float MaxAttackSpeedReduction = 0.70f; // 둔화 공격 속도 감소 상한 (Day51 추가, 완전 정지 방지)
 
         public static void SetRegistry(BattleCombatRegistry combatRegistry) // 현재 전투 Registry 연결
         {
@@ -170,6 +174,21 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return GetModifierTotal(runtimeId, BattleRuntimeModifierKind.Stun, nowSeconds) > 0f; // 활성 기절 Modifier 존재 여부 반환
         }
 
+        public static bool IsSilenced(string runtimeId, float nowSeconds = -1f) // 현재 침묵 상태 확인 (Day51 추가)
+        {
+            return GetModifierTotal(runtimeId, BattleRuntimeModifierKind.Silence, nowSeconds) > 0f; // 침묵 Modifier 존재 여부 반환
+        }
+
+        public static float GetAttackSpeedReduction(string runtimeId, float nowSeconds = -1f) // 공격 속도 감소율 조회 (Day51 추가)
+        {
+            return Mathf.Clamp(GetModifierTotal(runtimeId, BattleRuntimeModifierKind.AttackSpeedReductionPercent, nowSeconds), 0f, MaxAttackSpeedReduction); // 상한 보정 공격 속도 감소율 반환
+        }
+
+        public static float GetAttackMultiplier(string runtimeId, float nowSeconds = -1f) // 공격력 증가 배율 조회 (Day51 추가)
+        {
+            return 1f + GetModifierTotal(runtimeId, BattleRuntimeModifierKind.AttackPercent, nowSeconds); // 공격력 증가율 반영 배율 반환
+        }
+
         public static float GetDamageReduction(string runtimeId, float nowSeconds = -1f) // 최종 피해 감소율 조회
         {
             float reduction = GetModifierTotal(runtimeId, BattleRuntimeModifierKind.DamageReductionPercent, nowSeconds); // 대상 피해 감소율 합계 조회
@@ -264,6 +283,87 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return true; // 활성 도발 타겟 조회 성공
         }
 
+        public static void CollectStatusEffects(string runtimeId, List<BattleStatusEffectSnapshot> buffer, float nowSeconds = -1f) // 현재 활성 상태이상 스냅샷 수집 (Day51 추가, UI 매 갱신 호출용 버퍼 재사용 방식)
+        {
+            if (buffer == null) // 수집 버퍼 확인
+            {
+                return; // 상태이상 수집 중단
+            }
+
+            buffer.Clear(); // 이전 수집 결과 초기화
+
+            if (string.IsNullOrWhiteSpace(runtimeId)) // Runtime ID 확인
+            {
+                return; // 빈 Runtime ID 수집 중단
+            }
+
+            float now = ResolveNow(nowSeconds); // 현재 전투 시간 계산
+            CleanupExpired(now); // 만료 Runtime 효과 정리
+
+            for (int index = 0; index < modifiers.Count; index++) // 전체 Modifier 순회
+            {
+                TimedModifier modifier = modifiers[index]; // 현재 Modifier 조회
+
+                if (modifier.RuntimeId != runtimeId) // 대상 일치 확인
+                {
+                    continue; // 다른 대상 Modifier 제외
+                }
+
+                BattleStatusEffectId id = BattleStatusEffectCatalog.FromModifierKind(modifier.Kind); // Modifier 종류를 상태이상 종류로 변환
+
+                if (id == BattleStatusEffectId.None) // 표시 대상 상태이상 여부 확인
+                {
+                    continue; // 미분류 Modifier 제외
+                }
+
+                AccumulateSnapshot(buffer, id, modifier.ExpiresAt - now); // 동일 종류 병합 후 스냅샷 누적
+            }
+
+            for (int index = 0; index < periodicDamages.Count; index++) // 전체 주기 피해 순회
+            {
+                PeriodicDamageEntry entry = periodicDamages[index]; // 현재 주기 피해 조회
+
+                if (entry.TargetRuntimeId != runtimeId || entry.RemainingTicks <= 0) // 대상 일치 및 잔여 Tick 확인
+                {
+                    continue; // 비대상 또는 완료 주기 피해 제외
+                }
+
+                float remaining = Mathf.Max(0f, entry.NextTickAt - now) + (Mathf.Max(0, entry.RemainingTicks - 1) * entry.TickInterval); // 남은 전체 지속 피해 시간 계산
+                AccumulateSnapshot(buffer, BattleStatusEffectCatalog.FromPeriodicDamageType(entry.DamageType), remaining); // 지속 피해 스냅샷 누적
+            }
+
+            for (int index = 0; index < taunts.Count; index++) // 전체 도발 순회
+            {
+                TauntEntry taunt = taunts[index]; // 현재 도발 조회
+
+                if (taunt.EnemyRuntimeId != runtimeId) // 도발 대상 일치 확인
+                {
+                    continue; // 비대상 도발 제외
+                }
+
+                AccumulateSnapshot(buffer, BattleStatusEffectId.Taunt, taunt.ExpiresAt - now); // 도발 스냅샷 누적
+            }
+        }
+
+        private static void AccumulateSnapshot(List<BattleStatusEffectSnapshot> buffer, BattleStatusEffectId id, float remainingSeconds) // 동일 종류 상태이상 병합 누적 (Day51 추가)
+        {
+            for (int index = 0; index < buffer.Count; index++) // 기존 수집 결과 순회
+            {
+                BattleStatusEffectSnapshot existing = buffer[index]; // 현재 스냅샷 조회
+
+                if (existing.Id != id) // 동일 상태이상 종류 확인
+                {
+                    continue; // 다른 종류 스냅샷 제외
+                }
+
+                float longest = Mathf.Max(existing.RemainingSeconds, remainingSeconds); // 가장 늦게 끝나는 지속시간 선택
+                buffer[index] = new BattleStatusEffectSnapshot(id, longest, existing.StackCount + 1); // 중첩 수 증가 스냅샷 갱신
+                return; // 병합 완료
+            }
+
+            buffer.Add(new BattleStatusEffectSnapshot(id, remainingSeconds, 1)); // 신규 상태이상 스냅샷 추가
+        }
+
         public static void RegisterRemovableDebuff(string runtimeId, string effectId) // 제거 가능한 Debuff 등록
         {
             if (string.IsNullOrWhiteSpace(runtimeId) || string.IsNullOrWhiteSpace(effectId)) // Debuff 등록 입력 확인
@@ -290,26 +390,76 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return 0; // 잘못된 제거 요청 0 반환
             }
 
-            if (!removableDebuffs.TryGetValue(runtimeId, out List<string> effects) || effects.Count == 0) // 대상 Debuff 존재 확인
+            int removed = 0; // 실제 제거 개수 초기화
+
+            if (removableDebuffs.TryGetValue(runtimeId, out List<string> effects) && effects.Count > 0) // 등록된 제거 가능 Debuff 존재 확인
             {
-                return 0; // 제거할 Debuff 없음 반환
+                int removeCount = Mathf.Min(count, effects.Count); // 실제 제거 가능 개수 계산
+
+                for (int index = 0; index < removeCount; index++) // 제거 대상 Debuff 순회
+                {
+                    string sourceKey = effects[0]; // 가장 먼저 등록된 Debuff 출처 조회
+                    effects.RemoveAt(0); // Debuff 출처 목록에서 제거
+                    RemoveRuntimeEffectBySource(runtimeId, sourceKey); // 실제 Runtime 효과 제거
+                }
+
+                removed += removeCount; // 등록 기반 제거 개수 누적
+
+                if (effects.Count == 0) // 대상 Debuff 목록 소진 여부 확인
+                {
+                    removableDebuffs.Remove(runtimeId); // 빈 대상 Debuff 목록 제거
+                }
             }
 
-            int removeCount = Mathf.Min(count, effects.Count); // 실제 제거 가능 개수 계산
+            removed += RemoveUnregisteredDebuffs(runtimeId, count - removed); // 출처 미등록 디버프를 카탈로그 분류 기준으로 추가 제거 (Day51 추가)
+            return removed; // 실제 제거 개수 반환
+        }
 
-            for (int index = 0; index < removeCount; index++) // 제거 대상 Debuff 순회
+        private static int RemoveUnregisteredDebuffs(string runtimeId, int count) // 카탈로그 분류 기준 미등록 디버프 제거 (Day51 추가, RegisterRemovableDebuff 누락 방어)
+        {
+            if (count <= 0) // 잔여 제거 요청 수 확인
             {
-                string sourceKey = effects[0]; // 가장 먼저 등록된 Debuff 출처 조회
-                effects.RemoveAt(0); // Debuff 출처 목록에서 제거
-                RemoveRuntimeEffectBySource(runtimeId, sourceKey); // 실제 Runtime 효과 제거
+                return 0; // 추가 제거 없음 반환
             }
 
-            if (effects.Count == 0) // 대상 Debuff 목록 소진 여부 확인
+            int removed = 0; // 추가 제거 개수 초기화
+
+            for (int index = modifiers.Count - 1; index >= 0 && removed < count; index--) // Modifier 목록 역순 순회
             {
-                removableDebuffs.Remove(runtimeId); // 빈 대상 Debuff 목록 제거
+                TimedModifier modifier = modifiers[index]; // 현재 Modifier 조회
+
+                if (modifier.RuntimeId != runtimeId || !BattleStatusEffectCatalog.IsDebuff(BattleStatusEffectCatalog.FromModifierKind(modifier.Kind))) // 대상 및 디버프 분류 확인
+                {
+                    continue; // 비대상 또는 버프 Modifier 제외
+                }
+
+                modifiers.RemoveAt(index); // 분류 기준 디버프 Modifier 제거
+                removed++; // 추가 제거 개수 증가
             }
 
-            return removeCount; // 실제 제거 개수 반환
+            for (int index = periodicDamages.Count - 1; index >= 0 && removed < count; index--) // 주기 피해 목록 역순 순회
+            {
+                if (periodicDamages[index].TargetRuntimeId != runtimeId) // 대상 일치 확인
+                {
+                    continue; // 비대상 주기 피해 제외
+                }
+
+                periodicDamages.RemoveAt(index); // 지속 피해 디버프 제거
+                removed++; // 추가 제거 개수 증가
+            }
+
+            for (int index = taunts.Count - 1; index >= 0 && removed < count; index--) // 도발 목록 역순 순회
+            {
+                if (taunts[index].EnemyRuntimeId != runtimeId) // 도발 대상 일치 확인
+                {
+                    continue; // 비대상 도발 제외
+                }
+
+                taunts.RemoveAt(index); // 도발 디버프 제거
+                removed++; // 추가 제거 개수 증가
+            }
+
+            return removed; // 추가 제거 개수 반환
         }
 
         public static void AddPeriodicDamage(IBattleCombatantStats attacker, string targetRuntimeId, BattleDamageType damageType, int power, float tickInterval, int tickCount, string sourceKey, float nowSeconds = -1f) // 주기 피해 등록 또는 갱신

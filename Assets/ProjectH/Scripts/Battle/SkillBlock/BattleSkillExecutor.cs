@@ -41,6 +41,11 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
                 return false; // 기절 중 스킬 사용 차단
             }
 
+            if (BattleSkillRuntimeState.IsSilenced(owner.Stats.RuntimeId)) // 스킬 사용자 침묵 상태 확인 (Day51 추가)
+            {
+                return false; // 침묵 중 스킬 사용 차단
+            }
+
             ShowSkillAction(owner, request.Skill.DisplayName); // 사용하는 캐릭터 머리 위에 실제 스킬명 표시
             BattleSkillEffectExecutionResult effectResult = BattleSkillEffectExecutor.Execute(request, owner, registry); // SkillData 강화도별 실제 효과 실행
             BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateSkillUsed(owner, request)); // 스킬 사용 완료 패시브 Trigger 처리

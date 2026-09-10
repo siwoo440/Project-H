@@ -24,6 +24,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private BattleUltimateBeginResult pendingUltimate; // 리듬 챌린지 대기 중인 궁극기 선행 단계 결과 (Day50 추가)
         private BattleTimeController pausedTimeController; // 챌린지 동안 일시정지시킨 전투 시간 컨트롤러 (Day50 추가)
         private bool ultimateChallengeActive; // 리듬 챌린지 진행 여부 (Day50 추가)
+        private BattleStatusEffectStripView statusStrip; // 초상화 위 상태이상 표시 (Day51 추가)
         [SerializeField] private Outline portraitSelectionOutline; // 선택 캐릭터 초상화 윤곽 효과
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
@@ -258,6 +259,24 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             portraitButton.onClick.RemoveListener(HandlePortraitClicked); // 기존 동일 초상화 클릭 이벤트 제거
             portraitButton.onClick.AddListener(HandlePortraitClicked); // 초상화 클릭 궁극기 실행 이벤트 연결
+            EnsureStatusStrip(portraitRoot as RectTransform); // 초상화 위 상태이상 표시 준비 (Day51 추가)
+        }
+
+        private void EnsureStatusStrip(RectTransform portraitRect) // 초상화 위 상태이상 표시 준비 (Day51 추가)
+        {
+            if (portraitRect == null) // 초상화 RectTransform 확인
+            {
+                return; // 상태이상 표시 준비 중단
+            }
+
+            string runtimeId = Stats == null ? string.Empty : Stats.RuntimeId; // 현재 HUD 캐릭터 Runtime ID 조회
+            if (statusStrip != null) // 기존 상태이상 표시 존재 확인
+            {
+                statusStrip.Bind(runtimeId); // 표시 대상만 갱신
+                return; // 중복 생성 차단
+            }
+
+            statusStrip = BattleStatusEffectStripView.AttachAbove(portraitRect, runtimeId); // 초상화 위쪽에 상태이상 표시 부착
         }
 
         private void HandlePortraitClicked() // 초상화 클릭 처리 (Day49 추가)

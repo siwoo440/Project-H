@@ -18,12 +18,23 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
         private const float ResultHoldSeconds = 0.45f; // 판정 결과 표시 유지 시간
         private const float FinalHoldSeconds = 1.1f; // 전체 종료 후 요약 문구 유지 시간
         private const float BeatPulseScale = 0.35f; // 박자 표시 점 최대 확대 폭
+        private const float ComboPunchSeconds = 0.12f; // 콤보 갱신 확대 연출 시간 (Day50)
+        private const float ComboPunchScale = 1.35f; // 콤보 갱신 최대 확대 배율 (Day50)
+        private const float CenterJudgeHoldSeconds = 0.50f; // 중앙 판정 문구 표시 유지 시간 (Day50)
 
         private readonly List<CircleRuntime> circles = new List<CircleRuntime>(); // 생성 원 런타임 목록
+        private readonly RhythmComboTracker comboTracker = new RhythmComboTracker(); // 리듬 콤보 추적기 (Day50)
         private Action<RhythmChallengeResult> onComplete; // 챌린지 종료 콜백
         private Text summaryText; // 종합 결과 요약 텍스트
         private Text titleText; // 챌린지 안내 제목 텍스트
         private RectTransform beatDot; // 박자 표시 점 RectTransform
+        private Text comboText; // 콤보 카운터 텍스트 (Day50)
+        private RectTransform comboRect; // 콤보 카운터 RectTransform (Day50)
+        private Text centerJudgeText; // 중앙 판정 문구 텍스트 (Day50)
+        private RectTransform progressFill; // 진행 게이지 채움 RectTransform (Day50)
+        private float comboPunchTimer; // 콤보 확대 연출 잔여 시간 (Day50)
+        private float centerJudgeTimer; // 중앙 판정 문구 잔여 표시 시간 (Day50)
+        private int resolvedCircleCount; // 판정 완료 원 누적 수 (Day50)
         private float challengeElapsed; // 챌린지 시작 기준 경과 시간
         private int perfectCount; // 누적 Perfect 수
         private int goodCount; // 누적 Good 수
@@ -78,6 +89,7 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             summaryText.gameObject.SetActive(false); // 결과 요약 초기 숨김
 
             BuildBeatIndicator(); // 하단 박자 표시 생성
+            BuildComboHud(); // 콤보·중앙 판정·진행 게이지 HUD 생성 (Day50)
 
             List<RhythmCircleData> data = UltimateRhythmChallengeGenerator.Generate(); // 궁극기 리듬 챌린지 원 데이터 생성
 
@@ -101,6 +113,30 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             beatDot.pivot = new Vector2(0.5f, 0.5f); // 박자 점 중심 피벗 설정
             beatDot.sizeDelta = new Vector2(26f, 26f); // 박자 점 크기 설정
             beatDot.anchoredPosition = Vector2.zero; // 박자 점 위치 오프셋 초기화
+        }
+
+        private void BuildComboHud() // 콤보 카운터·중앙 판정 문구·진행 게이지 생성 (Day50)
+        {
+            comboText = CreateText(transform, "ComboText", string.Empty, 54, Color.white); // 콤보 카운터 텍스트 생성
+            RuntimeUiKit.SetRect(comboText.rectTransform, new Vector2(0.78f, 0.86f), new Vector2(0.98f, 0.95f)); // 콤보 카운터 우상단 배치
+            comboRect = comboText.rectTransform; // 콤보 카운터 RectTransform 저장
+            comboText.gameObject.SetActive(false); // 콤보 발생 전 숨김
+
+            centerJudgeText = CreateText(transform, "CenterJudgeText", string.Empty, 48, Color.white); // 중앙 판정 문구 텍스트 생성
+            RuntimeUiKit.SetRect(centerJudgeText.rectTransform, new Vector2(0.28f, 0.48f), new Vector2(0.72f, 0.58f)); // 중앙 판정 문구 화면 중앙 배치
+            centerJudgeText.gameObject.SetActive(false); // 판정 발생 전 숨김
+
+            Image gaugeBack = RuntimeUiKit.CreateImage(transform, "ProgressBack", new Color(0.10f, 0.13f, 0.20f, 0.75f)); // 진행 게이지 배경 생성
+            RuntimeUiKit.SetRect(gaugeBack.rectTransform, new Vector2(0.34f, 0.105f), new Vector2(0.66f, 0.128f)); // 진행 게이지 하단 배치
+            gaugeBack.raycastTarget = false; // 진행 게이지 배경 클릭 차단 비활성화
+
+            Image gaugeFill = RuntimeUiKit.CreateImage(gaugeBack.transform, "ProgressFill", new Color(0.72f, 0.93f, 1f, 0.90f)); // 진행 게이지 채움 생성
+            gaugeFill.raycastTarget = false; // 진행 게이지 채움 클릭 차단 비활성화
+            progressFill = gaugeFill.rectTransform; // 진행 게이지 채움 RectTransform 저장
+            progressFill.anchorMin = Vector2.zero; // 채움 최소 앵커 좌하단 설정
+            progressFill.anchorMax = new Vector2(0f, 1f); // 채움 최대 앵커 0퍼센트 시작 설정 (스프라이트 없는 Filled 타입 미표시 문제 회피)
+            progressFill.offsetMin = Vector2.zero; // 채움 최소 오프셋 초기화
+            progressFill.offsetMax = Vector2.zero; // 채움 최대 오프셋 초기화
         }
 
         private void CreateCircle(RhythmCircleData data) // 개별 리듬 원 생성
@@ -164,8 +200,9 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
 
         private void Update() // 챌린지 진행 갱신
         {
-            challengeElapsed += Time.deltaTime; // 챌린지 경과 시간 누적
+            challengeElapsed += Time.unscaledDeltaTime; // 챌린지 경과 시간 누적 (전투 일시정지 중에도 진행하도록 비배율 시간 사용)
             RefreshBeatIndicator(); // 박자 표시 갱신
+            RefreshComboHud(); // 콤보 확대 연출과 중앙 판정 문구 갱신 (Day50)
 
             if (finished) // 챌린지 종료 상태 확인
             {
@@ -198,7 +235,7 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
                 return; // 판정 완료 원 갱신 제외
             }
 
-            circle.Elapsed += Time.deltaTime; // 등장 이후 경과 시간 누적
+            circle.Elapsed += Time.unscaledDeltaTime; // 등장 이후 경과 시간 누적 (전투 일시정지 무관 진행)
             circle.Group.alpha = Mathf.Clamp01(circle.Elapsed / SpawnFadeSeconds); // 등장 페이드 적용
             float progress = circle.Elapsed / circle.Duration; // 줄어드는 진행률 계산 (1.0이 완벽 판정 순간)
             float ringScale = Mathf.Lerp(RingStartScale, 1f, Mathf.Clamp01(progress)); // 링 배율 계산
@@ -231,6 +268,61 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             beatDot.localScale = new Vector3(pulse, pulse, 1f); // 박자 표시 점 배율 적용
         }
 
+        private void RefreshComboHud() // 콤보 확대 연출과 중앙 판정 문구 표시 시간 갱신 (Day50)
+        {
+            if (comboRect != null && comboPunchTimer > 0f) // 콤보 확대 연출 진행 여부 확인
+            {
+                comboPunchTimer -= Time.unscaledDeltaTime; // 확대 연출 잔여 시간 감소
+                float punch = Mathf.Lerp(1f, ComboPunchScale, Mathf.Clamp01(comboPunchTimer / ComboPunchSeconds)); // 잔여 시간 기반 확대 배율 계산
+                comboRect.localScale = new Vector3(punch, punch, 1f); // 콤보 카운터 확대 배율 적용
+            }
+
+            if (centerJudgeText != null && centerJudgeTimer > 0f) // 중앙 판정 문구 표시 여부 확인
+            {
+                centerJudgeTimer -= Time.unscaledDeltaTime; // 중앙 판정 문구 잔여 표시 시간 감소
+
+                if (centerJudgeTimer <= 0f) // 표시 시간 종료 여부 확인
+                {
+                    centerJudgeText.gameObject.SetActive(false); // 중앙 판정 문구 숨김
+                }
+            }
+        }
+
+        private void ShowComboAndJudge(RhythmHitResult result) // 판정 결과 기반 콤보·중앙 문구 표시 갱신 (Day50)
+        {
+            int combo = comboTracker.Register(result); // 콤보 추적기에 판정 등록
+
+            if (comboText != null) // 콤보 카운터 존재 확인
+            {
+                bool visible = combo >= 2; // 2연속 이상에서만 콤보 표시
+                comboText.gameObject.SetActive(visible); // 콤보 카운터 표시 여부 적용
+                comboText.text = visible ? combo + " COMBO" : string.Empty; // 콤보 문구 적용
+                comboText.color = RhythmComboTracker.GetTierColor(combo); // 콤보 구간별 색상 적용
+                comboPunchTimer = visible ? ComboPunchSeconds : 0f; // 콤보 확대 연출 시작
+            }
+
+            if (centerJudgeText != null) // 중앙 판정 문구 존재 확인
+            {
+                centerJudgeText.text = RhythmCircleJudge.GetLabel(result); // 최근 판정 문구 적용
+                centerJudgeText.color = RhythmCircleJudge.GetColor(result); // 최근 판정 색상 적용
+                centerJudgeText.gameObject.SetActive(true); // 중앙 판정 문구 표시
+                centerJudgeTimer = CenterJudgeHoldSeconds; // 중앙 판정 문구 표시 시간 설정
+            }
+
+            RefreshProgressGauge(); // 진행 게이지 갱신
+        }
+
+        private void RefreshProgressGauge() // 판정 완료 비율 기반 진행 게이지 갱신 (Day50)
+        {
+            if (progressFill == null || circles.Count <= 0) // 진행 게이지와 원 목록 존재 확인
+            {
+                return; // 진행 게이지 갱신 중단
+            }
+
+            float ratio = Mathf.Clamp01((float)resolvedCircleCount / circles.Count); // 판정 완료 비율 계산
+            progressFill.anchorMax = new Vector2(ratio, 1f); // 앵커 확장 방식 채움 적용
+        }
+
         private void HandleCircleClicked(CircleRuntime circle) // 원 클릭 처리
         {
             if (finished || circle.Resolved || !circle.Spawned) // 챌린지 종료·이미 판정·미등장 여부 확인
@@ -256,6 +348,8 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             circle.JudgeText.color = resultColor; // 판정 문구 색상 적용
             circle.JudgeText.gameObject.SetActive(true); // 판정 문구 표시
             CountResult(result); // 판정 등급 집계
+            resolvedCircleCount++; // 판정 완료 원 수 증가
+            ShowComboAndJudge(result); // 콤보 카운터와 중앙 판정 문구 갱신 (Day50)
             Destroy(circle.Root, ResultHoldSeconds); // 판정 결과 표시 유지 후 원 객체 제거
         }
 
@@ -291,9 +385,24 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             }
 
             finished = true; // 챌린지 종료 상태 저장
-            RhythmChallengeResult result = new RhythmChallengeResult(perfectCount, goodCount, missCount); // 종합 결과 생성
+            RhythmChallengeResult result = new RhythmChallengeResult(perfectCount, goodCount, missCount, comboTracker.MaxCombo); // 종합 결과 생성 (Day50 최고 콤보 포함)
+            float powerMultiplier = RhythmPowerScaler.Evaluate(result); // 리듬 성적 기반 궁극기 위력 배율 계산
             titleText.gameObject.SetActive(false); // 안내 제목 숨김
-            summaryText.text = result.ToString(); // 종합 결과 요약 문구 표시
+
+            if (comboText != null) // 콤보 카운터 존재 확인
+            {
+                comboText.gameObject.SetActive(false); // 종료 시 콤보 카운터 숨김
+            }
+
+            if (centerJudgeText != null) // 중앙 판정 문구 존재 확인
+            {
+                centerJudgeText.text = result.IsFullCombo ? "FULL COMBO" : "MAX " + result.MaxCombo + " COMBO"; // 최고 콤보 요약 문구 적용
+                centerJudgeText.color = result.IsFullCombo ? RhythmCircleJudge.GetColor(RhythmHitResult.Perfect) : Color.white; // 풀콤보 강조 색상 적용
+                centerJudgeText.gameObject.SetActive(true); // 최고 콤보 요약 문구 표시
+                centerJudgeTimer = FinalHoldSeconds; // 종료 유지 시간까지 표시 유지
+            }
+
+            summaryText.text = result + " · " + RhythmPowerScaler.GetSummaryLabel(powerMultiplier); // 종합 결과와 위력 배율 요약 문구 표시
             summaryText.color = result.MissCount == 0 ? RhythmCircleJudge.GetColor(RhythmHitResult.Perfect) : Color.white; // 전체 성공 시 강조 색상 적용
             summaryText.gameObject.SetActive(true); // 결과 요약 텍스트 표시
             onComplete?.Invoke(result); // 챌린지 종료 콜백 실행

@@ -3,7 +3,7 @@ using ProjectH.Battle.Rhythm; // 궁극기 리듬 챌린지 기능
 
 namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 {
-    public sealed class UltimateRhythmChallengeTests // Day48~49 궁극기 리듬 챌린지 회귀 테스트
+    public sealed class UltimateRhythmChallengeTests // Day48~50 궁극기 리듬 챌린지 회귀 테스트
     {
         [Test] // 생성 원 개수 범위 검증
         public void Generate_CircleCount_IsAlwaysThreeOrFour() // 3~4개 범위 생성 검증
@@ -135,6 +135,73 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(result.TotalCount, Is.EqualTo(4)); // 전체 개수 검증
             Assert.That(result.HitCount, Is.EqualTo(3)); // 성공 개수 검증
             Assert.That(result.Accuracy, Is.EqualTo(0.625f).Within(0.0001f)); // 정확도(Perfect 1점·Good 0.5점) 검증
+        }
+
+        [Test] // 연속 성공 콤보 증가 검증 (Day50 추가)
+        public void ComboTracker_ConsecutiveHits_IncreasesCombo() // 콤보 증가 테스트
+        {
+            RhythmComboTracker tracker = new RhythmComboTracker(); // 콤보 추적기 생성
+
+            Assert.That(tracker.Register(RhythmHitResult.Perfect), Is.EqualTo(1)); // 첫 Perfect 콤보 1 검증
+            Assert.That(tracker.Register(RhythmHitResult.Good), Is.EqualTo(2)); // Good도 콤보 유지 증가 검증
+            Assert.That(tracker.Register(RhythmHitResult.Perfect), Is.EqualTo(3)); // 연속 성공 콤보 3 검증
+            Assert.That(tracker.MaxCombo, Is.EqualTo(3)); // 최고 콤보 기록 검증
+        }
+
+        [Test] // Miss 콤보 초기화와 최고 콤보 보존 검증 (Day50 추가)
+        public void ComboTracker_Miss_ResetsComboButKeepsMax() // 콤보 초기화 테스트
+        {
+            RhythmComboTracker tracker = new RhythmComboTracker(); // 콤보 추적기 생성
+            tracker.Register(RhythmHitResult.Perfect); // 1콤보 누적
+            tracker.Register(RhythmHitResult.Perfect); // 2콤보 누적
+            tracker.Register(RhythmHitResult.Perfect); // 3콤보 누적
+
+            Assert.That(tracker.Register(RhythmHitResult.Miss), Is.EqualTo(0)); // Miss 콤보 초기화 검증
+            Assert.That(tracker.MaxCombo, Is.EqualTo(3)); // Miss 이후에도 최고 콤보 보존 검증
+            Assert.That(tracker.Register(RhythmHitResult.Good), Is.EqualTo(1)); // 초기화 후 재누적 검증
+            Assert.That(tracker.MaxCombo, Is.EqualTo(3)); // 최고 콤보 갱신 조건 미달 검증
+        }
+
+        [Test] // 풀콤보 판별 검증 (Day50 추가)
+        public void ChallengeResult_FullCombo_IsDetected() // 풀콤보 판별 테스트
+        {
+            RhythmChallengeResult fullCombo = new RhythmChallengeResult(3, 1, 0, 4); // Miss 없는 결과 생성
+            RhythmChallengeResult broken = new RhythmChallengeResult(3, 0, 1, 3); // Miss 포함 결과 생성
+
+            Assert.That(fullCombo.IsFullCombo, Is.True); // Miss 없음 풀콤보 검증
+            Assert.That(fullCombo.MaxCombo, Is.EqualTo(4)); // 최고 콤보 저장 검증
+            Assert.That(broken.IsFullCombo, Is.False); // Miss 포함 풀콤보 불가 검증
+        }
+
+        [Test] // 전부 Perfect 최대 배율 검증 (Day50 추가)
+        public void PowerScaler_AllPerfect_ReturnsMaxMultiplier() // 최대 위력 배율 테스트
+        {
+            RhythmChallengeResult result = new RhythmChallengeResult(4, 0, 0, 4); // 전부 Perfect 풀콤보 결과 생성
+
+            Assert.That(RhythmPowerScaler.Evaluate(result), Is.EqualTo(RhythmPowerScaler.MaxMultiplier).Within(0.0001f)); // 최대 배율 1.5 검증
+        }
+
+        [Test] // 전부 Miss 최저 배율 검증 (Day50 추가)
+        public void PowerScaler_AllMiss_ReturnsMinMultiplier() // 최저 위력 배율 테스트
+        {
+            RhythmChallengeResult result = new RhythmChallengeResult(0, 0, 4, 0); // 전부 Miss 결과 생성
+
+            Assert.That(RhythmPowerScaler.Evaluate(result), Is.EqualTo(RhythmPowerScaler.MinMultiplier).Within(0.0001f)); // 최저 배율 0.6 검증
+        }
+
+        [Test] // 배율 범위와 성적 순서 검증 (Day50 추가)
+        public void PowerScaler_MultiplierStaysInRangeAndFollowsAccuracy() // 배율 범위·단조 증가 테스트
+        {
+            float allMiss = RhythmPowerScaler.Evaluate(new RhythmChallengeResult(0, 0, 4, 0)); // 전부 Miss 배율 계산
+            float mixed = RhythmPowerScaler.Evaluate(new RhythmChallengeResult(1, 1, 2, 2)); // 혼합 성적 배율 계산
+            float allGood = RhythmPowerScaler.Evaluate(new RhythmChallengeResult(0, 4, 0, 4)); // 전부 Good 풀콤보 배율 계산
+            float allPerfect = RhythmPowerScaler.Evaluate(new RhythmChallengeResult(4, 0, 0, 4)); // 전부 Perfect 풀콤보 배율 계산
+
+            Assert.That(allMiss, Is.LessThan(mixed)); // Miss보다 혼합 성적이 높은 배율인지 검증
+            Assert.That(mixed, Is.LessThan(allGood)); // 혼합 성적보다 전부 Good이 높은 배율인지 검증
+            Assert.That(allGood, Is.LessThan(allPerfect)); // 전부 Good보다 전부 Perfect가 높은 배율인지 검증
+            Assert.That(allPerfect, Is.LessThanOrEqualTo(RhythmPowerScaler.MaxMultiplier)); // 최대 배율 상한 검증
+            Assert.That(allMiss, Is.GreaterThanOrEqualTo(RhythmPowerScaler.MinMultiplier)); // 최저 배율 하한 검증
         }
     }
 }

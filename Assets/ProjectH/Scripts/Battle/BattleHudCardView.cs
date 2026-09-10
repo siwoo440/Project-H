@@ -21,6 +21,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private Button ultimateButton; // 궁극기 텍스트 Runtime 입력 버튼
         private Button portraitButton; // 초상화 Runtime 궁극기 입력 버튼 (Day49 추가)
         private Image portraitImage; // 초상화 배경 이미지 참조 (Day49 추가)
+        private BattleUltimateBeginResult pendingUltimate; // 리듬 챌린지 대기 중인 궁극기 선행 단계 결과 (Day50 추가)
+        private BattleTimeController pausedTimeController; // 챌린지 동안 일시정지시킨 전투 시간 컨트롤러 (Day50 추가)
+        private bool ultimateChallengeActive; // 리듬 챌린지 진행 여부 (Day50 추가)
         [SerializeField] private Outline portraitSelectionOutline; // 선택 캐릭터 초상화 윤곽 효과
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
@@ -111,28 +114,71 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
-        public bool TryUseUltimate() // 현재 HUD 캐릭터 궁극기 사용 시도
+        public bool TryUseUltimate() // 현재 HUD 캐릭터 궁극기 사용 시도 (Day50 리듬 성적 연동 흐름)
         {
-            if (!IsUltimateReady || Stats == null) // 생존 및 Ready 상태 확인
+            if (!IsUltimateReady || Stats == null || ultimateChallengeActive) // 생존·Ready·챌린지 중복 실행 여부 확인
             {
                 return false; // 사용 불가 상태 실행 차단
             }
 
-            BattleUltimateExecutionResult result = BattleUltimateExecutor.TryExecute(Stats.CharacterId); // 현재 전투 Registry 기반 궁극기 실행
+            BattleUltimateBeginResult begin = BattleUltimateExecutor.TryBeginUltimate(Stats.CharacterId); // 궁극기 검증과 게이지 소비만 선행 실행
 
-            if (!result.Succeeded) // 궁극기 실행 실패 여부 확인
+            if (!begin.Succeeded) // 궁극기 선행 단계 실패 여부 확인
             {
-                Debug.LogWarning($"[Project H][ULTIMATE] {Stats.CharacterId}, {result.Message}"); // 궁극기 사용 실패 로그 출력
+                Debug.LogWarning($"[Project H][ULTIMATE] {Stats.CharacterId}, {begin.Message}"); // 궁극기 사용 실패 로그 출력
                 return false; // 사용 실패 반환
             }
 
-            UltimateRhythmChallengeView.Show(result.UltimateName, HandleRhythmChallengeCompleted); // 궁극기 리듬 챌린지 표시 (Day49, 결과는 표시만 하고 효과는 아직 미연동)
-            return true; // 궁극기 실행 성공 반환
+            pendingUltimate = begin; // 챌린지 종료 후 사용할 선행 단계 결과 보관
+            ultimateChallengeActive = true; // 리듬 챌린지 진행 상태 기록
+            PauseBattleForChallenge(); // 챌린지 집중을 위한 전투 일시정지 적용
+            UltimateRhythmChallengeView.Show(begin.UltimateName, HandleRhythmChallengeCompleted); // 궁극기 리듬 챌린지 표시 (Day50, 종료 시 성적 배율로 효과 실행)
+            return true; // 궁극기 선행 단계 성공 반환
         }
 
-        private void HandleRhythmChallengeCompleted(RhythmChallengeResult result) // 궁극기 리듬 챌린지 종료 처리 (Day49 판정 등급 확장)
+        private void PauseBattleForChallenge() // 리듬 챌린지 동안 전투 일시정지 적용 (Day50 추가)
         {
-            Debug.Log($"[Project H][RHYTHM] {Stats?.CharacterId}, {result}, Accuracy={result.Accuracy:P0}"); // 리듬 챌린지 등급별 결과 로그 출력 (전투 효과 연동은 후속 Day)
+            BattleTimeController controller = FindFirstObjectByType<BattleTimeController>(); // 현재 Scene 전투 시간 컨트롤러 조회
+
+            if (controller == null || controller.IsPaused) // 컨트롤러 부재 또는 이미 일시정지 상태 확인
+            {
+                pausedTimeController = null; // 이 챌린지가 일시정지시킨 대상 없음 기록 (사용자 일시정지 상태 보존)
+                return; // 일시정지 적용 중단
+            }
+
+            controller.SetPaused(true); // 전투 일시정지 적용
+            pausedTimeController = controller; // 챌린지 종료 시 복구할 컨트롤러 보관
+        }
+
+        private void ResumeBattleAfterChallenge() // 리듬 챌린지 종료 후 전투 재개 (Day50 추가)
+        {
+            if (pausedTimeController != null) // 이 챌린지가 일시정지시킨 컨트롤러 확인
+            {
+                pausedTimeController.SetPaused(false); // 전투 진행 상태 복구
+                pausedTimeController = null; // 복구 대상 참조 해제
+            }
+        }
+
+        private void HandleRhythmChallengeCompleted(RhythmChallengeResult result) // 궁극기 리듬 챌린지 종료 처리 (Day50 판정 등급 전투 효과 연동)
+        {
+            try // 효과 실행 중 예외와 무관하게 전투 재개를 보장
+            {
+                float powerMultiplier = RhythmPowerScaler.Evaluate(result); // 리듬 성적 기반 궁극기 위력 배율 계산
+                BattleUltimateExecutionResult execution = BattleUltimateExecutor.ExecuteUltimateEffect(pendingUltimate, powerMultiplier); // 계산 배율로 궁극기 효과 실행
+                Debug.Log($"[Project H][RHYTHM] {Stats?.CharacterId}, {result}, Accuracy={result.Accuracy:P0}, MaxCombo={result.MaxCombo}, FullCombo={result.IsFullCombo}, Power=x{powerMultiplier:0.00}"); // 리듬 챌린지 결과와 적용 배율 로그 출력
+
+                if (!execution.Succeeded) // 궁극기 효과 실행 실패 여부 확인
+                {
+                    Debug.LogWarning($"[Project H][ULTIMATE] {Stats?.CharacterId}, {execution.Message}"); // 효과 미적용 사유 로그 출력
+                }
+            }
+            finally // 성공 여부와 무관한 마무리 처리
+            {
+                ResumeBattleAfterChallenge(); // 전투 재개 보장
+                pendingUltimate = default; // 대기 궁극기 선행 결과 초기화
+                ultimateChallengeActive = false; // 리듬 챌린지 진행 상태 해제
+                RefreshUltimate(); // 소비된 게이지 기준 궁극기 표시 갱신
+            }
         }
 
         public void SetUltimatePreview(float ratio) // 궁극기 게이지 UI 미리보기 설정
@@ -292,6 +338,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private void OnDestroy() // HUD 카드 제거
         {
+            ResumeBattleAfterChallenge(); // 챌린지 도중 HUD 제거 시 전투 정지 상태 잔존 방지 (Day50 추가)
             UnbindRuntimeEvents(); // Runtime 이벤트 연결 해제
 
             if (ultimateButton != null) // 궁극기 Runtime 버튼 확인

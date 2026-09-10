@@ -38,6 +38,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private const string EllenDefenseSource = "ULT:CH_ELLEN:SELF_DEF"; // 엘렌 자기 방어 증가 출처 키
         private const string LiliaResistanceSource = "ULT:CH_LILIA:RES_DOWN"; // 릴리아 마법 저항 감소 출처 키
         private const string EveStunSource = "ULT:CH_EVE:STUN"; // 이브 기절 출처 키
+        private const float MaxHealRatio = 0.60f; // 세레나 회복·부활 비율 상한 (Day50 배율 적용 후 과회복 방지)
+        private const float MaxPartyDamageReduction = 0.35f; // 엘렌 파티 피해 감소 상한 (Day50 배율 적용 후 무적화 방지)
 
         public static bool IsSupported(string characterId) // 초기 4인 궁극기 지원 여부 확인
         {
@@ -61,30 +63,33 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
-        public static BattleUltimateEffectExecutionResult Execute(string characterId, BattleActor owner, BattleCombatRegistry registry) // 캐릭터 고유 궁극기 효과 실행
+        public static BattleUltimateEffectExecutionResult Execute(string characterId, BattleActor owner, BattleCombatRegistry registry, float powerMultiplier = 1f) // 캐릭터 고유 궁극기 효과 실행 (Day50 리듬 성적 위력 배율 적용)
         {
             if (owner == null || registry == null || !owner.IsCombatReady || !owner.Stats.IsAlive) // 사용자 및 Registry 실행 가능 상태 확인
             {
                 return new BattleUltimateEffectExecutionResult(0, 0); // 잘못된 실행 요청 빈 결과 반환
             }
 
+            float safeMultiplier = Mathf.Max(0f, powerMultiplier); // 위력 배율 음수 방지
+
             switch (characterId) // 캐릭터별 궁극기 효과 분기
             {
                 case SerenaId: // 세레나 궁극기 처리
-                    return ExecuteSerena(owner, registry); // 세레나 성광의 심판 실행 결과 반환
+                    return ExecuteSerena(owner, registry, safeMultiplier); // 세레나 성광의 심판 실행 결과 반환
                 case EllenId: // 엘렌 궁극기 처리
-                    return ExecuteEllen(owner, registry); // 엘렌 기사의 결의 실행 결과 반환
+                    return ExecuteEllen(owner, registry, safeMultiplier); // 엘렌 기사의 결의 실행 결과 반환
                 case LiliaId: // 릴리아 궁극기 처리
-                    return ExecuteLilia(owner, registry); // 릴리아 별의 낙인 실행 결과 반환
+                    return ExecuteLilia(owner, registry, safeMultiplier); // 릴리아 별의 낙인 실행 결과 반환
                 case EveId: // 이브 궁극기 처리
-                    return ExecuteEve(owner, registry); // 이브 정령 폭우 실행 결과 반환
+                    return ExecuteEve(owner, registry, safeMultiplier); // 이브 정령 폭우 실행 결과 반환
                 default: // 미지원 궁극기 처리
                     return new BattleUltimateEffectExecutionResult(0, 0); // 미지원 궁극기 빈 결과 반환
             }
         }
 
-        private static BattleUltimateEffectExecutionResult ExecuteSerena(BattleActor owner, BattleCombatRegistry registry) // 세레나 성광의 심판 실행
+        private static BattleUltimateEffectExecutionResult ExecuteSerena(BattleActor owner, BattleCombatRegistry registry, float powerMultiplier) // 세레나 성광의 심판 실행
         {
+            float healRatio = Mathf.Min(MaxHealRatio, SerenaHealRatio * powerMultiplier); // 리듬 배율 반영 회복 비율 계산
             int affectedTargets = 0; // 영향 대상 누적 수 초기화
             bool healingApplied = false; // 전체 회복 적용 여부 초기화
             bool cleanseApplied = false; // 전체 정화 적용 여부 초기화
@@ -98,7 +103,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     continue; // 비대상 액터 제외
                 }
 
-                int requestedHealing = Mathf.RoundToInt(target.Stats.MaxHp * SerenaHealRatio); // 최대 체력 25퍼센트 회복량 계산
+                int requestedHealing = Mathf.RoundToInt(target.Stats.MaxHp * healRatio); // 리듬 배율 반영 최대 체력 비율 회복량 계산
                 BattleHealingResult healingResult = BattleHealingResolver.Resolve(target.Stats, requestedHealing); // 공통 회복 계산 적용
                 int healed = target.ApplyHealing(healingResult); // 아군 실제 회복 적용
                 int removed = BattleSkillRuntimeState.RemoveDebuffs(target.Stats.RuntimeId, int.MaxValue); // 등록 상태이상 전체 제거
@@ -119,14 +124,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 }
             }
 
-            bool revived = TryReviveOneAlly(owner); // 같은 전투 Scene 전투불능 아군 1명 부활 시도
+            bool revived = TryReviveOneAlly(owner, powerMultiplier); // 같은 전투 Scene 전투불능 아군 1명 부활 시도
             int appliedEffects = (healingApplied ? 1 : 0) + (cleanseApplied ? 1 : 0) + (revived ? 1 : 0); // 실제 적용 효과 종류 수 계산
             affectedTargets += revived ? 1 : 0; // 부활 영향 대상 수 반영
             return new BattleUltimateEffectExecutionResult(appliedEffects, affectedTargets); // 세레나 궁극기 실행 결과 반환
         }
 
-        private static BattleUltimateEffectExecutionResult ExecuteEllen(BattleActor owner, BattleCombatRegistry registry) // 엘렌 기사의 결의 실행
+        private static BattleUltimateEffectExecutionResult ExecuteEllen(BattleActor owner, BattleCombatRegistry registry, float powerMultiplier) // 엘렌 기사의 결의 실행
         {
+            float partyDamageReduction = Mathf.Min(MaxPartyDamageReduction, EllenPartyDamageReduction * powerMultiplier); // 리듬 배율 반영 파티 피해 감소 비율 계산
+            float selfDefenseBonus = EllenSelfDefenseBonus * powerMultiplier; // 리듬 배율 반영 자기 방어력 증가 비율 계산
             int partyTargets = 0; // 파티 피해 감소 적용 대상 수 초기화
 
             for (int index = 0; index < registry.Actors.Count; index++) // 현재 생존 Registry 액터 순회
@@ -138,17 +145,18 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     continue; // 비대상 액터 제외
                 }
 
-                BattleSkillRuntimeState.AddModifier(target.Stats.RuntimeId, BattleRuntimeModifierKind.DamageReductionPercent, EllenPartyDamageReduction, float.PositiveInfinity, EllenPartyReductionSource); // 아군 전체 전투 종료까지 피해 20퍼센트 감소 적용
+                BattleSkillRuntimeState.AddModifier(target.Stats.RuntimeId, BattleRuntimeModifierKind.DamageReductionPercent, partyDamageReduction, float.PositiveInfinity, EllenPartyReductionSource); // 아군 전체 전투 종료까지 피해 20퍼센트 감소 적용
                 partyTargets++; // 피해 감소 적용 대상 수 증가
             }
 
-            BattleSkillRuntimeState.AddModifier(owner.Stats.RuntimeId, BattleRuntimeModifierKind.DefensePercent, EllenSelfDefenseBonus, float.PositiveInfinity, EllenDefenseSource); // 엘렌 자신 전투 종료까지 방어력 50퍼센트 증가 적용
+            BattleSkillRuntimeState.AddModifier(owner.Stats.RuntimeId, BattleRuntimeModifierKind.DefensePercent, selfDefenseBonus, float.PositiveInfinity, EllenDefenseSource); // 엘렌 자신 전투 종료까지 방어력 50퍼센트 증가 적용
             int appliedEffects = partyTargets > 0 ? 2 : 1; // 파티 피해 감소와 자기 방어 효과 수 계산
             return new BattleUltimateEffectExecutionResult(appliedEffects, partyTargets + 1); // 엘렌 궁극기 실행 결과 반환
         }
 
-        private static BattleUltimateEffectExecutionResult ExecuteLilia(BattleActor owner, BattleCombatRegistry registry) // 릴리아 별의 낙인 실행
+        private static BattleUltimateEffectExecutionResult ExecuteLilia(BattleActor owner, BattleCombatRegistry registry, float powerMultiplier) // 릴리아 별의 낙인 실행
         {
+            float damageRatio = LiliaDamageRatio * powerMultiplier; // 리듬 배율 반영 마법 피해 공격력 계수 계산
             int damageTargets = 0; // 전체 피해 적용 대상 수 초기화
             int debuffTargets = 0; // 마법 저항 감소 적용 대상 수 초기화
             List<BattleActor> targets = CollectLivingActors(registry, BattleTeam.Enemy); // 사망 Registry 변경 방지용 생존 적군 스냅샷 생성
@@ -157,7 +165,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 BattleActor target = targets[index]; // 현재 효과 대상 조회
 
-                if (ApplyDamage(owner, target, LiliaDamageRatio, BattleDamageType.Magic)) // 공격력 260퍼센트 마법 피해 적용 확인
+                if (ApplyDamage(owner, target, damageRatio, BattleDamageType.Magic)) // 공격력 260퍼센트 마법 피해 적용 확인
                 {
                     damageTargets++; // 실제 피해 대상 수 증가
                 }
@@ -174,8 +182,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return new BattleUltimateEffectExecutionResult(appliedEffects, damageTargets + debuffTargets); // 릴리아 궁극기 실행 결과 반환
         }
 
-        private static BattleUltimateEffectExecutionResult ExecuteEve(BattleActor owner, BattleCombatRegistry registry) // 이브 정령 폭우 실행
+        private static BattleUltimateEffectExecutionResult ExecuteEve(BattleActor owner, BattleCombatRegistry registry, float powerMultiplier) // 이브 정령 폭우 실행
         {
+            float damageRatio = EveDamageRatio * powerMultiplier; // 리듬 배율 반영 물리 피해 공격력 계수 계산
             int damageTargets = 0; // 전체 피해 적용 대상 수 초기화
             int stunTargets = 0; // 기절 적용 대상 수 초기화
             List<BattleActor> targets = CollectLivingActors(registry, BattleTeam.Enemy); // 사망 Registry 변경 방지용 생존 적군 스냅샷 생성
@@ -184,7 +193,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 BattleActor target = targets[index]; // 현재 효과 대상 조회
 
-                if (ApplyDamage(owner, target, EveDamageRatio, BattleDamageType.Physical)) // 공격력 220퍼센트 물리 피해 적용 확인
+                if (ApplyDamage(owner, target, damageRatio, BattleDamageType.Physical)) // 공격력 220퍼센트 물리 피해 적용 확인
                 {
                     damageTargets++; // 실제 피해 대상 수 증가
                 }
@@ -220,7 +229,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return applied > 0; // 실제 피해 성공 여부 반환
         }
 
-        private static bool TryReviveOneAlly(BattleActor owner) // 세레나 전투불능 아군 1명 부활 시도
+        private static bool TryReviveOneAlly(BattleActor owner, float powerMultiplier) // 세레나 전투불능 아군 1명 부활 시도
         {
             if (owner == null) // 세레나 사용자 확인
             {
@@ -250,7 +259,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return false; // 부활 대상 없음 반환
             }
 
-            int reviveHp = Mathf.Max(1, Mathf.RoundToInt(candidate.AllyStats.MaxHp * SerenaReviveRatio)); // 최대 체력 25퍼센트 부활 체력 계산
+            int reviveHp = Mathf.Max(1, Mathf.RoundToInt(candidate.AllyStats.MaxHp * Mathf.Min(MaxHealRatio, SerenaReviveRatio * powerMultiplier))); // 리듬 배율 반영 부활 체력 계산
             bool revived = candidate.TryRevive(reviveHp); // 전투불능 아군 1명 부활 실행
 
             if (revived) // 아군 부활 성공 여부 확인

@@ -1,6 +1,7 @@
 using System.Collections.Generic; // 사전 자료형
 using ProjectH.Core; // 프로젝트 핵심 기능
 using ProjectH.Data; // 프로젝트 데이터 기능
+using ProjectH.SaveSystem; // 저장 및 지역 침식도 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.SceneManagement; // Unity 씬 기능
 using UnityEngine.UI; // Unity UI 기능
@@ -21,11 +22,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private readonly Dictionary<string, DungeonCardVisual> cardVisuals = new Dictionary<string, DungeonCardVisual>(); // 던전 카드 시각 사전
         private Text detailNameText; // 상세 던전 이름 텍스트
         private Text detailRegionText; // 상세 지역 텍스트
+        private Text detailErosionText; // 상세 침식도 및 적 스탯 증가 텍스트 (Day44 추가 작업)
         private Text detailLevelText; // 상세 권장 레벨 텍스트
         private Text detailRewardText; // 상세 보상 텍스트
         private Text detailStatusText; // 상세 상태 텍스트
         private Button enterButton; // 전투 진입 버튼
         private Text enterButtonLabel; // 전투 진입 버튼 라벨
+        private Text erosionDebugText; // 지역 침식도 디버그 텍스트 (Day44)
 
         public int RenderedCardCount => cardVisuals.Count; // 생성 카드 수 반환
         public bool IsEnterInteractable => enterButton != null && enterButton.interactable; // 전투 진입 버튼 상태 반환
@@ -102,11 +105,26 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetRect(listLabel.rectTransform, new Vector2(0.045f, 0.91f), new Vector2(0.50f, 0.985f)); // 던전 목록 라벨 배치
             listLabel.alignment = TextAnchor.MiddleLeft; // 던전 목록 라벨 좌측 정렬
             BuildDungeonCards(cardPanel.transform); // 던전 카드 목록 생성
+            EnsureRegionErosionInitialized(); // 지역별 침식도 랜덤 초기화 (Day44 추가 작업)
 
             Image detailPanel = CreateImage(canvasObject.transform, "DungeonDetailPanel", PanelColor); // 상세 정보 패널 생성
             SetRect(detailPanel.rectTransform, new Vector2(0.63f, 0.08f), new Vector2(0.955f, 0.83f)); // 상세 정보 패널 배치
             BuildDetailPanel(detailPanel.transform); // 상세 정보 패널 구성
+            BuildErosionDebugBar(canvasObject.transform); // 하단 지역 침식도 디버그 바 구성 (Day44)
             RefreshSelectionVisuals(); // 초기 선택 상태 표시
+        }
+
+        private void BuildErosionDebugBar(Transform parent) // 하단 지역 침식도 디버그 바 구성 (Day44)
+        {
+            erosionDebugText = CreateText(parent, "ErosionDebugText", "침식도 · -", 18, FontStyle.Bold, new Color(0.80f, 0.55f, 0.30f, 1f)); // 침식도 디버그 텍스트 생성
+            SetRect(erosionDebugText.rectTransform, new Vector2(0.045f, 0.01f), new Vector2(0.55f, 0.065f)); // 하단 여백에 침식도 디버그 텍스트 배치
+            erosionDebugText.alignment = TextAnchor.MiddleLeft; // 침식도 디버그 텍스트 좌측 정렬
+            Button minusButton = CreateButton(parent, "ErosionMinusDebug", "침식도 -10"); // 침식도 감소 디버그 버튼 생성
+            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.57f, 0.01f), new Vector2(0.72f, 0.065f)); // 침식도 감소 버튼 배치
+            minusButton.onClick.AddListener(DecreaseErosionDebug); // 침식도 감소 버튼 이벤트 연결
+            Button plusButton = CreateButton(parent, "ErosionPlusDebug", "침식도 +10"); // 침식도 증가 디버그 버튼 생성
+            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.74f, 0.01f), new Vector2(0.89f, 0.065f)); // 침식도 증가 버튼 배치
+            plusButton.onClick.AddListener(IncreaseErosionDebug); // 침식도 증가 버튼 이벤트 연결
         }
 
         private void BuildDungeonCards(Transform parent) // 던전 카드 목록 생성
@@ -157,8 +175,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             detailRegionText = CreateText(parent, "Region", "REGION · -", 20, FontStyle.Bold, new Color(0.32f, 0.39f, 0.47f, 1f)); // 상세 지역 텍스트 생성
             SetRect(detailRegionText.rectTransform, new Vector2(0.08f, 0.64f), new Vector2(0.92f, 0.71f)); // 상세 지역 텍스트 배치
             detailRegionText.alignment = TextAnchor.MiddleLeft; // 상세 지역 텍스트 좌측 정렬
+            detailErosionText = CreateText(parent, "Erosion", "침식도 · -", 17, FontStyle.Bold, new Color(0.60f, 0.28f, 0.16f, 1f)); // 상세 침식도 및 적 스탯 증가 텍스트 생성 (Day44 추가 작업)
+            SetRect(detailErosionText.rectTransform, new Vector2(0.08f, 0.575f), new Vector2(0.92f, 0.635f)); // 상세 침식도 텍스트 배치
+            detailErosionText.alignment = TextAnchor.MiddleLeft; // 상세 침식도 텍스트 좌측 정렬
             Image infoBox = CreateImage(parent, "InfoBox", new Color(0.84f, 0.82f, 0.75f, 0.92f)); // 상세 수치 상자 생성
-            SetRect(infoBox.rectTransform, new Vector2(0.08f, 0.33f), new Vector2(0.92f, 0.60f)); // 상세 수치 상자 배치
+            SetRect(infoBox.rectTransform, new Vector2(0.08f, 0.33f), new Vector2(0.92f, 0.565f)); // 상세 수치 상자 배치
             detailLevelText = CreateText(infoBox.transform, "RecommendedLevel", "권장 레벨\n-", 24, FontStyle.Bold, NavyColor); // 상세 권장 레벨 생성
             SetRect(detailLevelText.rectTransform, new Vector2(0.06f, 0.12f), new Vector2(0.47f, 0.88f)); // 상세 권장 레벨 배치
             detailLevelText.alignment = TextAnchor.MiddleCenter; // 상세 권장 레벨 중앙 정렬
@@ -212,6 +233,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 SetText(detailRewardText, "예상 보상\nEXP -   GOLD -"); // 미선택 보상 표시
                 SetText(detailStatusText, GameManager.Instance == null ? "Bootstrap 씬부터 실행해 주세요." : "선택된 던전이 없습니다."); // 미선택 상태 표시
                 SetEnterState(false); // 전투 진입 비활성화
+                RefreshErosionDebugText(null); // 미선택 침식도 디버그 표시 (Day44)
                 return; // 상세 갱신 중단
             }
 
@@ -221,6 +243,128 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetText(detailRewardText, $"예상 보상\nEXP {selectedDungeon.RewardExp}   GOLD {selectedDungeon.RewardGold}"); // 선택 던전 보상 표시
             SetText(detailStatusText, $"{selectedDungeon.Id} · 출격 준비 완료"); // 선택 던전 상태 표시
             SetEnterState(DungeonSelectionRuntimeState.CanEnter(HasDungeonData)); // 선택 데이터 기반 전투 진입 상태 적용
+            RefreshErosionDebugText(selectedDungeon); // 선택 던전 지역 침식도 디버그 표시 (Day44)
+        }
+
+        private void RefreshErosionDebugText(DungeonData selectedDungeon) // 지역 침식도 디버그 및 상세 패널 텍스트 갱신 (Day44)
+        {
+            if (selectedDungeon == null || string.IsNullOrWhiteSpace(selectedDungeon.RegionId)) // 선택 던전 및 지역 정보 확인
+            {
+                SetText(erosionDebugText, "침식도 · -"); // 지역 정보 없음 하단 표시
+                SetText(detailErosionText, "침식도 · -"); // 지역 정보 없음 상세 패널 표시
+                return; // 침식도 텍스트 갱신 종료
+            }
+
+            if (GameManager.Instance == null || GameManager.Instance.Save == null || GameManager.Instance.Save.CurrentSave == null) // 저장 데이터 확인
+            {
+                SetText(erosionDebugText, $"침식도({selectedDungeon.RegionId}) · -"); // 저장 데이터 없음 하단 표시
+                SetText(detailErosionText, "침식도 · 저장 데이터 없음"); // 저장 데이터 없음 상세 패널 표시
+                return; // 침식도 텍스트 갱신 종료
+            }
+
+            SaveData saveData = GameManager.Instance.Save.CurrentSave; // 현재 저장 데이터 조회
+            int erosion = RegionErosionService.GetOrInitializeErosion(saveData, selectedDungeon.RegionId); // 선택 지역 침식도 조회 (미등록 시 랜덤 초기화)
+            RegionErosionTier tier = RegionErosionService.GetErosionTier(saveData, selectedDungeon.RegionId); // 선택 지역 침식도 등급 조회
+            int statBonusPercent = RegionErosionService.GetEnemyStatBonusPercent(saveData, selectedDungeon.RegionId); // 선택 지역 적 스탯 증가율 조회
+            string tierLabel = GetErosionTierLabel(tier); // 침식도 등급 한글 라벨 조회
+            SetText(erosionDebugText, $"침식도({selectedDungeon.RegionId}) · {erosion}/{RegionErosionSaveData.MaxErosion} · {tierLabel}"); // 침식도 디버그 문구 하단 표시
+            SetText(detailErosionText, $"침식도 {erosion}/{RegionErosionSaveData.MaxErosion} · {tierLabel} · 적 스탯 +{statBonusPercent}%"); // 침식도 및 적 스탯 증가 상세 패널 표시
+        }
+
+        private void EnsureRegionErosionInitialized() // 지원 던전 소속 지역 침식도 랜덤 초기화 (Day44 추가 작업)
+        {
+            if (GameManager.Instance == null || GameManager.Instance.Save == null) // 저장 관리자 확인
+            {
+                return; // 초기화 중단
+            }
+
+            SaveManager saveManager = GameManager.Instance.Save; // 저장 관리자 조회
+            SaveData saveData = saveManager.CurrentSave; // 현재 저장 데이터 조회
+
+            if (saveData == null) // 현재 저장 데이터 확인
+            {
+                return; // 초기화 중단
+            }
+
+            bool changed = false; // 신규 초기화 발생 여부 초기화
+
+            for (int index = 0; index < DungeonSelectionRuntimeState.SupportedDungeonIds.Count; index++) // 지원 던전 ID 순회
+            {
+                DungeonData dungeon = GetDungeon(DungeonSelectionRuntimeState.SupportedDungeonIds[index]); // 현재 던전 데이터 조회
+
+                if (dungeon == null || string.IsNullOrWhiteSpace(dungeon.RegionId)) // 던전 및 지역 정보 확인
+                {
+                    continue; // 지역 정보 없는 던전 제외
+                }
+
+                if (RegionErosionService.TryInitializeRandomErosion(saveData, dungeon.RegionId, out _)) // 미등록 지역 랜덤 침식도 초기화 시도
+                {
+                    changed = true; // 신규 초기화 발생 기록
+                }
+            }
+
+            if (changed) // 신규 초기화 발생 확인
+            {
+                saveManager.SaveCurrent(); // 랜덤 초기화 결과 저장
+            }
+        }
+
+        private void DecreaseErosionDebug() // 지역 침식도 디버그 감소 처리 (Day44)
+        {
+            ApplyErosionDebugDelta(-10); // 침식도 10 감소 실행
+        }
+
+        private void IncreaseErosionDebug() // 지역 침식도 디버그 증가 처리 (Day44)
+        {
+            ApplyErosionDebugDelta(10); // 침식도 10 증가 실행
+        }
+
+        private void ApplyErosionDebugDelta(int delta) // 지역 침식도 디버그 증감 공통 처리 (Day44)
+        {
+            if (GameManager.Instance == null || GameManager.Instance.Save == null) // 저장 관리자 확인
+            {
+                SetText(detailStatusText, "저장 데이터를 찾을 수 없습니다."); // 저장 관리자 누락 안내
+                return; // 침식도 디버그 변경 중단
+            }
+
+            DungeonData selectedDungeon = GetDungeon(DungeonSelectionRuntimeState.SelectedDungeonId); // 선택 던전 데이터 조회
+
+            if (selectedDungeon == null || string.IsNullOrWhiteSpace(selectedDungeon.RegionId)) // 선택 던전 및 지역 정보 확인
+            {
+                SetText(detailStatusText, "지역 정보가 있는 던전을 먼저 선택해 주세요."); // 지역 정보 없음 안내
+                return; // 침식도 디버그 변경 중단
+            }
+
+            SaveManager saveManager = GameManager.Instance.Save; // 저장 관리자 조회
+            SaveData saveData = saveManager.CurrentSave; // 현재 저장 데이터 조회
+
+            if (saveData == null) // 현재 저장 데이터 확인
+            {
+                SetText(detailStatusText, "저장 데이터를 찾을 수 없습니다."); // 저장 데이터 누락 안내
+                return; // 침식도 디버그 변경 중단
+            }
+
+            RegionErosionService.AddErosion(saveData, selectedDungeon.RegionId, delta); // 지역 침식도 디버그 증감 적용
+            bool saved = saveManager.SaveCurrent(); // 침식도 변경 즉시 저장
+            SetText(detailStatusText, saved ? $"{selectedDungeon.RegionId} 침식도를 변경하고 저장했습니다." : "침식도는 변경되었지만 저장에 실패했습니다."); // 침식도 변경 결과 표시
+            RefreshErosionDebugText(selectedDungeon); // 침식도 디버그 텍스트 갱신
+        }
+
+        private static string GetErosionTierLabel(RegionErosionTier tier) // 침식도 등급 한글 라벨 변환 (Day44)
+        {
+            switch (tier) // 등급별 분기
+            {
+                case RegionErosionTier.Stable: // 안정 등급 처리
+                    return "안정"; // 안정 라벨 반환
+                case RegionErosionTier.Cracked: // 균열 등급 처리
+                    return "균열"; // 균열 라벨 반환
+                case RegionErosionTier.Eroded: // 침식 등급 처리
+                    return "침식"; // 침식 라벨 반환
+                case RegionErosionTier.Dangerous: // 위험 등급 처리
+                    return "위험"; // 위험 라벨 반환
+                default: // 붕괴 등급 처리
+                    return "붕괴"; // 붕괴 라벨 반환
+            }
         }
 
         private void SetEnterState(bool interactable) // 전투 진입 버튼 상태 적용

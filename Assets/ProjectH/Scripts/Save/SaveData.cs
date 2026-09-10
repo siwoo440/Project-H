@@ -111,6 +111,38 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
     }
 
     [Serializable] // JSON 직렬화 허용
+    public sealed class RegionErosionSaveData // 지역별 침식도 저장 데이터 (Day44)
+    {
+        public const int MinErosion = 0; // 침식도 최소값
+        public const int MaxErosion = 100; // 침식도 최대값
+        [SerializeField] private string regionId; // 지역 ID
+        [SerializeField] private int erosionLevel; // 지역 침식도 (0~100)
+        public string RegionId => regionId; // 지역 ID 반환
+        public int ErosionLevel => erosionLevel; // 지역 침식도 반환
+
+        public RegionErosionSaveData(string id, int level) // 지역 침식도 저장 데이터 생성
+        {
+            regionId = id; // 지역 ID 저장
+            erosionLevel = Mathf.Clamp(level, MinErosion, MaxErosion); // 침식도 범위 보정 후 저장
+        }
+
+        public void EnsureDefaults() // 지역 침식도 저장 기본값 복원
+        {
+            if (regionId == null) // 지역 ID null 확인
+            {
+                regionId = string.Empty; // 지역 ID 기본값 복원
+            }
+
+            erosionLevel = Mathf.Clamp(erosionLevel, MinErosion, MaxErosion); // 침식도 범위 보정
+        }
+
+        public void SetErosion(int value) // 지역 침식도 변경
+        {
+            erosionLevel = Mathf.Clamp(value, MinErosion, MaxErosion); // 침식도 범위 보정 후 저장
+        }
+    }
+
+    [Serializable] // JSON 직렬화 허용
     public sealed class SaveData // 전체 진행 저장 데이터
     {
         public const int CurrentVersion = 1; // 현재 저장 버전
@@ -131,6 +163,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private List<string> storyFlags = new List<string>(); // 활성 스토리 플래그 목록
         [SerializeField] private List<EquipmentInstanceSaveData> equipmentInventory = new List<EquipmentInstanceSaveData>(); // 보유 장비 인스턴스 목록
         [SerializeField] private List<ItemStackSaveData> itemInventory = new List<ItemStackSaveData>(); // 보유 일반 아이템 스택 목록
+        [SerializeField] private List<RegionErosionSaveData> regionErosion = new List<RegionErosionSaveData>(); // 지역별 침식도 목록 (Day44)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -144,6 +177,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public IReadOnlyList<string> StoryFlags => storyFlags; // 스토리 플래그 반환
         public IReadOnlyList<EquipmentInstanceSaveData> EquipmentInventory => equipmentInventory; // 장비 인벤토리 반환
         public IReadOnlyList<ItemStackSaveData> ItemInventory => itemInventory; // 일반 아이템 인벤토리 반환
+        public IReadOnlyList<RegionErosionSaveData> RegionErosion => regionErosion; // 지역별 침식도 목록 반환 (Day44)
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -219,6 +253,13 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             NormalizeItemInventory(); // 일반 아이템 스택 정규화
 
+            if (regionErosion == null) // 지역별 침식도 목록 확인
+            {
+                regionErosion = new List<RegionErosionSaveData>(); // 지역별 침식도 목록 복원
+            }
+
+            NormalizeRegionErosion(); // 지역별 침식도 정규화 (Day44)
+
             if (currentChapter == null) // 현재 챕터 확인
             {
                 currentChapter = string.Empty; // 챕터 기본값 복원
@@ -276,6 +317,41 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             EnsureDefaults(); // 저장 기본값 확인
             ItemStackSaveData stack = FindItemStackInternal(itemId); // 일반 아이템 스택 조회
             return stack == null ? 0 : stack.Quantity; // 일반 아이템 수량 반환
+        }
+
+        public int GetRegionErosion(string regionId) // 지역 침식도 조회 (Day44)
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            RegionErosionSaveData entry = FindRegionErosionInternal(regionId); // 지역 침식도 항목 조회
+            return entry == null ? 0 : entry.ErosionLevel; // 미등록 지역 0 반환
+        }
+
+        public bool HasRegionErosion(string regionId) // 지역 침식도 등록 여부 확인 (Day44)
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            return FindRegionErosionInternal(regionId) != null; // 지역 침식도 항목 존재 여부 반환
+        }
+
+        public int SetRegionErosion(string regionId, int value) // 지역 침식도 절대값 저장 (Day44)
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+
+            if (string.IsNullOrWhiteSpace(regionId)) // 지역 ID 확인
+            {
+                return 0; // 잘못된 지역 ID 변경 없음 반환
+            }
+
+            RegionErosionSaveData entry = FindRegionErosionInternal(regionId); // 기존 지역 침식도 항목 조회
+
+            if (entry == null) // 기존 항목 존재 확인
+            {
+                entry = new RegionErosionSaveData(regionId, value); // 신규 지역 침식도 항목 생성
+                regionErosion.Add(entry); // 지역 침식도 목록 추가
+                return entry.ErosionLevel; // 신규 침식도 반환
+            }
+
+            entry.SetErosion(value); // 기존 지역 침식도 변경
+            return entry.ErosionLevel; // 변경 침식도 반환
         }
 
         internal bool TrySetItemCountInternal(string itemId, int quantity, out string error) // 일반 아이템 수량 내부 변경
@@ -567,6 +643,58 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public void SetCurrentMainQuest(string value) // 현재 목표 변경
         {
             currentMainQuest = value ?? string.Empty; // 목표 기본값 방지
+        }
+
+        private RegionErosionSaveData FindRegionErosionInternal(string regionId) // 내부 지역 침식도 조회 (Day44)
+        {
+            if (string.IsNullOrWhiteSpace(regionId)) // 지역 ID 확인
+            {
+                return null; // 빈 지역 ID 조회 실패 반환
+            }
+
+            foreach (RegionErosionSaveData entry in regionErosion) // 지역 침식도 목록 순회
+            {
+                if (entry != null && string.Equals(entry.RegionId, regionId, StringComparison.Ordinal)) // 지역 ID 비교
+                {
+                    return entry; // 일치 지역 침식도 반환
+                }
+            }
+
+            return null; // 지역 침식도 조회 실패 반환
+        }
+
+        private void NormalizeRegionErosion() // 지역별 침식도 정규화 (Day44)
+        {
+            Dictionary<string, int> mergedLevels = new Dictionary<string, int>(StringComparer.Ordinal); // 지역 ID별 병합 침식도 생성
+
+            for (int index = 0; index < regionErosion.Count; index++) // 지역 침식도 목록 순회
+            {
+                RegionErosionSaveData entry = regionErosion[index]; // 현재 지역 침식도 조회
+
+                if (entry == null) // null 항목 확인
+                {
+                    continue; // 잘못된 항목 제외
+                }
+
+                entry.EnsureDefaults(); // 지역 침식도 기본값 복원
+
+                if (string.IsNullOrWhiteSpace(entry.RegionId)) // 지역 ID 유효성 확인
+                {
+                    continue; // 빈 지역 ID 제외
+                }
+
+                mergedLevels[entry.RegionId] = entry.ErosionLevel; // 동일 지역 최신 침식도로 덮어쓰기
+            }
+
+            List<string> regionIds = new List<string>(mergedLevels.Keys); // 정규화 지역 ID 목록 생성
+            regionIds.Sort(StringComparer.Ordinal); // 지역 ID 정렬
+            regionErosion.Clear(); // 기존 지역 침식도 목록 제거
+
+            for (int index = 0; index < regionIds.Count; index++) // 정렬 지역 ID 순회
+            {
+                string regionId = regionIds[index]; // 현재 지역 ID 조회
+                regionErosion.Add(new RegionErosionSaveData(regionId, mergedLevels[regionId])); // 정규화 지역 침식도 추가
+            }
         }
 
         private ItemStackSaveData FindItemStackInternal(string itemId) // 내부 일반 아이템 스택 조회

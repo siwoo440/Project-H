@@ -1,5 +1,7 @@
 using System; // 이벤트 기능
+using ProjectH.Core; // 전역 게임 관리자 기능
 using ProjectH.Data; // 몬스터 데이터 기능
+using ProjectH.SaveSystem; // 저장 및 지역 침식도 기능
 using UnityEngine; // Unity 수학 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -88,11 +90,37 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             string dungeonId = BattleContextRuntimeState.CurrentDungeonId; // 확정 전투 던전 ID 조회
             DungeonBattleTestProfile profile = DungeonBattleTestProfile.Get(dungeonId); // 전투 컨텍스트 기반 던전 프로필 조회
-            int scaledMaxHp = Mathf.Max(1, Mathf.RoundToInt(monsterData.MaxHp * profile.HealthMultiplier)); // 던전별 최대 체력 배율 적용
-            int scaledAttack = Mathf.Max(0, Mathf.RoundToInt(monsterData.Attack * profile.AttackMultiplier)); // 던전별 공격력 배율 적용
-            int scaledDefense = Mathf.Max(0, Mathf.RoundToInt(monsterData.Defense * profile.DefenseMultiplier)); // 던전별 방어력 배율 적용
-            int scaledResistance = Mathf.Max(0, Mathf.RoundToInt(monsterData.Resistance * profile.ResistanceMultiplier)); // 던전별 저항력 배율 적용
+            float erosionMultiplier = ResolveRegionErosionMultiplier(dungeonId); // 지역 침식도 기반 적 스탯 배율 조회 (Day44)
+            int scaledMaxHp = Mathf.Max(1, Mathf.RoundToInt(monsterData.MaxHp * profile.HealthMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 최대 체력
+            int scaledAttack = Mathf.Max(0, Mathf.RoundToInt(monsterData.Attack * profile.AttackMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 공격력
+            int scaledDefense = Mathf.Max(0, Mathf.RoundToInt(monsterData.Defense * profile.DefenseMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 방어력
+            int scaledResistance = Mathf.Max(0, Mathf.RoundToInt(monsterData.Resistance * profile.ResistanceMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 저항력
             return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, scaledMaxHp, scaledAttack, scaledDefense, scaledResistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType, 1f); // 원본 이름 및 전투 컨텍스트 배율 적용 적 스탯 반환
+        }
+
+        private static float ResolveRegionErosionMultiplier(string dungeonId) // 던전 소속 지역의 침식도 배율 조회 (Day44)
+        {
+            if (GameManager.Instance == null || GameManager.Instance.Data == null || GameManager.Instance.Save == null) // 전역 관리자 준비 확인
+            {
+                return 1f; // 관리자 미준비 시 배율 없음 반환
+            }
+
+            DungeonData dungeon = GameManager.Instance.Data.GetDungeon(dungeonId); // 소속 던전 원본 조회
+
+            if (dungeon == null || string.IsNullOrWhiteSpace(dungeon.RegionId)) // 던전 및 지역 ID 확인
+            {
+                return 1f; // 지역 정보 없음 시 배율 없음 반환
+            }
+
+            SaveData saveData = GameManager.Instance.Save.CurrentSave; // 현재 저장 데이터 조회
+
+            if (saveData == null) // 현재 저장 데이터 확인
+            {
+                return 1f; // 저장 데이터 없음 시 배율 없음 반환
+            }
+
+            RegionErosionService.GetOrInitializeErosion(saveData, dungeon.RegionId); // 미등록 지역 랜덤 침식도 안전망 초기화 (Day44 추가 작업)
+            return RegionErosionService.GetEnemyStatMultiplier(saveData, dungeon.RegionId); // 지역 침식도 기반 배율 반환
         }
     }
 }

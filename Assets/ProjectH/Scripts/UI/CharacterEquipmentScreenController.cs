@@ -35,6 +35,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text detailStatsText; // 선택 장비 옵션 텍스트
         private Text comparisonText; // 장비 교체 비교 텍스트
         private Text statusText; // 화면 상태 텍스트
+        private Text affinityText; // 캐릭터 호감도 디버그 텍스트 (Day43)
         private Button actionButton; // 장착 액션 버튼
         private Text actionButtonText; // 장착 액션 라벨
         private int selectedCharacterIndex; // 현재 캐릭터 목록 번호
@@ -90,6 +91,20 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             BuildHeader(background.transform); // 상단 메뉴 구성
             BuildCharacterPanel(background.transform); // 좌측 캐릭터 패널 구성
             BuildEquipmentPanel(background.transform); // 우측 장비 관리 패널 구성
+            BuildAffinityDebugBar(background.transform); // 하단 호감도 디버그 바 구성 (Day43)
+        }
+
+        private void BuildAffinityDebugBar(Transform parent) // 하단 호감도 디버그 바 구성 (Day43)
+        {
+            affinityText = CreateText(parent, "AffinityDebugText", "호감도 · -", 15, FontStyle.Bold, new Color(0.36f, 0.20f, 0.30f, 1f)); // 호감도 디버그 텍스트 생성
+            affinityText.alignment = TextAnchor.MiddleLeft; // 호감도 디버그 텍스트 왼쪽 정렬
+            SetRect(affinityText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.40f, 0.045f)); // 하단 여백에 호감도 디버그 텍스트 배치
+            Button minusButton = CreateButton(parent, "AffinityMinusDebug", "호감도 -10", new Color(0.98f, 0.90f, 0.95f, 1f)); // 호감도 감소 디버그 버튼 생성
+            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.41f, 0.005f), new Vector2(0.53f, 0.045f)); // 호감도 감소 버튼 배치
+            minusButton.onClick.AddListener(DecreaseAffinityDebug); // 호감도 감소 버튼 이벤트 연결
+            Button plusButton = CreateButton(parent, "AffinityPlusDebug", "호감도 +10", new Color(0.90f, 0.95f, 1f, 1f)); // 호감도 증가 디버그 버튼 생성
+            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.54f, 0.005f), new Vector2(0.66f, 0.045f)); // 호감도 증가 버튼 배치
+            plusButton.onClick.AddListener(IncreaseAffinityDebug); // 호감도 증가 버튼 이벤트 연결
         }
 
         private void BuildHeader(Transform parent) // 상단 메뉴 구성
@@ -254,6 +269,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             characterNameText.text = displayName; // 캐릭터 이름 갱신
             characterLevelText.text = $"Lv. {characterSave.Level}"; // 캐릭터 레벨 갱신
             portraitText.text = displayName; // 임시 초상 텍스트 갱신
+            UpdateAffinityDebugText(saveData, characterSave); // 호감도 디버그 텍스트 갱신 (Day43)
             UpdateCurrentStats(saveData, dataManager, characterSave, characterData); // 현재 최종 능력치 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Weapon, weaponSlotText, "무기"); // 무기 슬롯 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Armor, armorSlotText, "방어구"); // 방어구 슬롯 갱신
@@ -310,6 +326,67 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             EquipmentData equipment = dataManager.GetEquipment(instance.EquipmentId); // 장착 장비 원본 조회
             string equipmentName = equipment == null ? instance.EquipmentId : equipment.DisplayName; // 장착 장비 표시 이름 결정
             target.text = $"{slotLabel}\n{equipmentName}"; // 장착 장비 슬롯 표시
+        }
+
+        private void UpdateAffinityDebugText(SaveData saveData, CharacterSaveData characterSave) // 호감도 디버그 텍스트 갱신 (Day43)
+        {
+            if (affinityText == null) // 호감도 디버그 텍스트 존재 확인
+            {
+                return; // 호감도 디버그 텍스트 갱신 중단
+            }
+
+            int affinity = AffinityService.GetAffinity(saveData, characterSave.CharacterId); // 선택 캐릭터 호감도 조회
+            AffinityTier tier = AffinityService.GetAffinityTier(saveData, characterSave.CharacterId); // 선택 캐릭터 호감도 등급 조회
+            affinityText.text = $"호감도 · {affinity}/{CharacterSaveData.MaxAffinity} · {GetAffinityTierLabel(tier)}"; // 호감도 디버그 문구 표시
+        }
+
+        private void DecreaseAffinityDebug() // 호감도 디버그 감소 처리 (Day43)
+        {
+            ApplyAffinityDebugDelta(-10); // 호감도 10 감소 실행
+        }
+
+        private void IncreaseAffinityDebug() // 호감도 디버그 증가 처리 (Day43)
+        {
+            ApplyAffinityDebugDelta(10); // 호감도 10 증가 실행
+        }
+
+        private void ApplyAffinityDebugDelta(int delta) // 호감도 디버그 증감 공통 처리 (Day43)
+        {
+            if (!TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData)) // 전역 데이터 컨텍스트 확인
+            {
+                SetStatus("저장 데이터를 찾을 수 없습니다."); // 전역 데이터 누락 안내
+                return; // 호감도 디버그 변경 중단
+            }
+
+            CharacterSaveData characterSave = GetSelectedCharacter(saveData); // 선택 캐릭터 저장 조회
+
+            if (characterSave == null) // 선택 캐릭터 존재 확인
+            {
+                SetStatus("선택된 캐릭터가 없습니다."); // 선택 캐릭터 없음 안내
+                return; // 호감도 디버그 변경 중단
+            }
+
+            AffinityService.AddAffinity(saveData, characterSave.CharacterId, delta); // 호감도 디버그 증감 적용
+            bool saved = saveManager.SaveCurrent(); // 호감도 변경 즉시 저장
+            SetStatus(saved ? "호감도를 변경하고 저장했습니다." : "호감도는 변경되었지만 저장에 실패했습니다."); // 호감도 변경 결과 표시
+            Refresh(); // 호감도 변경 화면 갱신
+        }
+
+        private static string GetAffinityTierLabel(AffinityTier tier) // 호감도 등급 한글 라벨 변환 (Day43)
+        {
+            switch (tier) // 등급별 분기
+            {
+                case AffinityTier.Stranger: // 낯섦 등급 처리
+                    return "낯섦"; // 낯섦 라벨 반환
+                case AffinityTier.Acquaintance: // 안면 등급 처리
+                    return "안면"; // 안면 라벨 반환
+                case AffinityTier.Friendly: // 호감 등급 처리
+                    return "호감"; // 호감 라벨 반환
+                case AffinityTier.Trusted: // 신뢰 등급 처리
+                    return "신뢰"; // 신뢰 라벨 반환
+                default: // 유대 등급 처리
+                    return "유대"; // 유대 라벨 반환
+            }
         }
 
         private void BuildInventoryButtons(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave) // 보유 장비 목록 버튼 구성

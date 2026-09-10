@@ -15,13 +15,17 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
     [Serializable] // JSON 직렬화 허용
     public sealed class CharacterSaveData // 캐릭터 진행 저장 데이터
     {
+        public const int MinAffinity = 0; // 호감도 최소값 (Day43)
+        public const int MaxAffinity = 100; // 호감도 최대값 (Day43)
         [SerializeField] private string characterId; // 캐릭터 ID
         [SerializeField] private int level = 1; // 캐릭터 레벨
         [SerializeField] private int experience; // 캐릭터 경험치
+        [SerializeField] private int affinity; // 캐릭터 호감도 (0~100)
         [SerializeField] private CharacterEquipmentSaveData equipment = new CharacterEquipmentSaveData(); // 캐릭터 장착 장비 저장
         public string CharacterId => characterId; // 캐릭터 ID 반환
         public int Level => level; // 레벨 반환
         public int Experience => experience; // 경험치 반환
+        public int Affinity => affinity; // 호감도 반환
         public CharacterEquipmentSaveData Equipment // 캐릭터 장착 장비 반환
         {
             get
@@ -36,6 +40,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             characterId = id; // 캐릭터 ID 저장
             level = 1; // 초기 레벨 설정
             experience = 0; // 초기 경험치 설정
+            affinity = 0; // 초기 호감도 설정
             equipment = new CharacterEquipmentSaveData(); // 초기 장착 장비 저장 생성
         }
 
@@ -48,6 +53,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             level = Mathf.Max(1, level); // 최소 레벨 복원
             experience = Mathf.Max(0, experience); // 최소 경험치 복원
+            affinity = Mathf.Clamp(affinity, MinAffinity, MaxAffinity); // 호감도 범위 보정
 
             if (equipment == null) // 장착 장비 저장 확인
             {
@@ -65,6 +71,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public void SetExperience(int value) // 경험치 변경
         {
             experience = Mathf.Max(0, value); // 음수 경험치 방지
+        }
+
+        public void SetAffinity(int value) // 호감도 변경
+        {
+            affinity = Mathf.Clamp(value, MinAffinity, MaxAffinity); // 호감도 범위 보정 후 저장
         }
     }
 

@@ -18,3 +18,16 @@ MonoBehaviour:
   recommendedLevel: 8
   rewardGold: 320
   rewardExp: 220
+  dropTable:
+  - itemId: IT_MATERIAL_001
+    dropChance: 1
+    minQuantity: 4
+    maxQuantity: 6
+  - itemId: IT_POTION_SMALL
+    dropChance: 0.7
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: EQ_ARMOR_GUARD
+    dropChance: 0.08
+    minQuantity: 1
+    maxQuantity: 1

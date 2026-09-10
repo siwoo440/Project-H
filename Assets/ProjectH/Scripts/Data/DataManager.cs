@@ -52,6 +52,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
             equipments.Build(catalog.Equipments, validationErrors, "Equipment"); // 장비 저장소 생성
             ValidateItemDefinitions(); // 아이템 공통 정책 검증
             ValidateEquipmentLinks(); // 장비 연결 상태 검증
+            ValidateDungeonDrops(); // 던전 드롭 테이블 검증
 
             if (validationErrors.Count > 0) // 검증 오류 확인
             {
@@ -118,12 +119,14 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
             for (int index = 0; index < catalog.Equipments.Count; index++) // 장비 목록 순회
             {
                 EquipmentData equipment = catalog.Equipments[index]; // 현재 장비 조회
+
                 if (equipment == null) // 장비 참조 확인
                 {
                     continue; // 공통 null 오류만 유지
                 }
 
                 ItemData backingItem = equipment.Item; // 기반 아이템 조회
+
                 if (backingItem == null) // 기반 아이템 존재 확인
                 {
                     validationErrors.Add($"[Equipment] ItemData 누락: index={index}"); // 기반 아이템 누락 오류
@@ -145,6 +148,56 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
                 if (!object.ReferenceEquals(backingItem, registeredItem)) // 등록 인스턴스 일치 확인
                 {
                     validationErrors.Add($"[Equipment] 동일 ID의 다른 ItemData 인스턴스 연결: {equipment.Id}"); // 아이템 인스턴스 오류
+                }
+            }
+        }
+
+        private void ValidateDungeonDrops() // 던전 드롭 테이블 검증
+        {
+            if (catalog.Dungeons == null) // 던전 목록 존재 확인
+            {
+                return; // 공통 목록 오류만 유지
+            }
+
+            for (int dungeonIndex = 0; dungeonIndex < catalog.Dungeons.Count; dungeonIndex++) // 던전 목록 순회
+            {
+                DungeonData dungeon = catalog.Dungeons[dungeonIndex]; // 현재 던전 조회
+
+                if (dungeon == null || dungeon.DropTable == null) // 던전 및 드롭 테이블 확인
+                {
+                    continue; // 빈 던전 또는 드롭 테이블 제외
+                }
+
+                for (int dropIndex = 0; dropIndex < dungeon.DropTable.Count; dropIndex++) // 현재 던전 드롭 항목 순회
+                {
+                    DungeonDropEntry entry = dungeon.DropTable[dropIndex]; // 현재 드롭 항목 조회
+
+                    if (entry == null) // 드롭 항목 존재 확인
+                    {
+                        validationErrors.Add($"[DungeonDrop] null 항목: Dungeon={dungeon.Id}, index={dropIndex}"); // null 드롭 항목 오류
+                        continue; // 다음 드롭 항목 이동
+                    }
+
+                    if (string.IsNullOrWhiteSpace(entry.ItemId)) // 드롭 아이템 ID 확인
+                    {
+                        validationErrors.Add($"[DungeonDrop] 빈 ItemId: Dungeon={dungeon.Id}, index={dropIndex}"); // 빈 아이템 ID 오류
+                        continue; // 다음 드롭 항목 이동
+                    }
+
+                    if (!items.TryGet(entry.ItemId, out _)) // 드롭 아이템 등록 확인
+                    {
+                        validationErrors.Add($"[DungeonDrop] Items 미등록 ID: Dungeon={dungeon.Id}, Item={entry.ItemId}"); // 미등록 아이템 오류
+                    }
+
+                    if (entry.DropChance < 0f || entry.DropChance > 1f) // 드롭 확률 범위 확인
+                    {
+                        validationErrors.Add($"[DungeonDrop] 잘못된 확률: Dungeon={dungeon.Id}, Item={entry.ItemId}, Chance={entry.DropChance}"); // 드롭 확률 오류
+                    }
+
+                    if (entry.MinQuantity < 1 || entry.MaxQuantity < entry.MinQuantity) // 드롭 수량 범위 확인
+                    {
+                        validationErrors.Add($"[DungeonDrop] 잘못된 수량 범위: Dungeon={dungeon.Id}, Item={entry.ItemId}, Min={entry.MinQuantity}, Max={entry.MaxQuantity}"); // 드롭 수량 오류
+                    }
                 }
             }
         }

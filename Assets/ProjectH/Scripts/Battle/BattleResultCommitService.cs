@@ -1,5 +1,7 @@
 using System; // 문자열 및 숫자 범위 기능
 using System.Collections.Generic; // 중복 검사 집합 기능
+using ProjectH.Core; // 게임 관리자 기능
+using ProjectH.Data; // 아이템 데이터 관리자 기능
 using ProjectH.SaveSystem; // 저장 데이터 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -18,11 +20,19 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return false; // 중복 결과 반영 차단
             }
 
+            DataManager dataManager = GameManager.Instance == null ? null : GameManager.Instance.Data; // 현재 데이터 관리자 조회
+
+            if (result.Outcome == BattleOutcome.Victory && !DungeonDropGrantService.CanGrantAll(saveData, dataManager, result.Drops, out _)) // 승리 드롭 지급 가능 여부 확인
+            {
+                return false; // 드롭 데이터 이상 시 전체 결과 반영 중단
+            }
+
             if (result.Outcome == BattleOutcome.Victory) // 승리 결과 여부 확인
             {
                 BattleProgressSaveAdapter.AddGold(saveData, result.Gold); // 승리 골드 영구 반영
                 ApplyExperience(saveData, result); // 참가 캐릭터 경험치 및 레벨 영구 반영
                 DungeonProgressSaveAdapter.MarkCleared(saveData, result.DungeonId); // 승리 던전 클리어 영구 반영
+                DungeonDropGrantService.GrantAll(saveData, dataManager, result.Drops); // 승리 던전 드롭 영구 반영
             }
 
             BattleProgressSaveAdapter.MarkBattleResultCommitted(saveData, result.ResultId); // 전투 결과 반영 완료 기록

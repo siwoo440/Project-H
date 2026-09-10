@@ -18,3 +18,12 @@ MonoBehaviour:
   recommendedLevel: 3
   rewardGold: 180
   rewardExp: 120
+  dropTable:
+  - itemId: IT_MATERIAL_001
+    dropChance: 1
+    minQuantity: 2
+    maxQuantity: 3
+  - itemId: IT_POTION_SMALL
+    dropChance: 0.45
+    minQuantity: 1
+    maxQuantity: 1

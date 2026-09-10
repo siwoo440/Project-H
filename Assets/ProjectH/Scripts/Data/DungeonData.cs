@@ -1,3 +1,4 @@
+using System.Collections.Generic; // 목록 자료형
 using UnityEngine; // Unity 기본 기능
 
 namespace ProjectH.Data // 프로젝트 데이터 영역
@@ -11,6 +12,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField, Min(1)] private int recommendedLevel = 1; // 권장 레벨
         [SerializeField, Min(0)] private int rewardGold = 100; // 기본 골드 보상
         [SerializeField, Min(0)] private int rewardExp = 100; // 기본 경험치 보상
+        [SerializeField] private List<DungeonDropEntry> dropTable = new List<DungeonDropEntry>(); // 던전 드롭 테이블
 
         public string Id => id; // 고유 ID 반환
         public string DisplayName => displayName; // 표시 이름 반환
@@ -18,5 +20,6 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public int RecommendedLevel => recommendedLevel; // 권장 레벨 반환
         public int RewardGold => rewardGold; // 골드 보상 반환
         public int RewardExp => rewardExp; // 경험치 보상 반환
+        public IReadOnlyList<DungeonDropEntry> DropTable => dropTable; // 드롭 테이블 반환
     }
 }

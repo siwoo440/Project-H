@@ -347,14 +347,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameManager.Instance.Scenes.LoadScene(GameScenes.Lobby); // Lobby 씬 로드
         }
 
-        private static Image CreateImage(Transform parent, string objectName, Color color) // 기본 Image 생성
-        {
-            GameObject imageObject = new GameObject(objectName, typeof(RectTransform), typeof(Image)); // Image 객체 생성
-            imageObject.transform.SetParent(parent, false); // 부모 연결
-            Image image = imageObject.GetComponent<Image>(); // Image 컴포넌트 조회
-            image.color = color; // Image 색상 적용
-            return image; // 생성 Image 반환
-        }
+        private static Image CreateImage(Transform parent, string objectName, Color color) => RuntimeUiKit.CreateImage(parent, objectName, color); // 기본 Image 생성 (RuntimeUiKit 위임, 최적화 정리)
 
         private static Text CreateText(Transform parent, string objectName, string value, int fontSize, FontStyle fontStyle, Color color) // 기본 Text 생성
         {
@@ -401,20 +394,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             outline.effectDistance = new Vector2(1f, -1f); // 외곽선 두께 적용
         }
 
-        private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax) // UI 앵커 영역 설정
-        {
-            rect.anchorMin = anchorMin; // 최소 앵커 적용
-            rect.anchorMax = anchorMax; // 최대 앵커 적용
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
-        }
+        private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax) => RuntimeUiKit.SetRect(rect, anchorMin, anchorMax); // UI 앵커 영역 설정 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static void Stretch(RectTransform rect, float padding = 0f) // RectTransform 전체 확장
-        {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 설정
-            rect.offsetMin = new Vector2(padding, padding); // 최소 여백 설정
-            rect.offsetMax = new Vector2(-padding, -padding); // 최대 여백 설정
-        }
+        private static void Stretch(RectTransform rect, float padding = 0f) => RuntimeUiKit.Stretch(rect, padding); // RectTransform 전체 확장 (RuntimeUiKit 위임, 최적화 정리)
     }
 }

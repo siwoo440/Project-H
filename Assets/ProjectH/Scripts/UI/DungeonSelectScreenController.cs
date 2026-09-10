@@ -441,14 +441,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return button; // 던전 카드 버튼 반환
         }
 
-        private static Image CreateImage(Transform parent, string name, Color color) // 공통 UI 이미지 생성
-        {
-            GameObject imageObject = new GameObject(name, typeof(RectTransform), typeof(Image)); // UI 이미지 객체 생성
-            imageObject.transform.SetParent(parent, false); // UI 이미지 부모 배치
-            Image image = imageObject.GetComponent<Image>(); // UI 이미지 참조 조회
-            image.color = color; // UI 이미지 색상 적용
-            return image; // UI 이미지 반환
-        }
+        private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 UI 이미지 생성 (RuntimeUiKit 위임, 최적화 정리)
 
         private static Text CreateText(Transform parent, string name, string value, int size, FontStyle style, Color color) // 공통 UI 텍스트 생성
         {
@@ -496,21 +489,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             target.text = value; // 텍스트 값 적용
         }
 
-        private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax) // 정규화 UI 영역 배치
-        {
-            rect.anchorMin = anchorMin; // 최소 앵커 설정
-            rect.anchorMax = anchorMax; // 최대 앵커 설정
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
-        }
+        private static void SetRect(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax) => RuntimeUiKit.SetRect(rect, anchorMin, anchorMax); // 정규화 UI 영역 배치 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static void Stretch(RectTransform rect, float padding = 0f) // 부모 전체 영역 확장
-        {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 설정
-            rect.offsetMin = new Vector2(padding, padding); // 최소 여백 설정
-            rect.offsetMax = new Vector2(-padding, -padding); // 최대 여백 설정
-        }
+        private static void Stretch(RectTransform rect, float padding = 0f) => RuntimeUiKit.Stretch(rect, padding); // 부모 전체 영역 확장 (RuntimeUiKit 위임, 최적화 정리)
 
         private sealed class DungeonCardVisual // 던전 카드 시각 참조 묶음
         {

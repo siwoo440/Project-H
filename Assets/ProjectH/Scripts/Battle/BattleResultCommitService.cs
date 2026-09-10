@@ -32,6 +32,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 BattleProgressSaveAdapter.AddGold(saveData, result.Gold); // 승리 골드 영구 반영
                 ApplyExperience(saveData, result); // 참가 캐릭터 경험치 및 레벨 영구 반영
                 DungeonProgressSaveAdapter.MarkCleared(saveData, result.DungeonId); // 승리 던전 클리어 영구 반영
+                DungeonProgressSaveAdapter.TrySetBestStars(saveData, result.DungeonId, result.StarCount); // 승리 던전 최고 별점 영구 반영 (Day47)
                 DungeonDropGrantService.GrantAll(saveData, dataManager, result.Drops); // 승리 던전 드롭 영구 반영
             }
 

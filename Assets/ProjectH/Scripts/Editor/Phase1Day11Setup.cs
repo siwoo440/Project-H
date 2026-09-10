@@ -241,7 +241,7 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             }
 
             autoButton = CreateButton(parent, "AutoButton", "AUTO ON", "button_primary.png", 20); // AUTO 버튼 생성
-            SetRect(autoButton.GetComponent<RectTransform>(), new Vector2(0.90f, 0.11f), new Vector2(0.982f, 0.20f)); // AUTO 버튼 배치
+            SetRect(autoButton.GetComponent<RectTransform>(), new Vector2(0.90f, 0.225f), new Vector2(0.982f, 0.315f)); // AUTO 버튼 배치 (17일차 SkillBlockPanel 상단(0.215) 위로 이동, 최적화 정리)
             autoButtonText = autoButton.GetComponentInChildren<Text>(); // AUTO 버튼 텍스트 조회
             return cards; // HUD 카드 배열 반환
         }

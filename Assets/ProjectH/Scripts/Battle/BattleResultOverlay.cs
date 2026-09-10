@@ -1,3 +1,4 @@
+using ProjectH.UI; // Runtime UI 생성 공용 헬퍼 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.Events; // Unity 버튼 이벤트 기능
 using UnityEngine.UI; // Unity UI 기능
@@ -212,15 +213,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return displayName.Substring(0, 1); // 표시 이름 첫 문자 반환
         }
 
-        private static Image CreateImage(Transform parent, string name, Color color) // 공통 결과 이미지 생성
-        {
-            GameObject imageObject = new GameObject(name, typeof(RectTransform), typeof(Image)); // UI 이미지 객체 생성
-            imageObject.transform.SetParent(parent, false); // UI 이미지 부모 연결
-            Image image = imageObject.GetComponent<Image>(); // UI Image 컴포넌트 조회
-            image.color = color; // UI 이미지 색상 설정
-            image.raycastTarget = true; // 결과 UI 입력 차단 활성화
-            return image; // 생성 Image 반환
-        }
+        private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 결과 이미지 생성 (RuntimeUiKit 위임, 최적화 정리 — Image 기본 raycastTarget은 true)
 
         private static Text CreateText(Transform parent, string name, string value, int size, FontStyle style, Color color) // 공통 결과 텍스트 생성
         {
@@ -275,29 +268,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
-        private static void Stretch(RectTransform rect) // RectTransform 전체 확장
-        {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 전체 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 전체 설정
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
-        }
+        private static void Stretch(RectTransform rect) => RuntimeUiKit.Stretch(rect); // RectTransform 전체 확장 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static void Stretch(RectTransform rect, float padding) // RectTransform 내부 여백 확장
-        {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 전체 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 전체 설정
-            rect.offsetMin = new Vector2(padding, padding); // 최소 내부 여백 설정
-            rect.offsetMax = new Vector2(-padding, -padding); // 최대 내부 여백 설정
-        }
+        private static void Stretch(RectTransform rect, float padding) => RuntimeUiKit.Stretch(rect, padding); // RectTransform 내부 여백 확장 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static void SetRect(RectTransform rect, Vector2 min, Vector2 max) // RectTransform 앵커 배치
-        {
-            rect.anchorMin = min; // 최소 앵커 설정
-            rect.anchorMax = max; // 최대 앵커 설정
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
-        }
+        private static void SetRect(RectTransform rect, Vector2 min, Vector2 max) => RuntimeUiKit.SetRect(rect, min, max); // RectTransform 앵커 배치 (RuntimeUiKit 위임, 최적화 정리)
 
         private void OnDestroy() // 결과 Overlay 제거 처리
         {

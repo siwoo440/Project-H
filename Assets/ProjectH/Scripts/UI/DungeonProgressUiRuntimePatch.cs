@@ -129,7 +129,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (idText != null) // 카드 ID 텍스트 존재 확인
             {
-                idText.text = $"{dungeonId} · {DungeonProgressionPolicy.GetStatusLabel(state)}"; // 카드 진행 상태 문구 적용
+                string starsSuffix = state == DungeonProgressState.Cleared ? $" · {BuildStarsText(DungeonProgressSaveAdapter.GetBestStars(saveData, dungeonId))}" : string.Empty; // 클리어 상태 최고 별점 문구 계산 (Day47)
+                idText.text = $"{dungeonId} · {DungeonProgressionPolicy.GetStatusLabel(state)}{starsSuffix}"; // 카드 진행 상태 문구 적용
                 idText.color = ResolveStatusTextColor(state); // 카드 진행 상태 글자 색상 적용
             }
         }
@@ -166,8 +167,29 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             DungeonProgressState state = DungeonProgressionPolicy.GetState(saveData, selectedDungeonId); // 선택 던전 진행 상태 계산
             string statusLabel = DungeonProgressionPolicy.GetStatusLabel(state); // 선택 던전 상태 라벨 조회
-            string suffix = state == DungeonProgressState.Locked ? DungeonProgressionPolicy.GetLockReason(selectedDungeonId) : "출격 준비 완료"; // 상태별 상세 보조 문구 계산
+            string suffix = BuildDetailSuffix(saveData, selectedDungeonId, state); // 상태별 상세 보조 문구 계산 (Day47 최고 별점 포함)
             statusText.text = $"{selectedDungeonId} · {statusLabel} · {suffix}"; // 선택 던전 상세 진행 문구 적용
+        }
+
+        private static string BuildDetailSuffix(SaveData saveData, string dungeonId, DungeonProgressState state) // 상세 상태 보조 문구 계산 (Day47)
+        {
+            if (state == DungeonProgressState.Locked) // 잠금 상태 확인
+            {
+                return DungeonProgressionPolicy.GetLockReason(dungeonId); // 잠금 사유 문구 반환
+            }
+
+            if (state == DungeonProgressState.Cleared) // 클리어 상태 확인
+            {
+                return $"최고 기록 {BuildStarsText(DungeonProgressSaveAdapter.GetBestStars(saveData, dungeonId))}"; // 최고 별점 문구 반환
+            }
+
+            return "출격 준비 완료"; // 진입 가능 상태 기본 문구 반환
+        }
+
+        private static string BuildStarsText(int stars) // 별점 표시 문구 생성 (Day47)
+        {
+            int clampedStars = Mathf.Clamp(stars, 0, DungeonProgressSaveAdapter.MaxStars); // 별점 범위 보정
+            return new string('★', clampedStars) + new string('☆', DungeonProgressSaveAdapter.MaxStars - clampedStars); // 채움 및 빈 별 문구 반환
         }
 
         private Button FindButton(string objectName) // 화면 하위 버튼 이름 조회

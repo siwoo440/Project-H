@@ -513,14 +513,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             statusText.text = message ?? string.Empty; // 가방 상태 문구 적용
         }
 
-        private static Image CreateImage(Transform parent, string name, Color color) // 공통 UI 이미지 생성
-        {
-            GameObject imageObject = new GameObject(name, typeof(RectTransform), typeof(Image)); // UI 이미지 객체 생성
-            imageObject.transform.SetParent(parent, false); // UI 이미지 부모 연결
-            Image image = imageObject.GetComponent<Image>(); // UI 이미지 컴포넌트 조회
-            image.color = color; // UI 이미지 색상 적용
-            return image; // 생성 UI 이미지 반환
-        }
+        private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 UI 이미지 생성 (RuntimeUiKit 위임, 최적화 정리)
 
         private static Text CreateText(Transform parent, string name, string value, int fontSize, FontStyle fontStyle, Color color) // 공통 UI 텍스트 생성
         {
@@ -568,28 +561,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             outline.effectDistance = new Vector2(1f, -1f); // UI 외곽선 두께 적용
         }
 
-        private static void Stretch(RectTransform rect) // RectTransform 전체 확장
-        {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 전체 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 전체 설정
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
-        }
+        private static void Stretch(RectTransform rect) => RuntimeUiKit.Stretch(rect); // RectTransform 전체 확장 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static void Stretch(RectTransform rect, float padding) // RectTransform 내부 여백 확장
-        {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 전체 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 전체 설정
-            rect.offsetMin = new Vector2(padding, padding); // 최소 내부 여백 설정
-            rect.offsetMax = new Vector2(-padding, -padding); // 최대 내부 여백 설정
-        }
+        private static void Stretch(RectTransform rect, float padding) => RuntimeUiKit.Stretch(rect, padding); // RectTransform 내부 여백 확장 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static void SetRect(RectTransform rect, Vector2 min, Vector2 max) // RectTransform 앵커 배치
-        {
-            rect.anchorMin = min; // 최소 앵커 설정
-            rect.anchorMax = max; // 최대 앵커 설정
-            rect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
-            rect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
-        }
+        private static void SetRect(RectTransform rect, Vector2 min, Vector2 max) => RuntimeUiKit.SetRect(rect, min, max); // RectTransform 앵커 배치 (RuntimeUiKit 위임, 최적화 정리)
     }
 }

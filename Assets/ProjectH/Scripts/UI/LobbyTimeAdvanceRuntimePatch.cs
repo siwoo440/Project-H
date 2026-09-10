@@ -42,15 +42,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 시간 진행 버튼 생성 중단
             }
 
-            Transform topBar = lobby.transform.Find("TopBar"); // 상단바 루트 조회
-
-            if (topBar == null) // 상단바 존재 확인
-            {
-                Debug.LogWarning("[Project H] Lobby TopBar was not found for time button."); // 상단바 누락 로그
-                return; // 시간 진행 버튼 생성 중단
-            }
-
-            Transform existing = topBar.Find(TimeButtonName); // 기존 시간 진행 버튼 조회
+            Transform existing = lobby.transform.Find(TimeButtonName); // 기존 시간 진행 버튼 조회
 
             if (existing != null) // 기존 시간 진행 버튼 존재 확인
             {
@@ -65,25 +57,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 기존 버튼 처리 완료
             }
 
-            Button template = topBar.GetComponentInChildren<Button>(true); // 상단바 버튼 템플릿 조회
+            Image chipTemplate = lobby.transform.Find("TopBar/GoldChip")?.GetComponent<Image>(); // GoldChip 스프라이트 템플릿 조회 (디자인 통일)
             GameObject buttonObject = new GameObject(TimeButtonName, typeof(RectTransform), typeof(Image), typeof(Button)); // 시간 진행 버튼 객체 생성
-            buttonObject.transform.SetParent(topBar, false); // 상단바 부모 연결
+            buttonObject.transform.SetParent(lobby.transform, false); // Lobby 루트 부모 연결 (PartySummary와 Title/Save 버튼 사이 빈 공간 활용)
             Image image = buttonObject.GetComponent<Image>(); // 버튼 이미지 조회
             Button button = buttonObject.GetComponent<Button>(); // 버튼 컴포넌트 조회
 
-            if (template != null) // 템플릿 버튼 존재 확인
+            if (chipTemplate != null) // GoldChip 템플릿 존재 확인
             {
-                Image templateImage = template.GetComponent<Image>(); // 템플릿 이미지 조회
-
-                if (templateImage != null) // 템플릿 이미지 존재 확인
-                {
-                    image.sprite = templateImage.sprite; // 템플릿 스프라이트 복사
-                    image.type = templateImage.type; // 템플릿 이미지 유형 복사
-                    image.color = templateImage.color; // 템플릿 색상 복사
-                }
-
-                button.colors = template.colors; // 템플릿 버튼 전환 색상 복사
-                button.transition = template.transition; // 템플릿 버튼 전환 방식 복사
+                image.sprite = chipTemplate.sprite; // GoldChip 스프라이트 복사
+                image.type = chipTemplate.type; // GoldChip 이미지 유형 복사
+                image.color = new Color(0.90f, 0.95f, 1f, 0.97f); // 시간 진행 칩 색상 적용 (Gold/Crystal 대비 구분)
             }
             else // 템플릿 없음 처리
             {
@@ -93,8 +77,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             button.targetGraphic = image; // 버튼 대상 그래픽 연결
             button.onClick.AddListener(AdvanceTime); // 시간 진행 이벤트 연결
             RectTransform rect = buttonObject.GetComponent<RectTransform>(); // 버튼 RectTransform 조회
-            rect.anchorMin = new Vector2(0.88f, 0.18f); // 상단바 우측 빈 공간 최소 앵커 적용
-            rect.anchorMax = new Vector2(1f, 0.82f); // 상단바 우측 빈 공간 최대 앵커 적용
+            rect.anchorMin = new Vector2(0.715f, 0.745f); // PartySummary와 Title/Save 사이 빈 공간 최소 앵커 적용
+            rect.anchorMax = new Vector2(0.90f, 0.785f); // PartySummary와 Title/Save 사이 빈 공간 최대 앵커 적용
             rect.offsetMin = Vector2.zero; // 버튼 최소 오프셋 초기화
             rect.offsetMax = Vector2.zero; // 버튼 최대 오프셋 초기화
 
@@ -103,19 +87,19 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Text label = labelObject.GetComponent<Text>(); // 라벨 컴포넌트 조회
             label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
             label.text = "시간 진행"; // 시간 진행 버튼 문구 설정
-            label.fontSize = 14; // 버튼 글자 크기 설정
+            label.fontSize = 13; // 버튼 글자 크기 설정
             label.fontStyle = FontStyle.Bold; // 버튼 글자 굵기 설정
             label.color = new Color(0.18f, 0.27f, 0.40f, 1f); // 버튼 글자 색상 설정
             label.alignment = TextAnchor.MiddleCenter; // 버튼 글자 중앙 정렬
             label.resizeTextForBestFit = true; // 글자 자동 크기 활성화
-            label.resizeTextMinSize = 8; // 최소 글자 크기 설정
-            label.resizeTextMaxSize = 14; // 최대 글자 크기 설정
+            label.resizeTextMinSize = 7; // 최소 글자 크기 설정
+            label.resizeTextMaxSize = 13; // 최대 글자 크기 설정
             label.raycastTarget = false; // 라벨 입력 비활성화
             RectTransform labelRect = labelObject.GetComponent<RectTransform>(); // 라벨 RectTransform 조회
             labelRect.anchorMin = Vector2.zero; // 라벨 최소 앵커 설정
             labelRect.anchorMax = Vector2.one; // 라벨 최대 앵커 설정
-            labelRect.offsetMin = new Vector2(4f, 4f); // 라벨 최소 여백 설정
-            labelRect.offsetMax = new Vector2(-4f, -4f); // 라벨 최대 여백 설정
+            labelRect.offsetMin = new Vector2(4f, 2f); // 라벨 최소 여백 설정
+            labelRect.offsetMax = new Vector2(-4f, -2f); // 라벨 최대 여백 설정
         }
 
         private static void AdvanceTime() // 시간 진행 버튼 클릭 처리

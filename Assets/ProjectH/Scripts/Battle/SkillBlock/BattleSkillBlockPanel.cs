@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 목록 자료형
+using ProjectH.UI; // Runtime UI 생성 공용 헬퍼 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.EventSystems; // UI 드래그 포인터 기능
 using UnityEngine.UI; // Unity UI 기능
@@ -260,12 +261,6 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             rect.localScale = Vector3.one; // 드래그 후 블록 스케일 복원
         }
 
-        private static void Stretch(RectTransform rect, float padding) // RectTransform 전체 확장
-        {
-            rect.anchorMin = Vector2.zero; // 최소 앵커 전체 설정
-            rect.anchorMax = Vector2.one; // 최대 앵커 전체 설정
-            rect.offsetMin = new Vector2(padding, padding); // 최소 내부 여백 적용
-            rect.offsetMax = new Vector2(-padding, -padding); // 최대 내부 여백 적용
-        }
+        private static void Stretch(RectTransform rect, float padding) => RuntimeUiKit.Stretch(rect, padding); // RectTransform 전체 확장 (RuntimeUiKit 위임, 최적화 정리)
     }
 }

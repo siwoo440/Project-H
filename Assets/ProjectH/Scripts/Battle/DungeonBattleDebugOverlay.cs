@@ -55,7 +55,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             panelRect.anchorMin = new Vector2(0f, 1f); // 좌측 상단 최소 앵커 설정
             panelRect.anchorMax = new Vector2(0f, 1f); // 좌측 상단 최대 앵커 설정
             panelRect.pivot = new Vector2(0f, 1f); // 좌측 상단 피벗 설정
-            panelRect.anchoredPosition = new Vector2(18f, -18f); // 좌측 상단 위치 설정
+            panelRect.anchoredPosition = new Vector2(18f, -112f); // 좌측 상단 위치 설정 (WAVE/시간/상태 HUD 줄 아래로 이동, 최적화 정리)
             panelRect.sizeDelta = new Vector2(980f, 86f); // 테스트 정보 패널 크기 설정
             Image panelImage = panelObject.GetComponent<Image>(); // 테스트 정보 배경 이미지 조회
             panelImage.color = new Color(0.02f, 0.03f, 0.05f, 0.86f); // 테스트 정보 배경 색상 적용

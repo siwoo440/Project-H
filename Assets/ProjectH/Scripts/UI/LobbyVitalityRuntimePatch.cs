@@ -58,14 +58,30 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameObject panelObject = new GameObject(PanelName, typeof(RectTransform)); // 활력 패널 객체 생성
             panelObject.transform.SetParent(lobby.transform, false); // Lobby 루트 부모 연결
             RectTransform panelRect = panelObject.GetComponent<RectTransform>(); // 패널 RectTransform 조회
-            panelRect.anchorMin = new Vector2(0.05f, 0.79f); // 패널 최소 앵커 적용 (SaveButton 좌측 여백)
-            panelRect.anchorMax = new Vector2(0.75f, 0.87f); // 패널 최대 앵커 적용
+            panelRect.anchorMin = new Vector2(0.52f, 0.745f); // 패널 최소 앵커 적용 (PartySummary와 Title/Save 사이 빈 공간, 초상화 프레임과 겹치지 않음)
+            panelRect.anchorMax = new Vector2(0.705f, 0.785f); // 패널 최대 앵커 적용 (Gold/Crystal 칩과 동일한 컴팩트 크기)
             panelRect.offsetMin = Vector2.zero; // 패널 최소 오프셋 초기화
             panelRect.offsetMax = Vector2.zero; // 패널 최대 오프셋 초기화
 
+            Image background = panelObject.AddComponent<Image>(); // 활력 패널 배경 이미지 추가
+            Image chipTemplate = lobby.transform.Find("TopBar/GoldChip")?.GetComponent<Image>(); // GoldChip 스프라이트 템플릿 조회 (디자인 통일)
+
+            if (chipTemplate != null) // GoldChip 템플릿 존재 확인
+            {
+                background.sprite = chipTemplate.sprite; // GoldChip 스프라이트 복사
+                background.type = chipTemplate.type; // GoldChip 이미지 유형 복사
+                background.color = new Color(1f, 1f, 1f, 0.95f); // 활력 칩 배경 색상 적용 (Gold/Crystal과 동일 톤)
+            }
+            else // 템플릿 없음 처리
+            {
+                background.color = new Color(0.90f, 0.95f, 1f, 0.95f); // 기본 활력 패널 배경 색상 적용
+            }
+
+            background.raycastTarget = false; // 활력 패널 배경 입력 비활성화
+
             CreateLabel(panelObject.transform); // 활력 표시 라벨 생성
-            CreateButton(panelObject.transform, MinusButtonName, "-1", new Vector2(0.48f, 0f), new Vector2(0.72f, 1f), () => ApplyDelta(-1)); // 활력 감소 버튼 생성
-            CreateButton(panelObject.transform, PlusButtonName, "+1", new Vector2(0.75f, 0f), new Vector2(0.99f, 1f), () => ApplyDelta(1)); // 활력 증가 버튼 생성
+            CreateButton(panelObject.transform, MinusButtonName, "-1", new Vector2(0.60f, 0.12f), new Vector2(0.795f, 0.88f), () => ApplyDelta(-1)); // 활력 감소 버튼 생성
+            CreateButton(panelObject.transform, PlusButtonName, "+1", new Vector2(0.805f, 0.12f), new Vector2(1f, 0.88f), () => ApplyDelta(1)); // 활력 증가 버튼 생성
             RefreshLabel(panelObject.transform); // 활력 라벨 초기값 표시
         }
 
@@ -75,18 +91,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             labelObject.transform.SetParent(parent, false); // 패널 부모 연결
             Text label = labelObject.GetComponent<Text>(); // 라벨 컴포넌트 조회
             label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
-            label.fontSize = 15; // 라벨 글자 크기 설정
+            label.fontSize = 14; // 라벨 글자 크기 설정
             label.fontStyle = FontStyle.Bold; // 라벨 글자 굵기 설정
-            label.color = new Color(0.18f, 0.27f, 0.40f, 1f); // 라벨 글자 색상 설정
+            label.color = new Color(0.18f, 0.27f, 0.40f, 1f); // 라벨 글자 색상 설정 (Gold/Crystal 칩과 동일한 남색)
             label.alignment = TextAnchor.MiddleLeft; // 라벨 좌측 정렬
             label.resizeTextForBestFit = true; // 글자 자동 크기 활성화
-            label.resizeTextMinSize = 8; // 최소 글자 크기 설정
-            label.resizeTextMaxSize = 15; // 최대 글자 크기 설정
+            label.resizeTextMinSize = 7; // 최소 글자 크기 설정
+            label.resizeTextMaxSize = 14; // 최대 글자 크기 설정
             label.raycastTarget = false; // 라벨 입력 비활성화
             RectTransform labelRect = labelObject.GetComponent<RectTransform>(); // 라벨 RectTransform 조회
             labelRect.anchorMin = new Vector2(0f, 0f); // 라벨 최소 앵커 설정
-            labelRect.anchorMax = new Vector2(0.46f, 1f); // 라벨 최대 앵커 설정
-            labelRect.offsetMin = Vector2.zero; // 라벨 최소 오프셋 초기화
+            labelRect.anchorMax = new Vector2(0.58f, 1f); // 라벨 최대 앵커 설정
+            labelRect.offsetMin = new Vector2(6f, 0f); // 라벨 좌측 내부 여백 적용
             labelRect.offsetMax = Vector2.zero; // 라벨 최대 오프셋 초기화
         }
 
@@ -193,12 +209,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (GameManager.Instance == null || GameManager.Instance.Save == null || GameManager.Instance.Save.CurrentSave == null) // 저장 데이터 확인
             {
-                label.text = "VITALITY · -"; // 저장 데이터 없음 표시
+                label.text = "VIT -"; // 저장 데이터 없음 표시
                 return; // 라벨 갱신 종료
             }
 
             int vitality = VitalityService.GetVitality(GameManager.Instance.Save.CurrentSave); // 현재 활력 조회
-            label.text = $"VITALITY · {vitality}/{SaveData.MaxVitality}"; // 활력 문구 표시
+            label.text = $"VIT {vitality}/{SaveData.MaxVitality}"; // 활력 문구 표시
         }
     }
 }

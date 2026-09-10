@@ -29,6 +29,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f65ff710b39d622439ce01bf264c8c81, type: 2}
   - {fileID: 11400000, guid: 4eebdda77fa2f3f468dc72f5cf17394c, type: 2}
   - {fileID: 11400000, guid: 3c73c01f3a0212146b935e4ec5dc7a20, type: 2}
+  - {fileID: 11400000, guid: 76da5a3e66c24688a92a601c8886a277, type: 2}
   dungeons:
   - {fileID: 11400000, guid: 24b33301a12dcdb4fa0a07208167cded, type: 2}
   - {fileID: 11400000, guid: 521e75e13f3b4ebfbf7b533b37384bfd, type: 2}

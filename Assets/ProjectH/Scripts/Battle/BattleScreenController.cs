@@ -342,6 +342,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return false; // 적군 생성 실패
             }
 
+            BattleEnemyStats bossStats = null; // 이번 웨이브 등장 보스 전투 스탯 (Day46)
+
             for (int index = 0; index < waveEnemyIds.Length; index++) // 현재 웨이브 적군 ID 순회
             {
                 string monsterId = waveEnemyIds[index]; // 현재 몬스터 ID 조회
@@ -386,6 +388,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 deathHandler.Configure(enemy.Actor, combatRegistry, attackController, enemyBrain, null, enemy); // 적군 사망 처리 참조 연결
                 enemy.gameObject.SetActive(true); // 적군 전투 View 표시
                 spawnedEnemies.Add(enemy); // 생성 적군 목록 등록
+
+                if (monsterData.AIType == EnemyAIType.Boss && bossStats == null) // 보스형 적군 최초 등장 확인 (Day46)
+                {
+                    bossStats = enemyStats; // 이번 웨이브 보스 전투 스탯 저장
+                }
+            }
+
+            if (bossStats != null) // 이번 웨이브 보스 등장 확인 (Day46)
+            {
+                BattleBossPresentationController.EnsureRuntime().AnnounceBoss(bossStats); // 보스 등장 연출 및 상단 체력바 연결
             }
 
             return true; // 적군 생성 성공

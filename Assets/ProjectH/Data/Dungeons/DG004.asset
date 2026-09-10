@@ -41,3 +41,5 @@ MonoBehaviour:
   - monsterIds:
     - MON_CORRUPTED_SOLDIER
     - MON_CORRUPTED_SOLDIER
+  - monsterIds:
+    - MON_BOSS_LETICIA

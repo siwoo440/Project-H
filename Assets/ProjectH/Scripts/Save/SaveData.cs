@@ -105,10 +105,12 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public const int CurrentVersion = 1; // 현재 저장 버전
         public const int MaxPartySize = 4; // 최대 파티 인원
         public const int PartyPresetCount = 4; // 편성 프리셋 개수
+        public const int MaxVitality = 100; // 활력 기본 최대값 (Day42 임시 기본값, 추후 기획 수치로 조정)
         private const string EquipmentInstancePrefix = "EQI_"; // 장비 인스턴스 ID 접두사
         [SerializeField] private int saveVersion = CurrentVersion; // 저장 버전
         [SerializeField] private int currentDay = 1; // 현재 일차
         [SerializeField] private SaveTimeOfDay currentTime = SaveTimeOfDay.Morning; // 현재 시간대
+        [SerializeField] private int currentVitality = MaxVitality; // 현재 활력
         [SerializeField] private string currentChapter = "CHAPTER_01"; // 현재 챕터
         [SerializeField] private string currentMainQuest = "MAIN_001"; // 현재 메인 목표
         [SerializeField] private List<string> partyCharacterIds = new List<string>(); // 활성 파티 캐릭터 ID
@@ -121,6 +123,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
+        public int CurrentVitality => currentVitality; // 현재 활력 반환
         public string CurrentChapter => currentChapter; // 현재 챕터 반환
         public string CurrentMainQuest => currentMainQuest; // 현재 목표 반환
         public IReadOnlyList<string> PartyCharacterIds => partyCharacterIds; // 활성 파티 목록 반환
@@ -222,6 +225,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 currentTime = SaveTimeOfDay.Morning; // 잘못된 시간대 기본값 복원
             }
 
+            currentVitality = Mathf.Clamp(currentVitality, 0, MaxVitality); // 활력 범위 보정
             NormalizeActiveParty(); // 활성 파티 데이터 정리
             EnsurePartyPresetCount(); // 편성 프리셋 개수 보정
             selectedPartyPresetIndex = Mathf.Clamp(selectedPartyPresetIndex, 0, PartyPresetCount - 1); // 활성 프리셋 범위 보정
@@ -537,6 +541,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public void SetCurrentTime(SaveTimeOfDay value) // 현재 시간대 변경
         {
             currentTime = value; // 시간대 저장
+        }
+
+        public void SetCurrentVitality(int value) // 현재 활력 변경
+        {
+            currentVitality = Mathf.Clamp(value, 0, MaxVitality); // 활력 범위 보정 후 저장
         }
 
         public void SetCurrentChapter(string value) // 현재 챕터 변경

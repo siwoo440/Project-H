@@ -47,6 +47,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 default: // 밤 및 정의되지 않은 값 처리
                     saveData.SetCurrentDay(saveData.CurrentDay + 1); // 다음 일차로 진행
                     saveData.SetCurrentTime(SaveTimeOfDay.Morning); // 다음 일차 아침으로 복귀
+                    VitalityService.RestoreFull(saveData); // 다음 일차 진입 시 활력 전체 회복 (Day42)
                     break; // 밤 분기 종료
             }
 

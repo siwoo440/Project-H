@@ -144,6 +144,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 lobby.Refresh(); // 로비 화면 즉시 갱신
             }
+
+            LobbyVitalityRuntimePatch.RefreshDisplay(); // 다음 일차 진입 시 활력 라벨 즉시 갱신 (Day42)
         }
     }
 }

@@ -4,10 +4,10 @@ using UnityEngine; // Unity 기본 기능
 
 namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 {
-    public enum SaveTimeOfDay // 저장 시간대
+    public enum SaveTimeOfDay // 저장 시간대 (Day41 Morning/Day/Evening/Night 4단계)
     {
         Morning = 0, // 아침
-        Afternoon = 1, // 낮
+        Day = 1, // 낮
         Evening = 2, // 저녁
         Night = 3 // 밤
     }
@@ -216,6 +216,12 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
 
             currentDay = Mathf.Max(1, currentDay); // 최소 일차 복원
+
+            if (!Enum.IsDefined(typeof(SaveTimeOfDay), currentTime)) // 정의되지 않은 시간대 값 확인
+            {
+                currentTime = SaveTimeOfDay.Morning; // 잘못된 시간대 기본값 복원
+            }
+
             NormalizeActiveParty(); // 활성 파티 데이터 정리
             EnsurePartyPresetCount(); // 편성 프리셋 개수 보정
             selectedPartyPresetIndex = Mathf.Clamp(selectedPartyPresetIndex, 0, PartyPresetCount - 1); // 활성 프리셋 범위 보정

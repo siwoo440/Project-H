@@ -21,6 +21,9 @@ EditorBuildSettings:
     path: Assets/ProjectH/Scenes/Bag.unity
     guid: b41149f567674208a6fbe07f5d723ee7
   - enabled: 1
+    path: Assets/ProjectH/Scenes/Shop.unity
+    guid: 745a8f6088ac45daa21dfc45aa8d2066
+  - enabled: 1
     path: Assets/ProjectH/Scenes/Party.unity
     guid: 80f4fcedf7ef2d94c806e4758699c66b
   - enabled: 1

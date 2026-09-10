@@ -33,6 +33,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Button debugUltimateButton; // 궁극기 텍스트 수동 확인 버튼
         private readonly List<BattleUnitView> spawnedUnits = new List<BattleUnitView>(); // 생성된 아군 유닛 목록
         private readonly List<BattleEnemyView> spawnedEnemies = new List<BattleEnemyView>(); // 생성된 적군 유닛 목록
+        private IReadOnlyList<string[]> encounterWaves; // 던전 인카운터 웨이브 편성 (Day45)
+        private readonly List<string[]> resolvedWaves = new List<string[]>(); // 실제 적용 웨이브 목록 (Day45)
+        private int currentWaveIndex; // 현재 진행 웨이브 번호 (Day45)
         private BattlePartyRuntime partyRuntime; // 현재 전투 파티 런타임
         private float elapsedSeconds; // 전투 경과 시간
         private string currentBattleResultId = string.Empty; // 현재 전투 결과 고유 ID
@@ -77,6 +80,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         {
             timeController = battleTimeController; // 전투 시간 컨트롤러 연결
             debugPanel = battleDebugPanel; // 전투 개발 UI 컨트롤러 연결
+        }
+
+        public void ConfigureEncounterWaves(IReadOnlyList<string[]> waves) // 던전 인카운터 웨이브 편성 설정 (Day45)
+        {
+            encounterWaves = waves; // 웨이브 편성 저장
         }
 
         private void Start() // 전투 화면 시작
@@ -194,7 +202,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             elapsedSeconds = 0f; // 경과 시간 초기화
             currentBattleResultId = Guid.NewGuid().ToString("N"); // 신규 전투 결과 고유 ID 생성
             menuPanel?.SetActive(false); // 시작 시 전투 메뉴 숨김
-            SetText(waveText, "WAVE 1 / 1"); // 15일차 단일 테스트 웨이브 표시
+            resolvedWaves.Clear(); // 이전 전투 웨이브 목록 초기화 (Day45)
+            currentWaveIndex = 0; // 웨이브 번호 초기화 (Day45)
+            SetText(waveText, "WAVE 1 / 1"); // 웨이브 해석 전 임시 표시
             RefreshTime(); // 초기 시간 표시
             RefreshAutoLabel(); // 초기 AUTO 상태 표시
             HideAllHudCards(); // HUD 카드 초기 숨김
@@ -261,12 +271,15 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 전투 초기화 중단
             }
 
-            if (!SpawnEnemies(targetCamera, out string enemyError)) // 적군 전투 객체 생성
+            resolvedWaves.AddRange(encounterWaves != null && encounterWaves.Count > 0 ? encounterWaves : new List<string[]> { defaultEnemyIds }); // 웨이브 편성 확정 (Day45)
+
+            if (!SpawnEnemies(targetCamera, out string enemyError)) // 1웨이브 적군 전투 객체 생성
             {
                 FailInitialization(enemyError); // 적군 생성 오류 표시
                 return; // 전투 초기화 중단
             }
 
+            SetText(waveText, $"WAVE {currentWaveIndex + 1} / {resolvedWaves.Count}"); // 실제 웨이브 진행 상태 표시 (Day45)
             initialized = true; // 전투 초기화 완료 기록
             SetInteraction(true); // 전투 UI 입력 활성화
             PrepareOutcomeController(); // 전투 승패 컨트롤러 준비
@@ -312,25 +325,26 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return true; // 아군 생성 성공
         }
 
-        private bool SpawnEnemies(Camera targetCamera, out string error) // 12일차 기본 적군 생성
+        private bool SpawnEnemies(Camera targetCamera, out string error) // 현재 웨이브 적군 생성 (Day45 웨이브 대응)
         {
             error = string.Empty; // 적군 생성 오류 초기화
+            string[] waveEnemyIds = currentWaveIndex >= 0 && currentWaveIndex < resolvedWaves.Count ? resolvedWaves[currentWaveIndex] : null; // 현재 웨이브 적군 ID 조회
 
-            if (defaultEnemyIds == null || defaultEnemyIds.Length == 0) // 기본 적군 ID 확인
+            if (waveEnemyIds == null || waveEnemyIds.Length == 0) // 현재 웨이브 적군 ID 확인
             {
-                error = "Default enemy IDs are missing."; // 적군 ID 누락 오류 설정
+                error = $"Wave enemy IDs are missing. Wave={currentWaveIndex + 1}."; // 웨이브 적군 ID 누락 오류 설정
                 return false; // 적군 생성 실패
             }
 
-            if (defaultEnemyIds.Length > formationAnchors.EnemyCount) // 적군 앵커 개수 확인
+            if (waveEnemyIds.Length > formationAnchors.EnemyCount) // 적군 앵커 개수 확인
             {
-                error = $"Not enough enemy anchor slots. Enemies={defaultEnemyIds.Length}, Anchors={formationAnchors.EnemyCount}."; // 적군 앵커 부족 오류 설정
+                error = $"Not enough enemy anchor slots. Enemies={waveEnemyIds.Length}, Anchors={formationAnchors.EnemyCount}."; // 적군 앵커 부족 오류 설정
                 return false; // 적군 생성 실패
             }
 
-            for (int index = 0; index < defaultEnemyIds.Length; index++) // 기본 적군 ID 순회
+            for (int index = 0; index < waveEnemyIds.Length; index++) // 현재 웨이브 적군 ID 순회
             {
-                string monsterId = defaultEnemyIds[index]; // 현재 몬스터 ID 조회
+                string monsterId = waveEnemyIds[index]; // 현재 몬스터 ID 조회
                 MonsterData monsterData = GameManager.Instance.Data.GetMonster(monsterId); // 몬스터 원본 데이터 조회
 
                 if (monsterData == null) // 몬스터 데이터 존재 확인
@@ -347,7 +361,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return false; // 적군 생성 실패
                 }
 
-                string runtimeId = $"ENEMY_{index}"; // 적군 런타임 ID 생성
+                string runtimeId = $"ENEMY_W{currentWaveIndex + 1}_{index}"; // 적군 런타임 ID 생성 (웨이브 번호 포함, Day45)
                 BattleEnemyStats enemyStats = BattleEnemyStatsFactory.Create(monsterData, runtimeId); // 적군 전투 스탯 생성
                 BattleEnemyView enemy = Instantiate(enemyTemplate, enemyRoot); // 적군 전투 View 복제
                 enemy.gameObject.name = runtimeId; // 적군 GameObject 이름 설정
@@ -375,6 +389,48 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             return true; // 적군 생성 성공
+        }
+
+        public bool TryAdvanceWave() // 다음 웨이브 진행 시도 (Day45)
+        {
+            if (!initialized) // 전투 진행 상태 확인
+            {
+                return false; // 전투 미진행 시 웨이브 진행 불가
+            }
+
+            if (currentWaveIndex + 1 >= resolvedWaves.Count) // 다음 웨이브 존재 여부 확인
+            {
+                return false; // 마지막 웨이브이므로 진행 불가
+            }
+
+            ClearDefeatedEnemies(); // 이전 웨이브 잔여 오브젝트 정리
+            currentWaveIndex++; // 다음 웨이브 번호로 진행
+            Camera targetCamera = Camera.main; // 메인 카메라 재조회
+
+            if (!SpawnEnemies(targetCamera, out string error)) // 다음 웨이브 적군 생성
+            {
+                Debug.LogError($"[Project H][DAY45] Wave spawn failed. Wave={currentWaveIndex + 1}, Error={error}"); // 웨이브 생성 실패 로그
+                return false; // 다음 웨이브 진행 실패
+            }
+
+            SetText(waveText, $"WAVE {currentWaveIndex + 1} / {resolvedWaves.Count}"); // 진행 웨이브 표시 갱신
+            SetText(statusText, $"WAVE {currentWaveIndex + 1} 시작 · 적군 {spawnedEnemies.Count}명"); // 웨이브 진행 상태 표시
+            return true; // 다음 웨이브 진행 성공
+        }
+
+        private void ClearDefeatedEnemies() // 이전 웨이브 잔여 적군 오브젝트 제거 (Day45)
+        {
+            for (int index = 0; index < spawnedEnemies.Count; index++) // 이전 웨이브 적군 목록 순회
+            {
+                BattleEnemyView enemy = spawnedEnemies[index]; // 현재 적군 View 조회
+
+                if (enemy != null) // 적군 View 존재 확인
+                {
+                    Destroy(enemy.gameObject); // 이전 웨이브 적군 오브젝트 제거
+                }
+            }
+
+            spawnedEnemies.Clear(); // 생성 적군 목록 초기화
         }
 
         private void PrepareOutcomeController() // 전투 승패 컨트롤러 생성 또는 재사용

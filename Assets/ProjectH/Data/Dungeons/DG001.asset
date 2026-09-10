@@ -27,3 +27,8 @@ MonoBehaviour:
     dropChance: 0.35
     minQuantity: 1
     maxQuantity: 1
+  encounterWaves:
+  - monsterIds:
+    - MON_CORRUPTED_WOLF
+  - monsterIds:
+    - MON_CORRUPTED_WOLF

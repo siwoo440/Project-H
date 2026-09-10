@@ -1,5 +1,7 @@
+using System.Collections.Generic; // 목록 자료형
 using System.Reflection; // 비공개 전투 설정 연결 기능
 using ProjectH.Core; // 프로젝트 씬 상수 기능
+using ProjectH.Data; // 던전 데이터 기능
 using ProjectH.UI; // 던전 선택 상태 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.SceneManagement; // Unity 씬 기능
@@ -45,8 +47,17 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             DungeonBattleFormationProfile profile = DungeonBattleFormationProfile.Get(dungeonId); // 확정 던전 적 편성 조회
-            DefaultEnemyIdsField.SetValue(controller, profile.CreateEnemyIds()); // 기존 적군 생성 입력에 던전 편성 주입
+            DefaultEnemyIdsField.SetValue(controller, profile.CreateEnemyIds()); // 기존 적군 생성 입력에 던전 편성 주입 (레거시 단일 웨이브 폴백)
             Debug.Log($"[Project H][DAY28] {profile.DungeonId} 적 편성 {profile.EnemyCount}명 적용"); // 던전 편성 적용 로그 출력
+            ApplyEncounterWaves(controller, dungeonId, profile); // 던전 인카운터 웨이브 편성 적용 (Day45)
+        }
+
+        private static void ApplyEncounterWaves(BattleScreenController controller, string dungeonId, DungeonBattleFormationProfile fallbackProfile) // 던전 인카운터 웨이브 편성 적용 (Day45)
+        {
+            DungeonData dungeon = GameManager.Instance == null || GameManager.Instance.Data == null ? null : GameManager.Instance.Data.GetDungeon(dungeonId); // 확정 던전 원본 데이터 조회
+            List<string[]> waves = DungeonEncounterResolver.ResolveWaves(dungeon, fallbackProfile.CreateEnemyIds()); // 던전 데이터 기반 웨이브 목록 해석
+            controller.ConfigureEncounterWaves(waves); // 전투 화면에 웨이브 편성 주입
+            Debug.Log($"[Project H][DAY45] {dungeonId} 인카운터 웨이브 {waves.Count}개 적용"); // 웨이브 편성 적용 로그 출력
         }
     }
 }

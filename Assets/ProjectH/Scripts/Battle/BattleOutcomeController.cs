@@ -51,6 +51,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return CurrentOutcome; // 기존 진행 상태 유지
             }
 
+            if (evaluated == BattleOutcome.Victory && screenController != null && screenController.TryAdvanceWave()) // 다음 웨이브 존재 여부 확인 (Day45)
+            {
+                return CurrentOutcome; // 다음 웨이브 진행 중이므로 전투 계속 유지
+            }
+
             FinishBattle(evaluated); // 최종 승패 처리
             return CurrentOutcome; // 최종 승패 상태 반환
         }

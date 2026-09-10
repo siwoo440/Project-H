@@ -1,3 +1,4 @@
+using ProjectH.Battle.Rhythm; // 궁극기 리듬 챌린지 기능 (Day49)
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.UI; // Unity UI 기능
 
@@ -18,6 +19,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private Text ultimateText; // 궁극기 게이지 텍스트
         private float ultimateRatio; // 현재 궁극기 게이지 비율
         private Button ultimateButton; // 궁극기 텍스트 Runtime 입력 버튼
+        private Button portraitButton; // 초상화 Runtime 궁극기 입력 버튼 (Day49 추가)
+        private Image portraitImage; // 초상화 배경 이미지 참조 (Day49 추가)
         [SerializeField] private Outline portraitSelectionOutline; // 선택 캐릭터 초상화 윤곽 효과
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
@@ -32,6 +35,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             levelText = level; // 캐릭터 레벨 연결
             portraitText = portrait; // 임시 초상화 연결
             EnsurePortraitSelectionOutline(); // 초상화 선택 윤곽 효과 준비
+            EnsurePortraitButton(); // 초상화 궁극기 입력 버튼 준비 (Day49 추가)
             hpText = hp; // 체력 텍스트 연결
             hpFillImage = hpFill; // HP 게이지 연결
             gaugeFillImage = gaugeFill; // 궁극기 게이지 연결
@@ -72,6 +76,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetText(levelText, $"Lv.{Stats.Level}"); // 캐릭터 레벨 표시
             SetText(portraitText, Stats.DisplayName); // 임시 초상화 이름 표시
             EnsurePortraitSelectionOutline(); // 현재 초상화 선택 윤곽 효과 준비
+            EnsurePortraitButton(); // 현재 초상화 궁극기 입력 버튼 준비 (Day49 추가)
             Refresh(); // 현재 HUD 상태 표시
         }
 
@@ -118,9 +123,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (!result.Succeeded) // 궁극기 실행 실패 여부 확인
             {
                 Debug.LogWarning($"[Project H][ULTIMATE] {Stats.CharacterId}, {result.Message}"); // 궁극기 사용 실패 로그 출력
+                return false; // 사용 실패 반환
             }
 
-            return result.Succeeded; // 궁극기 실행 성공 여부 반환
+            UltimateRhythmChallengeView.Show(result.UltimateName, HandleRhythmChallengeCompleted); // 궁극기 리듬 챌린지 표시 (Day49, 결과는 표시만 하고 효과는 아직 미연동)
+            return true; // 궁극기 실행 성공 반환
+        }
+
+        private void HandleRhythmChallengeCompleted(int hitCount, int totalCount) // 궁극기 리듬 챌린지 종료 처리 (Day49)
+        {
+            Debug.Log($"[Project H][RHYTHM] {Stats?.CharacterId}, Hit={hitCount}/{totalCount}"); // 리듬 챌린지 결과 로그 출력 (전투 효과 연동은 후속 Day)
         }
 
         public void SetUltimatePreview(float ratio) // 궁극기 게이지 UI 미리보기 설정
@@ -168,6 +180,48 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             portraitSelectionOutline.effectDistance = new Vector2(3f, -3f); // 초상화 선택 윤곽 선 두께 적용
             portraitSelectionOutline.useGraphicAlpha = true; // 초상화 Graphic 알파 기반 윤곽 적용
             portraitSelectionOutline.enabled = false; // 생성 직후 초상화 선택 윤곽 숨김
+        }
+
+        private void EnsurePortraitButton() // 초상화 궁극기 입력 버튼 준비 (Day49 추가 — 궁극기 준비 시 초상화 클릭으로 발동)
+        {
+            if (portraitText == null) // 초상화 텍스트 참조 확인
+            {
+                return; // 초상화 버튼 준비 중단
+            }
+
+            Transform portraitRoot = portraitText.transform.parent; // 초상화 배경(Portrait) Transform 조회
+
+            if (portraitRoot == null) // 초상화 배경 존재 확인
+            {
+                return; // 초상화 버튼 준비 중단
+            }
+
+            portraitImage = portraitRoot.GetComponent<Image>(); // 초상화 배경 이미지 조회
+            portraitButton = portraitRoot.GetComponent<Button>(); // 기존 초상화 버튼 조회
+
+            if (portraitButton == null) // 기존 초상화 버튼 존재 확인
+            {
+                portraitButton = portraitRoot.gameObject.AddComponent<Button>(); // 초상화 배경에 Runtime 버튼 추가
+            }
+
+            if (portraitImage != null) // 초상화 배경 이미지 존재 확인
+            {
+                portraitButton.targetGraphic = portraitImage; // 초상화 배경을 버튼 TargetGraphic으로 연결
+                portraitImage.raycastTarget = true; // 초상화 배경 클릭 판정 활성화 (기존 씬에는 장식용으로 꺼져 있었음, 원인 수정)
+            }
+
+            portraitButton.onClick.RemoveListener(HandlePortraitClicked); // 기존 동일 초상화 클릭 이벤트 제거
+            portraitButton.onClick.AddListener(HandlePortraitClicked); // 초상화 클릭 궁극기 실행 이벤트 연결
+        }
+
+        private void HandlePortraitClicked() // 초상화 클릭 처리 (Day49 추가)
+        {
+            if (!IsUltimateReady) // 궁극기 준비 상태 확인
+            {
+                return; // 미준비 상태 클릭 무시
+            }
+
+            TryUseUltimate(); // 현재 HUD 캐릭터 궁극기 사용 시도
         }
 
         private void EnsureUltimateButton() // 궁극기 텍스트 Runtime 입력 버튼 준비
@@ -219,6 +273,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 ultimateButton.interactable = IsUltimateReady; // 생존 및 Ready 상태 기반 궁극기 입력 활성화
             }
 
+            if (portraitButton != null) // 초상화 Runtime 버튼 확인 (Day49 추가)
+            {
+                portraitButton.interactable = IsUltimateReady; // 생존 및 Ready 상태 기반 초상화 입력 활성화
+            }
+
+            if (portraitImage != null) // 초상화 배경 이미지 확인 (Day49 추가)
+            {
+                portraitImage.color = IsUltimateReady ? new Color(1f, 0.93f, 0.62f, 1f) : new Color(0.92f, 0.95f, 0.98f, 0.95f); // 궁극기 준비 상태 기반 초상화 강조 색상 적용
+            }
+
             if (ultimateText != null) // 궁극기 게이지 텍스트 확인
             {
                 int percent = Mathf.RoundToInt(ultimateRatio * 100f); // 궁극기 게이지 퍼센트 계산
@@ -233,6 +297,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (ultimateButton != null) // 궁극기 Runtime 버튼 확인
             {
                 ultimateButton.onClick.RemoveListener(HandleUltimateClicked); // 궁극기 클릭 이벤트 안전 해제
+            }
+
+            if (portraitButton != null) // 초상화 Runtime 버튼 확인 (Day49 추가)
+            {
+                portraitButton.onClick.RemoveListener(HandlePortraitClicked); // 초상화 클릭 이벤트 안전 해제
             }
         }
 

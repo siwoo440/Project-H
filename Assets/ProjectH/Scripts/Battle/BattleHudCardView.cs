@@ -130,9 +130,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return true; // 궁극기 실행 성공 반환
         }
 
-        private void HandleRhythmChallengeCompleted(int hitCount, int totalCount) // 궁극기 리듬 챌린지 종료 처리 (Day49)
+        private void HandleRhythmChallengeCompleted(RhythmChallengeResult result) // 궁극기 리듬 챌린지 종료 처리 (Day49 판정 등급 확장)
         {
-            Debug.Log($"[Project H][RHYTHM] {Stats?.CharacterId}, Hit={hitCount}/{totalCount}"); // 리듬 챌린지 결과 로그 출력 (전투 효과 연동은 후속 Day)
+            Debug.Log($"[Project H][RHYTHM] {Stats?.CharacterId}, {result}, Accuracy={result.Accuracy:P0}"); // 리듬 챌린지 등급별 결과 로그 출력 (전투 효과 연동은 후속 Day)
         }
 
         public void SetUltimatePreview(float ratio) // 궁극기 게이지 UI 미리보기 설정

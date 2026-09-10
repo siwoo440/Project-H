@@ -7,8 +7,9 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
     {
         public const int MinCircleCount = 3; // 최소 생성 원 개수
         public const int MaxCircleCount = 4; // 최대 생성 원 개수
-        public const float MinShrinkSeconds = 2.7f; // 최소 줄어드는 시간(초) — 기존 대비 3배 느리게 조정
-        public const float MaxShrinkSeconds = 4.2f; // 최대 줄어드는 시간(초) — 기존 대비 3배 느리게 조정
+        public const float BeatsPerMinute = 80f; // 챌린지 박자 속도(BPM)
+        public const float SecondsPerBeat = 60f / BeatsPerMinute; // 한 박자 길이(초)
+        public const float ApproachSeconds = 3f; // 원이 목표 크기까지 줄어드는 시간(초) — 모든 원 공통이라 박자가 일정하게 유지됨
         public const float CircleSizePixels = 130f; // 원 기준 크기(px), 기준 해상도(1920x1080) 대비 값
         public const float ReferenceWidth = 1920f; // 원 배치 계산 기준 해상도 가로
         public const float ReferenceHeight = 1080f; // 원 배치 계산 기준 해상도 세로
@@ -26,11 +27,28 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             for (int index = 0; index < count; index++) // 결정된 개수만큼 원 생성
             {
                 Vector2 position = FindNonOverlappingPosition(rng, circles); // 기존 원과 겹치지 않는 위치 탐색
-                float duration = Mathf.Lerp(MinShrinkSeconds, MaxShrinkSeconds, (float)rng.NextDouble()); // 랜덤 줄어드는 시간 계산
-                circles.Add(new RhythmCircleData(position, duration)); // 생성 원 데이터 추가
+                float spawnDelay = index * SecondsPerBeat; // 한 박자 간격 등장 지연 계산 (판정 순간도 정확히 한 박자 간격이 됨)
+                circles.Add(new RhythmCircleData(position, ApproachSeconds, spawnDelay, index + 1)); // 생성 원 데이터 추가
             }
 
             return circles; // 생성 원 목록 반환
+        }
+
+        public static float GetChallengeDurationSeconds(IReadOnlyList<RhythmCircleData> circles) // 챌린지 전체 진행 시간 계산
+        {
+            float longest = 0f; // 최장 판정 시각 초기화
+
+            if (circles == null) // 원 목록 존재 확인
+            {
+                return longest; // 빈 목록 0초 반환
+            }
+
+            for (int index = 0; index < circles.Count; index++) // 원 목록 순회
+            {
+                longest = Mathf.Max(longest, circles[index].HitTimeSeconds); // 가장 늦은 판정 시각 갱신
+            }
+
+            return longest; // 최장 판정 시각 반환
         }
 
         public static bool IsWithinSafeArea(Vector2 normalizedPosition) // 위치의 안전 영역 포함 여부 확인

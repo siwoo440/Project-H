@@ -19,63 +19,131 @@ MonoBehaviour:
     itemId: IT_POTION_SMALL
     buyPrice: 100
     sellPrice: 40
+    rotating: 0
+    dailyLimit: 10
   - productId: PRD_MATERIAL_001
     itemId: IT_MATERIAL_001
     buyPrice: 160
     sellPrice: 60
-  - productId: PRD_WEAPON_IRON
-    itemId: EQ_WEAPON_IRON
-    buyPrice: 900
-    sellPrice: 0
-  - productId: PRD_ARMOR_GUARD
-    itemId: EQ_ARMOR_GUARD
-    buyPrice: 1000
-    sellPrice: 0
-  - productId: PRD_GIFT_FLOWER
-    itemId: IT_GIFT_FLOWER
-    buyPrice: 60
-    sellPrice: 24
-  - productId: PRD_GIFT_CANDLE
-    itemId: IT_GIFT_CANDLE
-    buyPrice: 80
-    sellPrice: 32
-  - productId: PRD_GIFT_BROOCH
-    itemId: IT_GIFT_BROOCH
+    rotating: 0
+    dailyLimit: 10
+  - productId: PRD_SCROLL_WEAPON_C
+    itemId: IT_SCROLL_WEAPON_C
     buyPrice: 150
-    sellPrice: 60
-  - productId: PRD_GIFT_STARMAP
-    itemId: IT_GIFT_STARMAP
-    buyPrice: 150
-    sellPrice: 60
-  - productId: PRD_GIFT_SHELL
-    itemId: IT_GIFT_SHELL
+    sellPrice: 50
+    rotating: 0
+    dailyLimit: 5
+  - productId: PRD_SCROLL_ARMOR_C
+    itemId: IT_SCROLL_ARMOR_C
     buyPrice: 120
-    sellPrice: 48
-  - productId: PRD_GIFT_SWEETS
-    itemId: IT_GIFT_SWEETS
-    buyPrice: 40
-    sellPrice: 16
+    sellPrice: 40
+    rotating: 0
+    dailyLimit: 5
   - productId: PRD_RUNE_SHARD
     itemId: IT_RUNE_SHARD
     buyPrice: 40
     sellPrice: 10
+    rotating: 0
+    dailyLimit: 30
   - productId: PRD_RUNE_BOX_1
     itemId: IT_RUNE_BOX_1
     buyPrice: 100
     sellPrice: 50
+    rotating: 0
+    dailyLimit: 3
+  - productId: PRD_GIFT_FLOWER
+    itemId: IT_GIFT_FLOWER
+    buyPrice: 60
+    sellPrice: 24
+    rotating: 0
+    dailyLimit: 5
+  - productId: PRD_GIFT_SWEETS
+    itemId: IT_GIFT_SWEETS
+    buyPrice: 40
+    sellPrice: 16
+    rotating: 0
+    dailyLimit: 5
+  - productId: PRD_GIFT_CANDLE
+    itemId: IT_GIFT_CANDLE
+    buyPrice: 80
+    sellPrice: 32
+    rotating: 0
+    dailyLimit: 5
+  - productId: PRD_SCROLL_WEAPON_B
+    itemId: IT_SCROLL_WEAPON_B
+    buyPrice: 400
+    sellPrice: 120
+    rotating: 1
+    dailyLimit: 3
+  - productId: PRD_SCROLL_ARMOR_B
+    itemId: IT_SCROLL_ARMOR_B
+    buyPrice: 350
+    sellPrice: 100
+    rotating: 1
+    dailyLimit: 3
+  - productId: PRD_SCROLL_WEAPON_A
+    itemId: IT_SCROLL_WEAPON_A
+    buyPrice: 1000
+    sellPrice: 300
+    rotating: 1
+    dailyLimit: 1
+  - productId: PRD_SCROLL_ARMOR_A
+    itemId: IT_SCROLL_ARMOR_A
+    buyPrice: 900
+    sellPrice: 260
+    rotating: 1
+    dailyLimit: 1
   - productId: PRD_RUNE_BOX_2
     itemId: IT_RUNE_BOX_2
     buyPrice: 200
     sellPrice: 100
+    rotating: 1
+    dailyLimit: 3
+  - productId: PRD_GIFT_BROOCH
+    itemId: IT_GIFT_BROOCH
+    buyPrice: 150
+    sellPrice: 60
+    rotating: 1
+    dailyLimit: 5
+  - productId: PRD_GIFT_STARMAP
+    itemId: IT_GIFT_STARMAP
+    buyPrice: 150
+    sellPrice: 60
+    rotating: 1
+    dailyLimit: 5
+  - productId: PRD_GIFT_SHELL
+    itemId: IT_GIFT_SHELL
+    buyPrice: 120
+    sellPrice: 48
+    rotating: 1
+    dailyLimit: 5
+  - productId: PRD_WEAPON_IRON
+    itemId: EQ_WEAPON_IRON
+    buyPrice: 900
+    sellPrice: 0
+    rotating: 1
+    dailyLimit: 1
+  - productId: PRD_ARMOR_GUARD
+    itemId: EQ_ARMOR_GUARD
+    buyPrice: 1000
+    sellPrice: 0
+    rotating: 1
+    dailyLimit: 1
   - productId: PRD_HELMET_GUARD
     itemId: EQ_HELMET_GUARD
     buyPrice: 700
     sellPrice: 0
+    rotating: 1
+    dailyLimit: 1
   - productId: PRD_GLOVES_HUNTER
     itemId: EQ_GLOVES_HUNTER
     buyPrice: 800
     sellPrice: 0
+    rotating: 1
+    dailyLimit: 1
   - productId: PRD_BOOTS_SWIFT
     itemId: EQ_BOOTS_SWIFT
     buyPrice: 750
     sellPrice: 0
+    rotating: 1
+    dailyLimit: 1

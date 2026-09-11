@@ -15,6 +15,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField] private List<DungeonDropEntry> dropTable = new List<DungeonDropEntry>(); // 던전 드롭 테이블
         [SerializeField] private List<DungeonEncounterWave> encounterWaves = new List<DungeonEncounterWave>(); // 던전 인카운터 웨이브 목록 (Day45)
         [SerializeField, Min(1)] private int mapFloorCount = 1; // 노드형 탐험 지도 층 수 (Day55 추가, 보스 층 포함 · 1이면 보스 노드만)
+        [SerializeField, Min(0)] private int vitalityCost = 20; // 입장 활력 소비 (Day61 추가 — 경제 밸런스, 0이면 무료)
 
         public string Id => id; // 고유 ID 반환
         public string DisplayName => displayName; // 표시 이름 반환
@@ -25,5 +26,6 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public IReadOnlyList<DungeonDropEntry> DropTable => dropTable; // 드롭 테이블 반환
         public IReadOnlyList<DungeonEncounterWave> EncounterWaves => encounterWaves; // 인카운터 웨이브 목록 반환 (Day45)
         public int MapFloorCount => Mathf.Max(1, mapFloorCount); // 탐험 지도 층 수 반환 (Day55 추가)
+        public int VitalityCost => Mathf.Max(0, vitalityCost); // 입장 활력 소비 반환 (Day61 추가)
     }
 }

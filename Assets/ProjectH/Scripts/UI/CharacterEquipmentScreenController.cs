@@ -345,12 +345,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 EquipmentInstanceSaveData instance = CharacterEquipmentService.GetEquippedInstance(saveData, characterSave.CharacterId, slot); // 장착 장비
                 EquipmentData equipment = instance == null ? null : dataManager.GetEquipment(instance.EquipmentId); // 원본
                 equipmentSlotFrames[index].color = equipment == null ? new Color(0.12f, 0.12f, 0.16f, 1f) : GetGradeColor(equipment.Grade); // 등급 색
-                equipmentSlotNames[index].text = equipment == null ? string.Empty : equipment.DisplayName; // 장비 이름
+                equipmentSlotNames[index].text = equipment == null ? string.Empty : EquipmentUpgradeCatalog.FormatName(equipment.DisplayName, instance); // 장비 이름 (Day61 강화·초월 표시)
                 equipmentSlotFrames[index].GetComponent<Outline>().effectColor = equipmentFilter == (int)slot ? new Color(1f, 0.80f, 0.25f, 1f) : new Color(0.85f, 0.85f, 0.9f, 0.6f); // 선택 칸 금색
             }
         }
 
-        private static Color GetGradeColor(ItemGrade grade) // 장비 등급 칸 색 (Day60 추가)
+        internal static Color GetGradeColor(ItemGrade grade) // 장비 등급 칸 색 (Day60 추가, Day61 아이콘 공용)
         {
             switch (grade) // 등급 분기
             {
@@ -404,7 +404,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 case 0: return "[스텟]\n장비·룬·호감도·결속이 모두 반영된 최종 능력치입니다.\n\n아래 버튼으로 호감도 보상, 선물, 일상 대화, 결속을 관리할 수 있어요."; // 스텟
                 case 1: return "[장비]\n일러스트 둘레 5칸이 장비 슬롯입니다.\n무기 · 투구 · 방어구 · 장갑 · 신발\n\n칸을 누르면 그 슬롯 장비만 목록에 보이고, 장착 중인 장비가 선택됩니다.\n목록에서 장비를 고르면 변경 전후 능력치를 비교합니다. [전체 보기]로 필터를 풉니다."; // 장비
-                case 2: return "[룬]\n일러스트 둘레 5칸이 룬 슬롯입니다.\n1번 기본 · 2번 레벨 10 · 3번 결속 3단계 · 4번 고급 이상 장비 · 5번 결속 5단계\n\n강화 : 룬 조각 + 골드 (Lv.10까지, 실패 없음)\n합성 : 같은 종류·등급 2개 → 한 등급 위 (강화 조각 50% 반환)\n분해 : 룬 → 룬 조각 · 잠금 룬은 보호됩니다."; // 룬
+                case 2: return "[룬]\n일러스트 둘레 5칸이 룬 슬롯입니다.\n1번 기본 · 2번 레벨 10 · 3번 결속 3단계 · 4번 고급 이상 장비 · 5번 ★2 초월 장비\n\n강화 : 룬 조각 + 골드 (Lv.10까지, 실패 없음)\n합성 : 같은 종류·등급 2개 → 한 등급 위 (강화 조각 50% 반환)\n분해 : 룬 → 룬 조각 · 잠금 룬은 보호됩니다."; // 룬
                 case 3: return "[스킬]\n스킬 1~3, 궁극기, 패시브, 결속 스킬을 확인합니다."; // 스킬
                 default: return "[프로필]\n캐릭터 이름, 성우, 신체 정보와 이야기를 확인합니다.\n'###'은 아직 확정되지 않은 설정입니다."; // 프로필
             }
@@ -714,7 +714,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     continue; // 다른 슬롯 장비 제외
                 }
 
-                string equipmentName = equipment == null ? instance.EquipmentId : equipment.DisplayName; // 장비 표시 이름 결정
+                string equipmentName = equipment == null ? instance.EquipmentId : EquipmentUpgradeCatalog.FormatName(equipment.DisplayName, instance); // 장비 표시 이름 결정 (Day61 강화·초월 표시)
                 CharacterSaveData owner = CharacterEquipmentService.FindEquippedCharacter(saveData, instance.InstanceId); // 장비 착용 캐릭터 조회
                 string state = BuildEquipmentState(owner, characterSave); // 장비 착용 상태 문구 생성
                 string slotName = equipment == null ? "?" : EquipmentSlotInfo.GetLabel(equipment.Slot); // 장비 슬롯 이름 (Day60 5칸 대응)
@@ -805,9 +805,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             CharacterSaveData owner = CharacterEquipmentService.FindEquippedCharacter(saveData, instance.InstanceId); // 선택 장비 착용 캐릭터 조회
-            detailTitleText.text = equipment.DisplayName; // 장비 이름 상세 표시
+            detailTitleText.text = EquipmentUpgradeCatalog.FormatName(equipment.DisplayName, instance); // 장비 이름 상세 표시 (Day61 강화·초월 표시)
             detailGradeText.text = GetGradeStars(equipment.Grade); // 장비 등급 상세 표시
-            detailStatsText.text = $"슬롯: {GetSlotDisplayName(equipment.Slot)}\n상태: {BuildEquipmentState(owner, characterSave)}\n\n{BuildStatDescription(equipment)}\n\n{equipment.Description}"; // 장비 상세 정보 표시
+            detailStatsText.text = $"슬롯: {GetSlotDisplayName(equipment.Slot)}\n상태: {BuildEquipmentState(owner, characterSave)}\n\n{BuildStatDescription(equipment, EquipmentUpgradeCatalog.GetStatMultiplier(instance))}\n\n{equipment.Description}"; // 장비 상세 정보 표시 (Day61 강화·초월 수치 반영)
 
             if (owner != null && !string.Equals(owner.CharacterId, characterSave.CharacterId, StringComparison.Ordinal)) // 다른 캐릭터 장착 여부 확인
             {
@@ -1058,7 +1058,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return $"{label,-6} {currentDisplay:0.##}{suffix} → {previewDisplay:0.##}{suffix}   ({deltaText})"; // 실수 비교 문구 반환
         }
 
-        private static string BuildStatDescription(EquipmentData equipment) // 장비 상세 능력치 문구 생성
+        private static string BuildStatDescription(EquipmentData equipment, float multiplier = 1f) // 장비 상세 능력치 문구 생성 (Day61 강화·초월 배율 추가)
         {
             if (equipment == null || equipment.StatOptions == null || equipment.StatOptions.Count == 0) // 장비 옵션 존재 확인
             {
@@ -1070,7 +1070,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             for (int index = 0; index < equipment.StatOptions.Count; index++) // 장비 옵션 순회
             {
                 EquipmentStatOption option = equipment.StatOptions[index]; // 현재 장비 옵션 조회
-                string value = FormatStatValue(option.StatType, option.Value); // 장비 옵션 수치 문구 생성
+                string value = FormatStatValue(option.StatType, option.Value * multiplier); // 장비 옵션 수치 문구 생성 (배율 반영)
                 string separator = index == 0 ? string.Empty : "\n"; // 장비 옵션 줄바꿈 결정
                 description += $"{separator}{GetStatDisplayName(option.StatType)}  {value}"; // 장비 옵션 문구 누적
             }
@@ -1103,7 +1103,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return description; // 장비 축약 문구 반환
         }
 
-        private static string FormatStatValue(EquipmentStatType statType, float value) // 장비 능력치 수치 문구 생성
+        internal static string FormatStatValue(EquipmentStatType statType, float value) // 장비 능력치 수치 문구 생성 (Day61 대장간 공용)
         {
             bool percentage = statType == EquipmentStatType.Accuracy || statType == EquipmentStatType.CriticalRate; // 백분율 능력치 여부 계산
             float displayValue = percentage ? value * 100f : value; // 장비 능력치 표시값 계산
@@ -1112,7 +1112,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return $"{sign}{displayValue:0.##}{suffix}"; // 장비 능력치 수치 문구 반환
         }
 
-        private static string GetStatDisplayName(EquipmentStatType statType) // 장비 능력치 표시 이름 조회
+        internal static string GetStatDisplayName(EquipmentStatType statType) // 장비 능력치 표시 이름 조회 (Day61 대장간 공용)
         {
             switch (statType) // 장비 능력치 유형 분기
             {

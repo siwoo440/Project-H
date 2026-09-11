@@ -80,6 +80,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new Color(0.62f, 0.55f, 0.90f, 1f); // 청보라 (연산 원)
                 case "CH_EVE": // 이브 처리
                     return new Color(0.60f, 0.84f, 0.64f, 1f); // 숲 초록
+                case "NPC_SHOPKEEPER": // 상점 주인 처리 (Day61 추가)
+                    return new Color(0.96f, 0.80f, 0.62f, 1f); // 따뜻한 살구색
+                case "NPC_BLACKSMITH": // 대장장이 처리 (Day61 추가)
+                    return new Color(0.86f, 0.52f, 0.34f, 1f); // 불빛 구릿빛
                 default: // 기타 캐릭터 처리
                     return new Color(0.80f, 0.80f, 0.84f, 1f); // 회색
             }
@@ -103,6 +107,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new BackgroundPalette(new Color(0.46f, 0.70f, 0.96f), new Color(0.90f, 0.95f, 0.99f), new Color(0.66f, 0.72f, 0.60f), false); // 파란 하늘
                 case "EVENING": // 저녁 일상
                     return new BackgroundPalette(new Color(0.40f, 0.32f, 0.56f), new Color(0.98f, 0.62f, 0.42f), new Color(0.36f, 0.28f, 0.34f), false); // 노을
+                case "SHOP": // 상점 내부 (Day61 추가)
+                    return new BackgroundPalette(new Color(0.36f, 0.24f, 0.16f), new Color(0.86f, 0.66f, 0.42f), new Color(0.42f, 0.28f, 0.18f), false); // 등불 켠 목조 가게
+                case "BLACKSMITH": // 대장간 내부 (Day61 추가)
+                    return new BackgroundPalette(new Color(0.08f, 0.06f, 0.06f), new Color(0.72f, 0.30f, 0.10f), new Color(0.16f, 0.12f, 0.10f), false); // 화로 불빛
                 case "NIGHT": // 밤 일상
                     return new BackgroundPalette(new Color(0.03f, 0.05f, 0.14f), new Color(0.16f, 0.20f, 0.38f), new Color(0.08f, 0.09f, 0.16f), true); // 밤하늘
                 default: // 기본 처리

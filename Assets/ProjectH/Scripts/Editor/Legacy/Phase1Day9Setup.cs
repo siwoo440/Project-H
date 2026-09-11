@@ -74,11 +74,10 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             Text body = FindInScene<Text>(scene, "MissionBody"); // 로비 본문 조회
             Text saveState = FindInScene<Text>(scene, "SaveState"); // 로비 저장 상태 조회
             Button saveButton = FindInScene<Button>(scene, "SaveButton"); // 저장 버튼 조회
-            Button lobbyButton = FindInScene<Button>(scene, "Nav_로비"); // 로비 메뉴 버튼 조회
             Button partyButton = FindInScene<Button>(scene, "Nav_파티"); // 파티 메뉴 버튼 조회
-            Button dungeonButton = FindInScene<Button>(scene, "Nav_모험"); // 모험 메뉴 버튼 조회
+            Button dungeonButton = FindInScene<Button>(scene, "Nav_모험"); // 모험 메뉴 버튼 조회 (Day61 — 미사용 로비·메뉴 버튼은 씬에서 제거됨)
 
-            if (canvas == null || status == null || body == null || saveState == null || saveButton == null || lobbyButton == null || partyButton == null || dungeonButton == null) // 필수 UI 확인
+            if (canvas == null || status == null || body == null || saveState == null || saveButton == null || partyButton == null || dungeonButton == null) // 필수 UI 확인
             {
                 Debug.LogError("[Project H][UI] Lobby scene structure is incomplete. Run Phase 0 Day 4 setup first."); // 로비 구조 오류 로그
                 return; // 로비 설정 중단
@@ -106,12 +105,10 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             bodyRect.offsetMin = Vector2.zero; // 본문 최소 오프셋 초기화
             bodyRect.offsetMax = Vector2.zero; // 본문 최대 오프셋 초기화
             ResetButton(saveButton); // 저장 버튼 기존 이벤트 제거
-            ResetButton(lobbyButton); // 로비 메뉴 기존 이벤트 제거
             ResetButton(partyButton); // 파티 메뉴 기존 이벤트 제거
             ResetButton(dungeonButton); // 모험 메뉴 기존 이벤트 제거
             ResetButton(titleButton); // 타이틀 버튼 기존 이벤트 제거
             UnityEventTools.AddPersistentListener(saveButton.onClick, controller.SaveGame); // 저장 이벤트 연결
-            UnityEventTools.AddPersistentListener(lobbyButton.onClick, controller.GoLobby); // 로비 메뉴 이벤트 연결
             UnityEventTools.AddPersistentListener(partyButton.onClick, controller.GoParty); // 파티 메뉴 이벤트 연결
             UnityEventTools.AddPersistentListener(dungeonButton.onClick, controller.GoDungeonSelect); // 모험 메뉴 이벤트 연결
             UnityEventTools.AddPersistentListener(titleButton.onClick, controller.GoTitle); // 타이틀 이동 이벤트 연결

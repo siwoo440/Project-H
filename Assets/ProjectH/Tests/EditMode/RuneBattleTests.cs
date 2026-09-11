@@ -23,17 +23,17 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             BattleRuntimeStates.ResetAll(); // 통합 초기화
         }
 
-        private static RuneLoadout EquipRunes(params (RuneKind kind, int grade)[] runes) // 세레나에게 룬 장착 후 합계 반환 (결속 5·레벨 10으로 슬롯 확보)
+        private static RuneLoadout EquipRunes(params (RuneKind kind, int grade)[] runes) // 세레나에게 룬 최대 3개 장착 후 합계 반환 (레벨 10·결속 3으로 1~3번 슬롯 확보)
         {
+            Assert.That(runes.Length, Is.LessThanOrEqualTo(3)); // 4·5번 슬롯은 장비 조건 (Day61 — 5번이 ★2 초월 장비로 바뀜)
             SaveData saveData = SaveData.CreateNewGame(new[] { Serena }); // 새 게임
             saveData.FindCharacter(Serena).SetLevel(10); // 2번 슬롯
-            saveData.FindCharacter(Serena).SetBondLevel(5); // 3·5번 슬롯
+            saveData.FindCharacter(Serena).SetBondLevel(3); // 3번 슬롯
 
             for (int index = 0; index < runes.Length; index++) // 룬 순회
             {
                 RuneInstanceSaveData rune = RuneService.Grant(saveData, runes[index].kind, runes[index].grade); // 지급
-                int slot = index == 0 ? 0 : index == 1 ? 1 : index == 2 ? 2 : 4; // 해금 슬롯 (4번은 장비 조건이라 제외)
-                Assert.That(RuneService.TryEquip(saveData, null, Serena, rune.InstanceId, slot, out string message), Is.True, message); // 장착
+                Assert.That(RuneService.TryEquip(saveData, null, Serena, rune.InstanceId, index, out string message), Is.True, message); // 1~3번 슬롯 장착
             }
 
             return RuneService.BuildLoadout(saveData, Serena); // 합계 반환
@@ -57,13 +57,14 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         public void Stats_PowerVitalityGuardSwiftCritical_AreApplied() // 스탯 룬 테스트
         {
             CharacterData serena = LoadSerena(); // 세레나
-            RuneLoadout loadout = EquipRunes((RuneKind.Power, 3), (RuneKind.Vitality, 2), (RuneKind.Critical, 1), (RuneKind.Swift, 1)); // 힘★3·체력★2·치명★1·신속★1
+            RuneLoadout loadout = EquipRunes((RuneKind.Power, 3), (RuneKind.Vitality, 2), (RuneKind.Critical, 1)); // 힘★3·체력★2·치명★1
             BattleStats stats = BattleStatsFactory.CreateCharacter(serena, 1, "ALLY_0", BattleEquipmentStatBonus.Empty.WithRunes(loadout)); // 룬 반영 스탯
+            BattleStats swift = BattleStatsFactory.CreateCharacter(serena, 1, "ALLY_0", BattleEquipmentStatBonus.Empty.WithRunes(EquipRunes((RuneKind.Swift, 1)))); // 신속★1 (Day61 분리)
 
             Assert.That(stats.Attack, Is.EqualTo(Mathf.RoundToInt(serena.BaseAttack * 1.20f))); // 공격력 +20%
             Assert.That(stats.MaxHp, Is.EqualTo(Mathf.RoundToInt(serena.BaseHp * 1.10f))); // 체력 +10%
             Assert.That(stats.CriticalRate, Is.EqualTo(serena.CriticalRate + 0.10f).Within(0.0001f)); // 치명타율 +10%p
-            Assert.That(stats.AttackSpeed, Is.EqualTo(serena.AttackSpeed + 0.10f).Within(0.0001f)); // 공격 속도 +0.1
+            Assert.That(swift.AttackSpeed, Is.EqualTo(serena.AttackSpeed + 0.10f).Within(0.0001f)); // 공격 속도 +0.1
         }
 
         [Test] // 발동형 룬 등록·제거 검증

@@ -101,16 +101,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
         }
 
-        public void GoLobby() // 현재 로비 새로고침
-        {
-            if (isTransitioning) // 전환 상태 확인
-            {
-                return; // 중복 입력 중단
-            }
-
-            Refresh(); // 현재 로비 상태 갱신
-        }
-
         public void GoParty() // 파티 화면 이동
         {
             BeginSceneTransition(GameScenes.Party); // 파티 씬 전환

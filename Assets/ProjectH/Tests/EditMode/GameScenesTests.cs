@@ -14,6 +14,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
                 GameScenes.Title, // 타이틀 씬
                 GameScenes.Lobby, // 로비 씬
                 GameScenes.Party, // 파티 씬
+                GameScenes.Shop, // 상점 씬 (Day61 추가)
+                GameScenes.Blacksmith, // 대장간 씬 (Day61 추가)
                 GameScenes.DungeonSelect, // 던전 씬
                 GameScenes.Battle, // 전투 씬
                 GameScenes.Result // 결과 씬

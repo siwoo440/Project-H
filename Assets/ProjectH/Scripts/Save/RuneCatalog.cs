@@ -132,7 +132,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 case 1: return "레벨 10"; // 2번 레벨 슬롯
                 case 2: return "결속 3단계"; // 3번 결속 슬롯
                 case 3: return "고급 이상 장비"; // 4번 장비 슬롯
-                default: return "결속 5단계"; // 5번 (전용 장비 초월 슬롯 자리 — Day61에 조정 가능)
+                default: return "★2 초월 장비"; // 5번 초월 슬롯 (Day61 교체, 기획서 '전용 장비 초월'은 Day70 전용 장비와 연결)
             }
         }
 

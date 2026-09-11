@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "침식된 회랑"
   regionId: REG_BORDER
   recommendedLevel: 5
-  rewardGold: 240
+  rewardGold: 500
   rewardExp: 160
   dropTable:
   - itemId: IT_MATERIAL_001
@@ -43,6 +43,22 @@ MonoBehaviour:
     dropChance: 0.1
     minQuantity: 1
     maxQuantity: 1
+  - itemId: IT_SCROLL_WEAPON_C
+    dropChance: 0.45
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: IT_SCROLL_ARMOR_C
+    dropChance: 0.45
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: IT_SCROLL_WEAPON_B
+    dropChance: 0.1
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_SCROLL_ARMOR_B
+    dropChance: 0.1
+    minQuantity: 1
+    maxQuantity: 1
   encounterWaves:
   - monsterIds:
     - MON_CORRUPTED_WOLF
@@ -52,3 +68,4 @@ MonoBehaviour:
   - monsterIds:
     - MON_CORRUPTED_SOLDIER
   mapFloorCount: 5
+  vitalityCost: 25

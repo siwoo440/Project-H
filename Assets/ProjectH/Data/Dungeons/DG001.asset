@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "무너진 성역의 숲"
   regionId: REG_LETICIA
   recommendedLevel: 1
-  rewardGold: 120
+  rewardGold: 250
   rewardExp: 80
   dropTable:
   - itemId: IT_MATERIAL_001
@@ -35,9 +35,18 @@ MonoBehaviour:
     dropChance: 0.2
     minQuantity: 1
     maxQuantity: 1
+  - itemId: IT_SCROLL_WEAPON_C
+    dropChance: 0.25
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_SCROLL_ARMOR_C
+    dropChance: 0.25
+    minQuantity: 1
+    maxQuantity: 1
   encounterWaves:
   - monsterIds:
     - MON_CORRUPTED_WOLF
   - monsterIds:
     - MON_CORRUPTED_WOLF
   mapFloorCount: 3
+  vitalityCost: 15

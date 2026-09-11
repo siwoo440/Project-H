@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "심연의 관문"
   regionId: REG_ABYSS
   recommendedLevel: 8
-  rewardGold: 320
+  rewardGold: 700
   rewardExp: 220
   dropTable:
   - itemId: IT_MATERIAL_001
@@ -43,6 +43,22 @@ MonoBehaviour:
     dropChance: 0.15
     minQuantity: 1
     maxQuantity: 1
+  - itemId: IT_SCROLL_WEAPON_C
+    dropChance: 0.55
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: IT_SCROLL_ARMOR_C
+    dropChance: 0.55
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: IT_SCROLL_WEAPON_B
+    dropChance: 0.18
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_SCROLL_ARMOR_B
+    dropChance: 0.18
+    minQuantity: 1
+    maxQuantity: 1
   encounterWaves:
   - monsterIds:
     - MON_CORRUPTED_WOLF
@@ -56,3 +72,4 @@ MonoBehaviour:
   - monsterIds:
     - MON_BOSS_LETICIA
   mapFloorCount: 6
+  vitalityCost: 30

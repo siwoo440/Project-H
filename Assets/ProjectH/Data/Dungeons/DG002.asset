@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: "성역 외곽 폐허"
   regionId: REG_LETICIA
   recommendedLevel: 3
-  rewardGold: 180
+  rewardGold: 350
   rewardExp: 120
   dropTable:
   - itemId: IT_MATERIAL_001
@@ -35,6 +35,14 @@ MonoBehaviour:
     dropChance: 0.3
     minQuantity: 1
     maxQuantity: 1
+  - itemId: IT_SCROLL_WEAPON_C
+    dropChance: 0.35
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_SCROLL_ARMOR_C
+    dropChance: 0.35
+    minQuantity: 1
+    maxQuantity: 1
   encounterWaves:
   - monsterIds:
     - MON_CORRUPTED_WOLF
@@ -42,3 +50,4 @@ MonoBehaviour:
   - monsterIds:
     - MON_CORRUPTED_SOLDIER
   mapFloorCount: 4
+  vitalityCost: 20

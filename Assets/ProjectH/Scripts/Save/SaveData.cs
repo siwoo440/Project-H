@@ -29,6 +29,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private int bondResource; // 결속 자원 (Day59 추가, 최대 5·하루 1 회복)
         [SerializeField] private int lastBondRefillDay; // 결속 자원을 마지막으로 채운 일차 (Day59 추가, 0이면 첫 지급 전)
         [SerializeField] private List<RuneInstanceSaveData> runeInventory = new List<RuneInstanceSaveData>(); // 보유 룬 목록 (Day60 추가)
+        [SerializeField] private List<ShopStateSaveData> shopStates = new List<ShopStateSaveData>(); // 상점별 하루 상태 (Day61 추가 — 오늘의 상품·재고·리롤)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -46,6 +47,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public int BondResource => bondResource; // 결속 자원 반환 (Day59 추가, 회복 반영은 BondService.GetResource 사용)
         public int LastBondRefillDay => lastBondRefillDay; // 결속 자원 마지막 회복 일차 반환 (Day59 추가)
         public IReadOnlyList<RuneInstanceSaveData> RuneInventory => runeInventory; // 보유 룬 목록 반환 (Day60 추가)
+        public IReadOnlyList<ShopStateSaveData> ShopStates => shopStates; // 상점 상태 목록 반환 (Day61 추가)
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -138,6 +140,18 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             for (int index = 0; index < runeInventory.Count; index++) // 룬 순회
             {
                 runeInventory[index].EnsureDefaults(); // 룬 기본값 보정
+            }
+
+            if (shopStates == null) // 상점 상태 확인 (Day61 추가, 기존 세이브는 빈 목록)
+            {
+                shopStates = new List<ShopStateSaveData>(); // 상점 상태 복원
+            }
+
+            shopStates.RemoveAll(state => state == null || string.IsNullOrWhiteSpace(state.ShopId)); // 잘못된 상태 제거
+
+            for (int index = 0; index < shopStates.Count; index++) // 상점 상태 순회
+            {
+                shopStates[index].EnsureDefaults(); // 상태 기본값 보정
             }
 
             if (currentChapter == null) // 현재 챕터 확인
@@ -552,6 +566,34 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         {
             EnsureDefaults(); // 저장 기본값 확인
             return runeInventory.RemoveAll(rune => string.Equals(rune.InstanceId, instanceId, StringComparison.Ordinal)) > 0; // 제거 여부 반환
+        }
+
+        public ShopStateSaveData FindShopState(string shopId) // 상점 상태 조회 (Day61 추가, 없으면 null)
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+
+            for (int index = 0; index < shopStates.Count; index++) // 상태 순회
+            {
+                if (string.Equals(shopStates[index].ShopId, shopId, StringComparison.Ordinal)) // ID 비교
+                {
+                    return shopStates[index]; // 상태 반환
+                }
+            }
+
+            return null; // 조회 실패 반환
+        }
+
+        internal ShopStateSaveData GetOrCreateShopState(string shopId) // 상점 상태 조회·생성 (Day61 추가, ShopRotationService 전용)
+        {
+            ShopStateSaveData state = FindShopState(shopId); // 기존 상태
+
+            if (state == null) // 첫 방문
+            {
+                state = new ShopStateSaveData(shopId); // 새 상태 생성
+                shopStates.Add(state); // 목록 추가
+            }
+
+            return state; // 상태 반환
         }
 
         internal void SetBondResourceState(int resource, int refillDay) // 결속 자원·회복 일차 변경 (Day59 추가, BondService 전용)

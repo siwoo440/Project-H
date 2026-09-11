@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26497adc4db00064a9edc7dab84e7854, type: 3}
+  m_Name: IT_SCROLL_ARMOR_C
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.ItemData
+  id: IT_SCROLL_ARMOR_C
+  displayName: "\uBC29\uC5B4\uAD6C \uAC15\uD654 \uC8FC\uBB38\uC11C C"
+  itemType: 1
+  grade: 0
+  maxStack: 999
+  description: "\uB300\uC7A5\uAC04\uC5D0\uC11C \uBC29\uC5B4\uAD6C\u00B7\uD22C\uAD6C\u00B7\uC7A5\uAC11\u00B7\uC2E0\uBC1C\uC744 \uAC15\uD654\uD560 \uB54C \uC4F0\uB294 \uAE30\uBCF8 \uC8FC\uBB38\uC11C."
+  icon: {fileID: 0}

@@ -1,6 +1,7 @@
 using System.Collections.Generic; // 사전 자료형
 using ProjectH.Core; // 프로젝트 핵심 기능
 using ProjectH.Data; // 프로젝트 데이터 기능
+using ProjectH.Dungeon; // 던전 입장 비용 기능 (Day61 추가)
 using ProjectH.SaveSystem; // 저장 및 지역 침식도 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.SceneManagement; // Unity 씬 기능
@@ -237,7 +238,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetText(detailRegionText, $"REGION · {selectedDungeon.RegionId}"); // 선택 던전 지역 표시
             SetText(detailLevelText, $"권장 레벨\nLv.{selectedDungeon.RecommendedLevel}"); // 선택 던전 권장 레벨 표시
             SetText(detailRewardText, $"예상 보상\nEXP {selectedDungeon.RewardExp}   GOLD {selectedDungeon.RewardGold}"); // 선택 던전 보상 표시
-            SetText(detailStatusText, $"{selectedDungeon.Id} · 출격 준비 완료"); // 선택 던전 상태 표시
+            SaveData previewSave = GameManager.Instance == null || GameManager.Instance.Save == null ? null : GameManager.Instance.Save.CurrentSave; // 활력 표시용 저장 (Day61 추가)
+            SetText(detailStatusText, $"{selectedDungeon.Id} · 입장 활력 {selectedDungeon.VitalityCost} (보유 {VitalityService.GetVitality(previewSave)})"); // 선택 던전 상태 표시 (Day61 활력 소비 표시)
             SetEnterState(DungeonSelectionRuntimeState.CanEnter(HasDungeonData)); // 선택 데이터 기반 전투 진입 상태 적용
             RefreshErosionDebugText(selectedDungeon); // 선택 던전 지역 침식도 디버그 표시 (Day44)
         }
@@ -392,6 +394,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 전투 진입 중단
             }
 
+            DungeonData entryDungeon = GameManager.Instance.Data == null ? null : GameManager.Instance.Data.GetDungeon(DungeonSelectionRuntimeState.SelectedDungeonId); // 입장 던전 (Day61 추가)
+            SaveData entrySave = GameManager.Instance.Save == null ? null : GameManager.Instance.Save.CurrentSave; // 현재 저장 (Day61 추가)
+
+            if (!DungeonEntryService.TryPayEntry(entrySave, entryDungeon, out string entryError)) // 입장 활력 소비 (Day61 추가 — 경제 밸런스)
+            {
+                SetText(detailStatusText, entryError); // 활력 부족 안내
+                return; // 입장 중단
+            }
+
+            GameManager.Instance.Save.SaveCurrent(); // 활력 소비 저장
             DungeonMapOverlayView.StartRun(DungeonSelectionRuntimeState.SelectedDungeonId); // 전투 대신 노드형 탐험 지도 시작 (Day55 수정, 전투 노드 선택 시 전투 씬 이동)
         }
 

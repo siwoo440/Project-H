@@ -99,10 +99,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return true; // 옵션 없는 장비 계산 성공 반환
             }
 
+            float multiplier = EquipmentUpgradeCatalog.GetStatMultiplier(instance); // 강화·초월 옵션 배율 (Day61 추가, +0 ★1이면 1)
+
             for (int index = 0; index < equipment.StatOptions.Count; index++) // 장비 옵션 순회
             {
                 EquipmentStatOption option = equipment.StatOptions[index]; // 현재 장비 옵션 조회
-                accumulator.Add(option); // 장비 옵션 누산
+                accumulator.Add(option, multiplier); // 장비 옵션 누산 (강화·초월 반영)
             }
 
             return true; // 슬롯 계산 성공 반환
@@ -120,36 +122,38 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             private float attackRange; // 공격 사거리 누산값
             private float moveSpeed; // 이동속도 누산값
 
-            public void Add(EquipmentStatOption option) // 단일 옵션 누산
+            public void Add(EquipmentStatOption option, float multiplier) // 단일 옵션 누산 (Day61 강화·초월 배율 추가)
             {
+                float value = option.Value * multiplier; // 배율 적용 옵션 값
+
                 switch (option.StatType) // 옵션 유형 분기
                 {
                     case EquipmentStatType.MaxHp: // 최대 체력 옵션 처리
-                        maxHp += option.Value; // 최대 체력 누산
+                        maxHp += value; // 최대 체력 누산
                         break; // 최대 체력 처리 종료
                     case EquipmentStatType.Attack: // 공격력 옵션 처리
-                        attack += option.Value; // 공격력 누산
+                        attack += value; // 공격력 누산
                         break; // 공격력 처리 종료
                     case EquipmentStatType.Defense: // 방어력 옵션 처리
-                        defense += option.Value; // 방어력 누산
+                        defense += value; // 방어력 누산
                         break; // 방어력 처리 종료
                     case EquipmentStatType.Resistance: // 저항력 옵션 처리
-                        resistance += option.Value; // 저항력 누산
+                        resistance += value; // 저항력 누산
                         break; // 저항력 처리 종료
                     case EquipmentStatType.AttackSpeed: // 공격속도 옵션 처리
-                        attackSpeed += option.Value; // 공격속도 누산
+                        attackSpeed += value; // 공격속도 누산
                         break; // 공격속도 처리 종료
                     case EquipmentStatType.Accuracy: // 명중률 옵션 처리
-                        accuracy += option.Value; // 명중률 누산
+                        accuracy += value; // 명중률 누산
                         break; // 명중률 처리 종료
                     case EquipmentStatType.CriticalRate: // 치명타율 옵션 처리
-                        criticalRate += option.Value; // 치명타율 누산
+                        criticalRate += value; // 치명타율 누산
                         break; // 치명타율 처리 종료
                     case EquipmentStatType.AttackRange: // 공격 사거리 옵션 처리
-                        attackRange += option.Value; // 공격 사거리 누산
+                        attackRange += value; // 공격 사거리 누산
                         break; // 공격 사거리 처리 종료
                     case EquipmentStatType.MoveSpeed: // 이동속도 옵션 처리
-                        moveSpeed += option.Value; // 이동속도 누산
+                        moveSpeed += value; // 이동속도 누산
                         break; // 이동속도 처리 종료
                 }
             }

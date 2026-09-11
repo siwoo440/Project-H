@@ -15,6 +15,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
         [SerializeField, Min(0.1f)] private float generationInterval = 1.5f; // 블록 생성 주기
         private BattleSkillBlockQueue queue; // 현재 전투 블록 Queue
         private float generationTimer; // 다음 블록 생성 시간 누적
+        private float intervalMultiplier = 1f; // 생성 주기 배율 (Day60 스킬의 룬, 1 = 기본)
         private int nextRuntimeBlockId; // 다음 블록 런타임 순번
         private bool registryBound; // Registry 이벤트 연결 상태
         public BattleSkillBlockQueue Queue => queue; // 현재 블록 Queue 반환
@@ -29,6 +30,11 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             maxBlockCount = Mathf.Max(1, maximumBlocks); // 최대 블록 수 보정
             generationInterval = Mathf.Max(0.1f, intervalSeconds); // 블록 생성 주기 보정
             BindRegistry(); // 신규 Registry 이벤트 연결
+        }
+
+        public void SetIntervalReduction(float reduction) // 스킬의 룬 생성 주기 단축 설정 (Day60 추가, 0.2 = 20% 단축)
+        {
+            intervalMultiplier = Mathf.Clamp(1f - reduction, 0.4f, 1f); // 최대 60% 단축까지 허용
         }
 
         private void Start() // 스킬 블록 시스템 시작
@@ -54,15 +60,15 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
             if (queue.Count >= queue.MaxCount) // 최대 보유 블록 도달 확인
             {
-                generationTimer = Mathf.Min(generationTimer, generationInterval); // 가득 찬 상태 생성 시간 과누적 방지
+                generationTimer = Mathf.Min(generationTimer, generationInterval * intervalMultiplier); // 가득 찬 상태 생성 시간 과누적 방지
                 return; // 추가 블록 생성 중단
             }
 
             generationTimer += Time.deltaTime; // 전투 시간 기반 생성 시간 누적
 
-            while (generationTimer >= generationInterval && queue.Count < queue.MaxCount) // 생성 주기 도달 및 빈 슬롯 확인
+            while (generationTimer >= generationInterval * intervalMultiplier && queue.Count < queue.MaxCount) // 생성 주기 도달 및 빈 슬롯 확인 (Day60 스킬의 룬 배율)
             {
-                generationTimer -= generationInterval; // 블록 생성 주기 차감
+                generationTimer -= generationInterval * intervalMultiplier; // 블록 생성 주기 차감
 
                 if (!TryGenerateBlock()) // 신규 스킬 블록 생성 시도
                 {

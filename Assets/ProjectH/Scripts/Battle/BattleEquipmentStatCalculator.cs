@@ -39,20 +39,17 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             StatAccumulator accumulator = new StatAccumulator(); // 장비 보정 누산기 생성
-            string weaponInstanceId = ResolveInstanceId(characterSave, EquipmentSlot.Weapon, hasOverride, overrideSlot, overrideInstanceId); // 무기 계산 인스턴스 결정
-            string armorInstanceId = ResolveInstanceId(characterSave, EquipmentSlot.Armor, hasOverride, overrideSlot, overrideInstanceId); // 방어구 계산 인스턴스 결정
-
-            if (!TryAddSlot(characterSave, saveData, dataManager, EquipmentSlot.Weapon, weaponInstanceId, accumulator, out error)) // 무기 보정값 계산
+            foreach (EquipmentSlot slot in EquipmentSlotInfo.All) // 장비 5칸 순회 (Day60 투구·장갑·신발 추가)
             {
-                return false; // 무기 계산 실패 반환
+                string instanceId = ResolveInstanceId(characterSave, slot, hasOverride, overrideSlot, overrideInstanceId); // 슬롯 계산 인스턴스 결정
+
+                if (!TryAddSlot(characterSave, saveData, dataManager, slot, instanceId, accumulator, out error)) // 슬롯 보정값 계산
+                {
+                    return false; // 계산 실패 반환
+                }
             }
 
-            if (!TryAddSlot(characterSave, saveData, dataManager, EquipmentSlot.Armor, armorInstanceId, accumulator, out error)) // 방어구 보정값 계산
-            {
-                return false; // 방어구 계산 실패 반환
-            }
-
-            bonus = accumulator.ToBonus(); // 최종 장비 보정값 생성
+            bonus = accumulator.ToBonus().WithRunes(RuneService.BuildLoadout(saveData, characterSave.CharacterId)); // 최종 장비 보정값 + 장착 룬 합계 (Day60 추가)
             return true; // 계산 성공 반환
         }
 

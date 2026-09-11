@@ -27,6 +27,14 @@ MonoBehaviour:
     dropChance: 0.35
     minQuantity: 1
     maxQuantity: 1
+  - itemId: IT_RUNE_SHARD
+    dropChance: 0.6
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: IT_RUNE_BOX_1
+    dropChance: 0.2
+    minQuantity: 1
+    maxQuantity: 1
   encounterWaves:
   - monsterIds:
     - MON_CORRUPTED_WOLF

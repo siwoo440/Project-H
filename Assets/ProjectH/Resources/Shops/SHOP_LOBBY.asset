@@ -55,3 +55,27 @@ MonoBehaviour:
     itemId: IT_GIFT_SWEETS
     buyPrice: 40
     sellPrice: 16
+  - productId: PRD_RUNE_SHARD
+    itemId: IT_RUNE_SHARD
+    buyPrice: 40
+    sellPrice: 10
+  - productId: PRD_RUNE_BOX_1
+    itemId: IT_RUNE_BOX_1
+    buyPrice: 100
+    sellPrice: 50
+  - productId: PRD_RUNE_BOX_2
+    itemId: IT_RUNE_BOX_2
+    buyPrice: 200
+    sellPrice: 100
+  - productId: PRD_HELMET_GUARD
+    itemId: EQ_HELMET_GUARD
+    buyPrice: 700
+    sellPrice: 0
+  - productId: PRD_GLOVES_HUNTER
+    itemId: EQ_GLOVES_HUNTER
+    buyPrice: 800
+    sellPrice: 0
+  - productId: PRD_BOOTS_SWIFT
+    itemId: EQ_BOOTS_SWIFT
+    buyPrice: 750
+    sellPrice: 0

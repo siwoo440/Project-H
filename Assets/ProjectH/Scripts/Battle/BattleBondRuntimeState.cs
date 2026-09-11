@@ -30,7 +30,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public static float GetGaugeGainMultiplier(string characterId) // 궁극기 게이지 충전 배율 (2단계 +10%, 결속의 원탁 +10%)
         {
-            return 1f + BondCatalog.GetGaugeGainBonus(GetLevel(characterId)) + (roundTable ? BondCatalog.RoundTableGaugeBonus : 0f); // 배율 반환
+            return 1f + BondCatalog.GetGaugeGainBonus(GetLevel(characterId)) + (roundTable ? BondCatalog.RoundTableGaugeBonus : 0f) + BattleRuneRuntimeState.GetByCharacter(characterId, RuneKind.Ultimate); // 배율 반환 (Day60 궁극의 룬 합산)
         }
 
         public static int ScaleGaugeGain(string characterId, int amount) // 충전량에 결속 배율 적용 (소수점은 다음 충전으로 이월)

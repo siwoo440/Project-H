@@ -53,22 +53,24 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             BattleEquipmentStatBonus safeBonus = equipmentBonus ?? BattleEquipmentStatBonus.Empty; // 장비 보정값 null 보정
+            RuneLoadout runes = safeBonus.Runes ?? RuneLoadout.Empty; // 장착 룬 합계 (Day60 추가, 없으면 0)
             int safeLevel = BattleGrowthFormula.NormalizeLevel(level); // 성장 적용 레벨 범위 보정
             int grownMaxHp = BattleGrowthFormula.ScaleStat(characterData.BaseHp, safeLevel); // 성장 최대 체력 계산
             int grownAttack = BattleGrowthFormula.ScaleStat(characterData.BaseAttack, safeLevel); // 성장 공격력 계산
             int grownDefense = BattleGrowthFormula.ScaleStat(characterData.BaseDefense, safeLevel); // 성장 방어력 계산
             int grownResistance = BattleGrowthFormula.ScaleStat(characterData.BaseResistance, safeLevel); // 성장 저항력 계산
-            int maxHp = Mathf.RoundToInt((grownMaxHp + safeBonus.MaxHp) * (1f + affinityBonus.HpPercent)); // 장비·호감도 보너스 포함 최대 체력 계산 (보너스 없으면 기존과 동일)
-            int attack = Mathf.RoundToInt((grownAttack + safeBonus.Attack) * (1f + affinityBonus.AttackPercent)); // 장비·호감도 보너스 포함 공격력 계산 (보너스 없으면 기존과 동일)
-            int defense = Mathf.RoundToInt(grownDefense + safeBonus.Defense); // 장비 포함 방어력 계산
+            int maxHp = Mathf.RoundToInt((grownMaxHp + safeBonus.MaxHp) * (1f + affinityBonus.HpPercent + runes.Get(RuneKind.Vitality))); // 장비·호감도·체력의 룬 포함 최대 체력 계산 (보너스 없으면 기존과 동일)
+            int attack = Mathf.RoundToInt((grownAttack + safeBonus.Attack) * (1f + affinityBonus.AttackPercent + runes.Get(RuneKind.Power))); // 장비·호감도·힘의 룬 포함 공격력 계산 (보너스 없으면 기존과 동일)
+            int defense = Mathf.RoundToInt((grownDefense + safeBonus.Defense) * (1f + runes.Get(RuneKind.Guard))); // 장비·수비의 룬 포함 방어력 계산
             int resistance = Mathf.RoundToInt(grownResistance + safeBonus.Resistance); // 장비 포함 저항력 계산
-            float attackSpeed = characterData.AttackSpeed + safeBonus.AttackSpeed; // 장비 포함 공격속도 계산
+            float attackSpeed = characterData.AttackSpeed + safeBonus.AttackSpeed + runes.Get(RuneKind.Swift); // 장비·신속의 룬 포함 공격속도 계산
             float accuracy = characterData.Accuracy + safeBonus.Accuracy; // 장비 포함 명중률 계산
-            float criticalRate = characterData.CriticalRate + safeBonus.CriticalRate; // 장비 포함 치명타율 계산
+            float criticalRate = characterData.CriticalRate + safeBonus.CriticalRate + runes.Get(RuneKind.Critical); // 장비·치명타의 룬 포함 치명타율 계산
             float attackRange = characterData.AttackRange + safeBonus.AttackRange; // 장비 포함 공격 사거리 계산
             float moveSpeed = characterData.MoveSpeed + safeBonus.MoveSpeed; // 장비 포함 이동속도 계산
             BattleStats stats = new BattleStats(runtimeId, characterData.Id, characterData.DisplayName, characterData.Position, safeLevel, maxHp, attack, defense, attackSpeed, accuracy, criticalRate, attackRange, moveSpeed, resistance); // 최종 런타임 스탯 생성 (생성자가 잔여 상태 정리)
             BattleElementRuntimeState.Register(runtimeId, (BattleElement)characterData.Element); // 캐릭터 전투 속성 Runtime 등록 (Day52 추가, Day55 생성 후 등록으로 순서 변경)
+            BattleRuneRuntimeState.Register(runtimeId, characterData.Id, runes); // 발동형 룬 등록 (Day60 추가, 룬 없으면 잔여 등록 제거)
             return stats; // 최종 런타임 스탯 반환
         }
     }

@@ -1,5 +1,6 @@
 using System; // 문자열 비교 및 수학 기능
 using ProjectH.Battle; // 장비 최종 능력치 비교 기능
+using ProjectH.Battle.Rhythm; // 원형 스프라이트 기능 (Day60 추가)
 using ProjectH.Core; // 전역 게임 관리자 기능
 using ProjectH.Data; // 캐릭터 및 장비 데이터 기능
 using ProjectH.Dialogue; // 대화 진행·결과 반영 기능 (Day58 추가)
@@ -12,23 +13,43 @@ using UnityEngine.UI; // Unity UI 기능
 namespace ProjectH.UI // 프로젝트 UI 영역
 {
     [DisallowMultipleComponent] // 중복 캐릭터 화면 방지
-    public sealed class CharacterEquipmentScreenController : MonoBehaviour // Day36 캐릭터 장비 관리 화면
+    public sealed class CharacterEquipmentScreenController : MonoBehaviour // 캐릭터 화면 (Day36 장비 화면 → Day60 목업 구성 : 상단 바 · 좌측 일러스트 · 스텟/장비/룬/스킬/프로필 탭)
     {
         private static readonly string[] DemoEquipmentIds = // 임시 테스트 장비 ID 목록
         {
             "EQ_WEAPON_TRAINING", // 훈련용 검 ID
             "EQ_WEAPON_IRON", // 철제 검 ID
             "EQ_ARMOR_TRAINING", // 훈련용 갑옷 ID
-            "EQ_ARMOR_GUARD" // 수호자 갑옷 ID
+            "EQ_ARMOR_GUARD", // 수호자 갑옷 ID
+            "EQ_HELMET_TRAINING", // 훈련용 투구 ID (Day60 추가)
+            "EQ_GLOVES_TRAINING", // 훈련용 장갑 ID (Day60 추가)
+            "EQ_BOOTS_TRAINING" // 훈련용 신발 ID (Day60 추가)
         };
+        private const int EquipmentTabIndex = 1; // 장비 탭 (Day60 추가)
 
+        private static readonly string[] TabNames = { "스텟", "장비", "룬", "스킬", "프로필" }; // 탭 이름 (Day60 목업 순서)
+        private const int StatTabIndex = 0; // 스텟 탭
+        private const int RuneTabIndex = 2; // 룬 탭
         private Canvas canvas; // Runtime Canvas
+        private readonly RectTransform[] tabRoots = new RectTransform[5]; // 탭 내용 영역 (Day60 추가)
+        private readonly Button[] tabButtons = new Button[5]; // 탭 버튼 (Day60 추가)
+        private int currentTab; // 현재 탭 (Day60 추가)
+        private RectTransform leftArea; // 좌측 일러스트 영역 (Day60 추가, 룬 슬롯이 둘레에 배치)
+        private Image portraitImage; // 캐릭터 일러스트 (Day60 추가)
+        private Text goldText; // 상단 골드 표시 (Day60 추가)
+        private GameObject helpPanel; // ? 도움말 창 (Day60 추가)
+        private Text helpText; // 도움말 문구 (Day60 추가)
+        private CharacterRuneTab runeTab; // 룬 탭 (Day60 추가)
+        private CharacterSkillTab skillTab; // 스킬 탭 (Day60 추가)
+        private CharacterProfileTab profileTab; // 프로필 탭 (Day60 추가)
         private Text characterNameText; // 캐릭터 이름 텍스트
         private Text characterLevelText; // 캐릭터 레벨 텍스트
         private Text portraitText; // 캐릭터 임시 초상 텍스트
         private Text currentStatsText; // 현재 최종 능력치 텍스트
-        private Text weaponSlotText; // 무기 슬롯 텍스트
-        private Text armorSlotText; // 방어구 슬롯 텍스트
+        private readonly Image[] equipmentSlotFrames = new Image[CharacterSlotLayout.SlotCount]; // 장비 5칸 틀 (Day60 추가)
+        private readonly Text[] equipmentSlotNames = new Text[CharacterSlotLayout.SlotCount]; // 장비 5칸 아래 이름 (Day60 추가)
+        private GameObject equipmentSlotRoot; // 일러스트 둘레 장비 칸 묶음 (Day60 추가, 장비 탭에서만 표시)
+        private int equipmentFilter = -1; // 보유 장비 목록 슬롯 필터 (-1 전체, Day60 추가)
         private Text inventoryCountText; // 인벤토리 개수 텍스트
         private RectTransform inventoryContent; // 장비 인벤토리 목록 영역
         private Text detailTitleText; // 선택 장비 이름 텍스트
@@ -36,7 +57,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text detailStatsText; // 선택 장비 옵션 텍스트
         private Text comparisonText; // 장비 교체 비교 텍스트
         private Text statusText; // 화면 상태 텍스트
-        private Text affinityText; // 캐릭터 호감도 디버그 텍스트 (Day43)
+        private Text affinityText; // 성장·관계 정보 텍스트 (Day43 호감도 디버그 → Day60 스텟 탭 정보)
         private CharacterAffinityRewardPanel affinityRewardPanel; // 호감도 보상 패널 (Day56 추가, 최적화로 별도 클래스 분리)
         private CharacterGiftPanel giftPanel; // 선물하기 패널 (Day57 추가)
         private CharacterBondPanel bondPanel; // 결속 패널 (Day59 추가)
@@ -78,7 +99,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             eventSystemObject.transform.SetParent(transform, false); // 캐릭터 화면 하위 입력 시스템 연결
         }
 
-        private void BuildUi() // 전체 캐릭터 장비 화면 구성
+        private void BuildUi() // 전체 캐릭터 화면 구성 (Day60 목업 구성으로 재배치)
         {
             GameObject canvasObject = new GameObject("CharacterCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster)); // Runtime Canvas 생성
             canvasObject.transform.SetParent(transform, false); // 캐릭터 화면 하위 Canvas 연결
@@ -90,42 +111,303 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             scaler.referenceResolution = new Vector2(1600f, 900f); // 캐릭터 화면 기준 해상도 설정
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight; // 가로 세로 대응 방식 설정
             scaler.matchWidthOrHeight = 0.5f; // 가로 세로 중간 스케일 적용
-            Image background = CreateImage(canvas.transform, "Background", new Color(0.93f, 0.93f, 0.93f, 1f)); // 전체 배경 생성
+            Image background = CreateImage(canvas.transform, "Background", new Color(0.94f, 0.94f, 0.95f, 1f)); // 전체 배경 생성
             Stretch(background.rectTransform); // 전체 배경 확장
-            BuildHeader(background.transform); // 상단 메뉴 구성
-            BuildCharacterPanel(background.transform); // 좌측 캐릭터 패널 구성
-            BuildEquipmentPanel(background.transform); // 우측 장비 관리 패널 구성
-            BuildAffinityDebugBar(background.transform); // 하단 호감도 디버그 바 구성 (Day43)
+            BuildTopBar(background.transform); // 상단 바 (캐릭터 · ? · 골드 · 설정)
+            BuildLeftArea(background.transform); // 좌측 일러스트 영역
+            BuildTabs(background.transform); // 우측 탭과 내용
+            affinityRewardPanel = CharacterAffinityRewardPanel.Create(background.transform, Refresh, PlayCharacterEvent); // 호감도 보상 패널 (Day56, 스텟 탭 버튼으로 열기)
+            giftPanel = CharacterGiftPanel.Create(background.transform, Refresh, OpenAffinityRewardFromGift); // 선물 패널 (Day57)
+            bondPanel = CharacterBondPanel.Create(background.transform, Refresh); // 결속 패널 (Day59)
+            BuildHelpPanel(background.transform); // ? 도움말 창
+            SelectTab(StatTabIndex); // 스텟 탭으로 시작
         }
 
-        private void BuildAffinityDebugBar(Transform parent) // 하단 호감도 디버그 바 구성 (Day43)
+        private void BuildTopBar(Transform parent) // 상단 바 (목업 : ◀ 캐릭터 · ? · 골드 · 설정)
         {
-            affinityText = CreateText(parent, "AffinityDebugText", "호감도 · -", 15, FontStyle.Bold, new Color(0.36f, 0.20f, 0.30f, 1f)); // 호감도 디버그 텍스트 생성
-            affinityText.alignment = TextAnchor.MiddleLeft; // 호감도 디버그 텍스트 왼쪽 정렬
-            SetRect(affinityText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.26f, 0.045f)); // 하단 여백에 호감도 디버그 텍스트 배치 (Day59 결속 버튼 추가로 폭 조정)
-            Button minusButton = CreateButton(parent, "AffinityMinusDebug", "호감도 -10", new Color(0.98f, 0.90f, 0.95f, 1f)); // 호감도 감소 디버그 버튼 생성
-            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.27f, 0.005f), new Vector2(0.35f, 0.045f)); // 호감도 감소 버튼 배치 (Day59 재배치)
-            minusButton.onClick.AddListener(DecreaseAffinityDebug); // 호감도 감소 버튼 이벤트 연결
-            DevelopmentFeatures.HideInRelease(minusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
-            Button plusButton = CreateButton(parent, "AffinityPlusDebug", "호감도 +10", new Color(0.90f, 0.95f, 1f, 1f)); // 호감도 증가 디버그 버튼 생성
-            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.36f, 0.005f), new Vector2(0.44f, 0.045f)); // 호감도 증가 버튼 배치 (Day59 재배치)
-            plusButton.onClick.AddListener(IncreaseAffinityDebug); // 호감도 증가 버튼 이벤트 연결
-            DevelopmentFeatures.HideInRelease(plusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
-            Button rewardButton = CreateButton(parent, "AffinityRewardButton", "호감도 보상", new Color(1f, 0.88f, 0.60f, 1f)); // 호감도 보상 버튼 생성 (Day56 추가)
-            SetRect(rewardButton.GetComponent<RectTransform>(), new Vector2(0.45f, 0.005f), new Vector2(0.57f, 0.045f)); // 호감도 보상 버튼 배치 (Day59 재배치)
-            affinityRewardPanel = CharacterAffinityRewardPanel.Create(parent, Refresh, PlayCharacterEvent); // 호감도 보상 패널 생성 (수령 후 화면 갱신·Day58 개인 이벤트 보기 연결)
-            rewardButton.onClick.AddListener(ToggleAffinityRewardPanel); // 보상 패널 열기·닫기 연결 (Day57 선물 패널과 겹치지 않도록 전용 함수 사용)
-            Button giftButton = CreateButton(parent, "GiftButton", "선물하기", new Color(1f, 0.82f, 0.88f, 1f)); // 선물하기 버튼 생성 (Day57 추가)
-            SetRect(giftButton.GetComponent<RectTransform>(), new Vector2(0.58f, 0.005f), new Vector2(0.70f, 0.045f)); // 선물하기 버튼 배치 (Day59 재배치)
-            giftPanel = CharacterGiftPanel.Create(parent, Refresh, OpenAffinityRewardFromGift); // 선물 패널 생성 (선물 후 갱신·보상 바로가기 연결)
-            giftButton.onClick.AddListener(ToggleGiftPanel); // 선물 패널 열기·닫기 연결
-            Button talkButton = CreateButton(parent, "TalkButton", "대화하기", new Color(0.84f, 0.80f, 0.98f, 1f)); // 대화하기 버튼 생성 (Day58 추가)
-            SetRect(talkButton.GetComponent<RectTransform>(), new Vector2(0.71f, 0.005f), new Vector2(0.83f, 0.045f)); // 대화하기 버튼 배치 (Day59 재배치)
-            talkButton.onClick.AddListener(StartDailyTalk); // 일상 대화 연결
-            Button bondButton = CreateButton(parent, "BondButton", "결속", new Color(0.78f, 0.70f, 0.96f, 1f)); // 결속 버튼 생성 (Day59 추가)
-            SetRect(bondButton.GetComponent<RectTransform>(), new Vector2(0.84f, 0.005f), new Vector2(0.96f, 0.045f)); // 결속 버튼 배치
-            bondPanel = CharacterBondPanel.Create(parent, Refresh); // 결속 패널 생성 (단계 상승 후 갱신 연결)
-            bondButton.onClick.AddListener(ToggleBondPanel); // 결속 패널 열기·닫기 연결
+            Button backButton = CreateButton(parent, "BackButton", "◀  캐릭터", new Color(0.80f, 0.88f, 0.97f, 1f)); // 뒤로 버튼 (로비 복귀)
+            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.012f, 0.925f), new Vector2(0.14f, 0.982f)); // 좌상단 배치
+            backButton.onClick.AddListener(ReturnToLobby); // 로비 복귀 연결
+            Button helpButton = CreateButton(parent, "HelpButton", "?", new Color(0.82f, 0.88f, 0.98f, 1f)); // 도움말 버튼
+            SetRect(helpButton.GetComponent<RectTransform>(), new Vector2(0.735f, 0.928f), new Vector2(0.77f, 0.98f)); // 배치
+            helpButton.onClick.AddListener(ToggleHelp); // 도움말 연결
+            Image goldPill = CreateImage(parent, "GoldPill", new Color(0.86f, 0.86f, 0.88f, 1f)); // 골드 표시 바탕
+            SetRect(goldPill.rectTransform, new Vector2(0.78f, 0.93f), new Vector2(0.93f, 0.978f)); // 배치
+            AddOutline(goldPill.gameObject); // 테두리
+            Image coin = CreateImage(goldPill.transform, "Coin", new Color(1f, 0.80f, 0.25f, 1f)); // 동전 아이콘
+            coin.sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 원형
+            coin.preserveAspect = true; // 비율 유지
+            SetRect(coin.rectTransform, new Vector2(0.03f, 0.10f), new Vector2(0.20f, 0.90f)); // 왼쪽 배치
+            Text coinLabel = CreateText(coin.transform, "G", "G", 15, FontStyle.Bold, new Color(0.45f, 0.30f, 0.02f, 1f)); // 동전 글자
+            Stretch(coinLabel.rectTransform); // 채움
+            goldText = CreateText(goldPill.transform, "Gold", "0", 20, FontStyle.Bold, new Color(0.15f, 0.15f, 0.18f, 1f)); // 골드 수치
+            goldText.alignment = TextAnchor.MiddleRight; // 오른쪽 정렬
+            SetRect(goldText.rectTransform, new Vector2(0.22f, 0f), new Vector2(0.93f, 1f)); // 배치
+            Button settingsButton = CreateButton(parent, "SettingsButton", "⚙", new Color(0.94f, 0.94f, 0.95f, 1f)); // 설정 버튼
+            SetRect(settingsButton.GetComponent<RectTransform>(), new Vector2(0.94f, 0.925f), new Vector2(0.985f, 0.982f)); // 우상단 배치
+            settingsButton.onClick.AddListener(() => SetStatus("설정 화면은 설정·접근성 일차(Day71)에 연결됩니다.")); // 설정 안내
+        }
+
+        private void BuildLeftArea(Transform parent) // 좌측 일러스트 영역 (캐릭터 전환 · 이름 · 일러스트, 룬 탭에서는 둘레에 슬롯)
+        {
+            GameObject area = new GameObject("LeftArea", typeof(RectTransform)); // 좌측 영역
+            area.transform.SetParent(parent, false); // 부모 연결
+            leftArea = (RectTransform)area.transform; // 저장
+            SetRect(leftArea, new Vector2(0.015f, 0.03f), new Vector2(0.39f, 0.905f)); // 배치
+            Button previousButton = CreateButton(leftArea, "PreviousCharacter", "◀", new Color(0.90f, 0.90f, 0.92f, 1f)); // 이전 캐릭터
+            SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(0.14f, 0.93f), new Vector2(0.24f, 1f)); // 배치
+            previousButton.onClick.AddListener(SelectPreviousCharacter); // 연결
+            characterNameText = CreateText(leftArea, "CharacterName", "CHARACTER", 26, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 이름
+            SetRect(characterNameText.rectTransform, new Vector2(0.25f, 0.93f), new Vector2(0.60f, 1f)); // 배치
+            characterLevelText = CreateText(leftArea, "CharacterLevel", "Lv. 1", 18, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 레벨
+            SetRect(characterLevelText.rectTransform, new Vector2(0.60f, 0.93f), new Vector2(0.75f, 1f)); // 배치
+            Button nextButton = CreateButton(leftArea, "NextCharacter", "▶", new Color(0.90f, 0.90f, 0.92f, 1f)); // 다음 캐릭터
+            SetRect(nextButton.GetComponent<RectTransform>(), new Vector2(0.76f, 0.93f), new Vector2(0.86f, 1f)); // 배치
+            nextButton.onClick.AddListener(SelectNextCharacter); // 연결
+            Image frame = CreateImage(leftArea, "IllustrationFrame", Color.white); // 흰색 일러스트 칸 (목업)
+            SetRect(frame.rectTransform, new Vector2(0.14f, 0.15f), new Vector2(0.86f, 0.91f)); // 배치
+            AddOutline(frame.gameObject); // 테두리
+            portraitImage = CreateImage(frame.transform, "Portrait", Color.white); // 일러스트
+            portraitImage.preserveAspect = true; // 비율 유지
+            SetRect(portraitImage.rectTransform, new Vector2(0.04f, 0.02f), new Vector2(0.96f, 0.98f)); // 칸 채움
+            portraitText = CreateText(portraitImage.transform, "PortraitText", string.Empty, 24, FontStyle.Bold, new Color(0.20f, 0.16f, 0.26f, 0.9f)); // 임시 실루엣 이름
+            SetRect(portraitText.rectTransform, new Vector2(0f, 0.40f), new Vector2(1f, 0.56f)); // 가슴 높이
+        }
+
+        private void BuildTabs(Transform parent) // 탭 버튼 5개 + 내용 틀 + 공용 상태 문구
+        {
+            for (int index = 0; index < TabNames.Length; index++) // 탭 순회
+            {
+                int tab = index; // 클릭용 번호
+                tabButtons[index] = CreateButton(parent, $"Tab_{TabNames[index]}", TabNames[index], new Color(0.97f, 0.97f, 0.98f, 1f)); // 탭 버튼
+                float left = 0.405f + (index * 0.117f); // 가로 위치
+                SetRect(tabButtons[index].GetComponent<RectTransform>(), new Vector2(left, 0.845f), new Vector2(left + 0.11f, 0.90f)); // 배치
+                AddOutline(tabButtons[index].gameObject); // 테두리
+                tabButtons[index].onClick.AddListener(() => SelectTab(tab)); // 탭 전환
+            }
+
+            Image frame = CreateImage(parent, "ContentFrame", new Color(0.97f, 0.97f, 0.98f, 1f)); // 바깥 틀 (목업 이중 테두리)
+            SetRect(frame.rectTransform, new Vector2(0.405f, 0.03f), new Vector2(0.985f, 0.835f)); // 배치
+            AddOutline(frame.gameObject); // 테두리
+            Image inner = CreateImage(frame.transform, "Inner", new Color(0.93f, 0.93f, 0.94f, 1f)); // 안쪽 틀
+            Stretch(inner.rectTransform, 8f); // 여백
+            AddOutline(inner.gameObject); // 테두리
+            statusText = CreateText(inner.transform, "Status", string.Empty, 16, FontStyle.Normal, new Color(0.25f, 0.28f, 0.32f, 1f)); // 공용 상태 문구
+            statusText.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
+            SetRect(statusText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.98f, 0.06f)); // 맨 아래 배치
+
+            for (int index = 0; index < TabNames.Length; index++) // 탭 내용 영역
+            {
+                GameObject root = new GameObject($"{TabNames[index]}Tab", typeof(RectTransform)); // 영역 생성
+                root.transform.SetParent(inner.transform, false); // 부모 연결
+                tabRoots[index] = (RectTransform)root.transform; // 저장
+                SetRect(tabRoots[index], new Vector2(0f, 0.065f), new Vector2(1f, 1f)); // 상태 문구 위 채움
+            }
+
+            BuildStatTab(tabRoots[0]); // 스텟 탭
+            BuildEquipmentTab(tabRoots[1]); // 장비 탭 (기존 Day36 장비 화면)
+            runeTab = CharacterRuneTab.Create(tabRoots[2], leftArea, Refresh, SetStatus); // 룬 탭 (Day60)
+            skillTab = CharacterSkillTab.Create(tabRoots[3]); // 스킬 탭
+            profileTab = CharacterProfileTab.Create(tabRoots[4]); // 프로필 탭
+        }
+
+        private void SelectTab(int index) // 탭 전환
+        {
+            currentTab = index; // 현재 탭 저장
+
+            for (int tab = 0; tab < tabRoots.Length; tab++) // 탭 순회
+            {
+                if (tab == EquipmentTabIndex) equipmentSlotRoot.SetActive(tab == index); // 장비 탭은 일러스트 둘레 장비 칸도 함께 (Day60 추가)
+                if (tab == RuneTabIndex) runeTab.SetVisible(tab == index); // 룬 탭은 일러스트 둘레 슬롯도 함께
+                else tabRoots[tab].gameObject.SetActive(tab == index); // 내용 표시
+                tabButtons[tab].GetComponent<Image>().color = tab == index ? new Color(0.78f, 0.86f, 0.97f, 1f) : new Color(0.97f, 0.97f, 0.98f, 1f); // 선택 강조
+            }
+
+            if (helpPanel != null && helpPanel.activeSelf) helpText.text = GetHelpText(index); // 열린 도움말 갱신
+            Refresh(); // 선택 탭 내용 갱신
+        }
+
+        private void BuildStatTab(RectTransform root) // 스텟 탭 (최종 능력치 + 성장·관계 + 호감도 기능 버튼)
+        {
+            Text statsLabel = CreateText(root, "CurrentStatsLabel", "현재 최종 능력치", 20, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 능력치 제목
+            statsLabel.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
+            SetRect(statsLabel.rectTransform, new Vector2(0.03f, 0.90f), new Vector2(0.48f, 0.98f)); // 배치
+            currentStatsText = CreateText(root, "CurrentStats", "-", 17, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 능력치
+            currentStatsText.alignment = TextAnchor.UpperLeft; // 왼쪽 위 정렬
+            currentStatsText.horizontalOverflow = HorizontalWrapMode.Wrap; // 줄바꿈
+            SetRect(currentStatsText.rectTransform, new Vector2(0.04f, 0.24f), new Vector2(0.48f, 0.89f)); // 배치
+            Text growthLabel = CreateText(root, "GrowthLabel", "성장 · 관계", 20, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 성장 제목
+            growthLabel.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
+            SetRect(growthLabel.rectTransform, new Vector2(0.52f, 0.90f), new Vector2(0.97f, 0.98f)); // 배치
+            affinityText = CreateText(root, "GrowthInfo", string.Empty, 17, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 성장·관계 정보
+            affinityText.alignment = TextAnchor.UpperLeft; // 왼쪽 위 정렬
+            affinityText.horizontalOverflow = HorizontalWrapMode.Wrap; // 줄바꿈
+            affinityText.supportRichText = true; // 색 태그
+            SetRect(affinityText.rectTransform, new Vector2(0.53f, 0.24f), new Vector2(0.97f, 0.89f)); // 배치
+            CreateStatButton(root, "AffinityRewardButton", "호감도 보상", new Color(1f, 0.88f, 0.60f, 1f), 0, ToggleAffinityRewardPanel); // 호감도 보상 (Day56)
+            CreateStatButton(root, "GiftButton", "선물하기", new Color(1f, 0.82f, 0.88f, 1f), 1, ToggleGiftPanel); // 선물 (Day57)
+            CreateStatButton(root, "TalkButton", "대화하기", new Color(0.84f, 0.80f, 0.98f, 1f), 2, StartDailyTalk); // 일상 대화 (Day58)
+            CreateStatButton(root, "BondButton", "결속", new Color(0.78f, 0.70f, 0.96f, 1f), 3, ToggleBondPanel); // 결속 (Day59)
+            Button minusButton = CreateButton(root, "AffinityMinusDebug", "호감도 -10", new Color(0.98f, 0.90f, 0.95f, 1f)); // 호감도 감소 디버그
+            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.03f, 0.02f), new Vector2(0.23f, 0.10f)); // 배치
+            minusButton.onClick.AddListener(DecreaseAffinityDebug); // 연결
+            DevelopmentFeatures.HideInRelease(minusButton); // 출시 빌드 숨김
+            Button plusButton = CreateButton(root, "AffinityPlusDebug", "호감도 +10", new Color(0.90f, 0.95f, 1f, 1f)); // 호감도 증가 디버그
+            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.25f, 0.02f), new Vector2(0.45f, 0.10f)); // 배치
+            plusButton.onClick.AddListener(IncreaseAffinityDebug); // 연결
+            DevelopmentFeatures.HideInRelease(plusButton); // 출시 빌드 숨김
+        }
+
+        private void CreateStatButton(RectTransform root, string name, string label, Color color, int index, UnityEngine.Events.UnityAction action) // 스텟 탭 관계 기능 버튼
+        {
+            Button button = CreateButton(root, name, label, color); // 버튼 생성
+            float left = 0.03f + (index * 0.24f); // 가로 위치
+            SetRect(button.GetComponent<RectTransform>(), new Vector2(left, 0.12f), new Vector2(left + 0.22f, 0.21f)); // 배치
+            AddOutline(button.gameObject); // 테두리
+            button.onClick.AddListener(action); // 연결
+        }
+
+        private void BuildEquipmentTab(RectTransform root) // 장비 탭 (Day36 장비 화면을 탭 안으로 이동)
+        {
+            BuildEquipmentSlots(); // 일러스트 둘레 장비 5칸 (Day60 — 룬 슬롯과 같은 배치)
+            Button allButton = CreateButton(root, "EquipmentFilterAll", "전체 보기", new Color(0.90f, 0.90f, 0.92f, 1f)); // 슬롯 필터 해제 (Day60 추가)
+            SetRect(allButton.GetComponent<RectTransform>(), new Vector2(0.40f, 0.915f), new Vector2(0.54f, 0.975f)); // 배치
+            allButton.onClick.AddListener(ClearEquipmentFilter); // 연결
+            Text inventoryLabel = CreateText(root, "InventoryLabel", "보유 장비", 20, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 목록 제목
+            SetRect(inventoryLabel.rectTransform, new Vector2(0.56f, 0.91f), new Vector2(0.70f, 0.98f)); // 배치
+            inventoryCountText = CreateText(root, "InventoryCount", "0개", 16, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 개수
+            SetRect(inventoryCountText.rectTransform, new Vector2(0.70f, 0.91f), new Vector2(0.78f, 0.98f)); // 배치
+            Button grantButton = CreateButton(root, "GrantDemoEquipment", "테스트 장비 지급", new Color(0.88f, 0.83f, 0.66f, 1f)); // 테스트 장비
+            SetRect(grantButton.GetComponent<RectTransform>(), new Vector2(0.79f, 0.915f), new Vector2(0.98f, 0.975f)); // 배치
+            DevelopmentFeatures.HideInRelease(grantButton); // 출시 빌드 숨김
+            grantButton.onClick.AddListener(GrantDemoEquipment); // 연결
+            BuildInventoryScroll(root); // 장비 스크롤 목록
+            Image detailPanel = CreateImage(root, "DetailPanel", new Color(0.97f, 0.97f, 0.98f, 1f)); // 상세 칸
+            SetRect(detailPanel.rectTransform, new Vector2(0.02f, 0.46f), new Vector2(0.54f, 0.90f)); // 배치 (Day60 상단 슬롯 버튼 제거로 확장)
+            AddOutline(detailPanel.gameObject); // 테두리
+            detailTitleText = CreateText(detailPanel.transform, "DetailTitle", "장비를 선택하세요", 22, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 이름
+            detailTitleText.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
+            SetRect(detailTitleText.rectTransform, new Vector2(0.04f, 0.80f), new Vector2(0.72f, 0.97f)); // 배치
+            detailGradeText = CreateText(detailPanel.transform, "DetailGrade", string.Empty, 18, FontStyle.Bold, new Color(0.63f, 0.48f, 0.14f, 1f)); // 등급
+            SetRect(detailGradeText.rectTransform, new Vector2(0.72f, 0.80f), new Vector2(0.96f, 0.97f)); // 배치
+            detailStatsText = CreateText(detailPanel.transform, "DetailStats", "-", 15, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 옵션
+            detailStatsText.alignment = TextAnchor.UpperLeft; // 왼쪽 위 정렬
+            detailStatsText.horizontalOverflow = HorizontalWrapMode.Wrap; // 줄바꿈
+            detailStatsText.verticalOverflow = VerticalWrapMode.Truncate; // 세로 제한
+            SetRect(detailStatsText.rectTransform, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.80f)); // 배치
+            Image comparisonPanel = CreateImage(root, "ComparisonPanel", new Color(0.90f, 0.93f, 0.96f, 1f)); // 비교 칸
+            SetRect(comparisonPanel.rectTransform, new Vector2(0.02f, 0.12f), new Vector2(0.54f, 0.44f)); // 배치
+            AddOutline(comparisonPanel.gameObject); // 테두리
+            Text comparisonLabel = CreateText(comparisonPanel.transform, "ComparisonLabel", "변경 전 → 변경 후", 17, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 비교 제목
+            SetRect(comparisonLabel.rectTransform, new Vector2(0.04f, 0.84f), new Vector2(0.96f, 0.98f)); // 배치
+            comparisonText = CreateText(comparisonPanel.transform, "ComparisonText", "장비를 선택하면 예상 능력치가 표시됩니다.", 14, FontStyle.Normal, new Color(0.18f, 0.22f, 0.27f, 1f)); // 비교
+            comparisonText.alignment = TextAnchor.UpperLeft; // 왼쪽 위 정렬
+            comparisonText.horizontalOverflow = HorizontalWrapMode.Wrap; // 줄바꿈
+            comparisonText.verticalOverflow = VerticalWrapMode.Truncate; // 세로 제한
+            SetRect(comparisonText.rectTransform, new Vector2(0.05f, 0.03f), new Vector2(0.95f, 0.84f)); // 배치
+            actionButton = CreateButton(root, "ActionButton", "사용 불가", new Color(0.72f, 0.82f, 0.72f, 1f)); // 장착 버튼
+            SetRect(actionButton.GetComponent<RectTransform>(), new Vector2(0.70f, 0.02f), new Vector2(0.98f, 0.10f)); // 배치
+            actionButtonText = actionButton.GetComponentInChildren<Text>(); // 라벨
+            actionButton.onClick.AddListener(ApplySelectedEquipmentAction); // 연결
+        }
+
+        private void BuildEquipmentSlots() // 일러스트 둘레 장비 5칸 (Day60 추가 — 무기·투구·방어구·장갑·신발)
+        {
+            equipmentSlotRoot = new GameObject("EquipmentSlots", typeof(RectTransform)); // 칸 묶음
+            equipmentSlotRoot.transform.SetParent(leftArea, false); // 좌측 영역 자식
+            Stretch((RectTransform)equipmentSlotRoot.transform); // 좌측 영역 채움
+
+            for (int index = 0; index < CharacterSlotLayout.SlotCount; index++) // 칸 순회
+            {
+                EquipmentSlot slot = EquipmentSlotInfo.All[index]; // 칸 슬롯
+                Button button = RuntimeUiKit.CreateButton(equipmentSlotRoot.transform, $"EquipSlot_{slot}", new Color(0.12f, 0.12f, 0.16f, 1f)); // 칸 버튼
+                SetRect(button.GetComponent<RectTransform>(), CharacterSlotLayout.GetMin(index), CharacterSlotLayout.GetMax(index)); // 룬 슬롯과 같은 자리
+                equipmentSlotFrames[index] = button.GetComponent<Image>(); // 틀 저장
+                Outline outline = button.gameObject.AddComponent<Outline>(); // 테두리
+                outline.effectColor = new Color(0.85f, 0.85f, 0.9f, 0.6f); // 연회색
+                outline.effectDistance = new Vector2(2f, -2f); // 두께
+                Text symbol = CreateText(button.transform, "Symbol", EquipmentSlotInfo.GetSymbol(slot), 30, FontStyle.Bold, new Color(0.95f, 0.95f, 0.98f, 1f)); // 슬롯 글자
+                SetRect(symbol.rectTransform, new Vector2(0f, 0.30f), new Vector2(1f, 1f)); // 위쪽
+                Text label = CreateText(button.transform, "SlotLabel", EquipmentSlotInfo.GetLabel(slot), 13, FontStyle.Normal, new Color(0.80f, 0.80f, 0.86f, 1f)); // 슬롯 이름
+                SetRect(label.rectTransform, new Vector2(0f, 0.02f), new Vector2(1f, 0.30f)); // 아래쪽
+                equipmentSlotNames[index] = CreateText(equipmentSlotRoot.transform, $"EquipName_{slot}", string.Empty, 14, FontStyle.Bold, new Color(0.25f, 0.20f, 0.10f, 1f)); // 칸 아래 장비 이름
+                equipmentSlotNames[index].horizontalOverflow = HorizontalWrapMode.Overflow; // 넘침 허용
+                SetRect(equipmentSlotNames[index].rectTransform, CharacterSlotLayout.GetCaptionMin(index), CharacterSlotLayout.GetCaptionMax(index)); // 칸 아래 배치
+                button.onClick.AddListener(() => SelectEquipmentSlot(slot)); // 칸 선택
+            }
+        }
+
+        private void RefreshEquipmentSlots(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave) // 장비 5칸 갱신 (Day60 추가)
+        {
+            for (int index = 0; index < CharacterSlotLayout.SlotCount; index++) // 칸 순회
+            {
+                EquipmentSlot slot = EquipmentSlotInfo.All[index]; // 칸 슬롯
+                EquipmentInstanceSaveData instance = CharacterEquipmentService.GetEquippedInstance(saveData, characterSave.CharacterId, slot); // 장착 장비
+                EquipmentData equipment = instance == null ? null : dataManager.GetEquipment(instance.EquipmentId); // 원본
+                equipmentSlotFrames[index].color = equipment == null ? new Color(0.12f, 0.12f, 0.16f, 1f) : GetGradeColor(equipment.Grade); // 등급 색
+                equipmentSlotNames[index].text = equipment == null ? string.Empty : equipment.DisplayName; // 장비 이름
+                equipmentSlotFrames[index].GetComponent<Outline>().effectColor = equipmentFilter == (int)slot ? new Color(1f, 0.80f, 0.25f, 1f) : new Color(0.85f, 0.85f, 0.9f, 0.6f); // 선택 칸 금색
+            }
+        }
+
+        private static Color GetGradeColor(ItemGrade grade) // 장비 등급 칸 색 (Day60 추가)
+        {
+            switch (grade) // 등급 분기
+            {
+                case ItemGrade.Common: return new Color(0.35f, 0.36f, 0.40f, 1f); // 일반 회색
+                case ItemGrade.Uncommon: return new Color(0.20f, 0.45f, 0.30f, 1f); // 고급 초록
+                case ItemGrade.Rare: return new Color(0.20f, 0.35f, 0.65f, 1f); // 희귀 파랑
+                case ItemGrade.Epic: return new Color(0.45f, 0.25f, 0.62f, 1f); // 영웅 보라
+                default: return new Color(0.70f, 0.50f, 0.12f, 1f); // 전설 금색
+            }
+        }
+
+        private void SelectEquipmentSlot(EquipmentSlot slot) // 장비 칸 선택 : 목록을 그 슬롯으로 거르고 장착 장비 선택 (Day60 추가)
+        {
+            equipmentFilter = (int)slot; // 목록 필터
+            SelectEquippedSlot(slot); // 장착 장비 선택 (빈 칸이면 안내)
+            Refresh(); // 목록 갱신
+        }
+
+        private void ClearEquipmentFilter() // 목록 필터 해제 (Day60 추가)
+        {
+            equipmentFilter = -1; // 전체
+            Refresh(); // 목록 갱신
+        }
+
+        private void BuildHelpPanel(Transform parent) // ? 도움말 창
+        {
+            Image panel = CreateImage(parent, "HelpPanel", new Color(1f, 1f, 1f, 0.98f)); // 창 배경
+            SetRect(panel.rectTransform, new Vector2(0.30f, 0.25f), new Vector2(0.70f, 0.80f)); // 가운데 배치
+            AddOutline(panel.gameObject); // 테두리
+            helpText = CreateText(panel.transform, "HelpText", string.Empty, 17, FontStyle.Normal, new Color(0.12f, 0.12f, 0.16f, 1f)); // 도움말 문구
+            helpText.alignment = TextAnchor.UpperLeft; // 왼쪽 위 정렬
+            helpText.horizontalOverflow = HorizontalWrapMode.Wrap; // 줄바꿈
+            SetRect(helpText.rectTransform, new Vector2(0.05f, 0.14f), new Vector2(0.95f, 0.95f)); // 배치
+            Button close = CreateButton(panel.transform, "CloseHelp", "닫기", new Color(0.88f, 0.88f, 0.90f, 1f)); // 닫기
+            SetRect(close.GetComponent<RectTransform>(), new Vector2(0.38f, 0.03f), new Vector2(0.62f, 0.11f)); // 배치
+            close.onClick.AddListener(ToggleHelp); // 연결
+            helpPanel = panel.gameObject; // 저장
+            helpPanel.SetActive(false); // 초기 숨김
+        }
+
+        private void ToggleHelp() // 도움말 열기·닫기
+        {
+            helpPanel.SetActive(!helpPanel.activeSelf); // 전환
+            helpPanel.transform.SetAsLastSibling(); // 최상단
+            helpText.text = GetHelpText(currentTab); // 현재 탭 설명
+        }
+
+        private static string GetHelpText(int tab) // 탭별 도움말
+        {
+            switch (tab) // 탭 분기
+            {
+                case 0: return "[스텟]\n장비·룬·호감도·결속이 모두 반영된 최종 능력치입니다.\n\n아래 버튼으로 호감도 보상, 선물, 일상 대화, 결속을 관리할 수 있어요."; // 스텟
+                case 1: return "[장비]\n일러스트 둘레 5칸이 장비 슬롯입니다.\n무기 · 투구 · 방어구 · 장갑 · 신발\n\n칸을 누르면 그 슬롯 장비만 목록에 보이고, 장착 중인 장비가 선택됩니다.\n목록에서 장비를 고르면 변경 전후 능력치를 비교합니다. [전체 보기]로 필터를 풉니다."; // 장비
+                case 2: return "[룬]\n일러스트 둘레 5칸이 룬 슬롯입니다.\n1번 기본 · 2번 레벨 10 · 3번 결속 3단계 · 4번 고급 이상 장비 · 5번 결속 5단계\n\n강화 : 룬 조각 + 골드 (Lv.10까지, 실패 없음)\n합성 : 같은 종류·등급 2개 → 한 등급 위 (강화 조각 50% 반환)\n분해 : 룬 → 룬 조각 · 잠금 룬은 보호됩니다."; // 룬
+                case 3: return "[스킬]\n스킬 1~3, 궁극기, 패시브, 결속 스킬을 확인합니다."; // 스킬
+                default: return "[프로필]\n캐릭터 이름, 성우, 신체 정보와 이야기를 확인합니다.\n'###'은 아직 확정되지 않은 설정입니다."; // 프로필
+            }
         }
 
         private void CloseOtherPanels(MonoBehaviour keep) // 호감도 보상·선물·결속 패널이 겹치지 않게 닫기 (Day59 추가)
@@ -240,103 +522,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (!affinityRewardPanel.IsOpen) affinityRewardPanel.Toggle(); // 보상 패널 열기
         }
 
-        private void BuildHeader(Transform parent) // 상단 메뉴 구성
-        {
-            Button backButton = CreateButton(parent, "BackButton", "◀  로비", new Color(0.78f, 0.87f, 0.94f, 1f)); // 로비 복귀 버튼 생성
-            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.025f, 0.92f), new Vector2(0.16f, 0.975f)); // 로비 복귀 버튼 배치
-            backButton.onClick.AddListener(ReturnToLobby); // 로비 복귀 이벤트 연결
-            Text titleText = CreateText(parent, "Title", "캐릭터 장비 관리", 27, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 화면 제목 생성
-            SetRect(titleText.rectTransform, new Vector2(0.20f, 0.92f), new Vector2(0.52f, 0.975f)); // 화면 제목 배치
-            Text dayText = CreateText(parent, "DayLabel", "DAY36 · EQUIPMENT MANAGEMENT", 18, FontStyle.Bold, new Color(0.25f, 0.30f, 0.36f, 1f)); // Day36 화면 표시 생성
-            SetRect(dayText.rectTransform, new Vector2(0.69f, 0.92f), new Vector2(0.975f, 0.975f)); // Day36 화면 표시 배치
-        }
-
-        private void BuildCharacterPanel(Transform parent) // 좌측 캐릭터 영역 구성
-        {
-            Image panel = CreateImage(parent, "CharacterPanel", new Color(0.96f, 0.96f, 0.96f, 1f)); // 캐릭터 패널 배경 생성
-            SetRect(panel.rectTransform, new Vector2(0.02f, 0.05f), new Vector2(0.39f, 0.90f)); // 캐릭터 패널 배치
-            AddOutline(panel.gameObject); // 캐릭터 패널 외곽선 추가
-            characterNameText = CreateText(panel.transform, "CharacterName", "CHARACTER", 30, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 캐릭터 이름 생성
-            SetRect(characterNameText.rectTransform, new Vector2(0.16f, 0.91f), new Vector2(0.84f, 0.985f)); // 캐릭터 이름 배치
-            characterLevelText = CreateText(panel.transform, "CharacterLevel", "Lv. 1", 19, FontStyle.Bold, new Color(0.25f, 0.30f, 0.36f, 1f)); // 캐릭터 레벨 생성
-            SetRect(characterLevelText.rectTransform, new Vector2(0.39f, 0.855f), new Vector2(0.61f, 0.91f)); // 캐릭터 레벨 배치
-            Button previousButton = CreateButton(panel.transform, "PreviousCharacter", "◀", new Color(0.90f, 0.90f, 0.90f, 1f)); // 이전 캐릭터 버튼 생성
-            SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(0.04f, 0.855f), new Vector2(0.16f, 0.925f)); // 이전 캐릭터 버튼 배치
-            previousButton.onClick.AddListener(SelectPreviousCharacter); // 이전 캐릭터 이벤트 연결
-            Button nextButton = CreateButton(panel.transform, "NextCharacter", "▶", new Color(0.90f, 0.90f, 0.90f, 1f)); // 다음 캐릭터 버튼 생성
-            SetRect(nextButton.GetComponent<RectTransform>(), new Vector2(0.84f, 0.855f), new Vector2(0.96f, 0.925f)); // 다음 캐릭터 버튼 배치
-            nextButton.onClick.AddListener(SelectNextCharacter); // 다음 캐릭터 이벤트 연결
-            Image portraitPanel = CreateImage(panel.transform, "PortraitPlaceholder", Color.white); // 캐릭터 임시 초상 배경 생성
-            SetRect(portraitPanel.rectTransform, new Vector2(0.28f, 0.55f), new Vector2(0.72f, 0.84f)); // 캐릭터 임시 초상 배치
-            AddOutline(portraitPanel.gameObject); // 캐릭터 임시 초상 외곽선 추가
-            portraitText = CreateText(portraitPanel.transform, "PortraitText", "CHARACTER", 28, FontStyle.Bold, new Color(0.65f, 0.28f, 0.28f, 1f)); // 캐릭터 임시 초상 텍스트 생성
-            Stretch(portraitText.rectTransform, 8f); // 캐릭터 임시 초상 텍스트 확장
-            CreateLockedSlot(panel.transform, "HelmetPlaceholder", "투구\n준비 중", new Vector2(0.04f, 0.68f), new Vector2(0.24f, 0.81f)); // 투구 준비 슬롯 생성
-            CreateLockedSlot(panel.transform, "BootsPlaceholder", "신발\n준비 중", new Vector2(0.76f, 0.53f), new Vector2(0.96f, 0.66f)); // 신발 준비 슬롯 생성
-            Button armorSlot = CreateButton(panel.transform, "ArmorSlot", "방어구\n비어 있음", new Color(0.82f, 0.87f, 0.92f, 1f)); // 방어구 슬롯 버튼 생성
-            SetRect(armorSlot.GetComponent<RectTransform>(), new Vector2(0.04f, 0.53f), new Vector2(0.24f, 0.66f)); // 방어구 슬롯 버튼 배치
-            armorSlotText = armorSlot.GetComponentInChildren<Text>(); // 방어구 슬롯 라벨 조회
-            armorSlot.onClick.AddListener(SelectEquippedArmor); // 방어구 슬롯 선택 이벤트 연결
-            Button weaponSlot = CreateButton(panel.transform, "WeaponSlot", "무기\n비어 있음", new Color(0.88f, 0.83f, 0.76f, 1f)); // 무기 슬롯 버튼 생성
-            SetRect(weaponSlot.GetComponent<RectTransform>(), new Vector2(0.38f, 0.41f), new Vector2(0.62f, 0.53f)); // 무기 슬롯 버튼 배치
-            weaponSlotText = weaponSlot.GetComponentInChildren<Text>(); // 무기 슬롯 라벨 조회
-            weaponSlot.onClick.AddListener(SelectEquippedWeapon); // 무기 슬롯 선택 이벤트 연결
-            CreateLockedSlot(panel.transform, "GlovesPlaceholder", "장갑\n준비 중", new Vector2(0.76f, 0.68f), new Vector2(0.96f, 0.81f)); // 장갑 준비 슬롯 생성
-            Text statsLabel = CreateText(panel.transform, "CurrentStatsLabel", "현재 최종 능력치", 20, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 현재 능력치 라벨 생성
-            SetRect(statsLabel.rectTransform, new Vector2(0.06f, 0.345f), new Vector2(0.94f, 0.40f)); // 현재 능력치 라벨 배치
-            currentStatsText = CreateText(panel.transform, "CurrentStats", "-", 16, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 현재 능력치 텍스트 생성
-            currentStatsText.alignment = TextAnchor.UpperLeft; // 현재 능력치 왼쪽 정렬
-            currentStatsText.horizontalOverflow = HorizontalWrapMode.Wrap; // 현재 능력치 가로 줄바꿈 적용
-            currentStatsText.verticalOverflow = VerticalWrapMode.Truncate; // 현재 능력치 세로 영역 제한
-            SetRect(currentStatsText.rectTransform, new Vector2(0.08f, 0.04f), new Vector2(0.92f, 0.34f)); // 현재 능력치 텍스트 배치
-        }
-
-        private void BuildEquipmentPanel(Transform parent) // 우측 장비 관리 영역 구성
-        {
-            Image panel = CreateImage(parent, "EquipmentPanel", new Color(0.96f, 0.96f, 0.96f, 1f)); // 장비 관리 패널 생성
-            SetRect(panel.rectTransform, new Vector2(0.41f, 0.05f), new Vector2(0.98f, 0.90f)); // 장비 관리 패널 배치
-            AddOutline(panel.gameObject); // 장비 관리 패널 외곽선 추가
-            Text inventoryLabel = CreateText(panel.transform, "InventoryLabel", "보유 장비", 22, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 장비 목록 라벨 생성
-            SetRect(inventoryLabel.rectTransform, new Vector2(0.57f, 0.91f), new Vector2(0.72f, 0.98f)); // 오른쪽 장비 목록 라벨 배치
-            inventoryCountText = CreateText(panel.transform, "InventoryCount", "0개", 17, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 장비 개수 텍스트 생성
-            SetRect(inventoryCountText.rectTransform, new Vector2(0.72f, 0.91f), new Vector2(0.80f, 0.98f)); // 오른쪽 장비 개수 텍스트 배치
-            Button grantButton = CreateButton(panel.transform, "GrantDemoEquipment", "테스트 장비 지급", new Color(0.88f, 0.83f, 0.66f, 1f)); // 테스트 장비 지급 버튼 생성
-            SetRect(grantButton.GetComponent<RectTransform>(), new Vector2(0.80f, 0.915f), new Vector2(0.97f, 0.975f)); // 오른쪽 테스트 장비 지급 버튼 배치
-            DevelopmentFeatures.HideInRelease(grantButton); // 출시 빌드에서는 테스트 장비 지급 버튼 숨김 (최적화)
-            grantButton.onClick.AddListener(GrantDemoEquipment); // 테스트 장비 지급 이벤트 연결
-            BuildInventoryScroll(panel.transform); // 장비 스크롤 목록 구성
-            Image detailPanel = CreateImage(panel.transform, "DetailPanel", new Color(0.92f, 0.92f, 0.92f, 1f)); // 장비 상세 패널 생성
-            SetRect(detailPanel.rectTransform, new Vector2(0.02f, 0.52f), new Vector2(0.54f, 0.90f)); // 왼쪽 장비 상세 패널 배치
-            AddOutline(detailPanel.gameObject); // 장비 상세 패널 외곽선 추가
-            detailTitleText = CreateText(detailPanel.transform, "DetailTitle", "장비를 선택하세요", 23, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 장비 상세 이름 생성
-            detailTitleText.alignment = TextAnchor.MiddleLeft; // 장비 상세 이름 왼쪽 정렬
-            SetRect(detailTitleText.rectTransform, new Vector2(0.04f, 0.80f), new Vector2(0.72f, 0.97f)); // 장비 상세 이름 배치
-            detailGradeText = CreateText(detailPanel.transform, "DetailGrade", string.Empty, 20, FontStyle.Bold, new Color(0.63f, 0.48f, 0.14f, 1f)); // 장비 등급 텍스트 생성
-            SetRect(detailGradeText.rectTransform, new Vector2(0.72f, 0.80f), new Vector2(0.96f, 0.97f)); // 장비 등급 텍스트 배치
-            detailStatsText = CreateText(detailPanel.transform, "DetailStats", "-", 16, FontStyle.Normal, new Color(0.20f, 0.23f, 0.27f, 1f)); // 장비 옵션 텍스트 생성
-            detailStatsText.alignment = TextAnchor.UpperLeft; // 장비 옵션 왼쪽 정렬
-            detailStatsText.horizontalOverflow = HorizontalWrapMode.Wrap; // 장비 옵션 가로 줄바꿈 적용
-            detailStatsText.verticalOverflow = VerticalWrapMode.Truncate; // 장비 옵션 세로 영역 제한
-            SetRect(detailStatsText.rectTransform, new Vector2(0.05f, 0.07f), new Vector2(0.95f, 0.80f)); // 장비 옵션 텍스트 배치
-            Image comparisonPanel = CreateImage(panel.transform, "ComparisonPanel", new Color(0.90f, 0.93f, 0.95f, 1f)); // 능력치 비교 패널 생성
-            SetRect(comparisonPanel.rectTransform, new Vector2(0.02f, 0.13f), new Vector2(0.54f, 0.50f)); // 왼쪽 능력치 비교 패널 배치
-            AddOutline(comparisonPanel.gameObject); // 능력치 비교 패널 외곽선 추가
-            Text comparisonLabel = CreateText(comparisonPanel.transform, "ComparisonLabel", "변경 전 → 변경 후", 19, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 능력치 비교 라벨 생성
-            SetRect(comparisonLabel.rectTransform, new Vector2(0.04f, 0.84f), new Vector2(0.96f, 0.98f)); // 능력치 비교 라벨 배치
-            comparisonText = CreateText(comparisonPanel.transform, "ComparisonText", "장비를 선택하면 예상 능력치가 표시됩니다.", 15, FontStyle.Normal, new Color(0.18f, 0.22f, 0.27f, 1f)); // 능력치 비교 텍스트 생성
-            comparisonText.alignment = TextAnchor.UpperLeft; // 능력치 비교 왼쪽 정렬
-            comparisonText.horizontalOverflow = HorizontalWrapMode.Wrap; // 능력치 비교 가로 줄바꿈 적용
-            comparisonText.verticalOverflow = VerticalWrapMode.Truncate; // 능력치 비교 세로 영역 제한
-            SetRect(comparisonText.rectTransform, new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.84f)); // 능력치 비교 텍스트 배치
-            actionButton = CreateButton(panel.transform, "ActionButton", "사용 불가", new Color(0.72f, 0.82f, 0.72f, 1f)); // 장비 액션 버튼 생성
-            SetRect(actionButton.GetComponent<RectTransform>(), new Vector2(0.70f, 0.035f), new Vector2(0.97f, 0.105f)); // 장비 액션 버튼 배치
-            actionButtonText = actionButton.GetComponentInChildren<Text>(); // 장비 액션 라벨 조회
-            actionButton.onClick.AddListener(ApplySelectedEquipmentAction); // 장비 액션 이벤트 연결
-            statusText = CreateText(panel.transform, "Status", "장비를 선택하세요.", 16, FontStyle.Normal, new Color(0.25f, 0.28f, 0.32f, 1f)); // 화면 상태 텍스트 생성
-            statusText.alignment = TextAnchor.MiddleLeft; // 화면 상태 왼쪽 정렬
-            SetRect(statusText.rectTransform, new Vector2(0.03f, 0.035f), new Vector2(0.67f, 0.105f)); // 화면 상태 텍스트 배치
-        }
-
         private void BuildInventoryScroll(Transform parent) // 장비 인벤토리 스크롤 구성
         {
             GameObject scrollObject = new GameObject("InventoryScroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect)); // 스크롤 영역 생성
@@ -402,17 +587,22 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             string displayName = characterData == null ? characterSave.CharacterId : characterData.DisplayName; // 캐릭터 표시 이름 결정
             characterNameText.text = displayName; // 캐릭터 이름 갱신
             characterLevelText.text = $"Lv. {characterSave.Level}"; // 캐릭터 레벨 갱신
-            portraitText.text = displayName; // 임시 초상 텍스트 갱신
+            portraitImage.sprite = DialogueArtFactory.GetStanding(characterSave.CharacterId, string.Empty, out bool placeholder); // 일러스트 (정식 스탠딩 없으면 임시 실루엣, Day60)
+            portraitImage.color = placeholder ? DialogueArtFactory.GetCharacterTint(characterSave.CharacterId) : Color.white; // 임시 실루엣은 캐릭터 색
+            portraitText.text = placeholder ? displayName : string.Empty; // 임시 실루엣 위 이름
+            goldText.text = GoldCurrencyService.GetGold(saveData).ToString("N0"); // 상단 골드 (Day60)
             UpdateAffinityDebugText(saveData, characterSave); // 호감도 디버그 텍스트 갱신 (Day43)
             if (affinityRewardPanel != null) affinityRewardPanel.Refresh(saveData, characterSave, displayName); // 호감도 보상 패널 갱신 (Day56 추가, Unity 객체 null 비교)
             if (giftPanel != null) giftPanel.Refresh(saveData, dataManager, characterSave, displayName); // 선물 패널 갱신 (Day57 추가)
             if (bondPanel != null) bondPanel.Refresh(saveData, characterSave, displayName); // 결속 패널 갱신 (Day59 추가)
             UpdateCurrentStats(saveData, dataManager, characterSave, characterData); // 현재 최종 능력치 갱신
-            UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Weapon, weaponSlotText, "무기"); // 무기 슬롯 갱신
-            UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Armor, armorSlotText, "방어구"); // 방어구 슬롯 갱신
+            RefreshEquipmentSlots(saveData, dataManager, characterSave); // 일러스트 둘레 장비 5칸 갱신 (Day60)
             EnsureSelectedInstance(saveData); // 선택 장비 인스턴스 보정
             BuildInventoryButtons(saveData, dataManager, characterSave); // 보유 장비 목록 구성
             UpdateDetail(saveData, dataManager, characterSave); // 선택 장비 상세 갱신
+            if (runeTab != null) runeTab.Refresh(saveData, dataManager, characterSave, characterData); // 룬 탭 갱신 (Day60, 숨겨져 있으면 생략)
+            if (skillTab != null) skillTab.Refresh(characterData, characterSave); // 스킬 탭 갱신 (Day60)
+            if (profileTab != null) profileTab.Refresh(characterData, characterSave); // 프로필 탭 갱신 (Day60)
         }
 
         private bool TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData) // 전역 장비 화면 컨텍스트 조회
@@ -450,21 +640,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             currentStatsText.text = BuildStatsDescription(stats); // 현재 최종 능력치 표시
         }
 
-        private void UpdateSlotText(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave, EquipmentSlot slot, Text target, string slotLabel) // 장착 슬롯 텍스트 갱신
-        {
-            EquipmentInstanceSaveData instance = CharacterEquipmentService.GetEquippedInstance(saveData, characterSave.CharacterId, slot); // 슬롯 장착 장비 조회
-
-            if (instance == null) // 장착 장비 존재 확인
-            {
-                target.text = $"{slotLabel}\n비어 있음"; // 빈 장비 슬롯 표시
-                return; // 슬롯 갱신 종료
-            }
-
-            EquipmentData equipment = dataManager.GetEquipment(instance.EquipmentId); // 장착 장비 원본 조회
-            string equipmentName = equipment == null ? instance.EquipmentId : equipment.DisplayName; // 장착 장비 표시 이름 결정
-            target.text = $"{slotLabel}\n{equipmentName}"; // 장착 장비 슬롯 표시
-        }
-
         private void UpdateAffinityDebugText(SaveData saveData, CharacterSaveData characterSave) // 호감도 디버그 텍스트 갱신 (Day43)
         {
             if (affinityText == null) // 호감도 디버그 텍스트 존재 확인
@@ -474,7 +649,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             int affinity = AffinityService.GetAffinity(saveData, characterSave.CharacterId); // 선택 캐릭터 호감도 조회
             AffinityTier tier = AffinityService.GetAffinityTier(saveData, characterSave.CharacterId); // 선택 캐릭터 호감도 등급 조회
-            affinityText.text = $"호감도 · {affinity}/{CharacterSaveData.MaxAffinity} · {GetAffinityTierLabel(tier)} · 결속 {characterSave.BondLevel}"; // 호감도·결속 문구 표시 (Day59 결속 단계 추가)
+            int equippedRunes = 0; // 장착 룬 수 (Day60)
+            foreach (RuneInstanceSaveData rune in RuneService.GetEquipped(saveData, characterSave.CharacterId)) if (rune != null) equippedRunes++; // 장착 룬 집계
+            bool canTalk = DialogueService.CanTalk(saveData, characterSave.CharacterId, out _); // 이번 시간대 대화 가능 여부
+            affinityText.text = $"레벨  Lv.{characterSave.Level}   (경험치 {characterSave.Experience})\n\n호감도  {affinity}/{CharacterSaveData.MaxAffinity} · {GetAffinityTierLabel(tier)}\n결속  {characterSave.BondLevel}/{BondCatalog.MaxLevel} · 결속 자원 {BondService.GetResource(saveData)}/{BondCatalog.MaxResource}\n오늘 선물  {GiftService.GetGiftsGivenToday(saveData, characterSave.CharacterId)}/{GiftService.DailyGiftLimit}\n일상 대화  {(canTalk ? "<color=#2E8B57>가능</color>" : "이번 시간대 완료")}\n\n장착 룬  {equippedRunes}/{RuneCatalog.SlotCount}"; // 성장·관계 정보 (Day60 스텟 탭)
         }
 
         private void DecreaseAffinityDebug() // 호감도 디버그 감소 처리 (Day43)
@@ -530,10 +708,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 }
 
                 EquipmentData equipment = dataManager.GetEquipment(instance.EquipmentId); // 장비 원본 데이터 조회
+
+                if (equipmentFilter >= 0 && (equipment == null || (int)equipment.Slot != equipmentFilter)) // 슬롯 필터 확인 (Day60 추가)
+                {
+                    continue; // 다른 슬롯 장비 제외
+                }
+
                 string equipmentName = equipment == null ? instance.EquipmentId : equipment.DisplayName; // 장비 표시 이름 결정
                 CharacterSaveData owner = CharacterEquipmentService.FindEquippedCharacter(saveData, instance.InstanceId); // 장비 착용 캐릭터 조회
                 string state = BuildEquipmentState(owner, characterSave); // 장비 착용 상태 문구 생성
-                string slotName = equipment == null ? "?" : equipment.Slot == EquipmentSlot.Weapon ? "W" : "A"; // 장비 슬롯 축약 문구 생성
+                string slotName = equipment == null ? "?" : EquipmentSlotInfo.GetLabel(equipment.Slot); // 장비 슬롯 이름 (Day60 5칸 대응)
                 string grade = equipment == null ? string.Empty : GetGradeStars(equipment.Grade); // 장비 등급 별 문구 생성
                 string optionSummary = equipment == null ? "원본 데이터 없음" : BuildCompactStatDescription(equipment); // 장비 옵션 축약 문구 생성
                 Button itemButton = CreateButton(inventoryContent, $"Equipment_{index}", $"[{slotName}] {grade} {equipmentName}\n{optionSummary}\n{state}", new Color(0.90f, 0.90f, 0.90f, 1f)); // 장비 목록 버튼 생성
@@ -781,16 +965,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Refresh(); // 장비 상세 화면 갱신
         }
 
-        private void SelectEquippedWeapon() // 현재 무기 슬롯 선택
-        {
-            SelectEquippedSlot(EquipmentSlot.Weapon); // 무기 슬롯 선택 실행
-        }
-
-        private void SelectEquippedArmor() // 현재 방어구 슬롯 선택
-        {
-            SelectEquippedSlot(EquipmentSlot.Armor); // 방어구 슬롯 선택 실행
-        }
-
         private void SelectEquippedSlot(EquipmentSlot slot) // 현재 슬롯 장비 선택
         {
             if (!TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData)) // 전역 데이터 컨텍스트 확인
@@ -967,20 +1141,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private static string GetSlotDisplayName(EquipmentSlot slot) // 장비 슬롯 표시 이름 조회
         {
-            return slot == EquipmentSlot.Weapon ? "무기" : "방어구"; // 장비 슬롯 이름 반환
+            return EquipmentSlotInfo.GetLabel(slot); // 장비 슬롯 이름 반환 (Day60 5칸 대응)
         }
 
         private static string GetGradeStars(ItemGrade grade) // 장비 등급 별 문구 생성
         {
             int starCount = Mathf.Clamp((int)grade + 1, 1, 5); // 장비 등급 별 개수 계산
             return new string('★', starCount) + new string('☆', 5 - starCount); // 장비 등급 별 문구 반환
-        }
-
-        private static void CreateLockedSlot(Transform parent, string name, string label, Vector2 anchorMin, Vector2 anchorMax) // 준비 중 장비 슬롯 생성
-        {
-            Button slot = CreateButton(parent, name, label, new Color(0.88f, 0.88f, 0.88f, 1f)); // 준비 중 슬롯 버튼 생성
-            SetRect(slot.GetComponent<RectTransform>(), anchorMin, anchorMax); // 준비 중 슬롯 배치
-            slot.interactable = false; // 준비 중 슬롯 입력 비활성화
         }
 
         private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 UI 이미지 생성 (RuntimeUiKit 위임, 최적화 정리)

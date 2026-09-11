@@ -391,6 +391,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 아이템 사용 중단
             }
 
+            if (RuneCatalog.IsRuneBox(selectedItemId)) // 룬 상자 확인 (Day60 추가)
+            {
+                bool opened = RuneService.TryOpenBox(saveData, dataManager, selectedItemId, out RuneInstanceSaveData rune, out string boxMessage); // 상자 열기
+                bool boxSaved = opened && saveManager.SaveCurrent(); // 성공 시 저장
+                SetStatus(opened && !boxSaved ? $"{boxMessage} (저장 실패)" : opened ? $"{boxMessage} · 캐릭터 창 [룬] 탭에서 장착" : boxMessage); // 결과 안내
+                Refresh(); // 가방 갱신
+                return; // 처리 종료
+            }
+
             if (!ItemUseService.TryUse(saveData, dataManager, selectedItemId, out int remainingCount, out error)) // 소비 아이템 사용 시도
             {
                 SetStatus(error); // 아이템 사용 오류 표시

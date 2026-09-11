@@ -189,6 +189,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return 0; // 무적 중 피해 무시
             }
 
+            if (BattleRuneEffects.TryEvade(this, result)) // 민첩의 룬 회피 (Day60 추가)
+            {
+                return 0; // 회피 시 피해 없음
+            }
+
             int remainingDamage = BattlePassiveRuntimeState.AbsorbShield(Stats.RuntimeId, result.Damage, out int absorbedDamage); // 패시브 보호막 우선 피해 흡수
 
             if (absorbedDamage > 0) // 보호막 피해 흡수 확인
@@ -213,6 +218,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             floatingValueText?.ShowDamage(applied, result.Affinity); // 속성 상성 반영 피해 숫자 표시 (Day52 수정)
             AccumulateDisarray(result); // 실제 피해 발생 시에만 흐트러짐 누적 (Day53 추가)
             BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateDamageTaken(this, applied)); // 피해 수신 패시브 Trigger 처리
+            BattleRuneEffects.OnDamageApplied(this, result, applied); // 흡혈·가시·부활의 룬 처리 (Day60 추가)
 
             if (Stats.IsAlive) // 피해 후 생존 여부 확인
             {
@@ -234,7 +240,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 지속 피해는 흐트러짐을 누적시키지 않음 (방치 흐트러짐 방지)
             }
 
-            if (!BattleDisarrayRuntimeState.AddDisarray(Stats.RuntimeId, BattleDisarrayRuntimeState.GetHitAmount(result.Affinity))) // 상성 반영 누적 후 발생 여부 확인
+            if (!BattleDisarrayRuntimeState.AddDisarray(Stats.RuntimeId, BattleRuneEffects.ScaleDisarray(result.AttackerRuntimeId, BattleDisarrayRuntimeState.GetHitAmount(result.Affinity)))) // 상성·전투의 룬 반영 누적 후 발생 여부 확인 (Day60 룬 추가)
             {
                 return; // 흐트러짐 미발생 처리
             }

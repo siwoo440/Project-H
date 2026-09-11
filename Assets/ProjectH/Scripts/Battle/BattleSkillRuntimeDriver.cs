@@ -23,6 +23,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             TryApplyBondSynergy(); // 결속 조합 시너지 1회 적용 (Day59 추가, 시작 게이지보다 먼저 — 결속의 원탁 배율 반영)
             TryApplyAffinityStartGauge(); // 호감도 유대 보상 궁극기 시작 게이지 1회 적용 (Day56 추가)
             BattleSkillRuntimeState.TickPeriodicEffects(Time.time); // 현재 전투 시간 기준 주기 피해 Tick 처리
+            BattleRuneEffects.Tick(registry, Time.deltaTime); // 광기·재생·보호막의 룬 주기 처리 (Day60 추가)
             TickUltimateGauge(Time.deltaTime); // 전투 경과 시간 기준 궁극기 게이지 충전 처리
         }
 
@@ -85,6 +86,19 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 allies.Add(actor); // 아군 등록
                 ids.Add(stats.CharacterId); // ID 등록
                 levels.Add(BattleBondRuntimeState.GetLevel(stats.CharacterId)); // 결속 단계 등록
+            }
+
+            float skillRune = 0f; // 파티 최대 스킬의 룬 수치 (Day60 추가)
+
+            for (int index = 0; index < allies.Count; index++) // 아군 순회
+            {
+                skillRune = Mathf.Max(skillRune, BattleRuneRuntimeState.Get(allies[index].Stats.RuntimeId, RuneKind.Skill)); // 가장 높은 값 사용 (파티 공용 블록 생성기)
+            }
+
+            if (skillRune > 0f) // 스킬의 룬 확인
+            {
+                SkillBlock.BattleSkillBlockController blocks = FindFirstObjectByType<SkillBlock.BattleSkillBlockController>(); // 스킬 블록 생성기 조회
+                if (blocks != null) blocks.SetIntervalReduction(skillRune); // 생성 주기 단축
             }
 
             BondSynergyResult synergy = BondCatalog.EvaluateSynergy(ids, levels); // 시너지 판정

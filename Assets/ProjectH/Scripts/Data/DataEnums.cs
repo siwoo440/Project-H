@@ -64,7 +64,10 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
     public enum EquipmentSlot // 장비 착용 슬롯
     {
         Weapon = 0, // 무기 슬롯
-        Armor = 1 // 방어구 슬롯
+        Armor = 1, // 방어구 슬롯
+        Helmet = 2, // 투구 슬롯 (Day60 추가)
+        Gloves = 3, // 장갑 슬롯 (Day60 추가)
+        Boots = 4 // 신발 슬롯 (Day60 추가)
     }
 
     public enum EquipmentStatType // 장비 능력치 종류

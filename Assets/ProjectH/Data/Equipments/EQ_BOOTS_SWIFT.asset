@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b35157fa111346db9dcd3a465346f112, type: 3}
+  m_Name: EQ_BOOTS_SWIFT
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.EquipmentData
+  item: {fileID: 11400000, guid: 967aba35cf7441d9a3c17a11b86168b4, type: 2}
+  slot: 4
+  statOptions:
+  - statType: 8
+    value: 0.35
+  - statType: 4
+    value: 0.05

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26497adc4db00064a9edc7dab84e7854, type: 3}
+  m_Name: EQ_BOOTS_SWIFT
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.ItemData
+  id: EQ_BOOTS_SWIFT
+  displayName: "\uC9C8\uD48D \uC2E0\uBC1C"
+  itemType: 2
+  grade: 1
+  maxStack: 1
+  description: "\uBC14\uB78C \uC815\uB839\uC758 \uAC00\uD638\uAC00 \uAE43\uB4E0 \uC2E0\uBC1C."
+  icon: {fileID: 0}

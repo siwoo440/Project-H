@@ -55,6 +55,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private static readonly List<PeriodicDamageEntry> periodicDamages = new List<PeriodicDamageEntry>(); // 전체 주기 피해 목록
         private static readonly Dictionary<string, List<string>> removableDebuffs = new Dictionary<string, List<string>>(); // 제거 가능 Debuff 출처 목록
         private static BattleCombatRegistry registry; // 현재 전투 Registry
+        public static BattleCombatRegistry CurrentRegistry => registry; // 현재 전투 Registry 반환 (Day60 추가, 룬 가시 반사 대상 조회)
         private static bool resolvingCounter; // 반격 재귀 처리 방지 상태
         private static float nextExpiryAt = float.PositiveInfinity; // 가장 이른 만료 시각 (이 시각 전에는 만료 정리 생략 — 최적화)
         private const float MaxAttackSpeedReduction = 0.70f; // 둔화 공격 속도 감소 상한 (Day51 추가, 완전 정지 방지)

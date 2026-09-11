@@ -1,0 +1,27 @@
+{
+  "id": "TALK_PYRA_DAY",
+  "title": "",
+  "characterId": "CH_PYRA",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "점심! 고기! 많이! 이게 기사의 식사야."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "엘렌은 채소도 먹으라던데."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_PYRA",
+      "expression": "당황",
+      "text": "대, 대장 얘기는 왜 꺼내! …조금만 먹을게."
+    }
+  ]
+}

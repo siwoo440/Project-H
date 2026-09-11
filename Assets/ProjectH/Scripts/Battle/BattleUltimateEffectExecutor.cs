@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 전투 대상 스냅샷 목록 기능
+using ProjectH.Battle.SkillBlock; // 효과 목록 실행기 (Day64)
 using UnityEngine; // Unity 수학과 객체 조회 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -15,7 +16,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         }
     }
 
-    public static class BattleUltimateEffectExecutor // 초기 4인 궁극기 고유 효과 실행 기능
+    public static class BattleUltimateEffectExecutor // 궁극기 고유 효과 실행 기능 (초기 4인 전용 코드 + Day64 합류 8인 효과 목록)
     {
         public const string SerenaId = "CH_SERENA"; // 세레나 캐릭터 ID
         public const string EllenId = "CH_ELLEN"; // 엘렌 캐릭터 ID
@@ -43,7 +44,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public static bool IsSupported(string characterId) // 초기 4인 궁극기 지원 여부 확인
         {
-            return characterId == SerenaId || characterId == EllenId || characterId == LiliaId || characterId == EveId; // 초기 4인 ID 일치 여부 반환
+            return characterId == SerenaId || characterId == EllenId || characterId == LiliaId || characterId == EveId || BattleUltimateCatalog.Has(characterId); // 초기 4인 + 합류 8인 (Day64 효과 목록 궁극기)
         }
 
         public static string GetUltimateName(string characterId) // 캐릭터 ID 기반 궁극기 이름 조회
@@ -58,8 +59,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return LiliaUltimateName; // 릴리아 궁극기 이름 반환
                 case EveId: // 이브 ID 처리
                     return EveUltimateName; // 이브 궁극기 이름 반환
-                default: // 미지원 캐릭터 처리
-                    return string.Empty; // 미지원 궁극기 빈 이름 반환
+                default: // 합류 8인 또는 미지원 캐릭터 처리 (Day64)
+                    return BattleUltimateCatalog.Has(characterId) ? BattleUltimateCatalog.Get(characterId).Name : string.Empty; // 효과 목록 궁극기 이름 (없으면 빈 이름)
             }
         }
 
@@ -82,9 +83,22 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return ExecuteLilia(owner, registry, safeMultiplier); // 릴리아 별의 낙인 실행 결과 반환
                 case EveId: // 이브 궁극기 처리
                     return ExecuteEve(owner, registry, safeMultiplier); // 이브 정령 폭우 실행 결과 반환
-                default: // 미지원 궁극기 처리
-                    return new BattleUltimateEffectExecutionResult(0, 0); // 미지원 궁극기 빈 결과 반환
+                default: // 합류 8인 또는 미지원 궁극기 처리 (Day64)
+                    return ExecuteCatalog(characterId, owner, registry, safeMultiplier); // 효과 목록 궁극기 실행
             }
+        }
+
+        private static BattleUltimateEffectExecutionResult ExecuteCatalog(string characterId, BattleActor owner, BattleCombatRegistry registry, float powerMultiplier) // 합류 8인 궁극기 : 스킬과 같은 효과 실행기 + 리듬 배율 (Day64 추가)
+        {
+            BattleUltimateDefinition definition = BattleUltimateCatalog.Get(characterId); // 궁극기 정의
+
+            if (definition == null) // 정의 확인
+            {
+                return new BattleUltimateEffectExecutionResult(0, 0); // 미지원 빈 결과
+            }
+
+            BattleSkillEffectExecutionResult result = BattleSkillEffectExecutor.ExecuteEffects(definition.Effects, "ULT:" + characterId, owner, registry, powerMultiplier); // 효과 실행
+            return new BattleUltimateEffectExecutionResult(result.AppliedEffectCount, result.AffectedTargetCount); // 결과 변환
         }
 
         private static BattleUltimateEffectExecutionResult ExecuteSerena(BattleActor owner, BattleCombatRegistry registry, float powerMultiplier) // 세레나 성광의 심판 실행

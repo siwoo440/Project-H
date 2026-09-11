@@ -1,0 +1,73 @@
+{
+  "id": "RECRUIT_TYRIA",
+  "title": "말 없는 방패",
+  "characterId": "CH_TYRIA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "회랑에서 구해 낸 피난민들이 길드에 모여 있었다. 그 한가운데, 커다란 방패를 든 여인이 벽처럼 서 있었다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "……회랑 끝에서, 이 사람들을 지키고 있었다."
+    },
+    {
+      "id": "r3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "혼자서? 거기서 얼마나 버틴 거야?"
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "……사흘. 남부 수호대의 티리아다. 지금은… 수호대라고 부를 사람이 나 하나뿐이지만."
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_TYRIA",
+      "expression": "각오",
+      "text": "너희는 앞으로 나아가는 사람들이다. 그 등을… 내가 지키고 싶다.",
+      "choices": [
+        {
+          "text": "부탁할게. 네가 있으면 안심이야.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r6a"
+        },
+        {
+          "text": "무리하지 않겠다고 약속해 줘.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "r6b"
+        }
+      ]
+    },
+    {
+      "id": "r6a",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "……응. 내 뒤는, 무너지지 않는다.",
+      "next": "r7"
+    },
+    {
+      "id": "r6b",
+      "speaker": "CH_TYRIA",
+      "expression": "부끄러움",
+      "text": "……그런 말은, 오랜만에 듣는다. 노력하지.",
+      "next": "r7"
+    },
+    {
+      "id": "r7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아가 동료가 되었다. 피난민 아이 하나가 그녀의 방패 뒤에서 수줍게 손을 흔들었다."
+    }
+  ]
+}

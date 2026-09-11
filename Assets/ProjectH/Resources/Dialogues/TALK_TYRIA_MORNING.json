@@ -1,0 +1,27 @@
+{
+  "id": "TALK_TYRIA_MORNING",
+  "title": "",
+  "characterId": "CH_TYRIA",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "……아침 순찰, 끝났다. 마을은 평화롭다."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "벌써? 해 뜨자마자 나갔구나."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "……평화로운 걸 확인하면, 하루가 편하다."
+    }
+  ]
+}

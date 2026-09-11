@@ -1,0 +1,27 @@
+{
+  "id": "TALK_SEPHIRA_NIGHT",
+  "title": "",
+  "characterId": "CH_SEPHIRA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "밤 기도 시간이에요. 잠시 곁에 있어 주시겠어요?"
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "물론이지."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "…신께 드리는 기도보다, 지금이 더 평온하네요."
+    }
+  ]
+}

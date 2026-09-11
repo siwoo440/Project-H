@@ -1,0 +1,27 @@
+{
+  "id": "TALK_MERCIA_DAY",
+  "title": "",
+  "characterId": "CH_MERCIA",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_MERCIA",
+      "expression": "놀람",
+      "text": "이 ‘과자’라는 것… 이렇게 달콤한 음식이 세상에 있었군요!"
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "사원에선 못 먹어 봤어?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_MERCIA",
+      "expression": "부끄러움",
+      "text": "수행 중엔 금지였거든요. …하나만 더 먹어도 될까요?"
+    }
+  ]
+}

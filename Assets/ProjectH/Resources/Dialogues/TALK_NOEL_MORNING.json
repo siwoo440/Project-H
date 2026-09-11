@@ -1,0 +1,27 @@
+{
+  "id": "TALK_NOEL_MORNING",
+  "title": "",
+  "characterId": "CH_NOEL",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "좋은 아침! 오늘은 어느 쪽으로 가 볼까? 지도 펼쳐 놨어!"
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "벌써 계획까지 세웠어?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "모험가는 아침이 제일 설레는 법이거든."
+    }
+  ]
+}

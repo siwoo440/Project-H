@@ -1,0 +1,73 @@
+{
+  "id": "RECRUIT_NOEL",
+  "title": "모래바람 모험가",
+  "characterId": "CH_NOEL",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "마왕성에 도전했다는 소문이 돌자, 낡은 지도를 두른 소녀가 게시판 앞에서 말을 걸어왔다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "안녕! 심연의 관문까지 간 사람들이 너희지? 거기 벽 문양, 혹시 봤어?"
+    },
+    {
+      "id": "r3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "문양? 정신이 없어서 제대로는…"
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "난 노엘. 길드연합 모험가야. 유적 조사하다가… 같이 다니던 애들을 잃었어. 그 뒤로 쭉 혼자였고."
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "근데 혼자 다니는 것도 슬슬 질렸거든. 함정이랑 길 찾기는 자신 있어. 끼워 줄래?",
+      "choices": [
+        {
+          "text": "물론이지. 길잡이가 필요했어.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r6a"
+        },
+        {
+          "text": "이번엔 아무도 안 잃게 할게.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "r6b"
+        }
+      ]
+    },
+    {
+      "id": "r6a",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "좋았어! 지름길이든 비밀 통로든 내가 다 찾아 줄게.",
+      "next": "r7"
+    },
+    {
+      "id": "r6b",
+      "speaker": "CH_NOEL",
+      "expression": "부끄러움",
+      "text": "…뭐야, 그런 말 하면 반칙이잖아. 그래도, 고마워.",
+      "next": "r7"
+    },
+    {
+      "id": "r7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘이 동료가 되었다. 그녀는 새 지도 한 귀퉁이에 파티원들의 이름을 조그맣게 적었다."
+    }
+  ]
+}

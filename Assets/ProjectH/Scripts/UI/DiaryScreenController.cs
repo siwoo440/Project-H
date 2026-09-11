@@ -339,7 +339,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 AddGalleryItem(item, seen ? $"CG · {GetName(cg.CharacterId)} · {title}" : $"CG · {GetName(cg.CharacterId)} · ???"); // 줄 + 칸
             }
 
-            foreach (string characterId in DiaryCatalog.Starters) // 궁극기 컷신
+            foreach (string characterId in DiaryCatalog.AllCharacters) // 궁극기 컷신 (Day64 — 12인, 합류하면 열림)
             {
                 string captured = characterId; // 클릭용 복사
                 bool owned = saveData != null && saveData.FindCharacter(characterId) != null; // 동료로 합류

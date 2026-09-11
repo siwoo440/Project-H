@@ -1,0 +1,27 @@
+{
+  "id": "TALK_MERCIA_MORNING",
+  "title": "",
+  "characterId": "CH_MERCIA",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "좋은 아침이에요. 해가 뜨는 쪽을 향해 명상을 마쳤답니다."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "매일 그렇게 일찍 일어나?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "사원에서의 습관이에요. 당신도 한번 해 보실래요?"
+    }
+  ]
+}

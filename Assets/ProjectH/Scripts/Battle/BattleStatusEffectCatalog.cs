@@ -19,7 +19,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         CounterUp = 12, // 반격 확률 증가
         AttackUp = 13, // 공격력 증가
         Haste = 14, // 공격 속도 증가 가속 (Day54 추가)
-        Invulnerable = 15 // 무적 (Day54 추가)
+        Invulnerable = 15, // 무적 (Day54 추가)
+        DefenseDown = 16, // 방어 감소 (Day64 추가)
+        AttackDown = 17 // 공격 감소 (Day64 추가)
     }
 
     public readonly struct BattleStatusEffectSnapshot // 현재 활성 상태이상 표시 정보 (Day51 신규)
@@ -81,6 +83,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return "가속"; // 가속 문구 반환
                 case BattleStatusEffectId.Invulnerable: // 무적 처리 (Day54 추가)
                     return "무적"; // 무적 문구 반환
+                case BattleStatusEffectId.DefenseDown: // 방어 감소 처리 (Day64 추가)
+                    return "방어 감소"; // 방어 감소 문구 반환
+                case BattleStatusEffectId.AttackDown: // 공격 감소 처리 (Day64 추가)
+                    return "공격 감소"; // 공격 감소 문구 반환
                 default: // 미분류 상태이상 처리
                     return "-"; // 미분류 표시 문구 반환
             }
@@ -120,6 +126,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return "속"; // 가속 축약 문구 반환
                 case BattleStatusEffectId.Invulnerable: // 무적 처리 (Day54 추가)
                     return "무"; // 무적 축약 문구 반환
+                case BattleStatusEffectId.DefenseDown: // 방어 감소 처리 (Day64 추가)
+                    return "깎"; // 방어 감소 축약 문구 반환
+                case BattleStatusEffectId.AttackDown: // 공격 감소 처리 (Day64 추가)
+                    return "약"; // 공격 감소 축약 문구 반환
                 default: // 미분류 상태이상 처리
                     return "?"; // 미분류 축약 문구 반환
             }
@@ -137,6 +147,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case BattleStatusEffectId.ResistDown: // 저항 감소 처리
                 case BattleStatusEffectId.BlindDown: // 실명 처리
                 case BattleStatusEffectId.Taunt: // 도발 처리
+                case BattleStatusEffectId.DefenseDown: // 방어 감소 처리 (Day64 추가)
+                case BattleStatusEffectId.AttackDown: // 공격 감소 처리 (Day64 추가)
                     return true; // 디버프 분류 반환
                 default: // 버프 및 미분류 처리
                     return false; // 비디버프 분류 반환
@@ -162,6 +174,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case BattleStatusEffectId.Slow: // 둔화 처리
                 case BattleStatusEffectId.ResistDown: // 저항 감소 처리
                 case BattleStatusEffectId.BlindDown: // 실명 처리
+                case BattleStatusEffectId.DefenseDown: // 방어 감소 처리 (Day64 추가)
+                case BattleStatusEffectId.AttackDown: // 공격 감소 처리 (Day64 추가)
                     return DebuffColor; // 일반 디버프 색상 반환
                 case BattleStatusEffectId.DefenseUp: // 방어 증가 처리
                 case BattleStatusEffectId.DamageShield: // 피해 감소 처리
@@ -205,6 +219,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return BattleStatusEffectId.Haste; // 가속 상태이상 반환
                 case BattleRuntimeModifierKind.Invulnerable: // 무적 처리 (Day54 추가)
                     return BattleStatusEffectId.Invulnerable; // 무적 상태이상 반환
+                case BattleRuntimeModifierKind.DefenseReductionPercent: // 방어 감소 처리 (Day64 추가)
+                    return BattleStatusEffectId.DefenseDown; // 방어 감소 상태이상 반환
+                case BattleRuntimeModifierKind.AttackReductionPercent: // 공격 감소 처리 (Day64 추가)
+                    return BattleStatusEffectId.AttackDown; // 공격 감소 상태이상 반환
                 default: // 미분류 Modifier 처리
                     return BattleStatusEffectId.None; // 상태이상 없음 반환
             }

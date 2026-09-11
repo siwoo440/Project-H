@@ -56,6 +56,32 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return removed; // 실제 제거 개수 반환
         }
 
+        public static int RemoveBuffs(string runtimeId, int count, float nowSeconds = -1f) // 시간 제한 버프 제거 (Day64 추가 — 나타샤 섀도우 스텝, 남은 시간이 긴 것부터, 전투 내내 유지되는 버프는 제외)
+        {
+            if (string.IsNullOrWhiteSpace(runtimeId) || count <= 0) return 0; // 요청 확인
+            float now = ResolveNow(nowSeconds); // 현재 전투 시간
+            CleanupExpired(now); // 만료 정리
+            int removed = 0; // 제거 수
+
+            while (removed < count) // 요청 수만큼
+            {
+                int best = -1; // 남은 시간이 가장 긴 버프
+
+                for (int index = 0; index < modifiers.Count; index++) // Modifier 순회
+                {
+                    TimedModifier modifier = modifiers[index]; // 현재 Modifier
+                    if (modifier.RuntimeId != runtimeId || float.IsPositiveInfinity(modifier.ExpiresAt) || !BattleStatusEffectCatalog.IsBuff(BattleStatusEffectCatalog.FromModifierKind(modifier.Kind))) continue; // 대상의 시간 제한 버프만
+                    if (best < 0 || modifier.ExpiresAt > modifiers[best].ExpiresAt) best = index; // 가장 오래 남은 것
+                }
+
+                if (best < 0) break; // 더 없음
+                modifiers.RemoveAt(best); // 버프 제거
+                removed++; // 제거 수 증가
+            }
+
+            return removed; // 제거 수 반환
+        }
+
         private static int RemoveUnregisteredDebuffs(string runtimeId, int count) // 카탈로그 분류 기준 미등록 디버프 제거 (Day51 추가, RegisterRemovableDebuff 누락 방어)
         {
             if (count <= 0) // 잔여 제거 요청 수 확인

@@ -1,0 +1,27 @@
+{
+  "id": "TALK_NATASHA_EVENING",
+  "title": "",
+  "characterId": "CH_NATASHA",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_NATASHA",
+      "expression": "생각",
+      "text": "해 질 녘은 그림자가 길어져서 좋아. 숨기도 쉽고."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "숨을 필요가 있어? 여긴 마을인데."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "…습관이야. 금방 고쳐지진 않네."
+    }
+  ]
+}

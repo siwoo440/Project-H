@@ -1,0 +1,27 @@
+{
+  "id": "TALK_NATASHA_NIGHT",
+  "title": "",
+  "characterId": "CH_NATASHA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "밤엔 잠이 잘 안 와. 옛날 일이 자꾸 떠올라서."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그럼 잠들 때까지 얘기 상대 해 줄게."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_NATASHA",
+      "expression": "부끄러움",
+      "text": "…그런 말은 조심해서 해. 진심으로 받아들인다?"
+    }
+  ]
+}

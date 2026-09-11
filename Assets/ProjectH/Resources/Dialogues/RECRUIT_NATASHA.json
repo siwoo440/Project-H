@@ -1,0 +1,73 @@
+{
+  "id": "RECRUIT_NATASHA",
+  "title": "그림자의 인사",
+  "characterId": "CH_NATASHA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "등 뒤에서 누군가 속삭였다. 돌아보니 방금 전까지 아무도 없던 자리에, 보라색 눈의 여인이 웃고 있었다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "쉿, 놀라지 마. 마왕성 문턱까지 갔다 온 용사님이 이렇게 겁이 많아서야."
+    },
+    {
+      "id": "r3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "…누구야? 언제부터 거기 있었어?"
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "나타샤. 모르가스 뒷골목 출신이야. 마왕군 쪽 정보라면 누구보다 많이 알고 있지."
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "…걔네한테 빚이 좀 있거든. 갚으러 가는 길에 너희랑 같이 가면 편할 것 같아서. 어때?",
+      "choices": [
+        {
+          "text": "같이 가자. 네 복수도 도울게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r6a"
+        },
+        {
+          "text": "다음부턴 앞에서 말 걸어 줘.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "r6b"
+        }
+      ]
+    },
+    {
+      "id": "r6a",
+      "speaker": "CH_NATASHA",
+      "expression": "놀람",
+      "text": "…복수라고 말한 적은 없는데. 눈치 빠르네. 싫지 않아.",
+      "next": "r7"
+    },
+    {
+      "id": "r6b",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "후후, 노력은 해 볼게. 약속은 못 하지만.",
+      "next": "r7"
+    },
+    {
+      "id": "r7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤가 동료가 되었다. 정신을 차리고 보니, 주머니 속 사탕 하나가 사라져 있었다."
+    }
+  ]
+}

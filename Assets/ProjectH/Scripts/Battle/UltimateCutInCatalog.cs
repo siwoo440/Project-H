@@ -46,7 +46,15 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case "CH_ELLEN": return "제 뒤로. 한 걸음도 물러서지 않겠습니다."; // 엘렌 (짧고 정확한 존댓말)
                 case "CH_LILIA": return "좌표 고정. 전부 떨어져."; // 릴리아 (건조한 반말)
                 case "CH_EVE": return "정령들아… 비가 되어 줘."; // 이브 (짧은 반말)
-                default: return string.Empty; // 기타 캐릭터 (추가 캐릭터 일차에 연결)
+                case "CH_NATASHA": return "쉿— 끝나는 건 한순간이야."; // 나타샤 (장난스러운 반말) (Day64 추가)
+                case "CH_CLAIRE": return "배합 완료! 다들 버텨, 지금 살려 줄게!"; // 클레어 (활발한 반말)
+                case "CH_LUCIA": return "계약 이행. 머리를 노린다."; // 루시아 (냉정한 말투)
+                case "CH_PYRA": return "비켜! 전부 불태워 주지!"; // 파이라 (열혈 반말)
+                case "CH_TYRIA": return "……내 뒤는, 절대 무너지지 않아."; // 티리아 (과묵)
+                case "CH_MERCIA": return "금강의 법으로… 봉인합니다!"; // 메르시아 (순수한 존댓말)
+                case "CH_NOEL": return "모래바람아, 길을 막아!"; // 노엘 (자유로운 반말)
+                case "CH_SEPHIRA": return "신이시여, 이번만은 제 뜻으로 빌겠습니다."; // 세피라 (경건한 존댓말)
+                default: return string.Empty; // 기타 캐릭터
             }
         }
 

@@ -16,7 +16,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         AttackSpeedReductionPercent = 8, // 공격 속도 비율 감소 둔화 (Day51 추가)
         AttackPercent = 9, // 공격력 비율 증가 (Day51 추가)
         AttackSpeedPercent = 10, // 공격 속도 비율 증가 가속 (Day54 추가)
-        Invulnerable = 11 // 모든 피해 무시 무적 (Day54 추가)
+        Invulnerable = 11, // 모든 피해 무시 무적 (Day54 추가)
+        DefenseReductionPercent = 12, // 방어력 비율 감소 (Day64 추가)
+        AttackReductionPercent = 13 // 공격력 비율 감소 (Day64 추가)
     }
 
     public static partial class BattleSkillRuntimeState // 스킬 기반 전투 Runtime 상태 저장소 (최적화 — 역할별 partial 파일로 분리: 본 파일은 Modifier·스탯 조회)
@@ -149,7 +151,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             float bonus = GetModifierTotal(target.RuntimeId, BattleRuntimeModifierKind.DefensePercent, nowSeconds); // 대상 방어 증가율 조회
-            return Mathf.Max(0, Mathf.RoundToInt(target.Defense * (1f + bonus))); // 방어 증가 적용 최종 방어력 반환
+            float reduction = Mathf.Clamp(GetModifierTotal(target.RuntimeId, BattleRuntimeModifierKind.DefenseReductionPercent, nowSeconds), 0f, 0.90f); // 방어 감소율 (Day64 추가, 상한 90%)
+            return Mathf.Max(0, Mathf.RoundToInt(target.Defense * (1f + bonus) * (1f - reduction))); // 방어 증가·감소 적용 최종 방어력 반환
         }
 
         public static int GetEffectiveResistance(IBattleCombatantStats target, float nowSeconds = -1f) // 마법 저항 감소 반영 최종 저항력 계산
@@ -203,7 +206,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public static float GetAttackMultiplier(string runtimeId, float nowSeconds = -1f) // 공격력 증가 배율 조회 (Day51 추가)
         {
-            return 1f + GetModifierTotal(runtimeId, BattleRuntimeModifierKind.AttackPercent, nowSeconds); // 공격력 증가율 반영 배율 반환
+            float reduction = Mathf.Clamp(GetModifierTotal(runtimeId, BattleRuntimeModifierKind.AttackReductionPercent, nowSeconds), 0f, 0.90f); // 공격력 감소율 (Day64 추가, 상한 90%)
+            return (1f + GetModifierTotal(runtimeId, BattleRuntimeModifierKind.AttackPercent, nowSeconds)) * (1f - reduction); // 공격력 증가·감소 반영 배율 반환
         }
 
         public static float GetDamageReduction(string runtimeId, float nowSeconds = -1f) // 최종 피해 감소율 조회

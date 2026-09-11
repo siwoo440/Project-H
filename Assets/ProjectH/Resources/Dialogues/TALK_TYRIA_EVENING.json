@@ -1,0 +1,27 @@
+{
+  "id": "TALK_TYRIA_EVENING",
+  "title": "",
+  "characterId": "CH_TYRIA",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_TYRIA",
+      "expression": "생각",
+      "text": "……노을이 지면, 고향 마을 굴뚝 연기가 생각난다."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "언젠가 같이 그곳에 가 보자."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "……응. 그때는, 꽃을 가져가고 싶다."
+    }
+  ]
+}

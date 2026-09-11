@@ -1,0 +1,27 @@
+{
+  "id": "TALK_CLAIRE_DAY",
+  "title": "",
+  "characterId": "CH_CLAIRE",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "시장에서 톱니 부품을 싸게 샀어. 메리디안에선 흔했는데 여긴 귀하더라."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "연금술에 톱니도 써?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "장비랑 약을 합치면 훨씬 재밌어지거든. 기대해!"
+    }
+  ]
+}

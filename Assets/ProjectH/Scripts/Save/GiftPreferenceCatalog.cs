@@ -49,7 +49,31 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             new GiftPreferenceEntry("CH_LILIA", Shell, GiftPreference.Dislike), // 릴리아 : 정령의 조개 별로 (불 속성)
             new GiftPreferenceEntry("CH_EVE", Shell, GiftPreference.Love), // 이브 : 정령의 조개 아주 좋아함
             new GiftPreferenceEntry("CH_EVE", Sweets, GiftPreference.Like), // 이브 : 달콤한 과자 좋아함
-            new GiftPreferenceEntry("CH_EVE", Candle, GiftPreference.Dislike) // 이브 : 성수 향초 별로 (물 속성)
+            new GiftPreferenceEntry("CH_EVE", Candle, GiftPreference.Dislike), // 이브 : 성수 향초 별로 (물 속성)
+            new GiftPreferenceEntry("CH_NATASHA", Sweets, GiftPreference.Love), // 나타샤 : 달콤한 과자 아주 좋아함 (Day64 추가 — 겉은 장난스러움)
+            new GiftPreferenceEntry("CH_NATASHA", Brooch, GiftPreference.Like), // 나타샤 : 브로치 좋아함 (반짝이는 것)
+            new GiftPreferenceEntry("CH_NATASHA", Candle, GiftPreference.Dislike), // 나타샤 : 성수 향초 별로 (교단 냄새)
+            new GiftPreferenceEntry("CH_CLAIRE", Shell, GiftPreference.Love), // 클레어 : 정령의 조개 아주 좋아함 (연금 재료)
+            new GiftPreferenceEntry("CH_CLAIRE", StarMap, GiftPreference.Like), // 클레어 : 별자리 지도 좋아함
+            new GiftPreferenceEntry("CH_CLAIRE", Flower, GiftPreference.Dislike), // 클레어 : 들꽃 꽃다발 별로 (금방 시듦)
+            new GiftPreferenceEntry("CH_LUCIA", Brooch, GiftPreference.Love), // 루시아 : 브로치 아주 좋아함 (값나가는 물건)
+            new GiftPreferenceEntry("CH_LUCIA", StarMap, GiftPreference.Like), // 루시아 : 별자리 지도 좋아함 (길잡이)
+            new GiftPreferenceEntry("CH_LUCIA", Sweets, GiftPreference.Dislike), // 루시아 : 달콤한 과자 별로
+            new GiftPreferenceEntry("CH_PYRA", Sweets, GiftPreference.Love), // 파이라 : 달콤한 과자 아주 좋아함 (먹성)
+            new GiftPreferenceEntry("CH_PYRA", Brooch, GiftPreference.Like), // 파이라 : 기사단 브로치 좋아함
+            new GiftPreferenceEntry("CH_PYRA", Shell, GiftPreference.Dislike), // 파이라 : 정령의 조개 별로 (불 속성)
+            new GiftPreferenceEntry("CH_TYRIA", Flower, GiftPreference.Love), // 티리아 : 들꽃 꽃다발 아주 좋아함 (잃은 마을의 꽃)
+            new GiftPreferenceEntry("CH_TYRIA", Candle, GiftPreference.Like), // 티리아 : 성수 향초 좋아함 (추모)
+            new GiftPreferenceEntry("CH_TYRIA", Sweets, GiftPreference.Dislike), // 티리아 : 달콤한 과자 별로
+            new GiftPreferenceEntry("CH_MERCIA", Candle, GiftPreference.Love), // 메르시아 : 성수 향초 아주 좋아함 (수행)
+            new GiftPreferenceEntry("CH_MERCIA", Sweets, GiftPreference.Like), // 메르시아 : 달콤한 과자 좋아함 (처음 먹어 봄)
+            new GiftPreferenceEntry("CH_MERCIA", Brooch, GiftPreference.Dislike), // 메르시아 : 브로치 별로 (사치)
+            new GiftPreferenceEntry("CH_NOEL", StarMap, GiftPreference.Love), // 노엘 : 별자리 지도 아주 좋아함 (탐험가)
+            new GiftPreferenceEntry("CH_NOEL", Shell, GiftPreference.Like), // 노엘 : 정령의 조개 좋아함 (수집)
+            new GiftPreferenceEntry("CH_NOEL", Candle, GiftPreference.Dislike), // 노엘 : 성수 향초 별로
+            new GiftPreferenceEntry("CH_SEPHIRA", Candle, GiftPreference.Love), // 세피라 : 성수 향초 아주 좋아함 (기도)
+            new GiftPreferenceEntry("CH_SEPHIRA", Flower, GiftPreference.Like), // 세피라 : 들꽃 꽃다발 좋아함 (처음 받아 본 선물)
+            new GiftPreferenceEntry("CH_SEPHIRA", StarMap, GiftPreference.Dislike) // 세피라 : 별자리 지도 별로 (신의 뜻 밖의 길)
         };
 
         public static IReadOnlyList<string> AllGiftIds => GiftIds; // 선물 ID 목록 반환

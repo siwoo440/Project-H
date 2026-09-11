@@ -1,0 +1,27 @@
+{
+  "id": "TALK_LUCIA_DAY",
+  "title": "",
+  "characterId": "CH_LUCIA",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "점심은 빨리 먹는 게 좋다. 전장에선 식사 시간이 제일 위험하니까."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "여긴 마을이야. 천천히 먹어도 돼."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_LUCIA",
+      "expression": "생각",
+      "text": "…그렇군. 천천히 먹는 법을 잊고 있었다."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "TALK_NATASHA_MORNING",
+  "title": "",
+  "characterId": "CH_NATASHA",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "좋은 아침~ 용사님, 자는 얼굴 꽤 귀엽더라."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "…또 방에 몰래 들어왔어?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "문단속이 허술한 쪽이 잘못이지. 오늘 아침 정보는 공짜로 줄게."
+    }
+  ]
+}

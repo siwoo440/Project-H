@@ -1,0 +1,27 @@
+{
+  "id": "TALK_LUCIA_MORNING",
+  "title": "",
+  "characterId": "CH_LUCIA",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "총신 손질은 아침에 한다. 하루를 망치지 않는 습관이지."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "매일 하는 거야?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "하루 거르면 한 명이 죽는다. 용병의 계산법이다."
+    }
+  ]
+}

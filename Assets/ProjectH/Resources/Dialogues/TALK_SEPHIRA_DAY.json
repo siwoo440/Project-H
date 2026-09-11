@@ -1,0 +1,27 @@
+{
+  "id": "TALK_SEPHIRA_DAY",
+  "title": "",
+  "characterId": "CH_SEPHIRA",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "이 들꽃, 아이들이 제게 주었어요. 선물을 받는 건 처음이라…"
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "잘 어울려."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "부끄러움",
+      "text": "그, 그런 말씀은… 기도문에 없는 말이라 대답을 모르겠어요."
+    }
+  ]
+}

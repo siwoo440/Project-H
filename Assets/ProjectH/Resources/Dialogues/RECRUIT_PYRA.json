@@ -1,0 +1,79 @@
+{
+  "id": "RECRUIT_PYRA",
+  "title": "붉은 창의 귀환",
+  "characterId": "CH_PYRA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "침식된 회랑을 돌파했다는 소식이 퍼진 날, 붉은 갑옷의 창기사가 길드에 성큼 들어섰다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "회랑을 뚫은 게 너희라며? 흥, 생각보다 멀쩡하게 생겼네."
+    },
+    {
+      "id": "r3",
+      "speaker": "CH_ELLEN",
+      "expression": "놀람",
+      "text": "…파이라? 네가 왜 여기에."
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "오랜만입니다, 대장. 아니, 이젠 대장도 아니지. 제국의 이상 같은 걸로는 아무도 못 지켜요."
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…그래서 혼자 싸우고 있었나."
+    },
+    {
+      "id": "r6",
+      "speaker": "CH_PYRA",
+      "expression": "각오",
+      "text": "그래서 결과로 보여 주려고. 이 파티가 진짜 강한지, 내 창으로 직접 확인하겠어. 받아 줄 거지?",
+      "choices": [
+        {
+          "text": "좋아. 앞은 네게 맡길게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r7a"
+        },
+        {
+          "text": "엘렌과 싸우지 않는다면.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "r7b"
+        }
+      ]
+    },
+    {
+      "id": "r7a",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "하, 말 잘하네! 전부 불태워 줄 테니 뒤나 잘 따라와.",
+      "next": "r8"
+    },
+    {
+      "id": "r7b",
+      "speaker": "CH_PYRA",
+      "expression": "당황",
+      "text": "…싸우긴 누가 싸운다고. 말다툼 정도는 봐줘.",
+      "next": "r8"
+    },
+    {
+      "id": "r8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라가 동료가 되었다. 엘렌은 아무 말 없이, 그러나 조금 누그러진 얼굴로 그녀를 바라보았다."
+    }
+  ]
+}

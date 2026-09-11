@@ -32,15 +32,25 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
                 return new BattleSkillEffectExecutionResult(0, 0); // 미구현 스킬 빈 실행 결과 반환
             }
 
+            return ExecuteEffects(enhancement.Effects, request.SkillId, owner, registry, 1f); // 공통 효과 목록 실행 (Day64 — 궁극기와 공용)
+        }
+
+        public static BattleSkillEffectExecutionResult ExecuteEffects(IReadOnlyList<SkillEffectDefinition> effects, string sourceId, BattleActor owner, BattleCombatRegistry registry, float powerMultiplier) // 효과 목록 실행 (Day64 추가 — 스킬·코드 궁극기 공용, powerMultiplier는 리듬 배율로 수치에 곱함)
+        {
+            if (effects == null || owner == null || registry == null) // 입력 확인
+            {
+                return new BattleSkillEffectExecutionResult(0, 0); // 빈 결과
+            }
+
             int appliedEffects = 0; // 적용 효과 개수 초기화
             int affectedTargets = 0; // 영향 대상 누적 수 초기화
             int previousSuccessCount = 0; // 앞선 효과 성공 대상 수 초기화
             Dictionary<SkillTargetType, IReadOnlyList<BattleActor>> targetCache = new Dictionary<SkillTargetType, IReadOnlyList<BattleActor>>(); // 같은 TargetType 효과가 동일 대상을 유지하도록 타겟 캐시 생성
             BattleSkillTargetContext targetContext = default; // 주 대상 주변 효과용 실행 Context 초기화
 
-            for (int effectIndex = 0; effectIndex < enhancement.Effects.Length; effectIndex++) // 강화도별 효과 목록 순회
+            for (int effectIndex = 0; effectIndex < effects.Count; effectIndex++) // 강화도별 효과 목록 순회
             {
-                SkillEffectDefinition effect = enhancement.Effects[effectIndex]; // 현재 효과 데이터 조회
+                SkillEffectDefinition effect = ScaleEffect(effects[effectIndex], powerMultiplier); // 현재 효과 데이터 조회
 
                 if (effect == null || effect.Kind == SkillEffectKind.None) // 효과 데이터 유효성 확인
                 {
@@ -50,6 +60,19 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
                 if (effect.RequirePreviousSuccess && previousSuccessCount <= 0) // 앞선 효과 성공 조건 확인
                 {
                     continue; // 앞선 효과 실패 시 조건부 효과 제외
+                }
+
+                if (effect.Kind == SkillEffectKind.ReviveAllies) // 부활은 쓰러진 아군이 대상 (Day64)
+                {
+                    int revived = ReviveAllies(owner, effect); // 부활 실행
+                    if (revived > 0) // 부활 성공
+                    {
+                        appliedEffects++; // 적용 효과 수 증가
+                        affectedTargets += revived; // 영향 대상 수 누적
+                    }
+
+                    previousSuccessCount = revived; // 조건부 효과용
+                    continue; // 다음 효과
                 }
 
                 IReadOnlyList<BattleActor> targets = SelectTargets(owner, registry, effect, targetCache, targetContext); // 현재 효과 대상 목록 선택
@@ -64,7 +87,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
                 for (int targetIndex = 0; targetIndex < targets.Count; targetIndex++) // 현재 효과 대상 순회
                 {
                     BattleActor target = targets[targetIndex]; // 현재 효과 대상 조회
-                    string sourceKey = $"{request.SkillId}:{effectIndex}"; // 같은 스킬 효과 재사용 시 갱신용 출처 키 생성
+                    string sourceKey = $"{sourceId}:{effectIndex}"; // 같은 스킬 효과 재사용 시 갱신용 출처 키 생성
 
                     if (ApplySingleEffect(effect, owner, target, sourceKey)) // 단일 대상 효과 적용 성공 확인
                     {
@@ -82,6 +105,27 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             }
 
             return new BattleSkillEffectExecutionResult(appliedEffects, affectedTargets); // 공통 스킬 효과 실행 결과 반환
+        }
+
+        private static SkillEffectDefinition ScaleEffect(SkillEffectDefinition effect, float multiplier) // 궁극기 리듬 배율 적용 (피해·회복·보호막·버프/디버프 수치, 확률·기절·도발 등은 그대로)
+        {
+            if (effect == null || Mathf.Approximately(multiplier, 1f)) return effect; // 배율 없음
+
+            switch (effect.Kind) // 수치형 효과만
+            {
+                case SkillEffectKind.DamageAttackRatio: // 직접 피해
+                case SkillEffectKind.PeriodicDamageAttackRatio: // 지속 피해
+                case SkillEffectKind.DamageWhenOwnerLowHp: // 저체력 추가 피해
+                case SkillEffectKind.HealMaxHpPercent: // 회복
+                case SkillEffectKind.ShieldOwnerMaxHpPercent: // 보호막
+                case SkillEffectKind.AttackPercent: // 공격 증가
+                case SkillEffectKind.DamageReductionPercent: // 피해 감소
+                case SkillEffectKind.DefenseReductionPercent: // 방어 감소
+                case SkillEffectKind.AttackReductionPercent: // 공격 감소
+                    return effect.WithValue(effect.Value * Mathf.Max(0f, multiplier)); // 배율 적용 복사본
+                default: // 그 외
+                    return effect; // 그대로
+            }
         }
 
         private static IReadOnlyList<BattleActor> SelectTargets(BattleActor owner, BattleCombatRegistry registry, SkillEffectDefinition effect, Dictionary<SkillTargetType, IReadOnlyList<BattleActor>> targetCache, BattleSkillTargetContext context) // 효과별 대상 선택 및 캐시
@@ -131,6 +175,22 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
                     return ApplyDebuffModifier(effect, target, BattleRuntimeModifierKind.ResistanceReductionPercent, sourceKey); // 저항 감소 Modifier 적용 결과 반환
                 case SkillEffectKind.AccuracyReductionPercent: // 명중률 감소 처리
                     return ApplyDebuffModifier(effect, target, BattleRuntimeModifierKind.AccuracyReductionPercent, sourceKey); // 명중 감소 Modifier 적용 결과 반환
+                case SkillEffectKind.AttackPercent: // 공격력 증가 처리 (Day64)
+                    return ApplyModifier(effect, target, BattleRuntimeModifierKind.AttackPercent, sourceKey); // 버프
+                case SkillEffectKind.AttackSpeedPercent: // 가속 처리 (Day64)
+                    return ApplyModifier(effect, target, BattleRuntimeModifierKind.AttackSpeedPercent, sourceKey); // 버프
+                case SkillEffectKind.AttackSpeedReductionPercent: // 둔화 처리 (Day64)
+                    return ApplyDebuffModifier(effect, target, BattleRuntimeModifierKind.AttackSpeedReductionPercent, sourceKey); // 디버프
+                case SkillEffectKind.DefenseReductionPercent: // 방어 감소 처리 (Day64)
+                    return ApplyDebuffModifier(effect, target, BattleRuntimeModifierKind.DefenseReductionPercent, sourceKey); // 디버프
+                case SkillEffectKind.AttackReductionPercent: // 공격 감소 처리 (Day64)
+                    return ApplyDebuffModifier(effect, target, BattleRuntimeModifierKind.AttackReductionPercent, sourceKey); // 디버프
+                case SkillEffectKind.ShieldOwnerMaxHpPercent: // 보호막 처리 (Day64)
+                    return ApplyOwnerShield(effect, owner, target); // 시전자 최대 체력 비율 보호막
+                case SkillEffectKind.DispelBuff: // 버프 제거 처리 (Day64)
+                    return BattleSkillRuntimeState.RemoveBuffs(target.Stats.RuntimeId, Mathf.Max(1, effect.Count)) > 0; // 시간 제한 버프 제거
+                case SkillEffectKind.DamageWhenOwnerLowHp: // 저체력 추가 피해 처리 (Day64)
+                    return owner.Stats.CurrentHp <= owner.Stats.MaxHp * 0.5f && ApplyDamage(effect, owner, target); // 시전자 HP 50% 이하일 때만
                 case SkillEffectKind.Stun: // 기절 처리
                     return ApplyStun(effect, target, sourceKey); // 확률 기절 적용 결과 반환
                 default: // 미지원 효과 처리
@@ -236,6 +296,36 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
 
             BattleSkillRuntimeState.AddPeriodicDamage(owner.Stats, target.Stats.RuntimeId, ConvertDamageType(effect.DamageType), power, tickInterval, tickCount, sourceKey); // 데이터 기반 DoT Runtime 등록
             return true; // 주기 피해 등록 성공 반환
+        }
+
+        private static bool ApplyOwnerShield(SkillEffectDefinition effect, BattleActor owner, BattleActor target) // 시전자 최대 체력 비율 보호막 (Day64 추가 — 티리아 방패벽·파수꾼의 벽)
+        {
+            int amount = Mathf.RoundToInt(owner.Stats.MaxHp * Mathf.Max(0f, effect.Value)); // 보호막량
+            if (amount <= 0) return false; // 잘못된 수치
+            BattlePassiveRuntimeState.GrantShield(target.Stats.RuntimeId, amount); // 보호막 부여 (Day20 보호막 재사용)
+            return true; // 성공
+        }
+
+        private static int ReviveAllies(BattleActor owner, SkillEffectDefinition effect) // 쓰러진 아군 부활 (Day64 추가 — 세피라 세라핌의 축복, 같은 씬의 쓰러진 아군을 ID 순으로)
+        {
+            int limit = Mathf.Max(1, effect.Count); // 부활 인원
+            float ratio = Mathf.Clamp(effect.Value, 0.05f, 1f); // 부활 체력 비율
+            List<BattleDeathHandler> candidates = new List<BattleDeathHandler>(); // 부활 후보
+
+            foreach (BattleDeathHandler handler in Resources.FindObjectsOfTypeAll<BattleDeathHandler>()) // 비활성 포함 사망 처리기
+            {
+                if (handler != null && handler.CanRevive && handler.AllyStats != null && handler.gameObject.scene == owner.gameObject.scene) candidates.Add(handler); // 같은 씬 부활 가능 아군
+            }
+
+            candidates.Sort((a, b) => string.CompareOrdinal(a.AllyStats.RuntimeId, b.AllyStats.RuntimeId)); // 결정적 순서
+            int revived = 0; // 부활 수
+
+            for (int index = 0; index < candidates.Count && revived < limit; index++) // 인원만큼
+            {
+                if (candidates[index].TryRevive(Mathf.Max(1, Mathf.RoundToInt(candidates[index].AllyStats.MaxHp * ratio)))) revived++; // 부활
+            }
+
+            return revived; // 부활 수 반환
         }
 
         private static bool ApplyStun(SkillEffectDefinition effect, BattleActor target, string sourceKey) // 확률 기절 적용

@@ -1,0 +1,27 @@
+{
+  "id": "TALK_NOEL_DAY",
+  "title": "",
+  "characterId": "CH_NOEL",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "시장에 신기한 조개껍데기가 있더라. 무늬가 꼭 옛날 지도 같았어."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "또 수집품이 늘었네."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "헤헤, 가방이 터지기 직전이야."
+    }
+  ]
+}

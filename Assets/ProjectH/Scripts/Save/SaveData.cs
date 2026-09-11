@@ -205,6 +205,14 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             return null; // 조회 실패 반환
         }
 
+        internal bool AddCharacterInternal(string characterId) // 새 동료 합류 (Day64 추가 — RecruitService 전용, 이미 있으면 false)
+        {
+            EnsureDefaults(); // 저장 기본값 확인
+            if (string.IsNullOrWhiteSpace(characterId) || FindCharacter(characterId) != null) return false; // 빈 ID·중복
+            characters.Add(new CharacterSaveData(characterId)); // 레벨 1로 합류
+            return true; // 합류
+        }
+
         public bool HasCharacter(string characterId) // 캐릭터 보유 여부 확인
         {
             EnsureDefaults(); // 저장 기본값 확인

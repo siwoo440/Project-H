@@ -1,0 +1,27 @@
+{
+  "id": "TALK_CLAIRE_NIGHT",
+  "title": "",
+  "characterId": "CH_CLAIRE",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "밤샘 실험 중이야! 조용히 해 줘, 지금 거품이 딱 좋은 상태거든."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "무리하지 마. 내일도 던전이야."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "알았어~ 이것만 끝나면 잘게. 진짜로."
+    }
+  ]
+}

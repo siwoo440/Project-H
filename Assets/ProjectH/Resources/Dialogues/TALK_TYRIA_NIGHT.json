@@ -1,0 +1,27 @@
+{
+  "id": "TALK_TYRIA_NIGHT",
+  "title": "",
+  "characterId": "CH_TYRIA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "……밤에는 잘 자라. 내가 문 앞에 있다."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "티리아도 자야지."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "……네가 잠든 걸 확인하면, 잘게."
+    }
+  ]
+}

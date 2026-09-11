@@ -1,0 +1,27 @@
+{
+  "id": "TALK_PYRA_EVENING",
+  "title": "",
+  "characterId": "CH_PYRA",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_PYRA",
+      "expression": "생각",
+      "text": "대장이랑 나, 옛날엔 이렇게 노을 보면서 창술 얘기만 했었어."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "지금은 다시 할 수 있잖아."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_PYRA",
+      "expression": "부끄러움",
+      "text": "…흥. 네가 그렇게 말하면, 해 볼까 싶어지잖아."
+    }
+  ]
+}

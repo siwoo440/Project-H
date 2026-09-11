@@ -1,0 +1,27 @@
+{
+  "id": "TALK_NATASHA_DAY",
+  "title": "",
+  "characterId": "CH_NATASHA",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "점심은 달달한 걸로 하자. 머리를 쓰면 설탕이 당기거든."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "정보 수집도 머리 쓰는 일이구나."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "당연하지. 그러니까 과자는 네가 사."
+    }
+  ]
+}

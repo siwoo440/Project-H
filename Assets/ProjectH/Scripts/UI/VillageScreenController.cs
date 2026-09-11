@@ -1,7 +1,7 @@
 using System.Collections; // 코루틴 기능
 using System.Collections.Generic; // 목록 자료형
 using System.Text; // 문자열 조립 기능
-using ProjectH.Core; // 게임 관리자 및 씬 이름 기능
+using ProjectH.Core; // 게임 관리자·씬 이름·개발 기능 표시
 using ProjectH.Data; // 캐릭터·던전 데이터 기능
 using ProjectH.Dialogue; // 대화 파일 기능
 using ProjectH.SaveSystem; // 저장·시간·활력 기능
@@ -23,6 +23,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static readonly Color TimeColor = new Color(0.86f, 0.62f, 0.30f, 1f); // 시간 소비 버튼 주황
         private static readonly Color SubColor = new Color(0.26f, 0.28f, 0.34f, 1f); // 보조 버튼 회색
         private static readonly Color HintColor = new Color(0.82f, 0.84f, 0.88f, 1f); // 안내 글자
+        private static readonly Color RecruitColor = new Color(0.36f, 0.62f, 0.40f, 1f); // 새 동료 소식 초록 (Day64 추가)
 
         private readonly Dictionary<VillageZone, Button> zoneCards = new Dictionary<VillageZone, Button>(); // 지도 구역 카드
         private readonly Dictionary<VillageZone, Text> zoneCardPeople = new Dictionary<VillageZone, Text>(); // 카드 속 캐릭터 이름
@@ -225,6 +226,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 bool open = VillageZoneCatalog.IsOpen(info.Zone, phase); // 운영 여부
                 List<string> present = VillagePresenceService.GetCharactersIn(saveData, info.Zone); // 있는 사람
                 zoneCardPeople[info.Zone].text = !open ? "영업 종료 (밤)" : present.Count > 0 ? "● " + JoinNames(present) : "아무도 없음"; // 카드 글자
+                int recruits = info.Zone == VillageZone.Guild ? RecruitService.GetPending(saveData).Count : 0; // 길드 새 동료 소식 수 (Day64)
+                if (open && recruits > 0) zoneCardPeople[info.Zone].text = $"★ 새 동료 소식 {recruits}건\n" + zoneCardPeople[info.Zone].text; // 길드 카드 알림
                 zoneCards[info.Zone].GetComponent<Image>().color = open ? CardColor : new Color(0.05f, 0.05f, 0.06f, 0.65f); // 닫힌 구역 어둡게
             }
 
@@ -316,12 +319,58 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 case VillageZone.Inn: // 여관 : 잠자기
                     bool canSleep = VillageActionService.CanSleep(saveData, out _); // 저녁·밤만
                     return AddButton(canSleep ? "방 잡고 잠자기  (다음 날 아침 · 활력 전체 회복)" : "방 잡고 잠자기  (저녁부터)", TimeColor, y, 0.06f, canSleep, Sleep); // 잠자기
-                case VillageZone.Guild: // 길드 : 게시판 · 모험
+                case VillageZone.Guild: // 길드 : 새 동료 소식 · 게시판 · 모험
+                    y = AddRecruitActions(saveData, y); // 새 동료 합류 (Day64)
                     y = AddButton("의뢰 게시판", SubColor, y, 0.055f, true, ShowGuildBoard); // 게시판
                     return AddButton("모험 떠나기  (던전 선택)", SubColor, y, 0.055f, true, () => LoadScene(GameScenes.DungeonSelect)); // 던전
                 default: // 광장
                     return y; // 구역 행동 없음
             }
+        }
+
+        private float AddRecruitActions(SaveData saveData, float y) // 길드 새 동료 소식 버튼 (대기 중 첫 동료 1명씩 · 개발용 전원 합류)
+        {
+            List<RecruitDefinition> pending = RecruitService.GetPending(saveData); // 조건을 채운 합류 대기 동료
+
+            if (pending.Count > 0) // 소식 있음
+            {
+                RecruitDefinition first = pending[0]; // 첫 동료
+                string more = pending.Count > 1 ? $"  (외 {pending.Count - 1}명)" : string.Empty; // 남은 수
+                y = AddButton($"★ 새 동료 소식 · {GetName(first.CharacterId)}{more}", RecruitColor, y, 0.06f, true, () => StartRecruit(first.CharacterId)); // 합류 이야기
+            }
+
+            if (DevelopmentFeatures.Enabled && RecruitService.All.Count > CountOwnedRecruits(saveData)) // 개발용 : 아직 합류 안 한 동료가 있을 때만
+            {
+                y = AddButton("전원 합류  (개발용)", new Color(0.45f, 0.30f, 0.30f, 1f), y, 0.05f, true, RecruitAllForDebug); // 조건 무시 전원 합류
+            }
+
+            return y; // 다음 위치
+        }
+
+        private static int CountOwnedRecruits(SaveData saveData) // 이미 합류한 추가 동료 수
+        {
+            int count = 0; // 합류 수
+
+            foreach (RecruitDefinition definition in RecruitService.All) // 정의 순회
+            {
+                if (saveData != null && saveData.HasCharacter(definition.CharacterId)) count++; // 보유
+            }
+
+            return count; // 합류 수 반환
+        }
+
+        private void StartRecruit(string characterId) // 합류 이야기 재생 → 끝까지 보면 동료 추가
+        {
+            if (busy) return; // 진행 중 입력 무시
+            RecruitDefinition definition = RecruitService.Find(characterId); // 정의
+            if (definition == null) return; // 정의 없음
+            OpenDialogue(definition.ScriptId, runner => Finish(true, RecruitService.CompleteRecruit(GetSave(), characterId, runner, GetName(characterId)))); // 대화 → 합류
+        }
+
+        private void RecruitAllForDebug() // 개발용 전원 합류 (합류 이벤트 없이 바로)
+        {
+            int added = RecruitService.RecruitAllForDebug(GetSave()); // 합류
+            Finish(added > 0, $"[개발용] 새 동료 {added}명이 바로 합류했습니다."); // 저장·안내
         }
 
         private float AddLabel(string text, int size, Color color, FontStyle style, float top, float height) // 패널 글자 한 줄 추가 후 다음 위치 반환

@@ -1,0 +1,27 @@
+{
+  "id": "TALK_LUCIA_NIGHT",
+  "title": "",
+  "characterId": "CH_LUCIA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "밤 경계는 내가 서지. 저격수는 어둠에 익숙하다."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "교대하자. 너도 쉬어야지."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_LUCIA",
+      "expression": "부끄러움",
+      "text": "…이 파티는 이상하군. 용병을 걱정하다니."
+    }
+  ]
+}

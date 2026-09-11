@@ -1,0 +1,27 @@
+{
+  "id": "TALK_LUCIA_EVENING",
+  "title": "",
+  "characterId": "CH_LUCIA",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "오늘 번 몫이다. 공평하게 나눴으니 확인해라."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "루시아는 정말 계산이 정확하네."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "신뢰는 숫자에서 시작한다. …감정은 그다음이지."
+    }
+  ]
+}

@@ -80,6 +80,22 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new Color(0.62f, 0.55f, 0.90f, 1f); // 청보라 (연산 원)
                 case "CH_EVE": // 이브 처리
                     return new Color(0.60f, 0.84f, 0.64f, 1f); // 숲 초록
+                case "CH_NATASHA": // 나타샤 처리 (Day64 추가)
+                    return new Color(0.52f, 0.40f, 0.62f, 1f); // 그림자 보라
+                case "CH_CLAIRE": // 클레어 처리 (Day64 추가)
+                    return new Color(0.72f, 0.88f, 0.52f, 1f); // 연금 연두
+                case "CH_LUCIA": // 루시아 처리 (Day64 추가)
+                    return new Color(0.86f, 0.70f, 0.50f, 1f); // 사막 모래
+                case "CH_PYRA": // 파이라 처리 (Day64 추가)
+                    return new Color(0.98f, 0.52f, 0.40f, 1f); // 불꽃 주홍
+                case "CH_TYRIA": // 티리아 처리 (Day64 추가)
+                    return new Color(0.66f, 0.70f, 0.74f, 1f); // 방패 강철
+                case "CH_MERCIA": // 메르시아 처리 (Day64 추가)
+                    return new Color(0.96f, 0.80f, 0.46f, 1f); // 사원 금빛
+                case "CH_NOEL": // 노엘 처리 (Day64 추가)
+                    return new Color(0.56f, 0.82f, 0.94f, 1f); // 얼음 하늘
+                case "CH_SEPHIRA": // 세피라 처리 (Day64 추가)
+                    return new Color(0.94f, 0.94f, 0.98f, 1f); // 순백
                 case "NPC_SHOPKEEPER": // 상점 주인 처리 (Day61 추가)
                     return new Color(0.96f, 0.80f, 0.62f, 1f); // 따뜻한 살구색
                 case "NPC_BLACKSMITH": // 대장장이 처리 (Day61 추가)

@@ -10,7 +10,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
         Personal = 0, // 개인 이벤트
         Bond = 1, // 결속 대사
         Village = 2, // 마을 이벤트
-        InnNight = 3 // 여관 특별한 밤
+        InnNight = 3, // 여관 특별한 밤
+        Recruit = 4 // 동료 합류 (Day64 추가)
     }
 
     public sealed class DiaryScenarioEntry // 다시 볼 수 있는 이야기 한 편
@@ -52,7 +53,10 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
 
     public static class DiaryCatalog // 일기장 목록 (Day63 신규 — 시나리오 · CG · 궁극기 컷인)
     {
-        public static readonly string[] Starters = { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE" }; // 초기 4인 (64일차 합류 캐릭터는 대사가 생기면 추가)
+        public static readonly string[] Starters = { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE" }; // 초기 4인 (결속·마을·여관 대사 보유, 합류 8인은 70일차에 추가)
+        private static List<string> allCharacters; // 12인 목록 캐시
+
+        public static IReadOnlyList<string> AllCharacters => allCharacters ?? (allCharacters = BuildAllCharacters()); // 초기 4인 + 합류 8인 (Day64 추가 — 궁극기 컷신)
         private static List<DiaryScenarioEntry> scenarios; // 시나리오 목록 캐시
         private static List<DiaryCgEntry> cgs; // CG 목록 캐시
 
@@ -67,6 +71,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 case DiaryScenarioCategory.Personal: return "개인 이벤트"; // 개인
                 case DiaryScenarioCategory.Bond: return "결속"; // 결속
                 case DiaryScenarioCategory.Village: return "마을"; // 마을
+                case DiaryScenarioCategory.Recruit: return "동료 합류"; // 합류 (Day64)
                 default: return "특별한 밤"; // 여관
             }
         }
@@ -78,6 +83,11 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
             foreach (CharacterEventDefinition definition in CharacterEventCatalog.All) // 개인 이벤트
             {
                 result.Add(new DiaryScenarioEntry(definition.ScriptId, definition.CharacterId, DiaryScenarioCategory.Personal)); // 추가
+            }
+
+            foreach (RecruitDefinition definition in RecruitService.All) // 동료 합류 8편 (Day64)
+            {
+                result.Add(new DiaryScenarioEntry(definition.ScriptId, definition.CharacterId, DiaryScenarioCategory.Recruit)); // 추가
             }
 
             foreach (string characterId in Starters) // 결속 대사 1~5단계
@@ -98,6 +108,13 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 result.Add(new DiaryScenarioEntry(VillageActionService.GetInnEventScriptId(characterId), characterId, DiaryScenarioCategory.InnNight)); // 추가
             }
 
+            return result; // 결과 반환
+        }
+
+        private static List<string> BuildAllCharacters() // 12인 목록 구성
+        {
+            List<string> result = new List<string>(Starters); // 초기 4인
+            foreach (RecruitDefinition definition in RecruitService.All) result.Add(definition.CharacterId); // 합류 8인
             return result; // 결과 반환
         }
 

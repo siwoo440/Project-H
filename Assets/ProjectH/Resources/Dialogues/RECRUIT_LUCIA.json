@@ -1,0 +1,73 @@
+{
+  "id": "RECRUIT_LUCIA",
+  "title": "용병의 계약",
+  "characterId": "CH_LUCIA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 카운터 옆, 장총을 멘 여인이 의뢰서를 넘기다 이쪽을 돌아보았다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "마왕성에 들어갔다 살아 나온 파티. 소문보다 젊군."
+    },
+    {
+      "id": "r3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "루시아, 용병이다. 용건만 말하지. 마왕성 공략에는 저격수가 필요하고, 나는 제대로 된 보수가 필요하다."
+    },
+    {
+      "id": "r4",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "보수라면… 던전 보상을 나눠 가지는 걸로 될까?"
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_LUCIA",
+      "expression": "생각",
+      "text": "공평한 분배, 생환 우선. 이 두 가지를 지킨다면 계약하지.",
+      "choices": [
+        {
+          "text": "약속할게. 전원 생환이 우선이야.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r6a"
+        },
+        {
+          "text": "돈만 보고 싸우는 거야?",
+          "affinity": 0,
+          "preferred": false,
+          "next": "r6b"
+        }
+      ]
+    },
+    {
+      "id": "r6a",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "…좋은 대답이다. 계약 성립. 머리는 내가 맡지.",
+      "next": "r7"
+    },
+    {
+      "id": "r6b",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "이익 없는 싸움은 결국 사람을 죽인다. 그걸 너무 많이 봤을 뿐이야. …계약은 하겠다.",
+      "next": "r7"
+    },
+    {
+      "id": "r7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아가 동료가 되었다. 그녀가 서명한 계약서 끝에는, 아무도 모르게 ‘생환’이라는 글자에 밑줄이 그어져 있었다."
+    }
+  ]
+}

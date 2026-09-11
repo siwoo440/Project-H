@@ -45,7 +45,16 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         PeriodicDamageAttackRatio = 9, // 공격력 계수 주기 피해
         ResistanceReductionPercent = 10, // 마법 저항 비율 감소
         AccuracyReductionPercent = 11, // 명중률 비율 감소
-        Stun = 12 // 행동 불가 기절
+        Stun = 12, // 행동 불가 기절
+        AttackPercent = 13, // 공격력 비율 증가 (Day64 추가)
+        AttackSpeedPercent = 14, // 공격 속도 비율 증가 가속 (Day64 추가)
+        AttackSpeedReductionPercent = 15, // 공격 속도 비율 감소 둔화 (Day64 추가)
+        ShieldOwnerMaxHpPercent = 16, // 시전자 최대 체력 비율 보호막 (Day64 추가 — 티리아)
+        DefenseReductionPercent = 17, // 방어력 비율 감소 (Day64 추가 — 파이라·루시아·노엘)
+        AttackReductionPercent = 18, // 공격력 비율 감소 (Day64 추가 — 세피라)
+        DispelBuff = 19, // 대상 버프 제거 (Day64 추가 — 나타샤, count = 제거 수)
+        DamageWhenOwnerLowHp = 20, // 시전자 체력 50% 이하일 때 공격력 계수 추가 피해 (Day64 추가 — 나타샤)
+        ReviveAllies = 21 // 쓰러진 아군 부활 (Day64 추가 — 세피라, value = 최대 체력 비율, count = 인원)
     }
 
     [System.Serializable] // 스킬 효과 정의 직렬화
@@ -79,6 +88,14 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public SkillEffectDefinition(SkillEffectKind effectKind, SkillTargetType effectTargetType, float effectValue, float effectDuration, int effectCount, bool needsPreviousSuccess) // 18일차 호환 스킬 효과 데이터 생성
             : this(effectKind, effectTargetType, SkillDamageType.Physical, effectValue, effectDuration, effectCount, 1f, 1f, 0f, false, needsPreviousSuccess) // 기존 생성 규칙을 확장 생성자로 전달
         {
+        }
+
+        public SkillEffectDefinition WithValue(float newValue) => new SkillEffectDefinition(kind, targetType, damageType, newValue, duration, count, chance, interval, radius, excludePrimary, requirePreviousSuccess, element); // 수치만 바꾼 복사본 (Day64 — 궁극기 리듬 배율)
+
+        public SkillEffectDefinition(SkillEffectKind effectKind, SkillTargetType effectTargetType, SkillDamageType effectDamageType, float effectValue, float effectDuration, int effectCount, float effectChance, float effectInterval, float effectRadius, bool shouldExcludePrimary, bool needsPreviousSuccess, ElementType effectElement) // 속성 포함 생성 (Day64 추가 — 코드로 만드는 궁극기 효과)
+            : this(effectKind, effectTargetType, effectDamageType, effectValue, effectDuration, effectCount, effectChance, effectInterval, effectRadius, shouldExcludePrimary, needsPreviousSuccess) // 기존 생성 규칙
+        {
+            element = effectElement; // 속성 저장
         }
 
         public SkillEffectDefinition(SkillEffectKind effectKind, SkillTargetType effectTargetType, SkillDamageType effectDamageType, float effectValue, float effectDuration, int effectCount, float effectChance, float effectInterval, float effectRadius, bool shouldExcludePrimary, bool needsPreviousSuccess) // 19일차 확장 스킬 효과 데이터 생성

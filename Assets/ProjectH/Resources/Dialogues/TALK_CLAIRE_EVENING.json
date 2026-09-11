@@ -1,0 +1,27 @@
+{
+  "id": "TALK_CLAIRE_EVENING",
+  "title": "",
+  "characterId": "CH_CLAIRE",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_CLAIRE",
+      "expression": "생각",
+      "text": "저녁노을 보면 가끔 동생 생각이 나."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "동생이 있었어?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "…응. 언젠가 얘기해 줄게. 오늘은 말고."
+    }
+  ]
+}

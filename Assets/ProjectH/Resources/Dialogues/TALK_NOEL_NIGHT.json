@@ -1,0 +1,27 @@
+{
+  "id": "TALK_NOEL_NIGHT",
+  "title": "",
+  "characterId": "CH_NOEL",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "밤엔 별자리로 방향을 읽는 연습을 해. 저게 북쪽 별이야."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "나도 알려 줘."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "좋아! 대신 틀리면 내일 짐은 네가 드는 거다?"
+    }
+  ]
+}

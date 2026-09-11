@@ -1,0 +1,27 @@
+{
+  "id": "TALK_MERCIA_NIGHT",
+  "title": "",
+  "characterId": "CH_MERCIA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "밤하늘을 보며 신의 부름을 기다리고 있었어요."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "뭔가 들려?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_MERCIA",
+      "expression": "생각",
+      "text": "아직은요. 그런데 이상하게… 당신 목소리가 더 또렷이 들려요."
+    }
+  ]
+}

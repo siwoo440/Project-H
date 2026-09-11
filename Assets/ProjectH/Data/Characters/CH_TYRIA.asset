@@ -26,6 +26,7 @@ MonoBehaviour:
   baseMagic: 0
   baseResistance: 0
   criticalRate: 0.05
+  element: 0
   skills:
   - {fileID: 11400000, guid: 0e4a4f73535db864cbbcd49a9cf13e85, type: 2}
   - {fileID: 11400000, guid: 4c5c1dcfabb9a344ba9a908d697ae218, type: 2}

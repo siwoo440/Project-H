@@ -15,19 +15,56 @@ MonoBehaviour:
   id: SK_LUCIA_02
   ownerCharacterId: CH_LUCIA
   skillSlot: 2
-  displayName: "\uB8E8\uC2DC\uC544 \uC2A4\uD0AC 2"
-  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
-    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
-    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
-  targetType: 1
-  effectType: 0
+  displayName: "\uD035 \uB9AC\uB85C\uB4DC"
+  description: "\uC790\uC2E0\uC758 \uACF5\uACA9 \uC18D\uB3C4 25% \uC99D\uAC00 (7\uCD08)."
+  targetType: 0
+  effectType: 3
   enhancements:
   - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 10
-  - powerRatio: 1.25
+    effects:
+    - kind: 14
+      targetType: 0
+      damageType: 0
+      element: 0
+      value: 0.25
+      duration: 7
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 20
-  - powerRatio: 1.6
+    effects:
+    - kind: 14
+      targetType: 0
+      damageType: 0
+      element: 0
+      value: 0.25
+      duration: 7
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 30
+    effects:
+    - kind: 14
+      targetType: 0
+      damageType: 0
+      element: 0
+      value: 0.25
+      duration: 7
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0

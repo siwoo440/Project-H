@@ -11,6 +11,7 @@ namespace ProjectH.Village // 프로젝트 마을 영역
         public const int OnsenVitality = 30; // 온천 활력 회복량
         public const int InnEventBondLevel = 3; // 여관 특별한 밤 결속 단계 조건
         public const int InnEventBondCost = 1; // 여관 특별한 밤 결속 자원 소모
+        public const string ScriptNotReadyReason = "이 동료와의 이야기는 준비 중이에요 (70일차 개인 스토리에서 추가)."; // 대사 파일이 아직 없는 동료 안내 (Day64 추가)
 
         public static string GetZoneEventScriptId(string characterId, VillageZone zone) => $"VILLAGE_{zone.ToString().ToUpperInvariant()}_{ShortId(characterId)}"; // 구역 이벤트 대사 파일 ID (예: VILLAGE_PLAZA_SERENA)
 
@@ -31,6 +32,12 @@ namespace ProjectH.Village // 프로젝트 마을 영역
             if (!HasZoneEvent(zone)) // 이벤트 구역 확인
             {
                 reason = "이 구역에는 함께할 일이 없습니다."; // 안내
+                return false; // 불가
+            }
+
+            if (DialogueLibrary.Load(GetZoneEventScriptId(characterId, zone)) == null) // 대사 파일 확인 (Day64 — 합류 동료 8인은 70일차에 추가)
+            {
+                reason = ScriptNotReadyReason; // 안내
                 return false; // 불가
             }
 
@@ -100,6 +107,12 @@ namespace ProjectH.Village // 프로젝트 마을 영역
             if (character == null || VillagePresenceService.GetZone(saveData, characterId) != VillageZone.Inn) // 여관에 있는지
             {
                 reason = "지금 여관에 없는 캐릭터입니다."; // 안내
+                return false; // 불가
+            }
+
+            if (DialogueLibrary.Load(GetInnEventScriptId(characterId)) == null) // 대사 파일 확인 (Day64)
+            {
+                reason = ScriptNotReadyReason; // 안내
                 return false; // 불가
             }
 

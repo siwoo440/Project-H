@@ -1,0 +1,27 @@
+{
+  "id": "TALK_PYRA_MORNING",
+  "title": "",
+  "characterId": "CH_PYRA",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_PYRA",
+      "expression": "각오",
+      "text": "일어났어? 아침 훈련 간다! 창 백 번 찌르기부터!"
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "아침부터 기운 넘치네…"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "당연하지! 몸이 뜨거워야 머리도 맑아진다고."
+    }
+  ]
+}

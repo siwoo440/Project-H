@@ -1,0 +1,73 @@
+{
+  "id": "RECRUIT_CLAIRE",
+  "title": "연금술사의 방문",
+  "characterId": "CH_CLAIRE",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 문이 벌컥 열리고, 유리병이 잔뜩 든 가방을 멘 소녀가 뛰어 들어왔다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "찾았다! 숲의 성역을 뚫은 파티, 너희 맞지? 거기 이끼 샘플, 혹시 좀 챙겨 왔어?"
+    },
+    {
+      "id": "r3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "…이끼? 싸우느라 그럴 틈이 없었는데."
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "아깝다… 그 숲엔 생명력이 흘러넘치거든. 난 클레어, 메리디안에서 온 연금술사야. 생명연금술을 연구하고 있어."
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "그래서 말인데, 나도 끼워 줘! 회복약이든 독이든 전부 만들 수 있어. 대신 가끔 실험도 좀 도와주고.",
+      "choices": [
+        {
+          "text": "환영해. 약사가 필요했어.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r6a"
+        },
+        {
+          "text": "실험이 조금 걱정되는데…",
+          "affinity": 1,
+          "preferred": false,
+          "next": "r6b"
+        }
+      ]
+    },
+    {
+      "id": "r6a",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "그치그치! 내 약이면 다들 쓰러질 틈도 없을걸?",
+      "next": "r7"
+    },
+    {
+      "id": "r6b",
+      "speaker": "CH_CLAIRE",
+      "expression": "당황",
+      "text": "에이, 폭발은 가끔… 아주 가끔이야! 안전 수칙은 지킬게, 진짜로.",
+      "next": "r7"
+    },
+    {
+      "id": "r7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어가 동료가 되었다. 그녀가 찾는 ‘죽은 이를 살리는 법’에 대해서는, 아직 아무도 묻지 않았다."
+    }
+  ]
+}

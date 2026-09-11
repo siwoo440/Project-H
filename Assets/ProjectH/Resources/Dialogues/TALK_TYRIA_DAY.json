@@ -1,0 +1,27 @@
+{
+  "id": "TALK_TYRIA_DAY",
+  "title": "",
+  "characterId": "CH_TYRIA",
+  "background": "DAY",
+  "location": "일상 대화 · 점심",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "……아이들이, 방패에 그림을 그렸다."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "화 안 났어?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_TYRIA",
+      "expression": "부끄러움",
+      "text": "……꽃 그림이다. 지우지 않을 거다."
+    }
+  ]
+}

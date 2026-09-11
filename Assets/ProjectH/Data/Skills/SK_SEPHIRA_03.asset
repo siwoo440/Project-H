@@ -15,19 +15,128 @@ MonoBehaviour:
   id: SK_SEPHIRA_03
   ownerCharacterId: CH_SEPHIRA
   skillSlot: 3
-  displayName: "\uC138\uD53C\uB77C \uC2A4\uD0AC 3"
-  description: "17\uC77C\uCC28 \uACF5\uD1B5 \uC2A4\uD0AC \uBE14\uB85D\uC6A9 \uC784\uC2DC
-    \uB370\uC774\uD130. \uC2E4\uC81C \uD6A8\uACFC\uB294 \uCE90\uB9AD\uD130 \uC2A4\uD0AC
-    \uAD6C\uD604 \uC77C\uCC28\uC5D0 \uC5F0\uACB0."
+  displayName: "\uC131\uD754\uC758 \uC77C\uACA9"
+  description: "\uB2E8\uC77C 340% \uD53C\uD574, \uC544\uAD70 \uC804\uCCB4 8% \uD68C\uBCF5, \uC801 \uACF5\uACA9\uB825 12% \uAC10\uC18C (8\uCD08)."
   targetType: 1
-  effectType: 0
+  effectType: 1
   enhancements:
   - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 10
-  - powerRatio: 1.25
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 1
+      element: 0
+      value: 3.4
+      duration: 0.0
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 1
+      targetType: 4
+      damageType: 0
+      element: 0
+      value: 0.08
+      duration: 0.0
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 18
+      targetType: 1
+      damageType: 0
+      element: 0
+      value: 0.12
+      duration: 8
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 20
-  - powerRatio: 1.6
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 1
+      element: 0
+      value: 3.91
+      duration: 0.0
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 1
+      targetType: 4
+      damageType: 0
+      element: 0
+      value: 0.092
+      duration: 0.0
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 18
+      targetType: 1
+      damageType: 0
+      element: 0
+      value: 0.12
+      duration: 8
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+  - powerRatio: 1
     flatValue: 0
     ultimateGaugeGain: 30
+    effects:
+    - kind: 8
+      targetType: 1
+      damageType: 1
+      element: 0
+      value: 4.42
+      duration: 0.0
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 1
+      targetType: 4
+      damageType: 0
+      element: 0
+      value: 0.104
+      duration: 0.0
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0
+    - kind: 18
+      targetType: 1
+      damageType: 0
+      element: 0
+      value: 0.12
+      duration: 8
+      count: 0
+      chance: 1.0
+      interval: 1.0
+      radius: 0
+      excludePrimary: 0
+      requirePreviousSuccess: 0

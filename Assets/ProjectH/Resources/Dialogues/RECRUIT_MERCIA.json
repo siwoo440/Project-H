@@ -1,0 +1,73 @@
+{
+  "id": "RECRUIT_MERCIA",
+  "title": "순례자의 합장",
+  "characterId": "CH_MERCIA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 구석에서 흰 법복의 소녀가 조용히 두 손을 모으고 있었다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "…성역의 숲이 다시 숨을 쉬기 시작했어요. 당신들이 해낸 일이지요?"
+    },
+    {
+      "id": "r3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "숲의 몬스터를 조금 정리했을 뿐이야."
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "저는 메르시아. 동방 사원에서 신의 부름을 받고 순례 중이에요. 그 부름이… 당신 쪽을 가리키고 있어요."
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "제 주먹과 정령이 도움이 된다면, 함께 걷게 해 주시겠어요?",
+      "choices": [
+        {
+          "text": "같이 가자. 든든할 거야.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r6a"
+        },
+        {
+          "text": "신의 부름이라니, 어떤 거야?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "r6b"
+        }
+      ]
+    },
+    {
+      "id": "r6a",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "감사합니다. 수행하는 마음으로 곁을 지킬게요.",
+      "next": "r7"
+    },
+    {
+      "id": "r6b",
+      "speaker": "CH_MERCIA",
+      "expression": "생각",
+      "text": "아직 저도 전부는 몰라요. 그래서 따라가 보려는 거예요. 당신 곁이라면 들릴 것 같아서요.",
+      "next": "r7"
+    },
+    {
+      "id": "r7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "메르시아가 동료가 되었다. 그녀 곁을 떠다니는 작은 정령이 반갑다는 듯 반짝였다."
+    }
+  ]
+}

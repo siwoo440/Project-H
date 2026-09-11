@@ -1,0 +1,27 @@
+{
+  "id": "TALK_PYRA_NIGHT",
+  "title": "",
+  "characterId": "CH_PYRA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "밤엔 불씨를 지켜야 해. 제국에선 그게 기사의 첫 임무였거든."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "같이 지켜 줄까?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "좋아. 대신 졸면 바로 깨운다?"
+    }
+  ]
+}

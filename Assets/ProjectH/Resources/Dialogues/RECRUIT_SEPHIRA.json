@@ -1,0 +1,73 @@
+{
+  "id": "RECRUIT_SEPHIRA",
+  "title": "사도의 흔들림",
+  "characterId": "CH_SEPHIRA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "순백의 사제복을 입은 여인이 길드에 들어서자, 떠들썩하던 모험가들이 일제히 입을 다물었다."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "신의 사도단, 세피라입니다. 마왕성의 문을 두드린 자를 확인하라는 명을 받았습니다."
+    },
+    {
+      "id": "r3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "확인해서… 어떻게 하려고?"
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "명령대로라면, 신의 뜻에 맞는지 심판해야 합니다. 그런데… 당신들을 보고 있으니 판단이 서지 않아요."
+    },
+    {
+      "id": "r5",
+      "speaker": "CH_SEPHIRA",
+      "expression": "생각",
+      "text": "그래서 곁에서 지켜보려 합니다. 치유와 창, 둘 다 도움이 될 거예요. 허락해 주시겠습니까?",
+      "choices": [
+        {
+          "text": "명령이 아니라 네 뜻이라면 환영해.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r6a"
+        },
+        {
+          "text": "심판은 사양이지만, 같이 가자.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "r6b"
+        }
+      ]
+    },
+    {
+      "id": "r6a",
+      "speaker": "CH_SEPHIRA",
+      "expression": "놀람",
+      "text": "제 뜻… 그런 걸 물어본 사람은 처음이에요. 생각해 볼게요, 당신 곁에서.",
+      "next": "r7"
+    },
+    {
+      "id": "r6b",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "후후, 심판은 조금 미뤄 두지요. 지금은 치유하는 쪽이 더 필요해 보이니까요.",
+      "next": "r7"
+    },
+    {
+      "id": "r7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라가 동료가 되었다. 그녀의 기도문 끝에, 처음으로 신이 아닌 누군가의 이름이 조용히 덧붙었다."
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+using System.Collections.Generic; // 목록 자료형
 using UnityEngine; // Unity 기본 기능
 
 namespace ProjectH.SaveSystem // 프로젝트 저장 영역
@@ -59,6 +60,28 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 default: // 유대 등급 처리
                     return "유대"; // 유대 라벨 반환
             }
+        }
+
+        public static List<AffinityTier> CollectNewTiers(int before, int after) // 호감도 변화로 새로 넘어선 단계 목록 (Day58 추가, 선물·대화 공용)
+        {
+            List<AffinityTier> tiers = new List<AffinityTier>(); // 결과 목록
+
+            for (int tier = (int)ResolveTier(before) + 1; tier <= (int)ResolveTier(after); tier++) // 넘어선 단계 순회
+            {
+                tiers.Add((AffinityTier)tier); // 새 단계 추가
+            }
+
+            return tiers; // 결과 반환
+        }
+
+        public static string BuildTierReachedNotice(IReadOnlyList<AffinityTier> newTiers) // 새 단계 도달 안내 문구 (Day58 추가, 선물·대화 공용)
+        {
+            if (newTiers == null || newTiers.Count == 0) // 새 단계 확인
+            {
+                return string.Empty; // 안내 없음 반환
+            }
+
+            return $"\n{GetTierLabel(newTiers[newTiers.Count - 1])} 단계 도달! [호감도 보상]에서 보상을 받으세요."; // Day56 호감도 보상 안내 반환
         }
 
         public static AffinityTier ResolveTier(int affinity) // 호감도 수치를 등급으로 변환

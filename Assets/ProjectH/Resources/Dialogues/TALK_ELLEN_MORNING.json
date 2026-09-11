@@ -1,0 +1,21 @@
+{
+  "id": "TALK_ELLEN_MORNING",
+  "title": "",
+  "characterId": "CH_ELLEN",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "용사님, 이른 시간이군요. 경계 교대가 막 끝났습니다."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "아침은 하루 중 가장 정직한 시간입니다. 피곤함도 각오도 숨길 수 없으니까요."
+    }
+  ]
+}

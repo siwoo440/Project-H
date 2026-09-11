@@ -1,0 +1,27 @@
+{
+  "id": "TALK_ELLEN_NIGHT",
+  "title": "",
+  "characterId": "CH_ELLEN",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "밤에는 제가 초소를 봅니다. 용사님은 쉬십시오."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "잠깐만 같이 있을게."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "…그러시다면, 제 뒤로. 바람이 찹니다."
+    }
+  ]
+}

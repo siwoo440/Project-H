@@ -1,0 +1,21 @@
+{
+  "id": "TALK_LILIA_EVENING",
+  "title": "",
+  "characterId": "CH_LILIA",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "노아르 향초는 전부 마력 향초라 머리가 아파. 성역 향초는 향이 순해서 연구할 때 좋더라."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "…취향 조사하는 거 아니지? 기록하지 마."
+    }
+  ]
+}

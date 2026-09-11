@@ -1,0 +1,27 @@
+{
+  "id": "TALK_ELLEN_DAY",
+  "title": "",
+  "characterId": "CH_ELLEN",
+  "background": "DAY",
+  "location": "일상 대화 · 낮",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "휴식 중입니다. …보고할 일은 없습니다."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "손에 든 건 과자야?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_ELLEN",
+      "expression": "당황",
+      "text": "보급품이 아니라… 제 돈으로 산 겁니다. 단것은 체력 회복에 효율적이라서."
+    }
+  ]
+}

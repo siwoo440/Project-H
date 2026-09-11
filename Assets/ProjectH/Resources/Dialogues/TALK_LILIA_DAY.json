@@ -1,0 +1,27 @@
+{
+  "id": "TALK_LILIA_DAY",
+  "title": "",
+  "characterId": "CH_LILIA",
+  "background": "DAY",
+  "location": "일상 대화 · 낮",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "마침 잘 왔어. 네 결속 반응을 다시 재 보려던 참이야."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "또?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "측정은 반복이 기본이야. …싫으면 말하고. 억지로 하진 않을 테니까."
+    }
+  ]
+}

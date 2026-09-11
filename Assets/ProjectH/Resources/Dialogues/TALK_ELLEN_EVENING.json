@@ -1,0 +1,27 @@
+{
+  "id": "TALK_ELLEN_EVENING",
+  "title": "",
+  "characterId": "CH_ELLEN",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "갑옷의 문장을 닦고 있었습니다. 기사단의 문장은 기사가 무엇을 지키는지 보여 주는 표식이니까요."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_ELLEN",
+      "expression": "상처",
+      "text": "…한동안은 이 문장을 달 자격이 없다고 생각했습니다."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "그래도 오늘은 닦아 두겠습니다. 내일도 지켜야 하니까요."
+    }
+  ]
+}

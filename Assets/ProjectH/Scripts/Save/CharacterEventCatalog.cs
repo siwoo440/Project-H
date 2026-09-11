@@ -8,6 +8,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public string CharacterId { get; } // 캐릭터 ID
         public int Episode { get; } // 화수
         public string Title { get; } // 제목
+        public string ScriptId => Id; // 연결할 대화 파일 ID (Day58 추가, Resources/Dialogues/{이벤트 ID}.json)
         public IReadOnlyList<GameEventCondition> Conditions { get; } // 해금 조건 목록
 
         public CharacterEventDefinition(string id, string characterId, int episode, string title, params GameEventCondition[] conditions) // 개인 이벤트 항목 생성
@@ -24,17 +25,30 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
     {
         private static readonly CharacterEventDefinition[] Events = // 개인 이벤트 목록
         {
-            new CharacterEventDefinition("EVT_SERENA_01", "CH_SERENA", 1, "성역의 기도", GameEventCondition.AffinityAtLeast("CH_SERENA", AffinityTier.Friendly)), // 세레나 1화
-            new CharacterEventDefinition("EVT_SERENA_02", "CH_SERENA", 2, "오래된 약속", GameEventCondition.AffinityAtLeast("CH_SERENA", AffinityTier.Trusted), GameEventCondition.DayAtLeast(5)), // 세레나 2화
-            new CharacterEventDefinition("EVT_ELLEN_01", "CH_ELLEN", 1, "기사의 아침 훈련", GameEventCondition.AffinityAtLeast("CH_ELLEN", AffinityTier.Friendly), GameEventCondition.AtTime(SaveTimeOfDay.Morning)), // 엘렌 1화
-            new CharacterEventDefinition("EVT_ELLEN_02", "CH_ELLEN", 2, "부러진 검", GameEventCondition.AffinityAtLeast("CH_ELLEN", AffinityTier.Trusted), GameEventCondition.Cleared("DG002", "성역 외곽 폐허")), // 엘렌 2화
-            new CharacterEventDefinition("EVT_LILIA_01", "CH_LILIA", 1, "별을 세는 밤", GameEventCondition.AffinityAtLeast("CH_LILIA", AffinityTier.Friendly), GameEventCondition.AtTime(SaveTimeOfDay.Night)), // 릴리아 1화
-            new CharacterEventDefinition("EVT_LILIA_02", "CH_LILIA", 2, "금지된 서가", GameEventCondition.AffinityAtLeast("CH_LILIA", AffinityTier.Trusted), GameEventCondition.Cleared("DG003", "침식된 회랑")), // 릴리아 2화
-            new CharacterEventDefinition("EVT_EVE_01", "CH_EVE", 1, "정령의 속삭임", GameEventCondition.AffinityAtLeast("CH_EVE", AffinityTier.Friendly)), // 이브 1화
-            new CharacterEventDefinition("EVT_EVE_02", "CH_EVE", 2, "비 오는 날의 약속", GameEventCondition.AffinityAtLeast("CH_EVE", AffinityTier.Trusted), GameEventCondition.DayAtLeast(3), GameEventCondition.AtTime(SaveTimeOfDay.Evening)) // 이브 2화
+            new CharacterEventDefinition("EVT_SERENA_01", "CH_SERENA", 1, "치유 연습", GameEventCondition.AffinityAtLeast("CH_SERENA", AffinityTier.Friendly)), // 세레나 1화 (Day58 기획서 Lv.4 이벤트명으로 변경)
+            new CharacterEventDefinition("EVT_SERENA_02", "CH_SERENA", 2, "비밀 기도실", GameEventCondition.AffinityAtLeast("CH_SERENA", AffinityTier.Trusted), GameEventCondition.DayAtLeast(5)), // 세레나 2화 (Day58 기획서 Lv.6 이벤트명으로 변경)
+            new CharacterEventDefinition("EVT_ELLEN_01", "CH_ELLEN", 1, "조용한 미소", GameEventCondition.AffinityAtLeast("CH_ELLEN", AffinityTier.Friendly), GameEventCondition.AtTime(SaveTimeOfDay.Morning)), // 엘렌 1화 (Day58 기획서 Lv.4 이벤트명으로 변경)
+            new CharacterEventDefinition("EVT_ELLEN_02", "CH_ELLEN", 2, "검의 무게", GameEventCondition.AffinityAtLeast("CH_ELLEN", AffinityTier.Trusted), GameEventCondition.Cleared("DG002", "성역 외곽 폐허")), // 엘렌 2화 (Day58 기획서 Lv.6 이벤트명으로 변경)
+            new CharacterEventDefinition("EVT_LILIA_01", "CH_LILIA", 1, "마나 불안정", GameEventCondition.AffinityAtLeast("CH_LILIA", AffinityTier.Friendly), GameEventCondition.AtTime(SaveTimeOfDay.Night)), // 릴리아 1화 (Day58 기획서 Lv.4 이벤트명으로 변경)
+            new CharacterEventDefinition("EVT_LILIA_02", "CH_LILIA", 2, "어린 시절의 방", GameEventCondition.AffinityAtLeast("CH_LILIA", AffinityTier.Trusted), GameEventCondition.Cleared("DG003", "침식된 회랑")), // 릴리아 2화 (Day58 기획서 Lv.6 이벤트명으로 변경)
+            new CharacterEventDefinition("EVT_EVE_01", "CH_EVE", 1, "정령 송가", GameEventCondition.AffinityAtLeast("CH_EVE", AffinityTier.Friendly)), // 이브 1화 (Day58 기획서 Lv.4 이벤트명으로 변경)
+            new CharacterEventDefinition("EVT_EVE_02", "CH_EVE", 2, "숲의 기억", GameEventCondition.AffinityAtLeast("CH_EVE", AffinityTier.Trusted), GameEventCondition.DayAtLeast(3), GameEventCondition.AtTime(SaveTimeOfDay.Evening)) // 이브 2화 (Day58 기획서 Lv.6 이벤트명으로 변경)
         };
 
         public static IReadOnlyList<CharacterEventDefinition> All => Events; // 전체 개인 이벤트 반환
+
+        public static CharacterEventDefinition Find(string eventId) // 이벤트 ID로 조회 (Day58 추가)
+        {
+            for (int index = 0; index < Events.Length; index++) // 전체 순회
+            {
+                if (Events[index].Id == eventId) // ID 일치 확인
+                {
+                    return Events[index]; // 이벤트 반환
+                }
+            }
+
+            return null; // 조회 실패 반환
+        }
 
         public static List<CharacterEventDefinition> GetForCharacter(string characterId) // 캐릭터별 개인 이벤트 목록 (화수 순)
         {

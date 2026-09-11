@@ -1,0 +1,158 @@
+{
+  "id": "EVT_ELLEN_01",
+  "title": "조용한 미소",
+  "characterId": "CH_ELLEN",
+  "background": "CORRIDOR_MORNING",
+  "location": "전초기지 · 훈련 뒤 회랑",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "아침 훈련이 끝난 회랑. 엘렌은 검을 닦던 손을 멈추지 않은 채 주인공을 맞았다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "용사님. 오늘 자세는 어제보다 나았습니다. …조금이지만."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "엘렌이 칭찬하는 건 처음 듣는 것 같은데."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_ELLEN",
+      "expression": "당황",
+      "text": "칭찬이 아니라 보고입니다. 정확한 평가를…"
+    },
+    {
+      "id": "n5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "말끝이 흐려진다. 굳어 있던 입가가 아주 잠깐, 풀렸다가 제자리로 돌아갔다."
+    },
+    {
+      "id": "n6",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "방금 웃었지?"
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "…착각입니다."
+    },
+    {
+      "id": "n8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "엘렌은 검을 칼집에 넣고, 한동안 회랑 끝의 창을 바라보았다."
+    },
+    {
+      "id": "n9",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "용사님께서는 검을 휘두르는 이유를 생각해 보신 적 있습니까."
+    },
+    {
+      "id": "n10",
+      "speaker": "CH_ELLEN",
+      "expression": "상처",
+      "text": "제 검이 늘 옳았던 것은 아닙니다."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_ELLEN",
+      "expression": "상처",
+      "text": "…명령이었다고 말하면, 그걸로 끝나는 줄 알았습니다.",
+      "choices": [
+        {
+          "text": "말할 준비가 될 때까지 곁에서 기다린다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "판단은 미루고 끝까지 듣겠다고 말한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "대답 대신 옆에 나란히 선다. 창밖으로 초소의 깃발이 바람에 흔들렸다."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…재촉하지 않으시는군요."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "지금은 전부 말씀드릴 수 없습니다. 하지만 언젠가는, 제 입으로 말하겠습니다. 그게 제 책임이니까요.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "무슨 일이 있었든, 판단은 나중에 할게. 지금은 듣기만 할게."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_ELLEN",
+      "expression": "놀람",
+      "text": "…듣기만, 이라."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "제국에서는 보고를 들으면 곧바로 판정이 내려졌습니다. 그런 말은… 익숙하지 않군요.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "훈련 시간은 끝났습니다. 오늘 일은 기록에 남기지 않겠습니다."
+    },
+    {
+      "id": "m2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그럼 방금 웃은 것도 기록에 없는 거네."
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "……용사님."
+    },
+    {
+      "id": "m4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "엘렌은 대답 없이 돌아섰다. 하지만 회랑을 벗어나기 직전, 걸음이 반 박자 느려졌다."
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "…다음 훈련도, 제 뒤에서 보십시오. 이번에는 명령이 아니라 부탁입니다.",
+      "next": "END"
+    }
+  ]
+}

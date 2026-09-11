@@ -1,0 +1,21 @@
+{
+  "id": "TALK_LILIA_MORNING",
+  "title": "",
+  "characterId": "CH_LILIA",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "아침부터 뭐야. 나 아직 홍차 안 마셨어."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "첫 잔을 마시기 전의 나는 연구자가 아니라 그냥 졸린 사람이야. 기억해 둬."
+    }
+  ]
+}

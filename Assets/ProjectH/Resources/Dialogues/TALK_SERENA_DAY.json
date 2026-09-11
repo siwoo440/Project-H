@@ -1,0 +1,27 @@
+{
+  "id": "TALK_SERENA_DAY",
+  "title": "",
+  "characterId": "CH_SERENA",
+  "background": "DAY",
+  "location": "일상 대화 · 낮",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "구호소 일이 조금 한가해졌어요. 이럴 때 잠깐 쉬는 법을… 배우는 중이에요."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "잘하고 있어."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "…칭찬받으니 어색하네요. 그래도, 고마워요."
+    }
+  ]
+}

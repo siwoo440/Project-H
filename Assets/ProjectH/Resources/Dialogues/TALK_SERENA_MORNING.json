@@ -1,0 +1,21 @@
+{
+  "id": "TALK_SERENA_MORNING",
+  "title": "",
+  "characterId": "CH_SERENA",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "좋은 아침이에요, 용사님. 새벽 기도를 마치고 흰 백합에 물을 주던 참이에요."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "조금 기울어진 꽃도 매일 돌보면 다시 고개를 들어요. …사람도 그렇겠지요?"
+    }
+  ]
+}

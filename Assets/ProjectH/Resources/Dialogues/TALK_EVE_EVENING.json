@@ -1,0 +1,21 @@
+{
+  "id": "TALK_EVE_EVENING",
+  "title": "",
+  "characterId": "CH_EVE",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "연못에서 조개껍데기를 주웠어. 귀에 대면 물소리가 나. 물의 정령이 머물다 간 흔적."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_EVE",
+      "expression": "당황",
+      "text": "…갖고 싶어도 안 줘. 이건 내 거."
+    }
+  ]
+}

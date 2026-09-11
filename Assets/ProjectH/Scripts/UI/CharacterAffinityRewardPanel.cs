@@ -1,7 +1,7 @@
 using System; // 콜백 델리게이트 기능
 using System.Collections.Generic; // 목록 자료형
-using System.Text; // 문구 조립 기능
 using ProjectH.Core; // 전역 게임 관리자 기능
+using ProjectH.Dialogue; // 개인 이벤트 상태 기능 (Day58 추가)
 using ProjectH.SaveSystem; // 호감도 보상·이벤트 조건 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.UI; // Unity UI 기능
@@ -18,23 +18,29 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private readonly List<Button> tierButtons = new List<Button>(); // 단계별 보상 버튼
         private readonly List<AffinityTier> tierOrder = new List<AffinityTier>(); // 버튼 순서별 단계
+        private const int EventRowCount = 2; // 개인 이벤트 표시 줄 수 (Day58 추가, 현재 캐릭터당 2화)
         private readonly List<string> reasonBuffer = new List<string>(); // 이벤트 미충족 사유 재사용 버퍼
+        private readonly List<Text> eventRowTexts = new List<Text>(); // 개인 이벤트 줄 문구 (Day58 추가)
+        private readonly List<Button> eventRowButtons = new List<Button>(); // 개인 이벤트 보기 버튼 (Day58 추가)
+        private readonly List<CharacterEventDefinition> eventRowDefinitions = new List<CharacterEventDefinition>(); // 줄별 이벤트 (Day58 추가)
         private Text titleText; // 패널 제목
         private Text bonusText; // 적용 중 전투 보너스 문구
-        private Text eventText; // 개인 이벤트 해금 목록 문구
+        private Text eventText; // 개인 이벤트 제목 문구 (Day58부터 목록은 줄별 버튼으로 표시)
         private Text resultText; // 보상 수령 결과 문구
         private string boundCharacterId = string.Empty; // 현재 표시 캐릭터 ID
         private Action onClaimed; // 수령 후 화면 갱신 콜백
+        private Action<CharacterEventDefinition> onPlayEvent; // 개인 이벤트 보기 콜백 (Day58 추가)
 
         public bool IsOpen => gameObject.activeSelf; // 패널 열림 여부 반환
 
-        public static CharacterAffinityRewardPanel Create(Transform parent, Action claimedCallback) // 패널 생성
+        public static CharacterAffinityRewardPanel Create(Transform parent, Action claimedCallback, Action<CharacterEventDefinition> playEventCallback) // 패널 생성 (Day58 개인 이벤트 보기 콜백 추가)
         {
             Image panel = RuntimeUiKit.CreateImage(parent, "AffinityRewardPanel", new Color(0.98f, 0.97f, 0.95f, 0.98f)); // 패널 배경 생성
             RuntimeUiKit.SetRect(panel.rectTransform, new Vector2(0.18f, 0.10f), new Vector2(0.82f, 0.90f)); // 화면 중앙 배치
             panel.gameObject.AddComponent<Outline>().effectColor = new Color(0.75f, 0.55f, 0.30f, 0.8f); // 금색 외곽선 적용
             CharacterAffinityRewardPanel view = panel.gameObject.AddComponent<CharacterAffinityRewardPanel>(); // 패널 컴포넌트 추가
             view.onClaimed = claimedCallback; // 수령 콜백 저장
+            view.onPlayEvent = playEventCallback; // 개인 이벤트 보기 콜백 저장 (Day58 추가)
             view.Build(); // 구성 요소 생성
             panel.gameObject.SetActive(false); // 초기 숨김
             return view; // 패널 반환
@@ -61,8 +67,23 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             bonusText = RuntimeUiKit.CreateText(transform, "BonusText", string.Empty, 15, new Color(0.20f, 0.35f, 0.55f, 1f), FontStyle.Bold, TextAnchor.MiddleLeft); // 전투 보너스 문구 생성
             RuntimeUiKit.SetRect(bonusText.rectTransform, new Vector2(0.04f, 0.26f), new Vector2(0.96f, 0.31f)); // 보너스 문구 배치
-            eventText = RuntimeUiKit.CreateText(transform, "EventText", string.Empty, 15, new Color(0.18f, 0.18f, 0.20f, 1f), FontStyle.Normal, TextAnchor.UpperLeft); // 개인 이벤트 목록 생성
-            RuntimeUiKit.SetRect(eventText.rectTransform, new Vector2(0.04f, 0.08f), new Vector2(0.96f, 0.25f)); // 개인 이벤트 목록 배치
+            eventText = RuntimeUiKit.CreateText(transform, "EventText", "개인 이벤트", 15, new Color(0.18f, 0.18f, 0.20f, 1f), FontStyle.Bold, TextAnchor.MiddleLeft); // 개인 이벤트 제목 생성
+            RuntimeUiKit.SetRect(eventText.rectTransform, new Vector2(0.04f, 0.215f), new Vector2(0.96f, 0.255f)); // 개인 이벤트 제목 배치
+
+            for (int index = 0; index < EventRowCount; index++) // 개인 이벤트 줄 생성 (Day58 추가)
+            {
+                int row = index; // 클릭용 줄 번호 복사
+                float top = 0.21f - (index * 0.066f); // 줄 세로 위치
+                Text rowText = RuntimeUiKit.CreateText(transform, $"EventRow_{index}", string.Empty, 15, new Color(0.18f, 0.18f, 0.20f, 1f), FontStyle.Normal, TextAnchor.MiddleLeft).Wrap(); // 줄 문구 생성
+                rowText.supportRichText = true; // 상태 색 표시
+                RuntimeUiKit.SetRect(rowText.rectTransform, new Vector2(0.04f, top - 0.058f), new Vector2(0.77f, top)); // 줄 문구 배치
+                Button rowButton = CreateButton($"EventPlay_{index}", "보기", LockedColor); // 보기 버튼 생성
+                RuntimeUiKit.SetRect((RectTransform)rowButton.transform, new Vector2(0.79f, top - 0.056f), new Vector2(0.96f, top - 0.002f)); // 보기 버튼 배치
+                rowButton.onClick.AddListener(() => PlayEventRow(row)); // 보기 연결
+                eventRowTexts.Add(rowText); // 줄 문구 등록
+                eventRowButtons.Add(rowButton); // 버튼 등록
+                eventRowDefinitions.Add(null); // 줄 이벤트 자리 확보
+            }
             resultText = RuntimeUiKit.CreateText(transform, "ResultText", string.Empty, 15, new Color(0.55f, 0.35f, 0.10f, 1f)); // 수령 결과 문구 생성
             RuntimeUiKit.SetRect(resultText.rectTransform, new Vector2(0.04f, 0.01f), new Vector2(0.96f, 0.07f)); // 결과 문구 배치
         }
@@ -112,29 +133,44 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             bonusText.text = $"적용 중 전투 보너스 : {AffinityRewardCatalog.GetClaimedBonus(characterSave).Summary}"; // 누적 보너스 표시
-            eventText.text = BuildEventLines(saveData, boundCharacterId); // 개인 이벤트 목록 표시
+            RefreshEventRows(saveData, boundCharacterId); // 개인 이벤트 줄 표시 (Day58 보기 버튼으로 변경)
         }
 
-        private string BuildEventLines(SaveData saveData, string characterId) // 개인 이벤트 해금·잠김 목록 문구
+        private void RefreshEventRows(SaveData saveData, string characterId) // 개인 이벤트 줄·보기 버튼 갱신 (Day58 — 잠김 / 보기 / 다시보기)
         {
             List<CharacterEventDefinition> events = CharacterEventCatalog.GetForCharacter(characterId); // 캐릭터 개인 이벤트 조회
+            eventText.text = events.Count == 0 ? "개인 이벤트 · 준비 중" : "개인 이벤트"; // 제목 적용
 
-            if (events.Count == 0) // 이벤트 존재 확인
+            for (int index = 0; index < eventRowTexts.Count; index++) // 줄 순회
             {
-                return "개인 이벤트 · 준비 중"; // 준비 중 문구 반환
+                CharacterEventDefinition item = index < events.Count ? events[index] : null; // 줄 이벤트
+                eventRowDefinitions[index] = item; // 줄 이벤트 저장
+                eventRowTexts[index].gameObject.SetActive(item != null); // 이벤트 없으면 줄 숨김
+                eventRowButtons[index].gameObject.SetActive(item != null); // 이벤트 없으면 버튼 숨김
+
+                if (item == null) // 이벤트 확인
+                {
+                    continue; // 다음 줄
+                }
+
+                CharacterEventState state = DialogueService.GetEventState(saveData, item, reasonBuffer); // 이벤트 상태·사유 조회
+                string stateText = state == CharacterEventState.Completed ? "<color=#2E6FB0>[완료]</color>" : state == CharacterEventState.Available ? "<color=#2E8B57>[해금]</color>" : $"<color=#8A8A8A>[잠김] {string.Join(" · ", reasonBuffer)}</color>"; // 상태 문구
+                eventRowTexts[index].text = $"{item.Episode}화 「{item.Title}」   {stateText}"; // 줄 문구 적용
+                SetButtonLabel(eventRowButtons[index], state == CharacterEventState.Completed ? "다시보기" : state == CharacterEventState.Available ? "보기" : "잠김"); // 버튼 문구
+                eventRowButtons[index].interactable = state != CharacterEventState.Locked; // 잠김은 입력 막음
+                eventRowButtons[index].GetComponent<Image>().color = state == CharacterEventState.Available ? ClaimableColor : state == CharacterEventState.Completed ? ClaimedColor : LockedColor; // 상태별 색상
             }
+        }
 
-            StringBuilder builder = new StringBuilder("개인 이벤트"); // 문구 조립기 생성
+        private void PlayEventRow(int row) // 개인 이벤트 보기 버튼 처리 (Day58 추가)
+        {
+            CharacterEventDefinition item = row >= 0 && row < eventRowDefinitions.Count ? eventRowDefinitions[row] : null; // 줄 이벤트 조회
+            if (item != null) onPlayEvent?.Invoke(item); // 대화 화면 열기 요청
+        }
 
-            for (int index = 0; index < events.Count; index++) // 이벤트 순회
-            {
-                CharacterEventDefinition item = events[index]; // 이벤트 조회
-                bool unlocked = GameEventConditionEvaluator.Evaluate(saveData, item.Conditions, reasonBuffer); // 해금 판정 및 사유 수집
-                string state = unlocked ? "<color=#2E8B57>[해금]</color>" : $"<color=#8A8A8A>[잠김] {string.Join(" · ", reasonBuffer)}</color>"; // 상태 문구 결정
-                builder.Append($"\n  {item.Episode}화 「{item.Title}」   {state}"); // 이벤트 줄 추가
-            }
-
-            return builder.ToString(); // 목록 문구 반환
+        public void ShowResult(string message) // 결과 문구 표시 (Day58 추가, 개인 이벤트 완료 안내)
+        {
+            resultText.text = message ?? string.Empty; // 결과 문구 적용
         }
 
         private void Claim(AffinityTier tier) // 단계 보상 받기

@@ -1,0 +1,27 @@
+{
+  "id": "TALK_EVE_NIGHT",
+  "title": "",
+  "characterId": "CH_EVE",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_EVE",
+      "expression": "슬픔",
+      "text": "밤의 숲은 조용해. 여기는… 사람 소리가 너무 많아."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "시끄러우면 조용한 데로 갈까?"
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "…괜찮아. 당신 목소리는 시끄럽지 않아."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "TALK_LILIA_NIGHT",
+  "title": "",
+  "characterId": "CH_LILIA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "봐, 오늘은 별자리가 잘 보여. 저 선을 이으면 마력 흐름이랑 거의 같은 모양이야."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "제대로 된 별자리 지도가 있으면 밤새 볼 수 있을 텐데. …아, 혼잣말이야."
+    }
+  ]
+}

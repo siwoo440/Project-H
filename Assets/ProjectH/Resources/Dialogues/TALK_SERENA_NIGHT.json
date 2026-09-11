@@ -1,0 +1,27 @@
+{
+  "id": "TALK_SERENA_NIGHT",
+  "title": "",
+  "characterId": "CH_SERENA",
+  "background": "NIGHT",
+  "location": "일상 대화 · 밤",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "이 시간에도 깨어 계셨네요. 저는… 잠이 안 올 때면 기도문을 외워요."
+    },
+    {
+      "id": "t2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "오늘은 기도문 대신 이야기하자."
+    },
+    {
+      "id": "t3",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "…네. 그럼 오늘은 조금만, 늦게 자 볼게요."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "TALK_EVE_DAY",
+  "title": "",
+  "characterId": "CH_EVE",
+  "background": "DAY",
+  "location": "일상 대화 · 낮",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "해가 높을 때는 나무 그늘에 있어. 숲 사람들은 원래 그래."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "…당신도 앉을래? 여기, 바람이 좋아."
+    }
+  ]
+}

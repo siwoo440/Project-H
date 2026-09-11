@@ -106,17 +106,10 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
 
             GiftPreference preference = GiftPreferenceCatalog.GetPreference(characterId, itemId); // 취향 조회
-            AffinityTier beforeTier = AffinityService.ResolveTier(affinity); // 선물 전 단계
             int after = AffinityService.AddAffinity(saveData, characterId, GiftPreferenceCatalog.GetAffinityGain(preference)); // 호감도 증가 (100에서 멈춤)
-            AffinityTier afterTier = AffinityService.ResolveTier(after); // 선물 후 단계
             int giftsAfter = character.RecordGift(currentDay); // 오늘 선물 횟수 기록
             bool discovered = saveData.SetStoryFlag(BuildKnownFlag(characterId, itemId)); // 취향 발견 플래그 기록 (처음일 때만 true)
-            List<AffinityTier> newTiers = new List<AffinityTier>(); // 새로 도달한 단계 목록
-
-            for (int tier = (int)beforeTier + 1; tier <= (int)afterTier; tier++) // 넘어선 단계 순회
-            {
-                newTiers.Add((AffinityTier)tier); // 새 단계 추가
-            }
+            List<AffinityTier> newTiers = AffinityService.CollectNewTiers(affinity, after); // 새로 도달한 단계 목록 (Day58 공용 함수로 정리)
 
             string message = BuildSuccessMessage(item.DisplayName, preference, after - affinity, after, giftsAfter, discovered, newTiers); // 성공 안내 문구 생성
             result = GiftResult.Succeeded(message, preference, affinity, after, giftsAfter, discovered, newTiers); // 성공 결과 생성
@@ -127,13 +120,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         {
             string discoveredText = discovered ? " (새 취향 발견!)" : string.Empty; // 취향 발견 문구
             string message = $"{itemName} 선물 · {GiftPreferenceCatalog.GetLabel(preference)}{discoveredText} · 호감도 +{gain} ({after}/{CharacterSaveData.MaxAffinity}) · 오늘 {giftsToday}/{DailyGiftLimit}"; // 기본 결과 문구
-
-            if (newTiers.Count > 0) // 새 단계 도달 확인
-            {
-                message += $"\n{AffinityService.GetTierLabel(newTiers[newTiers.Count - 1])} 단계 도달! [호감도 보상]에서 보상을 받으세요."; // Day56 호감도 보상 안내
-            }
-
-            return message; // 안내 문구 반환
+            return message + AffinityService.BuildTierReachedNotice(newTiers); // 새 단계 안내 포함 문구 반환 (Day58 공용 함수로 정리)
         }
     }
 }

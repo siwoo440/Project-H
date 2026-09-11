@@ -1,0 +1,176 @@
+{
+  "id": "EVT_LILIA_01",
+  "title": "마나 불안정",
+  "characterId": "CH_LILIA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "노아르 · 마력 관측실",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "밤의 관측실. 책상 위에 흩어진 기록지마다 붉은 줄이 그어져 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "왔네. 마침 잘됐어. 이 수치 좀 봐."
+    },
+    {
+      "id": "n3",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "마왕군이 지나간 자리의 마력 흔적이야. 보통 침식은 퍼질수록 옅어져야 하는데, 이건 오히려 짙어져."
+    },
+    {
+      "id": "n4",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그게 무슨 뜻이야?"
+    },
+    {
+      "id": "n5",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "누군가 일부러 흘려보내고 있다는 뜻. …설명이 안 되는데. 이런 규모를 유지할 방법이—"
+    },
+    {
+      "id": "n6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아의 말이 끊겼다. 책상 위의 유리 구체가 파르르 떨리고, 방 안의 공기가 순간 차가워진다."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "잠깐, 다시 확인해. 아니, 괜찮아. 흔한 일이야. 감정이 조금 흔들리면 마나가—"
+    },
+    {
+      "id": "n8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "펜을 쥔 손이 하얗게 질려 있었다. 괜찮다는 말과는 반대로, 떨림은 점점 커져 갔다."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "…나가 있어. 금방 가라앉을 테니까.",
+      "choices": [
+        {
+          "text": "평소에 어떻게 가라앉히는지 묻는다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "괜찮다면 곁에 있어도 되는지 묻는다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "CH_LILIA",
+      "expression": "놀람",
+      "text": "…방법을 묻는 거야? 나가라는 말은 무시하고?"
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "숫자를 세. 소수를 차례대로. 생각을 논리로 붙잡아 두면 마나도 따라와."
+    },
+    {
+      "id": "a3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그럼 같이 세자. 2, 3, 5, 7…"
+    },
+    {
+      "id": "a4",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "11, 13… 너, 17 다음이 뭔지는 알아?"
+    },
+    {
+      "id": "a5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "……19?"
+    },
+    {
+      "id": "a6",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "정답. …이상하네. 혼자 셀 때보다 빨리 가라앉아.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "혼자 두는 게 더 위험해 보여. 곁에 있어도 될까?"
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_LILIA",
+      "expression": "놀람",
+      "text": "…물어보는구나. 멋대로 다가오지 않고."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "좋아. 대신 거기서 움직이지 마. 그 거리면… 괜찮을 것 같아."
+    },
+    {
+      "id": "b4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "한동안 둘 다 말이 없었다. 유리 구체의 떨림이 조금씩, 조금씩 잦아들었다.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "분석은 잠깐 멈출게. 조금만 여기 있어."
+    },
+    {
+      "id": "m2",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아는 붉은 줄투성이 기록지를 한쪽으로 밀어 두고, 창밖의 별을 올려다봤다."
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "어릴 때부터 들은 말이 있어. 감정이 흔들리면 위험하니까, 흔들리지 말라고."
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "그런데 방금은… 흔들렸는데도 무섭지 않았어. 이것도 설명이 안 되네."
+    },
+    {
+      "id": "m5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "설명 안 되는 게 하나쯤 있어도 되지 않아?"
+    },
+    {
+      "id": "m6",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "…연구자한테 할 소리는 아니지만. 오늘은 반박 안 할게.",
+      "next": "END"
+    }
+  ]
+}

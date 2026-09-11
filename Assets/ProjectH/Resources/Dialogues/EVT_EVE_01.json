@@ -1,0 +1,158 @@
+{
+  "id": "EVT_EVE_01",
+  "title": "정령 송가",
+  "characterId": "CH_EVE",
+  "background": "GARDEN_POND",
+  "location": "성역 정원 · 작은 연못",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "성역 정원 끝, 작은 연못가. 물 위로 희미한 빛 알갱이들이 떠다니고 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "그 가운데 이브가 눈을 감고 서 있었다. 입술이 달싹이며, 낮고 가는 노랫소리가 흘러나온다."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "(…노래? 처음 듣는 말인데.)"
+    },
+    {
+      "id": "n4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "발밑의 자갈이 소리를 냈다. 노래가 뚝 끊기고, 빛 알갱이들이 이브의 등 뒤로 숨는다."
+    },
+    {
+      "id": "n5",
+      "speaker": "CH_EVE",
+      "expression": "경계",
+      "text": "…당신이었어."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_EVE",
+      "expression": "경계",
+      "text": "인간은 보통 여기서 소리를 내. 정령들이 놀라."
+    },
+    {
+      "id": "n7",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "미안. 방해할 생각은 없었어."
+    },
+    {
+      "id": "n8",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "…사과할 줄은 아네."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "지금 부른 건 정령 송가야. 숲에서, 떠난 것들을 배웅할 때 불러.",
+      "choices": [
+        {
+          "text": "아무 말 없이 곁에 앉아 끝까지 듣는다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "노래의 뜻을 묻는다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "대답 대신, 연못가 풀밭에 조용히 앉는다. 이브가 잠시 이쪽을 내려다보았다."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_EVE",
+      "expression": "당황",
+      "text": "…묻지 않아?"
+    },
+    {
+      "id": "a3",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "고개를 끄덕이자, 이브는 한참을 망설이다가 다시 눈을 감았다. 노래가 이어지고, 숨어 있던 빛들이 하나둘 돌아왔다."
+    },
+    {
+      "id": "a4",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "정령들이 돌아왔어. 당신이 가만히 있어서.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "무슨 뜻인지 물어봐도 돼?"
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_EVE",
+      "expression": "진지",
+      "text": "…'잘 가, 뿌리는 여기 남아 있어.' 그런 뜻."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_EVE",
+      "expression": "슬픔",
+      "text": "고향 숲이 불탔을 때, 이 노래를 몇 번이나 불렀는지 몰라. 너무 많이 불러서… 한동안 부르지 못했어.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "…성역에도 아픈 나무가 있어. 침식 때문에. 그래서 불렀어."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_EVE",
+      "expression": "경계",
+      "text": "인간이 없는 시간에 부르려고 했는데."
+    },
+    {
+      "id": "m3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그럼 다음에는 멀리서 들을게."
+    },
+    {
+      "id": "m4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "이브의 귀 끝이 아주 조금 움직였다. 연못 위 빛 알갱이 하나가 어깨에 살며시 내려앉는다."
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_EVE",
+      "expression": "당황",
+      "text": "…정령이 당신한테 앉았어. 저 애는, 낯가림이 심한데."
+    },
+    {
+      "id": "m6",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "멀리서 안 들어도 돼. …다음에도, 여기 있어.",
+      "next": "END"
+    }
+  ]
+}

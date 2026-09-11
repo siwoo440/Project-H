@@ -1,0 +1,21 @@
+{
+  "id": "TALK_EVE_MORNING",
+  "title": "",
+  "characterId": "CH_EVE",
+  "background": "MORNING",
+  "location": "일상 대화 · 아침",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_EVE",
+      "expression": "경계",
+      "text": "…일찍 일어났네."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "아침 이슬에는 정령이 많아. 밟지 마. 저쪽으로 걸어."
+    }
+  ]
+}

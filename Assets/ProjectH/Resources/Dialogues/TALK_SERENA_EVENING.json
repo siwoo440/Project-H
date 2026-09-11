@@ -1,0 +1,21 @@
+{
+  "id": "TALK_SERENA_EVENING",
+  "title": "",
+  "characterId": "CH_SERENA",
+  "background": "EVENING",
+  "location": "일상 대화 · 저녁",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "저녁 기도 시간에는 성수로 빚은 향초를 켜요. 은은한 향이 퍼지면 마음이 가라앉거든요."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "아, 제 취향 이야기를 해 버렸네요. 잊어 주셔도 괜찮아요."
+    }
+  ]
+}

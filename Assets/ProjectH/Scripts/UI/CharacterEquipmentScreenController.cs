@@ -2,6 +2,7 @@ using System; // 문자열 비교 및 수학 기능
 using ProjectH.Battle; // 장비 최종 능력치 비교 기능
 using ProjectH.Core; // 전역 게임 관리자 기능
 using ProjectH.Data; // 캐릭터 및 장비 데이터 기능
+using ProjectH.Dialogue; // 대화 진행·결과 반영 기능 (Day58 추가)
 using ProjectH.SaveSystem; // 저장 및 장착 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.EventSystems; // Unity UI 입력 기능
@@ -100,23 +101,107 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             affinityText = CreateText(parent, "AffinityDebugText", "호감도 · -", 15, FontStyle.Bold, new Color(0.36f, 0.20f, 0.30f, 1f)); // 호감도 디버그 텍스트 생성
             affinityText.alignment = TextAnchor.MiddleLeft; // 호감도 디버그 텍스트 왼쪽 정렬
-            SetRect(affinityText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.40f, 0.045f)); // 하단 여백에 호감도 디버그 텍스트 배치
+            SetRect(affinityText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.30f, 0.045f)); // 하단 여백에 호감도 디버그 텍스트 배치 (Day58 버튼 추가로 폭 조정)
             Button minusButton = CreateButton(parent, "AffinityMinusDebug", "호감도 -10", new Color(0.98f, 0.90f, 0.95f, 1f)); // 호감도 감소 디버그 버튼 생성
-            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.41f, 0.005f), new Vector2(0.53f, 0.045f)); // 호감도 감소 버튼 배치
+            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.31f, 0.005f), new Vector2(0.41f, 0.045f)); // 호감도 감소 버튼 배치 (Day58 재배치)
             minusButton.onClick.AddListener(DecreaseAffinityDebug); // 호감도 감소 버튼 이벤트 연결
             DevelopmentFeatures.HideInRelease(minusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
             Button plusButton = CreateButton(parent, "AffinityPlusDebug", "호감도 +10", new Color(0.90f, 0.95f, 1f, 1f)); // 호감도 증가 디버그 버튼 생성
-            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.54f, 0.005f), new Vector2(0.66f, 0.045f)); // 호감도 증가 버튼 배치
+            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.42f, 0.005f), new Vector2(0.52f, 0.045f)); // 호감도 증가 버튼 배치 (Day58 재배치)
             plusButton.onClick.AddListener(IncreaseAffinityDebug); // 호감도 증가 버튼 이벤트 연결
             DevelopmentFeatures.HideInRelease(plusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
             Button rewardButton = CreateButton(parent, "AffinityRewardButton", "호감도 보상", new Color(1f, 0.88f, 0.60f, 1f)); // 호감도 보상 버튼 생성 (Day56 추가)
-            SetRect(rewardButton.GetComponent<RectTransform>(), new Vector2(0.67f, 0.005f), new Vector2(0.80f, 0.045f)); // 호감도 보상 버튼 배치
-            affinityRewardPanel = CharacterAffinityRewardPanel.Create(parent, Refresh); // 호감도 보상 패널 생성 (수령 후 화면 갱신 연결)
+            SetRect(rewardButton.GetComponent<RectTransform>(), new Vector2(0.53f, 0.005f), new Vector2(0.65f, 0.045f)); // 호감도 보상 버튼 배치 (Day58 재배치)
+            affinityRewardPanel = CharacterAffinityRewardPanel.Create(parent, Refresh, PlayCharacterEvent); // 호감도 보상 패널 생성 (수령 후 화면 갱신·Day58 개인 이벤트 보기 연결)
             rewardButton.onClick.AddListener(ToggleAffinityRewardPanel); // 보상 패널 열기·닫기 연결 (Day57 선물 패널과 겹치지 않도록 전용 함수 사용)
             Button giftButton = CreateButton(parent, "GiftButton", "선물하기", new Color(1f, 0.82f, 0.88f, 1f)); // 선물하기 버튼 생성 (Day57 추가)
-            SetRect(giftButton.GetComponent<RectTransform>(), new Vector2(0.81f, 0.005f), new Vector2(0.94f, 0.045f)); // 선물하기 버튼 배치
+            SetRect(giftButton.GetComponent<RectTransform>(), new Vector2(0.66f, 0.005f), new Vector2(0.78f, 0.045f)); // 선물하기 버튼 배치 (Day58 재배치)
             giftPanel = CharacterGiftPanel.Create(parent, Refresh, OpenAffinityRewardFromGift); // 선물 패널 생성 (선물 후 갱신·보상 바로가기 연결)
             giftButton.onClick.AddListener(ToggleGiftPanel); // 선물 패널 열기·닫기 연결
+            Button talkButton = CreateButton(parent, "TalkButton", "대화하기", new Color(0.84f, 0.80f, 0.98f, 1f)); // 대화하기 버튼 생성 (Day58 추가)
+            SetRect(talkButton.GetComponent<RectTransform>(), new Vector2(0.79f, 0.005f), new Vector2(0.91f, 0.045f)); // 대화하기 버튼 배치
+            talkButton.onClick.AddListener(StartDailyTalk); // 일상 대화 연결
+        }
+
+        private void StartDailyTalk() // 선택 캐릭터와 현재 시간대 일상 대화 (Day58 추가)
+        {
+            if (!TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData)) // 전역 데이터 확인
+            {
+                SetStatus("저장 데이터를 찾을 수 없습니다."); // 오류 안내
+                return; // 대화 중단
+            }
+
+            CharacterSaveData characterSave = GetSelectedCharacter(saveData); // 선택 캐릭터 조회
+
+            if (characterSave == null) // 캐릭터 확인
+            {
+                SetStatus("선택된 캐릭터가 없습니다."); // 캐릭터 없음 안내
+                return; // 대화 중단
+            }
+
+            if (!DialogueService.CanTalk(saveData, characterSave.CharacterId, out string reason)) // 대화 가능 여부 확인
+            {
+                SetStatus(reason); // 불가 사유 안내
+                return; // 대화 중단
+            }
+
+            string characterId = characterSave.CharacterId; // 대화 캐릭터 ID 보관
+            string scriptId = DialogueService.GetTalkScriptId(characterId, GameTimeService.GetCurrentPhase(saveData)); // 시간대 대화 파일 ID
+
+            if (OpenDialogue(scriptId, runner => OnDailyTalkFinished(characterId, runner)) == null) // 대화 화면 열기
+            {
+                SetStatus($"대화 파일을 찾을 수 없습니다. ({scriptId})"); // 파일 누락 안내
+            }
+        }
+
+        private void OnDailyTalkFinished(string characterId, DialogueRunner runner) // 일상 대화 종료 반영 (Day58 추가)
+        {
+            if (!TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData)) // 전역 데이터 확인
+            {
+                return; // 반영 중단
+            }
+
+            DialogueRewardResult result = DialogueService.CompleteTalk(saveData, characterId, runner); // 호감도·시간 칸 반영
+            bool saved = !result.Applied || saveManager.SaveCurrent(); // 반영 시 즉시 저장
+            SetStatus(saved ? result.Message : $"{result.Message} (저장 실패)"); // 결과 안내
+            Refresh(); // 호감도 표시 갱신
+        }
+
+        private void PlayCharacterEvent(CharacterEventDefinition definition) // 개인 이벤트 보기·다시보기 (Day58 추가)
+        {
+            if (!TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData) || definition == null) // 전역 데이터 확인
+            {
+                return; // 보기 중단
+            }
+
+            if (DialogueService.GetEventState(saveData, definition) == CharacterEventState.Locked) // 잠김 확인
+            {
+                affinityRewardPanel.ShowResult($"「{definition.Title}」은(는) 아직 잠겨 있습니다."); // 잠김 안내
+                return; // 보기 중단
+            }
+
+            if (OpenDialogue(definition.ScriptId, runner => OnCharacterEventFinished(definition, runner)) == null) // 대화 화면 열기
+            {
+                affinityRewardPanel.ShowResult($"대화 파일을 찾을 수 없습니다. ({definition.ScriptId})"); // 파일 누락 안내
+            }
+        }
+
+        private void OnCharacterEventFinished(CharacterEventDefinition definition, DialogueRunner runner) // 개인 이벤트 종료 반영 (Day58 추가)
+        {
+            if (!TryGetContext(out DataManager dataManager, out SaveManager saveManager, out SaveData saveData)) // 전역 데이터 확인
+            {
+                return; // 반영 중단
+            }
+
+            DialogueRewardResult result = DialogueService.CompleteEvent(saveData, definition, runner); // 완료 기록·보상 반영
+            bool saved = !result.Applied || saveManager.SaveCurrent(); // 반영 시 즉시 저장
+            Refresh(); // 호감도·이벤트 상태 갱신
+            affinityRewardPanel.ShowResult(saved ? result.Message : $"{result.Message} (저장 실패)"); // 결과 안내
+        }
+
+        private static DialogueOverlayView OpenDialogue(string scriptId, Action<DialogueRunner> finished) // 대화 파일 불러와 화면 열기 (Day58 추가)
+        {
+            return DialogueOverlayView.Open(DialogueLibrary.Load(scriptId), finished); // 대화 화면 반환 (파일 없으면 null)
         }
 
         private void ToggleAffinityRewardPanel() // 호감도 보상 패널 열기·닫기 (Day57 추가, 선물 패널은 닫음)

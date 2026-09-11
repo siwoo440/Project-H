@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_SERENA",
+  "title": "향초 가게",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세레나가 향초 노점 앞에서 한참을 망설이고 있다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_SERENA",
+      "expression": "당황",
+      "text": "구호소에 둘 향초를 고르는 중인데… 전부 좋은 향이라 못 고르겠어요."
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "당신이라면 어느 쪽이 좋아요?",
+      "choices": [
+        {
+          "text": "은은한 백합 향.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "m4a"
+        },
+        {
+          "text": "달콤한 꿀 향.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "m4b"
+        }
+      ]
+    },
+    {
+      "id": "m4a",
+      "speaker": "CH_SERENA",
+      "expression": "놀람",
+      "text": "백합… 제가 제일 좋아하는 향이에요. 어떻게 아셨어요?",
+      "next": "m5"
+    },
+    {
+      "id": "m4b",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "꿀 향이라면 아이들이 좋아하겠네요. 이걸로 할게요.",
+      "next": "m5"
+    },
+    {
+      "id": "m5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "작은 향초 꾸러미를 안고 돌아서는 세레나의 발걸음이 가벼웠다."
+    }
+  ]
+}

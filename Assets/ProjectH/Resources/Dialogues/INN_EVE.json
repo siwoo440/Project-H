@@ -1,0 +1,53 @@
+{
+  "id": "INN_EVE",
+  "title": "별이 보이는 창",
+  "characterId": "CH_EVE",
+  "background": "INN_NIGHT",
+  "location": "마을 · 여관 · 밤",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "여관 창가. 이브가 창문을 활짝 열어 두고 밤하늘을 올려다보고 있다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "숲에서는 늘 별을 보며 잤어. 인간의 방은 너무 답답하다고 생각했는데."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_EVE",
+      "expression": "부끄러움",
+      "text": "…오늘은 네가 있으니 괜찮을 것 같아. 곁에 있어 줘.",
+      "choices": [
+        {
+          "text": "별이 질 때까지 있을게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i4"
+        },
+        {
+          "text": "창문은 열어 둘게.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "i4"
+        }
+      ]
+    },
+    {
+      "id": "i4",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "…응."
+    },
+    {
+      "id": "i5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "열린 창으로 숲 냄새를 닮은 바람이 들어왔고, 등불은 조용히 꺼졌다."
+    }
+  ]
+}

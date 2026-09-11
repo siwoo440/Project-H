@@ -1,0 +1,67 @@
+{
+  "id": "VILLAGE_GUILD_ELLEN",
+  "title": "훈련장",
+  "characterId": "CH_ELLEN",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "g1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 뒤뜰 훈련장. 엘렌이 허수아비를 상대로 같은 동작을 수백 번째 반복하고 있다."
+    },
+    {
+      "id": "g2",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "…왔나. 한 판 붙겠나? 가볍게."
+    },
+    {
+      "id": "g3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "엘렌의 '가볍게'는 믿을 수가 없는데."
+    },
+    {
+      "id": "g4",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "…봐주겠다. 약속하지.",
+      "choices": [
+        {
+          "text": "좋아, 한 판 하자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "g5a"
+        },
+        {
+          "text": "자세부터 가르쳐 줘.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "g5b"
+        }
+      ]
+    },
+    {
+      "id": "g5a",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "좋은 눈이다. 도망치지 않는 게 제일 중요하다.",
+      "next": "g6"
+    },
+    {
+      "id": "g5b",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "배우려는 자세, 마음에 든다. 발은 어깨너비로.",
+      "next": "g6"
+    },
+    {
+      "id": "g6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "해가 질 무렵, 두 사람 모두 땀에 흠뻑 젖어 있었다."
+    }
+  ]
+}

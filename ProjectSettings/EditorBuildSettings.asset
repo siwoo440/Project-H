@@ -27,6 +27,9 @@ EditorBuildSettings:
     path: Assets/ProjectH/Scenes/Blacksmith.unity
     guid: 18a97ee8ac464f668e37051fca998aa3
   - enabled: 1
+    path: Assets/ProjectH/Scenes/Village.unity
+    guid: 1602b128798a4fef9df3146378c5cf3a
+  - enabled: 1
     path: Assets/ProjectH/Scenes/Party.unity
     guid: 80f4fcedf7ef2d94c806e4758699c66b
   - enabled: 1

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_LILIA",
+  "title": "던전 지도",
+  "characterId": "CH_LILIA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "g1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 게시판 앞. 릴리아가 던전 지도에 빨간 선을 잔뜩 긋고 있다."
+    },
+    {
+      "id": "g2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "길드 지도가 틀렸어. 마력 흐름으로 보면 이 통로는 막혀 있어야 해."
+    },
+    {
+      "id": "g3",
+      "speaker": "CH_LILIA",
+      "expression": "경계",
+      "text": "길드장한테 가져가면 믿어 줄까?",
+      "choices": [
+        {
+          "text": "내가 같이 가서 말해 줄게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "g4a"
+        },
+        {
+          "text": "다음 탐험에서 직접 확인하자.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "g4b"
+        }
+      ]
+    },
+    {
+      "id": "g4a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "…든든하네. 증명은 내가, 설득은 네가.",
+      "next": "g5"
+    },
+    {
+      "id": "g4b",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "현장 검증! 역시 넌 말이 통해.",
+      "next": "g5"
+    },
+    {
+      "id": "g5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "며칠 뒤, 길드 지도의 통로 하나에 '폐쇄 — 릴리아 조사'라는 표시가 붙었다."
+    }
+  ]
+}

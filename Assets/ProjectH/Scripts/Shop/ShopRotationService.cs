@@ -133,7 +133,7 @@ namespace ProjectH.Shop // 프로젝트 상점 영역
                 if (product != null && product.Rotating) candidates.Add(product.ProductId); // 오늘의 상품 후보
             }
 
-            Random random = new Random(StableHash(shop.Id) ^ ((day * 7919) + (rerollCount * 104729))); // 결정적 난수 (저장·재시작해도 동일)
+            Random random = new Random(StableHash($"{shop.Id}|{day}|{rerollCount}")); // 결정적 난수 (저장·재시작해도 동일, Day62 키 전체 해시로 보강)
 
             for (int index = candidates.Count - 1; index > 0; index--) // 후보 섞기 (Fisher-Yates)
             {

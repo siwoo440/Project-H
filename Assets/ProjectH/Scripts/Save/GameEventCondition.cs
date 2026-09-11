@@ -112,15 +112,6 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
         }
 
-        private static string GetPhaseLabel(SaveTimeOfDay phase) // 시간대 한글 라벨 반환
-        {
-            switch (phase) // 시간대 분기
-            {
-                case SaveTimeOfDay.Morning: return "아침"; // 아침 라벨
-                case SaveTimeOfDay.Day: return "낮"; // 낮 라벨
-                case SaveTimeOfDay.Evening: return "저녁"; // 저녁 라벨
-                default: return "밤"; // 밤 라벨
-            }
-        }
+        private static string GetPhaseLabel(SaveTimeOfDay phase) => GameTimeService.GetPhaseLabel(phase); // 시간대 한글 라벨 반환 (Day62 — 공용 표기로 통일)
     }
 }

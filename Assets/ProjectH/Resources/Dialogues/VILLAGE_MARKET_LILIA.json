@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_LILIA",
+  "title": "마석 좌판",
+  "characterId": "CH_LILIA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아가 마석 좌판 앞에서 돋보기를 들고 돌 하나하나를 들여다보고 있다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_LILIA",
+      "expression": "경계",
+      "text": "이거 봐. 순도 표시는 A급인데 결정 구조는 C급이야. 사기야, 사기."
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "…아니, 상인한테 따지려는 건 아니야. 그냥 너한테 말하고 싶었어.",
+      "choices": [
+        {
+          "text": "역시 릴리아는 대단해.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "m4a"
+        },
+        {
+          "text": "그럼 진짜 A급은 어디 있어?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "m4b"
+        }
+      ]
+    },
+    {
+      "id": "m4a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "…당연하지. 그래도, 네가 말하니까 기분은 좋네.",
+      "next": "m5"
+    },
+    {
+      "id": "m4b",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "좋은 질문. 저 끝 할머니 좌판이야. 따라와.",
+      "next": "m5"
+    },
+    {
+      "id": "m5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "시장을 한 바퀴 돌고 나니 릴리아의 가방이 반짝이는 돌로 가득했다."
+    }
+  ]
+}

@@ -77,5 +77,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         }
 
         public static string FormatSpeaker(NpcProfile npc) => $"{npc.Name}  ·  {npc.Title}"; // 이름표 문구
+
+        public static NpcProfile Find(string id) => id == Shopkeeper.Id ? Shopkeeper : id == Blacksmith.Id ? Blacksmith : null; // ID로 NPC 조회 (Day62 추가 — 대화 이름표용, 없으면 null)
     }
 }

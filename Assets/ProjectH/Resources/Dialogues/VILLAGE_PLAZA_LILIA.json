@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_LILIA",
+  "title": "비둘기의 궤도",
+  "characterId": "CH_LILIA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "p1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아가 벤치에 앉아 비둘기에게 빵 부스러기를 던지며 무언가를 적고 있다."
+    },
+    {
+      "id": "p2",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "관찰 중이야. 빵을 던지는 각도에 따라 비둘기가 모이는 궤도가 달라져."
+    },
+    {
+      "id": "p3",
+      "speaker": "CH_LILIA",
+      "expression": "경계",
+      "text": "…그냥 모이를 주는 거 아니냐는 표정이네.",
+      "choices": [
+        {
+          "text": "재밌어 보여. 나도 도와줄게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "p4a"
+        },
+        {
+          "text": "응, 그냥 모이 주는 걸로 보여.",
+          "affinity": 0,
+          "preferred": false,
+          "next": "p4b"
+        }
+      ]
+    },
+    {
+      "id": "p4a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "좋아, 조수 1호. 너는 오른쪽에서 던져. 기록은 내가 할게.",
+      "next": "p5"
+    },
+    {
+      "id": "p4b",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "…틀린 말은 아니야. 그래도 가설이 있으면 더 즐겁잖아.",
+      "next": "p5"
+    },
+    {
+      "id": "p5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "해가 기울 때까지 비둘기와 숫자가 가득한 공책이 쌓였다."
+    }
+  ]
+}

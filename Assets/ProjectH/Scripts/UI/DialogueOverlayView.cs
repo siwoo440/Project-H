@@ -1,8 +1,7 @@
 using System; // 콜백 델리게이트 기능
 using System.Collections.Generic; // 목록 자료형
 using System.Text; // 로그 문구 조립 기능
-using ProjectH.Core; // 전역 게임 관리자 기능
-using ProjectH.Data; // 캐릭터 이름 조회 기능
+using ProjectH.Battle.Rhythm; // 원형 스프라이트 기능
 using ProjectH.Dialogue; // 대화 진행 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.InputSystem; // 키보드 입력 기능
@@ -11,40 +10,55 @@ using UnityEngine.UI; // Unity UI 기능
 namespace ProjectH.UI // 프로젝트 UI 영역
 {
     [DisallowMultipleComponent] // 중복 대화 화면 방지
-    public sealed class DialogueOverlayView : MonoBehaviour // 미연시형 대화 화면 (Day58 신규 — 배경·스탠딩·하단 대화창·이름표·SKIP/AUTO/LOG/CLOSE)
+    public sealed class DialogueOverlayView : MonoBehaviour // 미연시형 대화 화면 (Day58 신규 · Day62 목업 개편 — 2인 좌우 스탠딩 · 이름/소속 · 우상단 아이콘 메뉴 · 밝은 회색 창)
     {
         private const int SortingOrder = 600; // 캐릭터 화면(100) 위, 로딩창(1000) 아래
-        private const float CharsPerSecond = 45f; // 타자 효과 속도
-        private static readonly Color WindowColor = new Color(0.25f, 0.17f, 0.36f, 0.80f); // 대화창 보라색
-        private static readonly Color NamePlateColor = new Color(0.17f, 0.11f, 0.26f, 0.95f); // 이름표 진보라색
-        private static readonly Color AccentColor = new Color(0.80f, 0.70f, 1f, 1f); // 연보라 강조색
-        private static readonly Color MenuColor = new Color(0.86f, 0.80f, 0.98f, 1f); // 메뉴 글자색
-        private static readonly Color AutoOnColor = new Color(1f, 0.84f, 0.40f, 1f); // AUTO 켜짐 금색
+        private static readonly Color WindowColor = new Color(0.94f, 0.94f, 0.96f, 0.93f); // 대화창 밝은 회색
+        private static readonly Color WindowLineColor = new Color(0.55f, 0.58f, 0.66f, 1f); // 대화창 윗선 회청색
+        private static readonly Color BodyColor = new Color(0.13f, 0.14f, 0.18f, 1f); // 대사 글자 진회색
+        private static readonly Color NamePlateColor = new Color(0.24f, 0.26f, 0.32f, 0.97f); // 이름표 차콜
+        private static readonly Color AffiliationColor = new Color(0.78f, 0.80f, 0.86f, 1f); // 소속 글자 연회색
+        private static readonly Color IconColor = new Color(0.10f, 0.11f, 0.14f, 0.62f); // 아이콘 원 배경
+        private static readonly Color AutoOnColor = new Color(1f, 0.84f, 0.40f, 1f); // 자동 켜짐 금색
+        private static readonly Color PanelColor = new Color(0.97f, 0.97f, 0.98f, 0.98f); // 설정·확인 창 흰 회색
+        private static readonly Color ButtonColor = new Color(0.30f, 0.32f, 0.40f, 1f); // 창 버튼 차콜
+        private static readonly Color SelectedColor = new Color(0.90f, 0.66f, 0.30f, 1f); // 선택 단계 주황
+
+        private sealed class StandingView // 무대 위 캐릭터 한 명
+        {
+            public string CharacterId; // 캐릭터 ID
+            public string Expression = string.Empty; // 현재 표정
+            public Image Image; // 스탠딩 이미지
+            public Text Label; // 임시 실루엣 이름·표정
+            public DialogueStageSlot Slot; // 자리
+        }
 
         private readonly List<Button> choiceButtons = new List<Button>(); // 현재 선택지 버튼
+        private readonly List<StandingView> standings = new List<StandingView>(); // 무대 위 캐릭터
+        private readonly Button[] textSpeedButtons = new Button[3]; // 글자 속도 버튼
+        private readonly Button[] autoSpeedButtons = new Button[3]; // 자동 속도 버튼
         private DialogueRunner runner; // 대화 진행기
         private Action<DialogueRunner> onFinished; // 종료 콜백
-        private string standingCharacterId = string.Empty; // 스탠딩 캐릭터 ID
-        private string currentExpression = string.Empty; // 현재 표정
-        private Image standingImage; // 스탠딩 이미지
-        private Text standingLabel; // 임시 실루엣 위 이름·표정
-        private GameObject uiRoot; // CLOSE로 숨길 UI 묶음
-        private GameObject namePlate; // 이름표
+        private DialogueStageLayout layout; // 스탠딩 배치
+        private GameObject uiRoot; // 숨김 대상 UI 묶음
+        private RectTransform namePlate; // 이름표
         private Text nameText; // 이름
+        private Text affiliationText; // 소속
         private Text bodyText; // 대사
         private Text continueMark; // 넘김 표시 ▼
-        private Text autoLabel; // AUTO 버튼 글자
+        private Text autoGlyph; // 자동 아이콘 글자
         private RectTransform choiceRoot; // 선택지 영역
-        private GameObject logPanel; // LOG 창
-        private Text logText; // LOG 내용
-        private ScrollRect logScroll; // LOG 스크롤
-        private GameObject confirmPanel; // SKIP 확인 창
+        private GameObject logPanel; // 로그 창
+        private Text logText; // 로그 내용
+        private ScrollRect logScroll; // 로그 스크롤
+        private GameObject confirmPanel; // 건너뛰기 확인 창
+        private GameObject settingsPanel; // 설정 창
         private string fullText = string.Empty; // 현재 대사 전체
         private float visibleChars; // 표시 중인 글자 수
         private bool isTyping; // 타자 효과 진행 여부
-        private bool autoMode; // AUTO 켜짐 여부
-        private float autoTimer; // AUTO 대기 시간
-        private bool uiHidden; // CLOSE로 숨긴 상태
+        private bool autoMode; // 자동 켜짐 여부
+        private float autoTimer; // 자동 대기 시간
+        private bool uiHidden; // 숨김 상태
 
         public static DialogueOverlayView Open(DialogueScript script, Action<DialogueRunner> finishedCallback) // 대화 화면 열기 (대화가 없으면 null)
         {
@@ -64,7 +78,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             DialogueOverlayView view = root.AddComponent<DialogueOverlayView>(); // 화면 컴포넌트 추가
             view.onFinished = finishedCallback; // 종료 콜백 저장
             view.runner = new DialogueRunner(script); // 진행기 생성
-            view.standingCharacterId = script.CharacterId; // 스탠딩 캐릭터 저장
+            view.layout = DialogueStageLayout.Build(script); // 좌우 배치 결정 (Day62)
             view.Build(script); // 화면 구성
             view.ShowCurrent(); // 첫 대사 표시
             return view; // 화면 반환
@@ -76,13 +90,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             background.sprite = DialogueArtFactory.GetBackground(script.Background); // 배경 이미지 적용
             background.raycastTarget = false; // 입력 통과
             RuntimeUiKit.Stretch(background.rectTransform); // 전체 화면
-            standingImage = RuntimeUiKit.CreateImage(transform, "Standing", Color.white); // 스탠딩 생성
-            standingImage.preserveAspect = true; // 비율 유지
-            standingImage.raycastTarget = false; // 입력 통과
-            RuntimeUiKit.SetRect(standingImage.rectTransform, new Vector2(0.32f, 0f), new Vector2(0.68f, 0.97f)); // 화면 중앙 하단 배치 (대화창이 하체를 가림)
-            standingLabel = RuntimeUiKit.CreateText(standingImage.transform, "PlaceholderLabel", string.Empty, 26, new Color(0.20f, 0.16f, 0.26f, 0.9f)); // 임시 실루엣 이름·표정
-            RuntimeUiKit.SetRect(standingLabel.rectTransform, new Vector2(0f, 0.40f), new Vector2(1f, 0.56f)); // 가슴 높이 배치
-            standingImage.gameObject.SetActive(!string.IsNullOrEmpty(standingCharacterId)); // 스탠딩 캐릭터가 없으면 숨김
+            AddStanding(layout.Left, DialogueStageSlot.Left); // 왼쪽 스탠딩
+            AddStanding(layout.Right, DialogueStageSlot.Right); // 오른쪽 스탠딩
+            AddStanding(layout.Center, DialogueStageSlot.Center); // 가운데 스탠딩 (1인)
 
             Button clickCatcher = RuntimeUiKit.CreateButton(transform, "ClickCatcher", new Color(0f, 0f, 0f, 0f), false); // 전체 화면 클릭 영역 (투명)
             RuntimeUiKit.Stretch((RectTransform)clickCatcher.transform); // 전체 화면
@@ -93,18 +103,35 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RuntimeUiKit.Stretch((RectTransform)uiRoot.transform); // 전체 화면
             BuildLocationTag(script); // 장소 표시
             BuildMessageWindow(); // 대화창·이름표
-            BuildMenuBar(); // 하단 메뉴
+            BuildIconMenu(); // 우상단 아이콘 메뉴 (Day62)
             GameObject choiceObject = new GameObject("Choices", typeof(RectTransform)); // 선택지 영역 생성
             choiceObject.transform.SetParent(uiRoot.transform, false); // 부모 연결
             choiceRoot = (RectTransform)choiceObject.transform; // 영역 저장
             RuntimeUiKit.SetRect(choiceRoot, new Vector2(0.26f, 0.36f), new Vector2(0.74f, 0.86f)); // 화면 가운데 배치
-            BuildLogPanel(); // LOG 창
-            BuildConfirmPanel(); // SKIP 확인 창
+            BuildLogPanel(); // 로그 창
+            BuildConfirmPanel(); // 건너뛰기 확인 창
+            BuildSettingsPanel(); // 설정 창 (Day62)
+        }
+
+        private void AddStanding(string characterId, DialogueStageSlot slot) // 스탠딩 한 명 배치 (빈 ID면 생략)
+        {
+            if (string.IsNullOrEmpty(characterId)) return; // 빈 자리
+            StandingView view = new StandingView { CharacterId = characterId, Slot = slot }; // 참조 생성
+            view.Image = RuntimeUiKit.CreateImage(transform, "Standing_" + slot, Color.white); // 스탠딩 이미지
+            view.Image.preserveAspect = true; // 비율 유지
+            view.Image.raycastTarget = false; // 입력 통과
+            Vector2 min = slot == DialogueStageSlot.Left ? new Vector2(0.03f, 0f) : slot == DialogueStageSlot.Right ? new Vector2(0.57f, 0f) : new Vector2(0.32f, 0f); // 자리별 왼쪽 아래
+            Vector2 max = slot == DialogueStageSlot.Left ? new Vector2(0.43f, 0.95f) : slot == DialogueStageSlot.Right ? new Vector2(0.97f, 0.95f) : new Vector2(0.68f, 0.97f); // 자리별 오른쪽 위
+            RuntimeUiKit.SetRect(view.Image.rectTransform, min, max); // 배치 (대화창이 하체를 가림)
+            view.Label = RuntimeUiKit.CreateText(view.Image.transform, "PlaceholderLabel", string.Empty, 26, new Color(0.20f, 0.16f, 0.26f, 0.9f)); // 임시 실루엣 이름·표정
+            view.Label.supportRichText = true; // 글자 크기 태그 사용
+            RuntimeUiKit.SetRect(view.Label.rectTransform, new Vector2(0f, 0.40f), new Vector2(1f, 0.56f)); // 가슴 높이 배치
+            standings.Add(view); // 목록 등록
         }
 
         private void BuildLocationTag(DialogueScript script) // 좌상단 장소 표시
         {
-            Image tag = RuntimeUiKit.CreateImage(uiRoot.transform, "LocationTag", new Color(0.12f, 0.08f, 0.18f, 0.62f)); // 반투명 띠
+            Image tag = RuntimeUiKit.CreateImage(uiRoot.transform, "LocationTag", new Color(0.10f, 0.11f, 0.14f, 0.55f)); // 반투명 띠
             tag.raycastTarget = false; // 입력 통과
             RuntimeUiKit.SetRect(tag.rectTransform, new Vector2(0f, 0.925f), new Vector2(0.34f, 0.98f)); // 좌상단 배치
             string title = string.IsNullOrEmpty(script.Title) ? string.Empty : $"「{script.Title}」  "; // 제목 문구
@@ -112,64 +139,64 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RuntimeUiKit.Stretch(text.rectTransform, 14f); // 여백 확장
         }
 
-        private void BuildMessageWindow() // 하단 대화창·이름표·대사·넘김 표시
+        private void BuildMessageWindow() // 하단 밝은 회색 대화창·이름표(이름·소속)·대사·넘김 표시
         {
             Image window = RuntimeUiKit.CreateImage(uiRoot.transform, "MessageWindow", WindowColor); // 대화창 생성
             window.raycastTarget = false; // 클릭은 전체 화면 영역이 받음
-            RuntimeUiKit.SetRect(window.rectTransform, new Vector2(0.01f, 0.05f), new Vector2(0.99f, 0.30f)); // 하단 배치
-            Image topLine = RuntimeUiKit.CreateImage(window.transform, "TopLine", AccentColor); // 윗선 생성
+            RuntimeUiKit.SetRect(window.rectTransform, new Vector2(0.01f, 0.03f), new Vector2(0.99f, 0.29f)); // 하단 배치
+            Image topLine = RuntimeUiKit.CreateImage(window.transform, "TopLine", WindowLineColor); // 윗선 생성
             topLine.raycastTarget = false; // 입력 통과
             RuntimeUiKit.SetRect(topLine.rectTransform, new Vector2(0f, 0.985f), new Vector2(1f, 1f)); // 윗선 배치
 
             Image plate = RuntimeUiKit.CreateImage(uiRoot.transform, "NamePlate", NamePlateColor); // 이름표 생성
             plate.raycastTarget = false; // 입력 통과
-            RuntimeUiKit.SetRect(plate.rectTransform, new Vector2(0.025f, 0.30f), new Vector2(0.20f, 0.355f)); // 대화창 왼쪽 위 배치
-            Image plateLine = RuntimeUiKit.CreateImage(plate.transform, "Underline", AccentColor); // 이름표 아랫선
-            plateLine.raycastTarget = false; // 입력 통과
-            RuntimeUiKit.SetRect(plateLine.rectTransform, new Vector2(0.06f, 0f), new Vector2(0.94f, 0.06f)); // 아랫선 배치
-            nameText = RuntimeUiKit.CreateText(plate.transform, "Name", string.Empty, 24, Color.white).Overflow(); // 이름 생성
-            RuntimeUiKit.Stretch(nameText.rectTransform); // 이름표 채움
-            namePlate = plate.gameObject; // 이름표 저장
+            namePlate = plate.rectTransform; // 이름표 저장 (화자 쪽으로 이동)
+            nameText = RuntimeUiKit.CreateText(plate.transform, "Name", string.Empty, 24, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft).BestFit(14); // 이름
+            RuntimeUiKit.SetRect(nameText.rectTransform, new Vector2(0.07f, 0f), new Vector2(0.52f, 1f)); // 이름 왼쪽
+            affiliationText = RuntimeUiKit.CreateText(plate.transform, "Affiliation", string.Empty, 16, AffiliationColor, FontStyle.Normal, TextAnchor.MiddleRight).BestFit(10); // 소속
+            RuntimeUiKit.SetRect(affiliationText.rectTransform, new Vector2(0.50f, 0f), new Vector2(0.94f, 1f)); // 소속 오른쪽
 
-            bodyText = RuntimeUiKit.CreateText(window.transform, "Body", string.Empty, 27, Color.white, FontStyle.Normal, TextAnchor.UpperLeft).Wrap().Outlined(new Color(0f, 0f, 0f, 0.45f), new Vector2(1.5f, -1.5f)); // 대사 생성
+            bodyText = RuntimeUiKit.CreateText(window.transform, "Body", string.Empty, 27, BodyColor, FontStyle.Normal, TextAnchor.UpperLeft).Wrap(); // 대사 생성 (밝은 창 위 진회색)
             bodyText.lineSpacing = 1.15f; // 줄 간격
-            RuntimeUiKit.SetRect(bodyText.rectTransform, new Vector2(0.035f, 0.10f), new Vector2(0.94f, 0.80f)); // 대사 배치
-            continueMark = RuntimeUiKit.CreateText(window.transform, "ContinueMark", "▼", 22, AccentColor); // 넘김 표시 생성
+            RuntimeUiKit.SetRect(bodyText.rectTransform, new Vector2(0.035f, 0.10f), new Vector2(0.94f, 0.78f)); // 대사 배치
+            continueMark = RuntimeUiKit.CreateText(window.transform, "ContinueMark", "▼", 22, WindowLineColor); // 넘김 표시 생성
             RuntimeUiKit.SetRect(continueMark.rectTransform, new Vector2(0.95f, 0.06f), new Vector2(0.985f, 0.26f)); // 오른쪽 아래 배치
         }
 
-        private void BuildMenuBar() // 하단 메뉴 (SKIP·AUTO·LOG·CLOSE)
+        private void BuildIconMenu() // 우상단 아이콘 메뉴 : 자동 · 건너뛰기 · 숨김 · 로그 · 설정 (목업 1번)
         {
-            Image bar = RuntimeUiKit.CreateImage(uiRoot.transform, "MenuBar", new Color(0.14f, 0.09f, 0.22f, 0.88f)); // 메뉴 띠 생성
-            bar.raycastTarget = false; // 입력 통과 (버튼만 입력)
-            RuntimeUiKit.SetRect(bar.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.045f)); // 화면 맨 아래 배치
-            CreateMenuButton(bar.transform, "SKIP", 0.66f, ConfirmSkip); // 건너뛰기
-            autoLabel = CreateMenuButton(bar.transform, "AUTO", 0.745f, ToggleAuto); // 자동 넘기기
-            CreateMenuButton(bar.transform, "LOG", 0.83f, OpenLog); // 대화 로그
-            CreateMenuButton(bar.transform, "CLOSE", 0.915f, HideUi); // 대화창 숨기기 (기획서 'UI 비활성화')
+            autoGlyph = CreateIconButton("Auto", "▶", "자동", 0, ToggleAuto); // 자동 넘기기
+            CreateIconButton("Skip", "▶▶", "건너뛰기", 1, ConfirmSkip); // 건너뛰기 (확인 창)
+            CreateIconButton("Hide", "◎", "숨김", 2, HideUi); // UI 숨김 (기획서 'UI 비활성화')
+            CreateIconButton("Log", "≡", "로그", 3, OpenLog); // 대화 로그
+            CreateIconButton("Settings", "⚙", "설정", 4, OpenSettings); // 글자·자동 속도 설정
         }
 
-        private Text CreateMenuButton(Transform parent, string label, float left, UnityEngine.Events.UnityAction action) // 메뉴 글자 버튼 생성
+        private Text CreateIconButton(string name, string glyph, string caption, int index, UnityEngine.Events.UnityAction action) // 원형 아이콘 버튼 + 아래 설명
         {
-            Button button = RuntimeUiKit.CreateButton(parent, $"Menu_{label}", new Color(1f, 1f, 1f, 0f)); // 투명 버튼
-            RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(left, 0f), new Vector2(left + 0.08f, 1f)); // 오른쪽부터 배치
-            Text text = RuntimeUiKit.CreateText(button.transform, "Label", label, 17, MenuColor).Overflow(); // 메뉴 글자
-            RuntimeUiKit.Stretch(text.rectTransform); // 버튼 채움
+            float centerX = 0.735f + (index * 0.057f); // 오른쪽으로 나란히
+            Button button = RuntimeUiKit.CreateButton(uiRoot.transform, "Icon_" + name, IconColor); // 원형 버튼
+            button.GetComponent<Image>().sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 원 모양
+            RectTransform rect = (RectTransform)button.transform; // 버튼 영역
+            rect.anchorMin = new Vector2(centerX, 0.945f); // 기준점
+            rect.anchorMax = new Vector2(centerX, 0.945f); // 기준점
+            rect.sizeDelta = new Vector2(54f, 54f); // 정원 크기
+            Text text = RuntimeUiKit.CreateText(button.transform, "Glyph", glyph, 22, Color.white).BestFit(12); // 아이콘 글자
+            RuntimeUiKit.Stretch(text.rectTransform, 8f); // 원 안
+            Text label = RuntimeUiKit.CreateText(uiRoot.transform, "Caption_" + name, caption, 13, Color.white).Outlined(new Color(0f, 0f, 0f, 0.7f), new Vector2(1f, -1f)); // 아래 설명
+            label.raycastTarget = false; // 입력 통과
+            RuntimeUiKit.SetRect(label.rectTransform, new Vector2(centerX - 0.028f, 0.878f), new Vector2(centerX + 0.028f, 0.908f)); // 원 아래
             button.onClick.AddListener(action); // 기능 연결
             return text; // 글자 반환
         }
 
-        private void BuildLogPanel() // LOG 창 (지나간 대사 목록)
+        private void BuildLogPanel() // 로그 창 (지나간 대사 목록)
         {
-            Image panel = RuntimeUiKit.CreateImage(transform, "LogPanel", new Color(0.05f, 0.03f, 0.09f, 0.90f)); // 어두운 전체 창 (뒤 클릭 차단)
+            Image panel = RuntimeUiKit.CreateImage(transform, "LogPanel", new Color(0.06f, 0.07f, 0.09f, 0.92f)); // 어두운 전체 창 (뒤 클릭 차단)
             RuntimeUiKit.Stretch(panel.rectTransform); // 전체 화면
-            Text title = RuntimeUiKit.CreateText(panel.transform, "Title", "LOG", 26, AccentColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
+            Text title = RuntimeUiKit.CreateText(panel.transform, "Title", "LOG", 26, AffiliationColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
             RuntimeUiKit.SetRect(title.rectTransform, new Vector2(0.08f, 0.90f), new Vector2(0.50f, 0.97f)); // 제목 배치
-            Button close = RuntimeUiKit.CreateButton(panel.transform, "CloseLog", new Color(0.30f, 0.22f, 0.42f, 0.95f)); // 닫기 버튼
-            RuntimeUiKit.SetRect((RectTransform)close.transform, new Vector2(0.84f, 0.905f), new Vector2(0.92f, 0.965f)); // 닫기 배치
-            Text closeLabel = RuntimeUiKit.CreateText(close.transform, "Label", "닫기", 18, Color.white); // 닫기 글자
-            RuntimeUiKit.Stretch(closeLabel.rectTransform); // 버튼 채움
-            close.onClick.AddListener(CloseLog); // 닫기 연결
+            CreatePanelButton(panel.transform, "CloseLog", "닫기", new Vector2(0.84f, 0.905f), new Vector2(0.92f, 0.965f), CloseLog); // 닫기 버튼
 
             GameObject scrollObject = new GameObject("Scroll", typeof(RectTransform), typeof(Image), typeof(ScrollRect)); // 스크롤 영역
             scrollObject.transform.SetParent(panel.transform, false); // 부모 연결
@@ -201,32 +228,65 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             logPanel.SetActive(false); // 초기 숨김
         }
 
-        private void BuildConfirmPanel() // SKIP 확인 창
+        private void BuildConfirmPanel() // 건너뛰기 확인 창 (기획서 '주의창-씬 넘기기')
         {
             Image dim = RuntimeUiKit.CreateImage(transform, "SkipConfirm", new Color(0f, 0f, 0f, 0.55f)); // 뒤 화면 어둡게 (클릭 차단)
             RuntimeUiKit.Stretch(dim.rectTransform); // 전체 화면
-            Image box = RuntimeUiKit.CreateImage(dim.transform, "Box", new Color(0.20f, 0.13f, 0.30f, 0.97f)); // 확인 상자
+            Image box = RuntimeUiKit.CreateImage(dim.transform, "Box", PanelColor); // 확인 상자
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.33f, 0.38f), new Vector2(0.67f, 0.62f)); // 가운데 배치
-            box.gameObject.AddComponent<Outline>().effectColor = AccentColor; // 연보라 외곽선
-            Text message = RuntimeUiKit.CreateText(box.transform, "Message", "해당 장면을 건너뛰시겠습니까?\n<size=17>선택지가 나오면 멈추고, 완료한 이야기는 다시 볼 수 있어요.</size>", 22, Color.white).Wrap(); // 안내 문구
+            box.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 회청색 외곽선
+            Text message = RuntimeUiKit.CreateText(box.transform, "Message", "해당 씬을 건너뛰시겠습니까?\n<size=17>(일기장을 통해 다시 감상이 가능 · 선택지가 나오면 멈춰요)</size>", 22, BodyColor).Wrap(); // 안내 문구
             message.supportRichText = true; // 글자 크기 태그 사용
             RuntimeUiKit.SetRect(message.rectTransform, new Vector2(0.05f, 0.40f), new Vector2(0.95f, 0.94f)); // 문구 배치
-            CreateConfirmButton(box.transform, "네", new Vector2(0.10f, 0.10f), new Vector2(0.46f, 0.34f), RunSkip); // 건너뛰기 실행
-            CreateConfirmButton(box.transform, "아니요", new Vector2(0.54f, 0.10f), new Vector2(0.90f, 0.34f), () => confirmPanel.SetActive(false)); // 창 닫기
+            CreatePanelButton(box.transform, "Yes", "네", new Vector2(0.10f, 0.10f), new Vector2(0.46f, 0.34f), RunSkip); // 건너뛰기 실행
+            CreatePanelButton(box.transform, "No", "아니요", new Vector2(0.54f, 0.10f), new Vector2(0.90f, 0.34f), () => confirmPanel.SetActive(false)); // 창 닫기
             confirmPanel = dim.gameObject; // 창 저장
             confirmPanel.SetActive(false); // 초기 숨김
         }
 
-        private static void CreateConfirmButton(Transform parent, string label, Vector2 min, Vector2 max, UnityEngine.Events.UnityAction action) // 확인 창 버튼 생성
+        private void BuildSettingsPanel() // 설정 창 : 글자 속도 · 자동 넘김 속도 (Day62 신규)
         {
-            Button button = RuntimeUiKit.CreateButton(parent, $"Confirm_{label}", new Color(0.36f, 0.26f, 0.52f, 1f)); // 버튼 생성
-            RuntimeUiKit.SetRect((RectTransform)button.transform, min, max); // 버튼 배치
-            Text text = RuntimeUiKit.CreateText(button.transform, "Label", label, 20, Color.white); // 버튼 글자
-            RuntimeUiKit.Stretch(text.rectTransform); // 버튼 채움
-            button.onClick.AddListener(action); // 기능 연결
+            Image dim = RuntimeUiKit.CreateImage(transform, "Settings", new Color(0f, 0f, 0f, 0.55f)); // 뒤 화면 어둡게
+            RuntimeUiKit.Stretch(dim.rectTransform); // 전체 화면
+            Image box = RuntimeUiKit.CreateImage(dim.transform, "Box", PanelColor); // 설정 상자
+            RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.31f, 0.30f), new Vector2(0.69f, 0.70f)); // 가운데 배치
+            box.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 외곽선
+            Text title = RuntimeUiKit.CreateText(box.transform, "Title", "대화 설정", 24, BodyColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
+            RuntimeUiKit.SetRect(title.rectTransform, new Vector2(0.06f, 0.84f), new Vector2(0.70f, 0.96f)); // 제목 배치
+            BuildSpeedRow(box.transform, "글자 속도", 0.60f, textSpeedButtons, level => DialogueSettings.TextSpeed = level); // 글자 속도 줄
+            BuildSpeedRow(box.transform, "자동 넘김 속도", 0.34f, autoSpeedButtons, level => DialogueSettings.AutoSpeed = level); // 자동 속도 줄
+            CreatePanelButton(box.transform, "CloseSettings", "닫기", new Vector2(0.36f, 0.06f), new Vector2(0.64f, 0.19f), () => settingsPanel.SetActive(false)); // 닫기
+            settingsPanel = dim.gameObject; // 창 저장
+            settingsPanel.SetActive(false); // 초기 숨김
         }
 
-        private void Update() // 타자 효과·AUTO·키보드 처리
+        private void BuildSpeedRow(Transform parent, string label, float y, Button[] buttons, Action<int> apply) // 느림·보통·빠름 한 줄
+        {
+            Text text = RuntimeUiKit.CreateText(parent, "Label_" + label, label, 19, BodyColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 줄 이름
+            RuntimeUiKit.SetRect(text.rectTransform, new Vector2(0.06f, y), new Vector2(0.36f, y + 0.16f)); // 왼쪽
+
+            for (int index = 0; index < buttons.Length; index++) // 단계 버튼
+            {
+                int level = index; // 클릭용 단계 복사
+                buttons[index] = CreatePanelButton(parent, $"{label}_{index}", DialogueSettings.SpeedLabels[index], new Vector2(0.38f + (index * 0.19f), y), new Vector2(0.55f + (index * 0.19f), y + 0.16f), () => // 단계 버튼
+                {
+                    apply(level); // 저장
+                    RefreshSettingsButtons(); // 선택 표시
+                });
+            }
+        }
+
+        private static Button CreatePanelButton(Transform parent, string name, string label, Vector2 min, Vector2 max, UnityEngine.Events.UnityAction action) // 창 버튼 생성
+        {
+            Button button = RuntimeUiKit.CreateButton(parent, "Button_" + name, ButtonColor); // 버튼 생성
+            RuntimeUiKit.SetRect((RectTransform)button.transform, min, max); // 버튼 배치
+            Text text = RuntimeUiKit.CreateText(button.transform, "Label", label, 19, Color.white).BestFit(11); // 버튼 글자
+            RuntimeUiKit.Stretch(text.rectTransform, 4f); // 버튼 채움
+            button.onClick.AddListener(action); // 기능 연결
+            return button; // 버튼 반환
+        }
+
+        private void Update() // 타자 효과·자동·키보드 처리
         {
             if (runner == null) // 종료 확인
             {
@@ -237,7 +297,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (isTyping) // 타자 효과 진행 확인
             {
-                visibleChars += CharsPerSecond * delta; // 표시 글자 증가
+                visibleChars += DialogueSettings.GetCharsPerSecond(DialogueSettings.TextSpeed) * delta; // 설정 속도로 글자 증가
                 int count = Mathf.Min(fullText.Length, Mathf.FloorToInt(visibleChars)); // 표시 글자 수
 
                 if (count >= fullText.Length) // 대사 끝 확인
@@ -250,14 +310,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 }
             }
 
-            continueMark.color = new Color(AccentColor.r, AccentColor.g, AccentColor.b, 0.35f + (0.65f * Mathf.PingPong(Time.unscaledTime * 1.6f, 1f))); // ▼ 깜빡임
-            bool modalOpen = logPanel.activeSelf || confirmPanel.activeSelf; // 창 열림 여부
+            continueMark.color = new Color(WindowLineColor.r, WindowLineColor.g, WindowLineColor.b, 0.35f + (0.65f * Mathf.PingPong(Time.unscaledTime * 1.6f, 1f))); // ▼ 깜빡임
+            bool modalOpen = logPanel.activeSelf || confirmPanel.activeSelf || settingsPanel.activeSelf; // 창 열림 여부
 
-            if (autoMode && !isTyping && !modalOpen && !uiHidden && runner.Current != null && !runner.IsWaitingForChoice) // AUTO 넘김 조건
+            if (autoMode && !isTyping && !modalOpen && !uiHidden && runner.Current != null && !runner.IsWaitingForChoice) // 자동 넘김 조건
             {
                 autoTimer += delta; // 대기 누적
 
-                if (autoTimer >= 1.0f + (fullText.Length * 0.035f)) // 대사 길이만큼 기다린 뒤
+                if (autoTimer >= DialogueSettings.GetAutoDelay(DialogueSettings.AutoSpeed, fullText.Length)) // 설정 속도만큼 기다린 뒤
                 {
                     Next(); // 다음 대사
                     return; // 이번 프레임 입력 처리 생략 (종료 직후 보호)
@@ -272,8 +332,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
             else if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) // ESC 확인
             {
-                if (logPanel.activeSelf) CloseLog(); // LOG 닫기
+                if (logPanel.activeSelf) CloseLog(); // 로그 닫기
                 confirmPanel.SetActive(false); // 확인 창 닫기
+                settingsPanel.SetActive(false); // 설정 창 닫기
             }
         }
 
@@ -284,7 +345,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 무시
             }
 
-            if (uiHidden) // CLOSE 상태 확인
+            if (uiHidden) // 숨김 상태 확인
             {
                 ShowUi(); // 다시 표시
                 return; // 넘기지 않음
@@ -315,7 +376,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             ClearChoices(); // 이전 선택지 제거
             DialogueNode node = runner.Current; // 현재 노드
-            autoTimer = 0f; // AUTO 대기 초기화
+            autoTimer = 0f; // 자동 대기 초기화
 
             if (node == null) // 노드 확인
             {
@@ -329,12 +390,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 표시 종료
             }
 
-            bool isStandingSpeaker = node.Speaker == standingCharacterId; // 스탠딩 캐릭터가 말하는지
-            if (isStandingSpeaker && !string.IsNullOrEmpty(node.Expression)) currentExpression = node.Expression; // 표정 갱신
-            RefreshStanding(isStandingSpeaker || node.Speaker == DialogueSpeakers.Narration); // 스탠딩 갱신 (주인공 대사 중에는 살짝 어둡게)
-            string speakerName = ResolveSpeakerName(node.Speaker); // 이름 조회
-            namePlate.SetActive(!string.IsNullOrEmpty(speakerName)); // 나레이션은 이름표 숨김
-            nameText.text = speakerName; // 이름 적용
+            StandingView speakerView = FindStanding(node.Speaker); // 무대 위 화자
+            if (speakerView != null && !string.IsNullOrEmpty(node.Expression)) speakerView.Expression = node.Expression; // 표정 갱신
+            RefreshStandings(node.Speaker); // 말하는 쪽 강조 (Day62)
+            RefreshNamePlate(node.Speaker, speakerView); // 이름·소속·위치 (Day62)
             bodyText.fontStyle = node.Speaker == DialogueSpeakers.Narration ? FontStyle.Italic : FontStyle.Normal; // 나레이션은 기울임
             fullText = node.Text; // 대사 저장
             visibleChars = 0f; // 타자 효과 시작
@@ -347,7 +406,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             isTyping = false; // 타자 효과 종료
             bodyText.text = fullText; // 전체 대사
-            autoTimer = 0f; // AUTO 대기 시작
+            autoTimer = 0f; // 자동 대기 시작
 
             if (runner.IsWaitingForChoice) // 선택지 확인
             {
@@ -360,19 +419,42 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
         }
 
-        private void RefreshStanding(bool bright) // 스탠딩 이미지·밝기 갱신
+        private StandingView FindStanding(string characterId) // 무대 위 캐릭터 조회
         {
-            if (string.IsNullOrEmpty(standingCharacterId)) // 스탠딩 캐릭터 확인
+            for (int index = 0; index < standings.Count; index++) // 목록 순회
             {
-                return; // 갱신 생략
+                if (standings[index].CharacterId == characterId) return standings[index]; // 일치
             }
 
-            standingImage.sprite = DialogueArtFactory.GetStanding(standingCharacterId, currentExpression, out bool placeholder); // 표정별 스탠딩
-            Color tint = placeholder ? DialogueArtFactory.GetCharacterTint(standingCharacterId) : Color.white; // 임시 실루엣은 캐릭터 색
-            standingImage.color = bright ? tint : Color.Lerp(tint, Color.black, 0.28f); // 말하지 않을 때 어둡게
-            standingLabel.gameObject.SetActive(placeholder); // 정식 아트가 있으면 글자 숨김
-            standingLabel.text = placeholder ? $"{ResolveSpeakerName(standingCharacterId)}\n<size=20>[{(string.IsNullOrEmpty(currentExpression) ? "기본" : currentExpression)}]</size>" : string.Empty; // 이름·표정 표시
-            standingLabel.supportRichText = true; // 글자 크기 태그 사용
+            return null; // 무대에 없음
+        }
+
+        private void RefreshStandings(string speaker) // 스탠딩 이미지·밝기 갱신 (말하는 사람 밝게, 듣는 사람 어둡게)
+        {
+            bool characterSpeaking = FindStanding(speaker) != null; // 무대 위 캐릭터가 말하는지
+
+            for (int index = 0; index < standings.Count; index++) // 무대 순회
+            {
+                StandingView view = standings[index]; // 스탠딩
+                view.Image.sprite = DialogueArtFactory.GetStanding(view.CharacterId, view.Expression, out bool placeholder); // 표정별 스탠딩
+                Color tint = placeholder ? DialogueArtFactory.GetCharacterTint(view.CharacterId) : Color.white; // 임시 실루엣은 캐릭터 색
+                bool speaking = view.CharacterId == speaker; // 이 캐릭터가 말하는지
+                float dim = speaking ? 0f : characterSpeaking ? 0.45f : speaker == DialogueSpeakers.Narration && standings.Count == 1 ? 0f : 0.28f; // 듣는 쪽 0.45 · 주인공 대사 0.28 · 1인 나레이션 0
+                view.Image.color = Color.Lerp(tint, Color.black, dim); // 밝기 적용
+                view.Image.rectTransform.localScale = Vector3.one * (speaking || !characterSpeaking ? 1f : 0.96f); // 듣는 쪽 살짝 작게
+                view.Label.gameObject.SetActive(placeholder); // 정식 아트가 있으면 글자 숨김
+                view.Label.text = placeholder ? $"{DialogueSpeakerInfo.ResolveName(view.CharacterId)}\n<size=20>[{(string.IsNullOrEmpty(view.Expression) ? "기본" : view.Expression)}]</size>" : string.Empty; // 이름·표정 표시
+            }
+        }
+
+        private void RefreshNamePlate(string speaker, StandingView speakerView) // 이름표 : 이름 · 소속 · 화자 쪽 위치
+        {
+            string speakerName = DialogueSpeakerInfo.ResolveName(speaker); // 이름
+            namePlate.gameObject.SetActive(!string.IsNullOrEmpty(speakerName)); // 나레이션은 이름표 숨김
+            nameText.text = speakerName; // 이름
+            affiliationText.text = DialogueSpeakerInfo.ResolveAffiliation(speaker); // 소속
+            bool right = speakerView != null && speakerView.Slot == DialogueStageSlot.Right; // 오른쪽 화자
+            RuntimeUiKit.SetRect(namePlate, right ? new Vector2(0.72f, 0.29f) : new Vector2(0.025f, 0.29f), right ? new Vector2(0.975f, 0.35f) : new Vector2(0.28f, 0.35f)); // 화자 쪽 대화창 위
         }
 
         private void ShowChoices(IReadOnlyList<DialogueChoice> choices) // 선택지 버튼 표시
@@ -386,11 +468,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             for (int index = 0; index < choices.Count; index++) // 선택지 순회
             {
                 int captured = index; // 클릭용 번호 복사
-                Button button = RuntimeUiKit.CreateButton(choiceRoot, $"Choice_{index}", new Color(0.22f, 0.14f, 0.32f, 0.92f)); // 선택지 버튼
+                Button button = RuntimeUiKit.CreateButton(choiceRoot, $"Choice_{index}", new Color(0.96f, 0.96f, 0.98f, 0.95f)); // 밝은 선택지 버튼
                 float y = top - (index * (height + gap)); // 버튼 위치
                 RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(0f, y - height), new Vector2(1f, y)); // 버튼 배치
-                button.gameObject.AddComponent<Outline>().effectColor = AccentColor; // 연보라 외곽선
-                Text text = RuntimeUiKit.CreateText(button.transform, "Label", choices[index].Text, 24, Color.white).BestFit(16); // 선택지 문구
+                button.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 회청색 외곽선
+                Text text = RuntimeUiKit.CreateText(button.transform, "Label", choices[index].Text, 24, BodyColor).BestFit(16); // 선택지 문구
                 RuntimeUiKit.Stretch(text.rectTransform, 10f); // 여백 확장
                 button.onClick.AddListener(() => Choose(captured)); // 선택 연결
                 choiceButtons.Add(button); // 목록 등록
@@ -418,7 +500,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             else ShowCurrent(); // 다음 대사 표시
         }
 
-        private void ConfirmSkip() // SKIP 확인 창 열기
+        private void ConfirmSkip() // 건너뛰기 확인 창 열기
         {
             if (runner == null || runner.IsWaitingForChoice) // 종료·선택지 대기 확인
             {
@@ -445,15 +527,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             CompleteTyping(); // 타자 효과 없이 바로 표시
         }
 
-        private void ToggleAuto() // AUTO 켜기·끄기
+        private void ToggleAuto() // 자동 켜기·끄기
         {
             autoMode = !autoMode; // 상태 전환
             autoTimer = 0f; // 대기 초기화
-            autoLabel.color = autoMode ? AutoOnColor : MenuColor; // 켜짐 표시
-            autoLabel.text = autoMode ? "AUTO ●" : "AUTO"; // 켜짐 표시 문구
+            autoGlyph.color = autoMode ? AutoOnColor : Color.white; // 켜짐 금색
         }
 
-        private void OpenLog() // LOG 창 열기
+        private void OpenLog() // 로그 창 열기
         {
             if (runner == null) return; // 종료 확인
             StringBuilder builder = new StringBuilder(); // 로그 문구 조립기
@@ -468,8 +549,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     continue; // 다음 줄
                 }
 
-                string name = ResolveSpeakerName(entry.Speaker); // 화자 이름
-                if (!string.IsNullOrEmpty(name)) builder.Append($"<color=#C9B6F2><b>{name}</b></color>\n"); // 이름 연보라
+                string name = DialogueSpeakerInfo.ResolveName(entry.Speaker); // 화자 이름
+                if (!string.IsNullOrEmpty(name)) builder.Append($"<color=#C8CDD8><b>{name}</b></color>\n"); // 이름 연회색
                 builder.Append($"{entry.Text}\n\n"); // 대사
             }
 
@@ -480,12 +561,28 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             logScroll.verticalNormalizedPosition = 0f; // 최신 대사로 스크롤
         }
 
-        private void CloseLog() // LOG 창 닫기
+        private void CloseLog() // 로그 창 닫기
         {
             logPanel.SetActive(false); // 창 숨김
         }
 
-        private void HideUi() // CLOSE : 대화창·메뉴 숨기기 (아무 곳이나 클릭하면 복귀)
+        private void OpenSettings() // 설정 창 열기
+        {
+            RefreshSettingsButtons(); // 현재 단계 표시
+            settingsPanel.SetActive(true); // 창 표시
+            settingsPanel.transform.SetAsLastSibling(); // 최상단 표시
+        }
+
+        private void RefreshSettingsButtons() // 선택된 속도 단계 강조
+        {
+            for (int index = 0; index < textSpeedButtons.Length; index++) // 단계 순회
+            {
+                textSpeedButtons[index].GetComponent<Image>().color = index == DialogueSettings.TextSpeed ? SelectedColor : ButtonColor; // 글자 속도
+                autoSpeedButtons[index].GetComponent<Image>().color = index == DialogueSettings.AutoSpeed ? SelectedColor : ButtonColor; // 자동 속도
+            }
+        }
+
+        private void HideUi() // 숨김 : 대화창·메뉴 숨기기 (아무 곳이나 클릭하면 복귀)
         {
             uiHidden = true; // 숨김 상태
             uiRoot.SetActive(false); // UI 숨김
@@ -509,15 +606,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             enabled = false; // Update 중지
             onFinished?.Invoke(finished); // 결과 반영 콜백
             Destroy(gameObject); // 화면 제거
-        }
-
-        private static string ResolveSpeakerName(string speaker) // 화자 이름 조회
-        {
-            if (speaker == DialogueSpeakers.Narration) return string.Empty; // 나레이션 이름 없음
-            if (speaker == DialogueSpeakers.Hero) return DialogueSpeakers.HeroLabel; // 주인공 이름
-            DataManager data = GameManager.Instance == null ? null : GameManager.Instance.Data; // 데이터 관리자 조회
-            CharacterData character = data == null ? null : data.GetCharacter(speaker); // 캐릭터 원본 조회
-            return character == null ? speaker : character.DisplayName; // 표시 이름 반환
         }
     }
 }

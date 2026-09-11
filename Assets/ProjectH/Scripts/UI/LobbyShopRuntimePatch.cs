@@ -5,8 +5,9 @@ using UnityEngine.UI; // Unity UI 기능
 
 namespace ProjectH.UI // 프로젝트 UI 영역
 {
-    public static class LobbyShopRuntimePatch // Lobby 대장간·상점 진입 버튼 Runtime 패치 (Day61 대장간 버튼 추가 — 상점 왼쪽 칸)
+    public static class LobbyShopRuntimePatch // Lobby 마을·대장간·상점 진입 버튼 Runtime 패치 (Day61 대장간 · Day62 마을 추가 — 상점 왼쪽 칸부터)
     {
+        private const string VillageButtonName = "VillageSceneEntryButton"; // 마을 버튼 객체 이름 (Day62 추가)
         private const string BlacksmithButtonName = "BlacksmithSceneEntryButton"; // 대장간 버튼 객체 이름 (Day61 추가)
         private const string ShopButtonName = "ShopSceneEntryButton"; // 상점 버튼 객체 이름
 
@@ -33,11 +34,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 버튼 생성 중단
             }
 
+            Transform village = EnsureEntryButton(navigationRoot, VillageButtonName, "마을", GoVillage); // 마을 버튼 (Day62 추가)
             Transform blacksmith = EnsureEntryButton(navigationRoot, BlacksmithButtonName, "대장간", GoBlacksmith); // 대장간 버튼 (Day61 추가)
             Transform shop = EnsureEntryButton(navigationRoot, ShopButtonName, "상점", GoShop); // 상점 버튼
-            int shopIndex = shop.GetSiblingIndex(); // 상점 칸 위치
-            blacksmith.SetSiblingIndex(blacksmith.GetSiblingIndex() > shopIndex ? shopIndex : shopIndex - 1); // 대장간을 상점 바로 왼쪽 칸으로 (SetSiblingIndex는 먼저 빠진 뒤 끼워지므로 앞쪽이면 -1)
+            PlaceBefore(blacksmith, shop); // 대장간을 상점 바로 왼쪽 칸으로
+            PlaceBefore(village, blacksmith); // 마을을 대장간 바로 왼쪽 칸으로 (Day62)
             NormalizeBottomNavigation(navigationRoot); // 하단 버튼 균등 배치
+        }
+
+        private static void PlaceBefore(Transform target, Transform anchor) // target을 anchor 바로 왼쪽 칸으로 (Day62 공용화)
+        {
+            int anchorIndex = anchor.GetSiblingIndex(); // 기준 칸 위치
+            target.SetSiblingIndex(target.GetSiblingIndex() > anchorIndex ? anchorIndex : anchorIndex - 1); // SetSiblingIndex는 먼저 빠진 뒤 끼워지므로 앞쪽이면 -1
         }
 
         private static Transform EnsureEntryButton(Transform navigationRoot, string buttonName, string labelText, UnityEngine.Events.UnityAction onClick) // 하단 진입 버튼 보장 (Day61 상점 전용 → 공용화)
@@ -159,6 +167,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static void GoShop() => LoadScene(GameScenes.Shop); // 상점 씬 이동
 
         private static void GoBlacksmith() => LoadScene(GameScenes.Blacksmith); // 대장간 씬 이동 (Day61 추가)
+
+        private static void GoVillage() => LoadScene(GameScenes.Village); // 마을 씬 이동 (Day62 추가)
 
         private static void LoadScene(string sceneName) // 씬 이동 공통 처리
         {

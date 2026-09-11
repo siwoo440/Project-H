@@ -111,6 +111,20 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new BackgroundPalette(new Color(0.36f, 0.24f, 0.16f), new Color(0.86f, 0.66f, 0.42f), new Color(0.42f, 0.28f, 0.18f), false); // 등불 켠 목조 가게
                 case "BLACKSMITH": // 대장간 내부 (Day61 추가)
                     return new BackgroundPalette(new Color(0.08f, 0.06f, 0.06f), new Color(0.72f, 0.30f, 0.10f), new Color(0.16f, 0.12f, 0.10f), false); // 화로 불빛
+                case "VILLAGE": // 마을 전경 지도 (Day62 추가)
+                    return new BackgroundPalette(new Color(0.52f, 0.74f, 0.92f), new Color(0.92f, 0.90f, 0.78f), new Color(0.50f, 0.66f, 0.42f), false); // 초록 들판 마을
+                case "VILLAGE_PLAZA": // 광장 (Day62 추가)
+                    return new BackgroundPalette(new Color(0.50f, 0.72f, 0.96f), new Color(0.96f, 0.94f, 0.88f), new Color(0.74f, 0.70f, 0.62f), false); // 밝은 돌바닥 광장
+                case "VILLAGE_MARKET": // 시장 (Day62 추가)
+                    return new BackgroundPalette(new Color(0.62f, 0.74f, 0.92f), new Color(1f, 0.86f, 0.62f), new Color(0.66f, 0.46f, 0.30f), false); // 천막 노점 거리
+                case "VILLAGE_ONSEN": // 온천 (Day62 추가)
+                    return new BackgroundPalette(new Color(0.46f, 0.52f, 0.66f), new Color(0.86f, 0.88f, 0.92f), new Color(0.40f, 0.56f, 0.60f), false); // 김 오르는 노천탕
+                case "VILLAGE_INN": // 여관 (Day62 추가)
+                    return new BackgroundPalette(new Color(0.34f, 0.24f, 0.18f), new Color(0.92f, 0.70f, 0.44f), new Color(0.40f, 0.28f, 0.20f), false); // 등불 켠 목조 여관
+                case "VILLAGE_GUILD": // 길드 (Day62 추가)
+                    return new BackgroundPalette(new Color(0.30f, 0.34f, 0.44f), new Color(0.78f, 0.72f, 0.60f), new Color(0.36f, 0.32f, 0.30f), false); // 석조 길드 홀
+                case "INN_NIGHT": // 여관 밤 (Day62 추가)
+                    return new BackgroundPalette(new Color(0.03f, 0.04f, 0.10f), new Color(0.24f, 0.16f, 0.22f), new Color(0.10f, 0.07f, 0.08f), true); // 달빛 비치는 방
                 case "NIGHT": // 밤 일상
                     return new BackgroundPalette(new Color(0.03f, 0.05f, 0.14f), new Color(0.16f, 0.20f, 0.38f), new Color(0.08f, 0.09f, 0.16f), true); // 밤하늘
                 default: // 기본 처리

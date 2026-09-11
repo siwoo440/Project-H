@@ -1,0 +1,53 @@
+{
+  "id": "INN_SERENA",
+  "title": "밤의 기도",
+  "characterId": "CH_SERENA",
+  "background": "INN_NIGHT",
+  "location": "마을 · 여관 · 밤",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "여관 이층 끝 방. 문을 두드리자 잠옷 차림의 세레나가 조심스레 문을 연다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "…오셨네요. 사실 오늘 밤은, 기도보다 당신 목소리가 듣고 싶었어요."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "성녀가 이런 말을 해도 될까요. 리리아스 님은… 용서해 주시겠죠.",
+      "choices": [
+        {
+          "text": "오늘 밤은 곁에 있을게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i4"
+        },
+        {
+          "text": "천천히 이야기부터 하자.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "i4"
+        }
+      ]
+    },
+    {
+      "id": "i4",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "……네."
+    },
+    {
+      "id": "i5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "등불이 꺼지고, 창밖의 달빛만이 조용히 방 안을 비췄다."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_LILIA",
+  "title": "온천의 성분",
+  "characterId": "CH_LILIA",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "o1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "온천 안내판 앞에서 릴리아가 성분표를 소리 내어 읽고 있다."
+    },
+    {
+      "id": "o2",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "유황, 탄산, 미량의 마나 결정… 이 조합이면 피로 회복 효과는 진짜야."
+    },
+    {
+      "id": "o3",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "그러니까 과학적으로 검증된 휴식이라는 거지. 들어가도 된다는 뜻이야.",
+      "choices": [
+        {
+          "text": "쉬고 싶었구나.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "o4a"
+        },
+        {
+          "text": "검증 결과 기대할게.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "o4b"
+        }
+      ]
+    },
+    {
+      "id": "o4a",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "…들켰네. 요즘 연산을 너무 많이 돌렸거든.",
+      "next": "o5"
+    },
+    {
+      "id": "o4b",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "나와서 보고서 줄게. 한 장짜리로.",
+      "next": "o5"
+    },
+    {
+      "id": "o5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "한참 뒤, 볼이 발그레해진 릴리아가 \"효과 있음\" 한 줄만 적힌 종이를 내밀었다."
+    }
+  ]
+}

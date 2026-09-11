@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_EVE",
+  "title": "나무 그늘",
+  "characterId": "CH_EVE",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "p1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "광장 끝 오래된 느티나무 아래, 이브가 눈을 감고 기대어 있다."
+    },
+    {
+      "id": "p2",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "…인간 마을에도 이런 나무가 있을 줄은 몰랐어."
+    },
+    {
+      "id": "p3",
+      "speaker": "CH_EVE",
+      "expression": "진지",
+      "text": "백 년은 넘었을 거야. 여기 사람들이 베지 않고 지켜 왔다는 뜻이지.",
+      "choices": [
+        {
+          "text": "인간도 지킬 줄 알아.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "p4a"
+        },
+        {
+          "text": "넌 이 나무가 좋구나.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "p4b"
+        }
+      ]
+    },
+    {
+      "id": "p4a",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "…적어도 이 마을은. 그건 인정할게.",
+      "next": "p5"
+    },
+    {
+      "id": "p4b",
+      "speaker": "CH_EVE",
+      "expression": "슬픔",
+      "text": "좋다기보다… 여기 있으면 숲 냄새가 조금 나.",
+      "next": "p5"
+    },
+    {
+      "id": "p5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "바람이 불자 나뭇잎 소리가 두 사람 사이를 채웠다."
+    }
+  ]
+}

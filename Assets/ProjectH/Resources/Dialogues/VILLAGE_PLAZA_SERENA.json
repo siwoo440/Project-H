@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_SERENA",
+  "title": "분수대의 동전",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "p1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "분수대 앞에서 세레나가 아이들에게 둘러싸여 있다."
+    },
+    {
+      "id": "p2",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "아, 오셨군요. 아이들이 분수에 동전을 던지면 소원이 이뤄진다고 해서요."
+    },
+    {
+      "id": "p3",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "성녀가 그런 걸 믿어도 되냐고… 방금 혼났답니다.",
+      "choices": [
+        {
+          "text": "나도 하나 던져 볼까.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "p4a"
+        },
+        {
+          "text": "여신님이 질투하지 않을까?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "p4b"
+        }
+      ]
+    },
+    {
+      "id": "p4a",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "그럼 같이 던져요. 무슨 소원인지는… 비밀이에요.",
+      "next": "p5"
+    },
+    {
+      "id": "p4b",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "후후, 리리아스 님은 그렇게 속 좁은 분이 아니세요.",
+      "next": "p5"
+    },
+    {
+      "id": "p5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "동전 두 개가 나란히 물속으로 가라앉았다."
+    }
+  ]
+}

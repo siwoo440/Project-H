@@ -1,0 +1,67 @@
+{
+  "id": "VILLAGE_PLAZA_ELLEN",
+  "title": "광장의 순찰",
+  "characterId": "CH_ELLEN",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "p1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "엘렌이 광장 가장자리에서 오가는 사람들을 조용히 지켜보고 있다."
+    },
+    {
+      "id": "p2",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…순찰 중이다. 습관이라 쉬는 날에도 이렇게 된다."
+    },
+    {
+      "id": "p3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "같이 걸을까?"
+    },
+    {
+      "id": "p4",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "…그래. 둘이 걸으면 순찰이 아니라 산책이라고 하겠지.",
+      "choices": [
+        {
+          "text": "오늘은 산책이라고 하자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "p5a"
+        },
+        {
+          "text": "순찰도 좋아. 든든하니까.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "p5b"
+        }
+      ]
+    },
+    {
+      "id": "p5a",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "산책…인가. 오랜만에 듣는 말이군.",
+      "next": "p6"
+    },
+    {
+      "id": "p5b",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "든든하다라. …그 말, 기억해 두지.",
+      "next": "p6"
+    },
+    {
+      "id": "p6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "두 사람의 발걸음이 광장을 한 바퀴 돌았다."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_ELLEN",
+  "title": "울타리 너머",
+  "characterId": "CH_ELLEN",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "o1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "남탕과 여탕을 가르는 대나무 울타리 너머에서 익숙한 목소리가 들린다."
+    },
+    {
+      "id": "o2",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "…거기 너냐. 목소리로 알았다."
+    },
+    {
+      "id": "o3",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "상처가 많아서 사람 많은 곳은 피하는데… 이 시간엔 아무도 없더군.",
+      "choices": [
+        {
+          "text": "그 상처들, 다 네가 지킨 증거야.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "o4a"
+        },
+        {
+          "text": "나도 조용한 게 좋아.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "o4b"
+        }
+      ]
+    },
+    {
+      "id": "o4a",
+      "speaker": "CH_ELLEN",
+      "expression": "상처",
+      "text": "…그렇게 말해 준 건 네가 처음이다.",
+      "next": "o5"
+    },
+    {
+      "id": "o4b",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "그럼 한동안 이렇게 조용히 있자.",
+      "next": "o5"
+    },
+    {
+      "id": "o5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "울타리 너머로 물 흐르는 소리만 한동안 이어졌다."
+    }
+  ]
+}

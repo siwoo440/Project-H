@@ -17,6 +17,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
         [SerializeField] private int giftsGivenToday; // 마지막 선물 일차에 받은 선물 횟수 (Day57 추가)
         [SerializeField] private int lastTalkSlot; // 마지막 일상 대화 시간 칸 (Day58 추가, 일차×4+시간대, 0이면 기록 없음)
         [SerializeField] private int bondLevel; // 결속 단계 0~5 (Day59 추가, 0이면 결속 전)
+        [SerializeField] private int lastVillageEventDay; // 마지막 마을 구역 이벤트 일차 (Day62 추가, 하루 1회 제한)
+        [SerializeField] private int lastInnEventDay; // 마지막 여관 특별한 밤 일차 (Day62 추가, 하루 1회 제한)
         [SerializeField] private CharacterEquipmentSaveData equipment = new CharacterEquipmentSaveData(); // 캐릭터 장착 장비 저장
         public string CharacterId => characterId; // 캐릭터 ID 반환
         public int Level => level; // 레벨 반환
@@ -26,6 +28,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
         public int LastGiftDay => lastGiftDay; // 마지막 선물 일차 반환 (Day57 추가)
         public int LastTalkSlot => lastTalkSlot; // 마지막 일상 대화 시간 칸 반환 (Day58 추가)
         public int BondLevel => bondLevel; // 결속 단계 반환 (Day59 추가)
+        public int LastVillageEventDay => lastVillageEventDay; // 마지막 마을 구역 이벤트 일차 반환 (Day62 추가)
+        public int LastInnEventDay => lastInnEventDay; // 마지막 여관 특별한 밤 일차 반환 (Day62 추가)
         public CharacterEquipmentSaveData Equipment // 캐릭터 장착 장비 반환
         {
             get
@@ -122,6 +126,16 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
         public void MarkTalked(int slot) // 일상 대화 시간 칸 기록 (Day58 추가)
         {
             lastTalkSlot = Mathf.Max(0, slot); // 시간 칸 저장
+        }
+
+        public void MarkVillageEvent(int day) // 마을 구역 이벤트 일차 기록 (Day62 추가)
+        {
+            lastVillageEventDay = Mathf.Max(0, day); // 일차 저장
+        }
+
+        public void MarkInnEvent(int day) // 여관 특별한 밤 일차 기록 (Day62 추가)
+        {
+            lastInnEventDay = Mathf.Max(0, day); // 일차 저장
         }
 
         public void SetBondLevel(int value) // 결속 단계 변경 (Day59 추가)

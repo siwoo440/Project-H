@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_EVE",
+  "title": "사냥 의뢰",
+  "characterId": "CH_EVE",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "g1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "이브가 게시판의 사냥 의뢰서 한 장을 떼어 들고 굳은 얼굴로 서 있다."
+    },
+    {
+      "id": "g2",
+      "speaker": "CH_EVE",
+      "expression": "경계",
+      "text": "…'숲 늑대 퇴치'. 이 늑대들, 마을을 습격한 게 아니야. 쫓겨난 거야."
+    },
+    {
+      "id": "g3",
+      "speaker": "CH_EVE",
+      "expression": "슬픔",
+      "text": "숲이 오염돼서 먹을 게 없어진 거라고. 인간들은 결과만 보지.",
+      "choices": [
+        {
+          "text": "원인을 같이 찾아보자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "g4a"
+        },
+        {
+          "text": "길드에 사정을 알리자.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "g4b"
+        }
+      ]
+    },
+    {
+      "id": "g4a",
+      "speaker": "CH_EVE",
+      "expression": "놀람",
+      "text": "…정말? 그럼 이 의뢰, 우리 방식으로 해결하자.",
+      "next": "g5"
+    },
+    {
+      "id": "g4b",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "들어 줄지는 모르겠지만… 해 볼 가치는 있어.",
+      "next": "g5"
+    },
+    {
+      "id": "g5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "이브는 의뢰서를 조심스레 접어 품에 넣었다."
+    }
+  ]
+}

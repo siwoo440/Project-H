@@ -51,12 +51,16 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역 (Day58 신규)
         [SerializeField] private string characterId; // 스탠딩으로 표시할 캐릭터 ID
         [SerializeField] private string background; // 배경 키
         [SerializeField] private string location; // 장소 표시 문구
+        [SerializeField] private string leftCharacterId; // 왼쪽 스탠딩 직접 지정 (Day62 추가, 비우면 자동 배치)
+        [SerializeField] private string rightCharacterId; // 오른쪽 스탠딩 직접 지정 (Day62 추가, 비우면 자동 배치)
         [SerializeField] private List<DialogueNode> nodes = new List<DialogueNode>(); // 노드 목록
         public string Id => id ?? string.Empty; // 대화 ID 반환
         public string Title => title ?? string.Empty; // 제목 반환
         public string CharacterId => characterId ?? string.Empty; // 스탠딩 캐릭터 반환
         public string Background => background ?? string.Empty; // 배경 키 반환
         public string Location => location ?? string.Empty; // 장소 문구 반환
+        public string LeftCharacterId => leftCharacterId ?? string.Empty; // 왼쪽 지정 반환 (Day62 추가)
+        public string RightCharacterId => rightCharacterId ?? string.Empty; // 오른쪽 지정 반환 (Day62 추가)
         public IReadOnlyList<DialogueNode> Nodes => nodes ?? (IReadOnlyList<DialogueNode>)Array.Empty<DialogueNode>(); // 노드 목록 반환
 
         public int IndexOf(string nodeId) // 노드 ID 위치 조회

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_EVE",
+  "title": "샘물의 정령",
+  "characterId": "CH_EVE",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "o1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "온천 뒤편 바위틈. 이브가 솟아나는 물줄기에 손을 대고 무언가를 속삭이고 있다."
+    },
+    {
+      "id": "o2",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "여기엔 작은 물의 정령이 살아. 인간들이 모르게 온기를 지켜 주고 있었어."
+    },
+    {
+      "id": "o3",
+      "speaker": "CH_EVE",
+      "expression": "진지",
+      "text": "…너한테는 보여? 아니, 보이지 않아도 느껴질지도.",
+      "choices": [
+        {
+          "text": "따뜻한 기운이 느껴져.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "o4a"
+        },
+        {
+          "text": "네가 보는 걸 믿을게.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "o4b"
+        }
+      ]
+    },
+    {
+      "id": "o4a",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "…역시 너는 이상한 인간이야. 좋은 쪽으로.",
+      "next": "o5"
+    },
+    {
+      "id": "o4b",
+      "speaker": "CH_EVE",
+      "expression": "부끄러움",
+      "text": "믿는다는 말, 인간한테서 듣는 건 오랜만이야.",
+      "next": "o5"
+    },
+    {
+      "id": "o5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "물줄기가 잠깐 반짝이며 두 사람의 손끝을 감쌌다."
+    }
+  ]
+}

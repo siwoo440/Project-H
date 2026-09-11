@@ -95,7 +95,7 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역
 
         public static bool IsValidSpeaker(string speaker) // 허용 화자 확인
         {
-            return speaker == DialogueSpeakers.Hero || speaker == DialogueSpeakers.Narration || (speaker != null && speaker.StartsWith("CH_", StringComparison.Ordinal)); // 주인공·나레이션·캐릭터 ID 허용
+            return speaker == DialogueSpeakers.Hero || speaker == DialogueSpeakers.Narration || (speaker != null && (speaker.StartsWith("CH_", StringComparison.Ordinal) || speaker.StartsWith("NPC_", StringComparison.Ordinal))); // 주인공·나레이션·캐릭터·NPC ID 허용 (Day62 NPC 추가)
         }
 
         private static void CheckTarget(DialogueScript script, string target, string owner, List<string> errors) // 이동 대상 존재 검사

@@ -1,0 +1,67 @@
+{
+  "id": "VILLAGE_MARKET_ELLEN",
+  "title": "숫돌 흥정",
+  "characterId": "CH_ELLEN",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "엘렌이 숫돌 하나를 들고 상인과 마주 서 있다. 분위기가 험악하다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_ELLEN",
+      "expression": "당황",
+      "text": "…값을 깎으려던 게 아니다. 좋은 돌인지 보고 있었을 뿐이다."
+    },
+    {
+      "id": "m3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "상인이 겁먹은 것 같은데."
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "…표정이 원래 이렇다. 네가 대신 말 좀 해 줘.",
+      "choices": [
+        {
+          "text": "웃으면서 물어보면 돼.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "m5a"
+        },
+        {
+          "text": "내가 흥정할게.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "m5b"
+        }
+      ]
+    },
+    {
+      "id": "m5a",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "웃으면서…? …이렇게?",
+      "next": "m6"
+    },
+    {
+      "id": "m5b",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "고맙다. 칼 가는 법이라면 내가 가르쳐 주지.",
+      "next": "m6"
+    },
+    {
+      "id": "m6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "결국 상인은 숫돌에 손수건까지 얹어 주었다."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_SERENA",
+  "title": "족욕",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "o1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "온천 입구의 족욕탕. 세레나가 신발을 벗고 조심스레 발을 담그고 있다."
+    },
+    {
+      "id": "o2",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "아… 따뜻해요. 하루 종일 서 있었더니 발이 녹는 것 같아요."
+    },
+    {
+      "id": "o3",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "옆에 앉으실래요? 여기는 둘이 앉기 딱 좋은 자리예요.",
+      "choices": [
+        {
+          "text": "그럼 실례할게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "o4a"
+        },
+        {
+          "text": "오늘은 무리하지 마.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "o4b"
+        }
+      ]
+    },
+    {
+      "id": "o4a",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "…이렇게 나란히 있으니, 여행 중이라는 걸 잠깐 잊게 되네요.",
+      "next": "o5"
+    },
+    {
+      "id": "o4b",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "네. 당신도요. 우리 둘 다 가끔은 쉬어야 해요.",
+      "next": "o5"
+    },
+    {
+      "id": "o5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "김이 오르는 물 위로 저녁 햇살이 반짝였다."
+    }
+  ]
+}

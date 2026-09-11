@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_SERENA",
+  "title": "의뢰서 정리",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "g1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 창구 옆에서 세레나가 수북한 의뢰서를 분류하고 있다."
+    },
+    {
+      "id": "g2",
+      "speaker": "CH_SERENA",
+      "expression": "당황",
+      "text": "접수원 분이 쓰러지셔서요. 치료하고 나니… 일이 남아 있더라고요."
+    },
+    {
+      "id": "g3",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "도와주시면 금방 끝날 것 같아요.",
+      "choices": [
+        {
+          "text": "당연히 돕지.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "g4a"
+        },
+        {
+          "text": "성녀가 서류 일까지 해?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "g4b"
+        }
+      ]
+    },
+    {
+      "id": "g4a",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "고마워요. 이 '위험' 표시는 저쪽, '긴급'은 이쪽이에요.",
+      "next": "g5"
+    },
+    {
+      "id": "g4b",
+      "speaker": "CH_SERENA",
+      "expression": "각오",
+      "text": "누군가 해야 하는 일이라면요. 그게 제 신앙이에요.",
+      "next": "g5"
+    },
+    {
+      "id": "g5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "마지막 의뢰서를 꽂자 창구 뒤에서 박수 소리가 났다."
+    }
+  ]
+}

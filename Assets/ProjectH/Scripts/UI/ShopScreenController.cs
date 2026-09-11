@@ -165,9 +165,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             DataManager dataManager = GameManager.Instance == null ? null : GameManager.Instance.Data; // 데이터 관리자 조회
-            int visibleCount = Mathf.Min(shop.Products.Count, 6); // 화면 표시 상품 수 제한
+            int productCount = shop.Products.Count; // 전체 상품 수 (Day57 선물 추가로 6개 제한 해제)
+            int columnCount = productCount > 6 ? 2 : 1; // 6개 초과 시 2열 배치 (Day57 추가)
+            int rowCount = Mathf.CeilToInt(productCount / (float)columnCount); // 행 수 계산
+            float rowStep = Mathf.Min(0.155f, 0.96f / rowCount); // 행 간격 계산 (많아지면 촘촘하게)
+            float columnWidth = 0.96f / columnCount; // 열 너비 계산
 
-            for (int index = 0; index < visibleCount; index++) // 상품 목록 순회
+            for (int index = 0; index < productCount; index++) // 상품 목록 순회
             {
                 ShopProductEntry product = shop.Products[index]; // 현재 상품 조회
 
@@ -180,8 +184,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 string itemName = item == null || string.IsNullOrWhiteSpace(item.DisplayName) ? product.ItemId : item.DisplayName; // 상품 표시 이름 결정
                 string sellText = product.CanSell ? product.SellPrice + "G" : "판매 불가"; // 판매 가격 문구 결정
                 Button button = CreateButton(productListRoot, "Product_" + product.ProductId, itemName + "\n구매 " + product.BuyPrice + "G / " + sellText, new Color(0.88f, 0.91f, 0.94f, 1f)); // 상품 선택 버튼 생성
-                float top = 0.98f - (index * 0.155f); // 상품 버튼 상단 위치 계산
-                SetRect(button.GetComponent<RectTransform>(), new Vector2(0.02f, top - 0.13f), new Vector2(0.98f, top)); // 상품 버튼 배치
+                float top = 0.98f - ((index / columnCount) * rowStep); // 상품 버튼 상단 위치 계산 (행 기준)
+                float left = 0.02f + ((index % columnCount) * columnWidth); // 상품 버튼 왼쪽 위치 계산 (열 기준)
+                SetRect(button.GetComponent<RectTransform>(), new Vector2(left, top - (rowStep * 0.84f)), new Vector2(left + columnWidth - 0.01f, top)); // 상품 버튼 배치
                 ShopProductEntry capturedProduct = product; // 클릭 이벤트용 상품 보존
                 button.onClick.AddListener(() => SelectProduct(capturedProduct)); // 상품 선택 이벤트 연결
             }

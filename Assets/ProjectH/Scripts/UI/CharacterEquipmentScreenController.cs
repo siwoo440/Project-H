@@ -37,6 +37,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text statusText; // 화면 상태 텍스트
         private Text affinityText; // 캐릭터 호감도 디버그 텍스트 (Day43)
         private CharacterAffinityRewardPanel affinityRewardPanel; // 호감도 보상 패널 (Day56 추가, 최적화로 별도 클래스 분리)
+        private CharacterGiftPanel giftPanel; // 선물하기 패널 (Day57 추가)
         private Button actionButton; // 장착 액션 버튼
         private Text actionButtonText; // 장착 액션 라벨
         private int selectedCharacterIndex; // 현재 캐릭터 목록 번호
@@ -111,7 +112,29 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button rewardButton = CreateButton(parent, "AffinityRewardButton", "호감도 보상", new Color(1f, 0.88f, 0.60f, 1f)); // 호감도 보상 버튼 생성 (Day56 추가)
             SetRect(rewardButton.GetComponent<RectTransform>(), new Vector2(0.67f, 0.005f), new Vector2(0.80f, 0.045f)); // 호감도 보상 버튼 배치
             affinityRewardPanel = CharacterAffinityRewardPanel.Create(parent, Refresh); // 호감도 보상 패널 생성 (수령 후 화면 갱신 연결)
-            rewardButton.onClick.AddListener(affinityRewardPanel.Toggle); // 보상 패널 열기·닫기 연결
+            rewardButton.onClick.AddListener(ToggleAffinityRewardPanel); // 보상 패널 열기·닫기 연결 (Day57 선물 패널과 겹치지 않도록 전용 함수 사용)
+            Button giftButton = CreateButton(parent, "GiftButton", "선물하기", new Color(1f, 0.82f, 0.88f, 1f)); // 선물하기 버튼 생성 (Day57 추가)
+            SetRect(giftButton.GetComponent<RectTransform>(), new Vector2(0.81f, 0.005f), new Vector2(0.94f, 0.045f)); // 선물하기 버튼 배치
+            giftPanel = CharacterGiftPanel.Create(parent, Refresh, OpenAffinityRewardFromGift); // 선물 패널 생성 (선물 후 갱신·보상 바로가기 연결)
+            giftButton.onClick.AddListener(ToggleGiftPanel); // 선물 패널 열기·닫기 연결
+        }
+
+        private void ToggleAffinityRewardPanel() // 호감도 보상 패널 열기·닫기 (Day57 추가, 선물 패널은 닫음)
+        {
+            if (giftPanel != null && giftPanel.IsOpen) giftPanel.Toggle(); // 열린 선물 패널 닫기
+            affinityRewardPanel.Toggle(); // 보상 패널 전환
+        }
+
+        private void ToggleGiftPanel() // 선물 패널 열기·닫기 (Day57 추가, 보상 패널은 닫음)
+        {
+            if (affinityRewardPanel != null && affinityRewardPanel.IsOpen) affinityRewardPanel.Toggle(); // 열린 보상 패널 닫기
+            giftPanel.Toggle(); // 선물 패널 전환
+        }
+
+        private void OpenAffinityRewardFromGift() // 선물 패널의 호감도 보상 바로가기 (Day57 추가)
+        {
+            if (giftPanel.IsOpen) giftPanel.Toggle(); // 선물 패널 닫기
+            if (!affinityRewardPanel.IsOpen) affinityRewardPanel.Toggle(); // 보상 패널 열기
         }
 
         private void BuildHeader(Transform parent) // 상단 메뉴 구성
@@ -279,6 +302,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             portraitText.text = displayName; // 임시 초상 텍스트 갱신
             UpdateAffinityDebugText(saveData, characterSave); // 호감도 디버그 텍스트 갱신 (Day43)
             if (affinityRewardPanel != null) affinityRewardPanel.Refresh(saveData, characterSave, displayName); // 호감도 보상 패널 갱신 (Day56 추가, Unity 객체 null 비교)
+            if (giftPanel != null) giftPanel.Refresh(saveData, dataManager, characterSave, displayName); // 선물 패널 갱신 (Day57 추가)
             UpdateCurrentStats(saveData, dataManager, characterSave, characterData); // 현재 최종 능력치 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Weapon, weaponSlotText, "무기"); // 무기 슬롯 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Armor, armorSlotText, "방어구"); // 방어구 슬롯 갱신

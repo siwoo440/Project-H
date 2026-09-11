@@ -31,3 +31,27 @@ MonoBehaviour:
     itemId: EQ_ARMOR_GUARD
     buyPrice: 1000
     sellPrice: 0
+  - productId: PRD_GIFT_FLOWER
+    itemId: IT_GIFT_FLOWER
+    buyPrice: 60
+    sellPrice: 24
+  - productId: PRD_GIFT_CANDLE
+    itemId: IT_GIFT_CANDLE
+    buyPrice: 80
+    sellPrice: 32
+  - productId: PRD_GIFT_BROOCH
+    itemId: IT_GIFT_BROOCH
+    buyPrice: 150
+    sellPrice: 60
+  - productId: PRD_GIFT_STARMAP
+    itemId: IT_GIFT_STARMAP
+    buyPrice: 150
+    sellPrice: 60
+  - productId: PRD_GIFT_SHELL
+    itemId: IT_GIFT_SHELL
+    buyPrice: 120
+    sellPrice: 48
+  - productId: PRD_GIFT_SWEETS
+    itemId: IT_GIFT_SWEETS
+    buyPrice: 40
+    sellPrice: 16

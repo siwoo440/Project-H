@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26497adc4db00064a9edc7dab84e7854, type: 3}
+  m_Name: IT_GIFT_CANDLE
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.ItemData
+  id: IT_GIFT_CANDLE
+  displayName: "\uC131\uC218 \uD5A5\uCD08"
+  itemType: 3
+  grade: 1
+  maxStack: 99
+  description: "\uC131\uC218\uB85C \uBE5A\uC740 \uC740\uC740\uD55C \uD5A5\uCD08. \uAE30\uB3C4\uB97C \uC62C\uB9AC\uB294 \uC774\uC5D0\uAC8C \uD2B9\uBCC4\uD55C \uC120\uBB3C\uC774\uB2E4."
+  icon: {fileID: 0}

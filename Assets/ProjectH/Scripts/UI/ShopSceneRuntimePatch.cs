@@ -8,27 +8,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     {
         private const string ShopControllerName = "ShopScreenRuntime"; // 상점 화면 컨트롤러 이름
         private const string ShopCameraName = "ShopCamera"; // 상점 화면 카메라 이름
-        private static bool registered; // 씬 이벤트 등록 상태
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // Runtime 씬 패치 등록
         private static void Register() // 씬 로드 이벤트 등록
         {
-            if (registered) // 기존 등록 상태 확인
-            {
-                return; // 중복 등록 차단
-            }
-
-            registered = true; // 등록 상태 저장
-            SceneManager.sceneLoaded += OnSceneLoaded; // 씬 로드 완료 이벤트 연결
+            SceneRuntimePatch.Register(GameScenes.Shop, OnSceneLoaded); // Shop 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) // 씬 로드 완료 처리
+        private static void OnSceneLoaded(Scene scene) // 씬 로드 완료 처리
         {
-            if (!string.Equals(scene.name, GameScenes.Shop, System.StringComparison.Ordinal)) // 상점 씬 여부 확인
-            {
-                return; // 다른 씬 제외
-            }
-
             EnsureShopCamera(); // 상점 카메라 보장
             EnsureShopScreen(); // 상점 화면 보장
         }

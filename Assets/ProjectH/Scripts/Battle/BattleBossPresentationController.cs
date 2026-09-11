@@ -235,22 +235,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 보스 연출 이미지 생성 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static Text CreateText(Transform parent, string name, string value, int size, FontStyle style, Color color) // 공통 보스 연출 텍스트 생성
+        private static Text CreateText(Transform parent, string name, string value, int size, FontStyle style, Color color) // 공통 보스 연출 텍스트 생성 (RuntimeUiKit 위임)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text)); // UI 텍스트 객체 생성
-            textObject.transform.SetParent(parent, false); // UI 텍스트 부모 연결
-            Text text = textObject.GetComponent<Text>(); // UI Text 컴포넌트 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
-            text.text = value; // UI 텍스트 값 적용
-            text.fontSize = size; // UI 텍스트 크기 적용
-            text.fontStyle = style; // UI 텍스트 스타일 적용
-            text.color = color; // UI 텍스트 색상 적용
-            text.alignment = TextAnchor.MiddleCenter; // UI 텍스트 중앙 정렬
-            text.resizeTextForBestFit = true; // 글자 자동 크기 활성화
-            text.resizeTextMinSize = 12; // 최소 글자 크기 설정
-            text.resizeTextMaxSize = size; // 최대 글자 크기 설정
-            text.raycastTarget = false; // UI 텍스트 입력 비활성화
-            return text; // 생성 UI 텍스트 반환
+            return RuntimeUiKit.CreateText(parent, name, value, size, color, style).BestFit(12); // 자동 크기 맞춤 텍스트 반환
         }
 
         private static void SetFill(Image target, float ratio) // 가로 게이지 비율 설정 (앵커 기반, 기존 BattleHudCardView/BattleEnemyView와 동일 방식)

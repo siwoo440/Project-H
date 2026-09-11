@@ -515,37 +515,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 UI 이미지 생성 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static Text CreateText(Transform parent, string name, string value, int fontSize, FontStyle fontStyle, Color color) // 공통 UI 텍스트 생성
+        private static Text CreateText(Transform parent, string name, string value, int fontSize, FontStyle fontStyle, Color color) // 공통 UI 텍스트 생성 (RuntimeUiKit 위임)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text)); // UI 텍스트 객체 생성
-            textObject.transform.SetParent(parent, false); // UI 텍스트 부모 연결
-            Text text = textObject.GetComponent<Text>(); // UI Text 컴포넌트 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
-            text.text = value; // UI 텍스트 값 적용
-            text.fontSize = fontSize; // UI 텍스트 크기 적용
-            text.fontStyle = fontStyle; // UI 텍스트 스타일 적용
-            text.color = color; // UI 텍스트 색상 적용
-            text.alignment = TextAnchor.MiddleCenter; // UI 텍스트 중앙 정렬
-            text.alignByGeometry = true; // UI 텍스트 글리프 정렬 활성화
-            text.resizeTextForBestFit = true; // UI 텍스트 자동 크기 활성화
-            text.resizeTextMinSize = 10; // UI 텍스트 최소 크기 설정
-            text.resizeTextMaxSize = fontSize; // UI 텍스트 최대 크기 설정
-            text.raycastTarget = false; // UI 텍스트 입력 비활성화
-            return text; // 생성 UI 텍스트 반환
+            return RuntimeUiKit.CreateText(parent, name, value, fontSize, color, fontStyle).AlignByGeometry().BestFit(10); // 모양 정렬·자동 크기 텍스트 반환
         }
 
-        private static Button CreateButton(Transform parent, string name, string label, Color color) // 공통 UI 버튼 생성
+        private static Button CreateButton(Transform parent, string name, string label, Color color) // 공통 UI 버튼 생성 (RuntimeUiKit 위임)
         {
-            GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)); // UI 버튼 객체 생성
-            buttonObject.transform.SetParent(parent, false); // UI 버튼 부모 연결
-            Image image = buttonObject.GetComponent<Image>(); // UI 버튼 이미지 조회
-            image.color = color; // UI 버튼 배경색 적용
-            Button button = buttonObject.GetComponent<Button>(); // UI Button 컴포넌트 조회
-            button.targetGraphic = image; // UI 버튼 대상 그래픽 연결
-            AddOutline(buttonObject); // UI 버튼 외곽선 추가
-            Text text = CreateText(buttonObject.transform, "Label", label, 18, FontStyle.Normal, new Color(0.08f, 0.09f, 0.11f, 1f)); // UI 버튼 라벨 생성
-            Stretch(text.rectTransform, 5f); // UI 버튼 라벨 확장
-            return button; // 생성 UI 버튼 반환
+            Button button = RuntimeUiKit.CreateButton(parent, name, color); // 버튼 생성
+            AddOutline(button.gameObject); // 버튼 외곽선 적용
+            Text text = CreateText(button.transform, "Label", label, 18, FontStyle.Normal, new Color(0.08f, 0.09f, 0.11f, 1f)); // 버튼 라벨 생성
+            Stretch(text.rectTransform, 5f); // 라벨 확장
+            return button; // 버튼 반환
         }
 
         private static void AddOutline(GameObject target) // 공통 UI 외곽선 추가

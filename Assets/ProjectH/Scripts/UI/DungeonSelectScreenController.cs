@@ -37,17 +37,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // 첫 씬 로드 전 이벤트 구독 지정
         private static void RegisterSceneLoadedHandler() // 씬 로드 이벤트 구독
         {
-            SceneManager.sceneLoaded -= HandleSceneLoaded; // 중복 씬 로드 구독 해제
-            SceneManager.sceneLoaded += HandleSceneLoaded; // 씬 로드 이벤트 구독
+            SceneRuntimePatch.Register(GameScenes.DungeonSelect, HandleSceneLoaded); // DungeonSelect 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void HandleSceneLoaded(Scene scene, LoadSceneMode _) // 씬 로드 완료 처리
+        private static void HandleSceneLoaded(Scene scene) // 씬 로드 완료 처리
         {
-            if (!string.Equals(scene.name, GameScenes.DungeonSelect, System.StringComparison.Ordinal)) // 던전 선택 씬 여부 확인
-            {
-                return; // 다른 씬 설치 중단
-            }
-
             EnsureRuntimeController(); // 던전 선택 컨트롤러 설치
         }
 
@@ -122,9 +116,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button minusButton = CreateButton(parent, "ErosionMinusDebug", "침식도 -10"); // 침식도 감소 디버그 버튼 생성
             SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.57f, 0.01f), new Vector2(0.72f, 0.065f)); // 침식도 감소 버튼 배치
             minusButton.onClick.AddListener(DecreaseErosionDebug); // 침식도 감소 버튼 이벤트 연결
+            DevelopmentFeatures.HideInRelease(minusButton); // 출시 빌드에서는 침식도 디버그 버튼 숨김 (최적화)
             Button plusButton = CreateButton(parent, "ErosionPlusDebug", "침식도 +10"); // 침식도 증가 디버그 버튼 생성
             SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.74f, 0.01f), new Vector2(0.89f, 0.065f)); // 침식도 증가 버튼 배치
             plusButton.onClick.AddListener(IncreaseErosionDebug); // 침식도 증가 버튼 이벤트 연결
+            DevelopmentFeatures.HideInRelease(plusButton); // 출시 빌드에서는 침식도 디버그 버튼 숨김 (최적화)
         }
 
         private void BuildDungeonCards(Transform parent) // 던전 카드 목록 생성
@@ -443,40 +439,23 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 UI 이미지 생성 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static Text CreateText(Transform parent, string name, string value, int size, FontStyle style, Color color) // 공통 UI 텍스트 생성
+        private static Text CreateText(Transform parent, string name, string value, int size, FontStyle style, Color color) // 공통 UI 텍스트 생성 (RuntimeUiKit 위임)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text)); // UI 텍스트 객체 생성
-            textObject.transform.SetParent(parent, false); // UI 텍스트 부모 배치
-            Text text = textObject.GetComponent<Text>(); // UI Text 참조 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
-            text.text = value; // UI 텍스트 값 적용
-            text.fontSize = size; // UI 텍스트 크기 적용
-            text.fontStyle = style; // UI 텍스트 스타일 적용
-            text.color = color; // UI 텍스트 색상 적용
-            text.alignment = TextAnchor.MiddleCenter; // UI 텍스트 기본 중앙 정렬
-            text.horizontalOverflow = HorizontalWrapMode.Wrap; // UI 텍스트 가로 줄바꿈 적용
-            text.verticalOverflow = VerticalWrapMode.Truncate; // UI 텍스트 세로 초과 제한
-            text.raycastTarget = false; // UI 텍스트 입력 차단 해제
-            return text; // UI 텍스트 반환
+            return RuntimeUiKit.CreateText(parent, name, value, size, color, style).Wrap(); // 줄바꿈 텍스트 반환
         }
 
-        private static Button CreateButton(Transform parent, string name, string label) // 공통 UI 버튼 생성
+        private static Button CreateButton(Transform parent, string name, string label) // 공통 UI 버튼 생성 (RuntimeUiKit 위임)
         {
-            GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)); // UI 버튼 객체 생성
-            buttonObject.transform.SetParent(parent, false); // UI 버튼 부모 배치
-            Image image = buttonObject.GetComponent<Image>(); // UI 버튼 이미지 조회
-            image.color = HeaderColor; // UI 버튼 기본 색상 적용
-            Button button = buttonObject.GetComponent<Button>(); // UI 버튼 참조 조회
-            button.targetGraphic = image; // UI 버튼 대상 그래픽 연결
-            ColorBlock colors = button.colors; // UI 버튼 색상 설정 복사
-            colors.normalColor = HeaderColor; // UI 버튼 기본 상태 색상 설정
-            colors.highlightedColor = new Color(0.14f, 0.27f, 0.43f, 1f); // UI 버튼 강조 상태 색상 설정
-            colors.pressedColor = new Color(0.06f, 0.12f, 0.21f, 1f); // UI 버튼 누름 상태 색상 설정
-            colors.disabledColor = new Color(0.32f, 0.34f, 0.36f, 0.65f); // UI 버튼 비활성 상태 색상 설정
-            button.colors = colors; // UI 버튼 색상 설정 적용
-            Text text = CreateText(buttonObject.transform, "Label", label, 22, FontStyle.Bold, Color.white); // UI 버튼 라벨 생성
-            Stretch(text.rectTransform, 8f); // UI 버튼 라벨 확장
-            return button; // UI 버튼 반환
+            Button button = RuntimeUiKit.CreateButton(parent, name, HeaderColor); // 버튼 생성
+            ColorBlock colors = button.colors; // 버튼 색 전환 조회
+            colors.normalColor = HeaderColor; // 기본 색상 적용
+            colors.highlightedColor = new Color(0.14f, 0.27f, 0.43f, 1f); // 강조 색상 적용
+            colors.pressedColor = new Color(0.06f, 0.12f, 0.21f, 1f); // 눌림 색상 적용
+            colors.disabledColor = new Color(0.32f, 0.34f, 0.36f, 0.65f); // 비활성 색상 적용
+            button.colors = colors; // 색 전환 적용
+            Text text = CreateText(button.transform, "Label", label, 22, FontStyle.Bold, Color.white); // 버튼 라벨 생성
+            Stretch(text.rectTransform, 8f); // 라벨 확장
+            return button; // 버튼 반환
         }
 
         private static void SetText(Text target, string value) // 텍스트 안전 설정

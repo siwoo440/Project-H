@@ -12,27 +12,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private const string LabelName = "VitalityLabel"; // 활력 표시 라벨 이름
         private const string MinusButtonName = "VitalityMinusButton"; // 활력 감소 버튼 이름
         private const string PlusButtonName = "VitalityPlusButton"; // 활력 증가 버튼 이름
-        private static bool registered; // 씬 이벤트 등록 상태
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // Runtime 로비 패치 등록
         private static void Register() // 씬 로드 이벤트 등록
         {
-            if (registered) // 기존 등록 상태 확인
-            {
-                return; // 중복 등록 차단
-            }
-
-            registered = true; // 등록 상태 저장
-            SceneManager.sceneLoaded += OnSceneLoaded; // 씬 로드 완료 이벤트 연결
+            SceneRuntimePatch.Register(GameScenes.Lobby, OnSceneLoaded); // Lobby 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) // Lobby 씬 로드 완료 처리
+        private static void OnSceneLoaded(Scene scene) // Lobby 씬 로드 완료 처리
         {
-            if (!string.Equals(scene.name, GameScenes.Lobby, System.StringComparison.Ordinal)) // Lobby 씬 여부 확인
-            {
-                return; // 다른 씬 제외
-            }
-
             EnsureVitalityPanel(); // 활력 테스트 패널 생성 및 연결
         }
 
@@ -82,6 +70,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             CreateLabel(panelObject.transform); // 활력 표시 라벨 생성
             CreateButton(panelObject.transform, MinusButtonName, "-1", new Vector2(0.60f, 0.12f), new Vector2(0.795f, 0.88f), () => ApplyDelta(-1)); // 활력 감소 버튼 생성
             CreateButton(panelObject.transform, PlusButtonName, "+1", new Vector2(0.805f, 0.12f), new Vector2(1f, 0.88f), () => ApplyDelta(1)); // 활력 증가 버튼 생성
+            DevelopmentFeatures.HideInRelease(panelObject.transform.Find(MinusButtonName)); // 출시 빌드에서는 활력 -1 테스트 버튼 숨김 (최적화)
+            DevelopmentFeatures.HideInRelease(panelObject.transform.Find(PlusButtonName)); // 출시 빌드에서는 활력 +1 테스트 버튼 숨김 (최적화)
             RefreshLabel(panelObject.transform); // 활력 라벨 초기값 표시
         }
 

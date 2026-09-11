@@ -8,27 +8,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 {
     public static class DungeonMapRuntimePatch // 던전 선택 씬 복귀 시 탐험 지도 자동 재오픈 (Day55 신규)
     {
-        private static bool registered; // 씬 이벤트 등록 상태
-
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // Runtime 지도 패치 등록
         private static void Register() // 씬 로드 이벤트 등록
         {
-            if (registered) // 기존 등록 상태 확인
-            {
-                return; // 중복 등록 차단
-            }
-
-            registered = true; // 등록 상태 저장
-            SceneManager.sceneLoaded += OnSceneLoaded; // 씬 로드 완료 이벤트 연결
+            SceneRuntimePatch.Register(GameScenes.DungeonSelect, OnSceneLoaded); // DungeonSelect 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) // 던전 선택 씬 로드 완료 처리
+        private static void OnSceneLoaded(Scene scene) // 던전 선택 씬 로드 완료 처리
         {
-            if (!string.Equals(scene.name, GameScenes.DungeonSelect, StringComparison.Ordinal)) // 던전 선택 씬 여부 확인
-            {
-                return; // 다른 씬 무시
-            }
-
             if (!DungeonRunState.IsActive && DungeonRunState.LastEndKind == DungeonRunEndKind.None) // 탐험 진행·종료 요약 대기 여부 확인
             {
                 return; // 탐험과 무관한 방문 무시

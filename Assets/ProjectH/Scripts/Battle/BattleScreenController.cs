@@ -83,6 +83,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             debugPanel = battleDebugPanel; // 전투 개발 UI 컨트롤러 연결
         }
 
+        public void ConfigureDefaultEnemies(string[] enemyIds) // 레거시 단일 웨이브 기본 적군 설정 (최적화 — 리플렉션 주입 대체)
+        {
+            defaultEnemyIds = enemyIds; // 기본 적군 ID 목록 저장
+        }
+
         public void ConfigureEncounterWaves(IReadOnlyList<string[]> waves) // 던전 인카운터 웨이브 편성 설정 (Day45)
         {
             encounterWaves = waves; // 웨이브 편성 저장

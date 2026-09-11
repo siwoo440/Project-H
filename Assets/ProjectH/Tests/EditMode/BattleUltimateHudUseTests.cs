@@ -19,9 +19,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [SetUp] // 테스트 준비 표시
         public void SetUp() // 궁극기 HUD 입력 테스트 준비
         {
-            BattleUltimateGaugeRuntimeState.ResetAll(); // 이전 궁극기 게이지 초기화
-            BattleSkillRuntimeState.ResetAll(); // 이전 스킬 Runtime 초기화
-            BattlePassiveRuntimeState.ResetAll(); // 이전 패시브 Runtime 초기화
+            BattleRuntimeStates.ResetAll(); // 전투 정적 상태 전체 초기화 (최적화 통합 창구)
             registryObject = new GameObject("BattleUltimateHudUseTests.Registry"); // 테스트 Registry 객체 생성
             registry = registryObject.AddComponent<BattleCombatRegistry>(); // 테스트 Registry 생성
             BattleSkillRuntimeState.SetRegistry(registry); // 테스트 스킬 Runtime Registry 연결
@@ -43,8 +41,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Object.DestroyImmediate(cardObject); // 테스트 HUD 카드 객체 제거
             Object.DestroyImmediate(owner.gameObject); // 테스트 사용자 객체 제거
             Object.DestroyImmediate(enemy.gameObject); // 테스트 적군 객체 제거
-            BattleUltimateGaugeRuntimeState.ResetAll(); // 테스트 궁극기 게이지 초기화
-            BattleSkillRuntimeState.ResetAll(); // 테스트 스킬 Runtime 초기화
+            BattleRuntimeStates.ResetAll(); // 전투 정적 상태 전체 초기화 (최적화 통합 창구)
             BattlePassiveSystem.Shutdown(registry); // 테스트 패시브 시스템 연결 해제
             BattlePassiveRuntimeState.ResetAll(); // 테스트 패시브 Runtime 초기화
             Object.DestroyImmediate(registryObject); // 테스트 Registry 객체 제거

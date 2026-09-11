@@ -1,4 +1,5 @@
 using System.Collections; // 코루틴 기능
+using ProjectH.Core; // 개발 기능 표시 여부
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.UI; // Unity UI 기능
 
@@ -23,6 +24,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private void Start() // 체력 디버그 시작
         {
             BindButton(); // 회복 버튼 이벤트 연결
+            DevelopmentFeatures.HideInRelease(healButton); // 출시 빌드에서는 회복 디버그 버튼 숨김 (최적화)
             StartCoroutine(UpdateStatusNextFrame()); // 기존 전투 초기화 이후 상태 문구 갱신
         }
 

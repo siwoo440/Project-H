@@ -13,15 +13,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // 첫 씬 로드 전 이벤트 구독 지정
         private static void RegisterSceneLoadedHandler() // 씬 로드 이벤트 구독
         {
-            SceneManager.sceneLoaded -= HandleSceneLoaded; // 중복 씬 로드 구독 해제
-            SceneManager.sceneLoaded += HandleSceneLoaded; // 씬 로드 이벤트 구독
+            SceneRuntimePatch.Register(GameScenes.Battle, HandleSceneLoaded); // Battle 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void HandleSceneLoaded(Scene scene, LoadSceneMode _) // 씬 로드 완료 처리
+        private static void HandleSceneLoaded(Scene scene) // 씬 로드 완료 처리
         {
-            if (!string.Equals(scene.name, GameScenes.Battle, StringComparison.Ordinal)) // 전투 씬 여부 확인
+            if (!DevelopmentFeatures.Enabled) // 출시 빌드 확인 (최적화)
             {
-                return; // 다른 씬 생성 중단
+                return; // 출시 빌드에서는 테스트 정보 오버레이 생성 안 함
             }
 
             if (UnityEngine.Object.FindFirstObjectByType<DungeonBattleDebugOverlay>() != null) // 기존 오버레이 존재 확인

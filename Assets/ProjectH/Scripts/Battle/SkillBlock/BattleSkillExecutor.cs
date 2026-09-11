@@ -12,9 +12,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
         public void Configure(BattleCombatRegistry combatRegistry) // 스킬 실행기 참조 설정
         {
             registry = combatRegistry; // 전투 레지스트리 연결
-            BattleSkillRuntimeState.SetRegistry(registry); // 스킬 Runtime 상태에 현재 Registry 연결
-            BattleSkillRuntimeState.ResetAll(); // 신규 전투 스킬 Runtime 상태 초기화
-            BattleUltimateGaugeRuntimeState.ResetAll(); // 신규 전투 궁극기 게이지 Runtime 상태 초기화
+            BattleRuntimeStates.BeginBattle(registry); // 전투 시작 정적 상태 초기화 (통합 창구)
 
             if (registry != null && registry.GetComponent<BattleSkillRuntimeDriver>() == null) // 주기 효과 Runtime Driver 존재 확인
             {

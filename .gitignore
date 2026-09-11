@@ -40,3 +40,6 @@ Desktop.ini
 # Crash 리포트
 sysinfo.txt
 crashlytics-build.properties
+
+# Unity/dotnet이 재생성하는 솔루션 파일 (최적화 — 빌드마다 변경되는 추적 제거)
+*.slnx

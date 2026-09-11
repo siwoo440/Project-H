@@ -8,27 +8,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     public static class LobbyShopRuntimePatch // Lobby 상점 진입 버튼 Runtime 패치
     {
         private const string ShopButtonName = "ShopSceneEntryButton"; // 상점 버튼 객체 이름
-        private static bool registered; // 씬 이벤트 등록 상태
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // Runtime 로비 패치 등록
         private static void Register() // 씬 로드 이벤트 등록
         {
-            if (registered) // 기존 등록 상태 확인
-            {
-                return; // 중복 등록 차단
-            }
-
-            registered = true; // 등록 상태 저장
-            SceneManager.sceneLoaded += OnSceneLoaded; // 씬 로드 완료 이벤트 연결
+            SceneRuntimePatch.Register(GameScenes.Lobby, OnSceneLoaded); // Lobby 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) // Lobby 씬 로드 완료 처리
+        private static void OnSceneLoaded(Scene scene) // Lobby 씬 로드 완료 처리
         {
-            if (!string.Equals(scene.name, GameScenes.Lobby, System.StringComparison.Ordinal)) // Lobby 씬 여부 확인
-            {
-                return; // 다른 씬 제외
-            }
-
             EnsureShopButton(); // 상점 버튼 생성 및 연결
         }
 

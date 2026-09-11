@@ -251,20 +251,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return Mathf.Clamp01(snapshot.RemainingSeconds / TimerBarReferenceSeconds); // 기준 지속시간 대비 잔여 비율 반환
         }
 
-        private static Text CreateLabel(Transform parent, string name, int fontSize, Color color) // 공통 상태이상 표시 텍스트 생성
+        private static Text CreateLabel(Transform parent, string name, int fontSize, Color color) // 공통 상태이상 표시 텍스트 생성 (RuntimeUiKit 위임)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text)); // UI 텍스트 객체 생성
-            textObject.transform.SetParent(parent, false); // UI 텍스트 부모 연결
-            Text text = textObject.GetComponent<Text>(); // UI Text 컴포넌트 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
-            text.fontSize = fontSize; // UI 텍스트 크기 적용
-            text.fontStyle = FontStyle.Bold; // UI 텍스트 굵기 적용
-            text.color = color; // UI 텍스트 색상 적용
-            text.alignment = TextAnchor.MiddleCenter; // UI 텍스트 중앙 정렬
-            text.horizontalOverflow = HorizontalWrapMode.Overflow; // 좁은 영역에서도 문구 유지
-            text.verticalOverflow = VerticalWrapMode.Overflow; // 세로 잘림 방지
-            text.raycastTarget = false; // UI 텍스트 입력 비활성화
-            return text; // 생성 UI 텍스트 반환
+            return RuntimeUiKit.CreateText(parent, name, string.Empty, fontSize, color).Overflow(); // 넘침 허용 텍스트 반환
         }
     }
 }

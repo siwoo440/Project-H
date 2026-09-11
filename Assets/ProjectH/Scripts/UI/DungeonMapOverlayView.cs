@@ -630,35 +630,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
         }
 
-        private static Text CreateText(Transform parent, string name, string value, int fontSize, Color color, TextAnchor alignment) // 공통 텍스트 생성
+        private static Text CreateText(Transform parent, string name, string value, int fontSize, Color color, TextAnchor alignment) // 공통 텍스트 생성 (RuntimeUiKit 위임)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text), typeof(Outline)); // 텍스트 객체 생성
-            textObject.transform.SetParent(parent, false); // 부모 연결
-            Text text = textObject.GetComponent<Text>(); // Text 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // 기본 폰트 적용
-            text.text = value; // 문구 적용
-            text.fontSize = fontSize; // 크기 적용
-            text.fontStyle = FontStyle.Bold; // 굵기 적용
-            text.color = color; // 색상 적용
-            text.alignment = alignment; // 정렬 적용
-            text.supportRichText = true; // 색상 태그 허용
-            text.horizontalOverflow = HorizontalWrapMode.Overflow; // 가로 넘침 허용
-            text.verticalOverflow = VerticalWrapMode.Overflow; // 세로 넘침 허용
-            text.raycastTarget = false; // 텍스트 입력 비활성화 (버튼 클릭 방해 방지)
-            Outline outline = textObject.GetComponent<Outline>(); // 외곽선 조회
-            outline.effectColor = new Color(0.02f, 0.03f, 0.06f, 0.85f); // 어두운 외곽선 적용
-            outline.effectDistance = new Vector2(1.5f, -1.5f); // 외곽선 두께 적용
-            return text; // 텍스트 반환
+            return RuntimeUiKit.CreateText(parent, name, value, fontSize, color, FontStyle.Bold, alignment).Overflow().Outlined(new Color(0.02f, 0.03f, 0.06f, 0.85f), new Vector2(1.5f, -1.5f)); // 넘침 허용·외곽선 텍스트 반환
         }
 
-        private static Button CreateButton(Transform parent, string name, string label, Color color) // 공통 버튼 생성
+        private static Button CreateButton(Transform parent, string name, string label, Color color) // 공통 버튼 생성 (RuntimeUiKit 위임)
         {
-            Image image = RuntimeUiKit.CreateImage(parent, name, color); // 버튼 배경 생성
-            image.raycastTarget = true; // 버튼 클릭 판정 활성화
-            Button button = image.gameObject.AddComponent<Button>(); // 버튼 컴포넌트 추가
-            button.targetGraphic = image; // 대상 그래픽 연결
-            Text text = CreateText(image.transform, "Label", label, 22, Color.white, TextAnchor.MiddleCenter); // 버튼 문구 생성
-            RuntimeUiKit.Stretch(text.rectTransform); // 버튼 전체 확장
+            Button button = RuntimeUiKit.CreateButton(parent, name, color); // 버튼 생성
+            Text text = CreateText(button.transform, "Label", label, 22, Color.white, TextAnchor.MiddleCenter); // 버튼 라벨 생성
+            RuntimeUiKit.Stretch(text.rectTransform); // 라벨 확장
             return button; // 버튼 반환
         }
 

@@ -77,4 +77,33 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(LoadingScreenView.ResolveMode(ProjectH.Core.GameScenes.Title, ProjectH.Core.GameScenes.Lobby), Is.EqualTo(LoadingScreenMode.Corner)); // 타이틀 → 로비 우하단 모드 검증
         }
     }
+
+    public sealed class SceneRuntimePatchTests // 씬 Runtime Patch 공통 등록기 회귀 테스트 (최적화)
+    {
+        private static void NoOp(UnityEngine.SceneManagement.Scene scene) // 테스트용 빈 콜백
+        {
+        }
+
+        [Test] // 같은 콜백 중복 등록 무시 검증
+        public void Register_SameCallbackTwice_RegistersOnce() // 중복 등록 테스트
+        {
+            const string sceneName = "__TEST_SCENE_RUNTIME_PATCH__"; // 실제 씬과 겹치지 않는 테스트 씬 이름
+            int before = ProjectH.Core.SceneRuntimePatch.CountFor(sceneName); // 등록 전 개수
+
+            ProjectH.Core.SceneRuntimePatch.Register(sceneName, NoOp); // 첫 등록
+            ProjectH.Core.SceneRuntimePatch.Register(sceneName, NoOp); // 같은 콜백 재등록
+
+            Assert.That(ProjectH.Core.SceneRuntimePatch.CountFor(sceneName), Is.EqualTo(before == 0 ? 1 : before)); // 한 번만 등록 검증
+        }
+
+        [Test] // 잘못된 입력 무시 검증
+        public void Register_InvalidInput_IsIgnored() // 잘못된 입력 테스트
+        {
+            ProjectH.Core.SceneRuntimePatch.Register(string.Empty, NoOp); // 빈 씬 이름 등록 시도
+            ProjectH.Core.SceneRuntimePatch.Register("__TEST_NULL_CALLBACK__", null); // 빈 콜백 등록 시도
+
+            Assert.That(ProjectH.Core.SceneRuntimePatch.CountFor(string.Empty), Is.EqualTo(0)); // 빈 씬 이름 미등록 검증
+            Assert.That(ProjectH.Core.SceneRuntimePatch.CountFor("__TEST_NULL_CALLBACK__"), Is.EqualTo(0)); // 빈 콜백 미등록 검증
+        }
+    }
 }

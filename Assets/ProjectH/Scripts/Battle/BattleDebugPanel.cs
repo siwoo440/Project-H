@@ -1,3 +1,4 @@
+using ProjectH.Core; // 개발 기능 표시 여부
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.UI; // Unity UI 기능
 
@@ -23,6 +24,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         {
             BindButton(); // 전투 디버그 버튼 이벤트 연결
             SetVisible(false); // 시작 시 전투 디버그 UI 숨김
+            DevelopmentFeatures.HideInRelease(toggleButton); // 출시 빌드에서는 디버그 표시 버튼 숨김 (최적화)
         }
 
         public void Toggle() // 전투 디버그 UI 표시 전환

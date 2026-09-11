@@ -24,17 +24,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // 첫 씬 로드 전 이벤트 구독 지정
         private static void RegisterSceneLoadedHandler() // 씬 로드 이벤트 구독
         {
-            SceneManager.sceneLoaded -= HandleSceneLoaded; // 중복 씬 로드 구독 해제
-            SceneManager.sceneLoaded += HandleSceneLoaded; // 씬 로드 이벤트 구독
+            SceneRuntimePatch.Register(GameScenes.DungeonSelect, HandleSceneLoaded); // DungeonSelect 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void HandleSceneLoaded(Scene scene, LoadSceneMode _) // 씬 로드 완료 처리
+        private static void HandleSceneLoaded(Scene scene) // 씬 로드 완료 처리
         {
-            if (!string.Equals(scene.name, GameScenes.DungeonSelect, StringComparison.Ordinal)) // 던전 선택 씬 여부 확인
-            {
-                return; // 다른 씬 패치 중단
-            }
-
             if (UnityEngine.Object.FindFirstObjectByType<DungeonProgressUiRuntimePatch>() != null) // 기존 패치 존재 확인
             {
                 return; // 중복 패치 설치 중단

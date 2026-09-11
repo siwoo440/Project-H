@@ -39,6 +39,28 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             return character.Affinity; // 변경 후 호감도 반환
         }
 
+        public static int GetTierThreshold(AffinityTier tier) // 등급 진입 호감도 반환 (Day56 추가)
+        {
+            return (int)tier * TierRangeSize; // 20 단위 진입 수치 반환
+        }
+
+        public static string GetTierLabel(AffinityTier tier) // 등급 한글 라벨 반환 (Day56 추가, 화면·조건 문구 공용)
+        {
+            switch (tier) // 등급별 분기
+            {
+                case AffinityTier.Stranger: // 낯섦 등급 처리
+                    return "낯섦"; // 낯섦 라벨 반환
+                case AffinityTier.Acquaintance: // 안면 등급 처리
+                    return "안면"; // 안면 라벨 반환
+                case AffinityTier.Friendly: // 호감 등급 처리
+                    return "호감"; // 호감 라벨 반환
+                case AffinityTier.Trusted: // 신뢰 등급 처리
+                    return "신뢰"; // 신뢰 라벨 반환
+                default: // 유대 등급 처리
+                    return "유대"; // 유대 라벨 반환
+            }
+        }
+
         public static AffinityTier ResolveTier(int affinity) // 호감도 수치를 등급으로 변환
         {
             int clamped = Mathf.Clamp(affinity, CharacterSaveData.MinAffinity, CharacterSaveData.MaxAffinity); // 등급 계산용 범위 보정

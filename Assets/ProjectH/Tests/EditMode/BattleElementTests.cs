@@ -143,4 +143,58 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             }
         }
     }
+
+    public sealed class BattleRuntimeStatesTests // 전투 정적 상태 통합 초기화 회귀 테스트 (최적화)
+    {
+        [Test] // 통합 초기화가 모든 전투 저장소를 비우는지 검증
+        public void ResetAll_ClearsEveryBattleStore() // 통합 초기화 테스트
+        {
+            BattleElementRuntimeState.Register("ENEMY_0", BattleElement.Fire); // 속성 등록
+            BattleDisarrayRuntimeState.Register("ENEMY_0", 800); // 흐트러짐 등록
+            BattleSkillRuntimeState.AddModifier("ALLY_0", BattleRuntimeModifierKind.Stun, 1f, 10f, "TEST", 1f); // 상태이상 등록
+            BattleUltimateGaugeRuntimeState.AddGauge("CH_TEST", 50); // 궁극기 게이지 충전
+
+            BattleRuntimeStates.ResetAll(); // 통합 초기화
+
+            Assert.That(BattleElementRuntimeState.GetElement("ENEMY_0"), Is.EqualTo(BattleElement.None)); // 속성 초기화 검증
+            Assert.That(BattleDisarrayRuntimeState.IsRegistered("ENEMY_0"), Is.False); // 흐트러짐 초기화 검증
+            Assert.That(BattleSkillRuntimeState.IsStunned("ALLY_0", 2f), Is.False); // 상태이상 초기화 검증
+            Assert.That(BattleUltimateGaugeRuntimeState.GetGaugeRatio("CH_TEST"), Is.EqualTo(0f).Within(0.0001f)); // 게이지 초기화 검증
+        }
+
+        [Test] // 만료 정리 생략 최적화가 기존 판정과 같은지 검증
+        public void ExpiryAwareCleanup_MatchesFullScanResults() // 만료 정리 최적화 테스트
+        {
+            BattleRuntimeStates.ResetAll(); // 사전 정리
+            BattleSkillRuntimeState.AddModifier("ALLY_0", BattleRuntimeModifierKind.Stun, 1f, 2f, "SHORT", 10f); // 12초 만료 기절
+            BattleSkillRuntimeState.AddModifier("ALLY_0", BattleRuntimeModifierKind.Silence, 1f, 8f, "LONG", 10f); // 18초 만료 침묵
+
+            Assert.That(BattleSkillRuntimeState.IsStunned("ALLY_0", 11f), Is.True); // 만료 전 기절 유지 검증
+            Assert.That(BattleSkillRuntimeState.IsStunned("ALLY_0", 12f), Is.False); // 정확히 만료 시각에 해제 검증
+            Assert.That(BattleSkillRuntimeState.IsSilenced("ALLY_0", 12f), Is.True); // 늦은 효과는 남아 있는지 검증
+            Assert.That(BattleSkillRuntimeState.IsSilenced("ALLY_0", 18f), Is.False); // 늦은 효과 만료 검증
+
+            BattleSkillRuntimeState.AddModifier("ALLY_0", BattleRuntimeModifierKind.Stun, 1f, 3f, "REFRESH", 20f); // 23초 만료 기절
+            BattleSkillRuntimeState.AddModifier("ALLY_0", BattleRuntimeModifierKind.Stun, 1f, 10f, "REFRESH", 21f); // 같은 출처 갱신으로 31초 연장
+            Assert.That(BattleSkillRuntimeState.IsStunned("ALLY_0", 25f), Is.True); // 연장된 효과가 이전 만료 시각에 지워지지 않는지 검증
+            Assert.That(BattleSkillRuntimeState.IsStunned("ALLY_0", 31f), Is.False); // 연장 만료 검증
+            BattleRuntimeStates.ResetAll(); // 다음 테스트 영향 방지
+        }
+
+        [Test] // 전투 시작 초기화는 등록형 상태를 지우지 않는지 검증 (Day52 순서 경합 방지 규칙)
+        public void BeginBattle_KeepsRegisteredElementAndDisarray() // 시작 초기화 규칙 테스트
+        {
+            BattleRuntimeStates.ResetAll(); // 사전 정리
+            BattleElementRuntimeState.Register("ENEMY_0", BattleElement.Water); // 스탯 생성 시점 속성 등록 가정
+            BattleDisarrayRuntimeState.Register("ENEMY_0", 800); // 스탯 생성 시점 흐트러짐 등록 가정
+            BattleSkillRuntimeState.AddModifier("ALLY_0", BattleRuntimeModifierKind.Stun, 1f, 10f, "TEST", 1f); // 이전 전투 잔여 상태이상 가정
+
+            BattleRuntimeStates.BeginBattle(null); // 전투 시작 초기화 (늦게 실행된 경우)
+
+            Assert.That(BattleElementRuntimeState.GetElement("ENEMY_0"), Is.EqualTo(BattleElement.Water)); // 속성 유지 검증
+            Assert.That(BattleDisarrayRuntimeState.IsRegistered("ENEMY_0"), Is.True); // 흐트러짐 유지 검증
+            Assert.That(BattleSkillRuntimeState.IsStunned("ALLY_0", 2f), Is.False); // 전투 중 효과는 초기화 검증
+            BattleRuntimeStates.ResetAll(); // 다음 테스트 영향 방지
+        }
+    }
 }

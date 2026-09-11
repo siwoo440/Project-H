@@ -36,6 +36,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text comparisonText; // 장비 교체 비교 텍스트
         private Text statusText; // 화면 상태 텍스트
         private Text affinityText; // 캐릭터 호감도 디버그 텍스트 (Day43)
+        private CharacterAffinityRewardPanel affinityRewardPanel; // 호감도 보상 패널 (Day56 추가, 최적화로 별도 클래스 분리)
         private Button actionButton; // 장착 액션 버튼
         private Text actionButtonText; // 장착 액션 라벨
         private int selectedCharacterIndex; // 현재 캐릭터 목록 번호
@@ -102,9 +103,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button minusButton = CreateButton(parent, "AffinityMinusDebug", "호감도 -10", new Color(0.98f, 0.90f, 0.95f, 1f)); // 호감도 감소 디버그 버튼 생성
             SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.41f, 0.005f), new Vector2(0.53f, 0.045f)); // 호감도 감소 버튼 배치
             minusButton.onClick.AddListener(DecreaseAffinityDebug); // 호감도 감소 버튼 이벤트 연결
+            DevelopmentFeatures.HideInRelease(minusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
             Button plusButton = CreateButton(parent, "AffinityPlusDebug", "호감도 +10", new Color(0.90f, 0.95f, 1f, 1f)); // 호감도 증가 디버그 버튼 생성
             SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.54f, 0.005f), new Vector2(0.66f, 0.045f)); // 호감도 증가 버튼 배치
             plusButton.onClick.AddListener(IncreaseAffinityDebug); // 호감도 증가 버튼 이벤트 연결
+            DevelopmentFeatures.HideInRelease(plusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
+            Button rewardButton = CreateButton(parent, "AffinityRewardButton", "호감도 보상", new Color(1f, 0.88f, 0.60f, 1f)); // 호감도 보상 버튼 생성 (Day56 추가)
+            SetRect(rewardButton.GetComponent<RectTransform>(), new Vector2(0.67f, 0.005f), new Vector2(0.80f, 0.045f)); // 호감도 보상 버튼 배치
+            affinityRewardPanel = CharacterAffinityRewardPanel.Create(parent, Refresh); // 호감도 보상 패널 생성 (수령 후 화면 갱신 연결)
+            rewardButton.onClick.AddListener(affinityRewardPanel.Toggle); // 보상 패널 열기·닫기 연결
         }
 
         private void BuildHeader(Transform parent) // 상단 메뉴 구성
@@ -169,6 +176,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetRect(inventoryCountText.rectTransform, new Vector2(0.72f, 0.91f), new Vector2(0.80f, 0.98f)); // 오른쪽 장비 개수 텍스트 배치
             Button grantButton = CreateButton(panel.transform, "GrantDemoEquipment", "테스트 장비 지급", new Color(0.88f, 0.83f, 0.66f, 1f)); // 테스트 장비 지급 버튼 생성
             SetRect(grantButton.GetComponent<RectTransform>(), new Vector2(0.80f, 0.915f), new Vector2(0.97f, 0.975f)); // 오른쪽 테스트 장비 지급 버튼 배치
+            DevelopmentFeatures.HideInRelease(grantButton); // 출시 빌드에서는 테스트 장비 지급 버튼 숨김 (최적화)
             grantButton.onClick.AddListener(GrantDemoEquipment); // 테스트 장비 지급 이벤트 연결
             BuildInventoryScroll(panel.transform); // 장비 스크롤 목록 구성
             Image detailPanel = CreateImage(panel.transform, "DetailPanel", new Color(0.92f, 0.92f, 0.92f, 1f)); // 장비 상세 패널 생성
@@ -270,6 +278,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             characterLevelText.text = $"Lv. {characterSave.Level}"; // 캐릭터 레벨 갱신
             portraitText.text = displayName; // 임시 초상 텍스트 갱신
             UpdateAffinityDebugText(saveData, characterSave); // 호감도 디버그 텍스트 갱신 (Day43)
+            if (affinityRewardPanel != null) affinityRewardPanel.Refresh(saveData, characterSave, displayName); // 호감도 보상 패널 갱신 (Day56 추가, Unity 객체 null 비교)
             UpdateCurrentStats(saveData, dataManager, characterSave, characterData); // 현재 최종 능력치 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Weapon, weaponSlotText, "무기"); // 무기 슬롯 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Armor, armorSlotText, "방어구"); // 방어구 슬롯 갱신
@@ -372,22 +381,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Refresh(); // 호감도 변경 화면 갱신
         }
 
-        private static string GetAffinityTierLabel(AffinityTier tier) // 호감도 등급 한글 라벨 변환 (Day43)
-        {
-            switch (tier) // 등급별 분기
-            {
-                case AffinityTier.Stranger: // 낯섦 등급 처리
-                    return "낯섦"; // 낯섦 라벨 반환
-                case AffinityTier.Acquaintance: // 안면 등급 처리
-                    return "안면"; // 안면 라벨 반환
-                case AffinityTier.Friendly: // 호감 등급 처리
-                    return "호감"; // 호감 라벨 반환
-                case AffinityTier.Trusted: // 신뢰 등급 처리
-                    return "신뢰"; // 신뢰 라벨 반환
-                default: // 유대 등급 처리
-                    return "유대"; // 유대 라벨 반환
-            }
-        }
+        private static string GetAffinityTierLabel(AffinityTier tier) => AffinityService.GetTierLabel(tier); // 호감도 등급 한글 라벨 변환 (Day43, Day56 공용 함수로 위임)
 
         private void BuildInventoryButtons(SaveData saveData, DataManager dataManager, CharacterSaveData characterSave) // 보유 장비 목록 버튼 구성
         {
@@ -863,33 +857,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private static Image CreateImage(Transform parent, string name, Color color) => RuntimeUiKit.CreateImage(parent, name, color); // 공통 UI 이미지 생성 (RuntimeUiKit 위임, 최적화 정리)
 
-        private static Text CreateText(Transform parent, string name, string value, int fontSize, FontStyle fontStyle, Color color) // 공통 UI 텍스트 생성
+        private static Text CreateText(Transform parent, string name, string value, int fontSize, FontStyle fontStyle, Color color) // 공통 UI 텍스트 생성 (RuntimeUiKit 위임)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text)); // UI 텍스트 객체 생성
-            textObject.transform.SetParent(parent, false); // UI 텍스트 부모 연결
-            Text text = textObject.GetComponent<Text>(); // UI Text 컴포넌트 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
-            text.text = value; // UI 텍스트 값 적용
-            text.fontSize = fontSize; // UI 텍스트 크기 적용
-            text.fontStyle = fontStyle; // UI 텍스트 스타일 적용
-            text.color = color; // UI 텍스트 색상 적용
-            text.alignment = TextAnchor.MiddleCenter; // UI 텍스트 중앙 정렬
-            text.raycastTarget = false; // UI 텍스트 레이캐스트 비활성화
-            return text; // 생성 UI 텍스트 반환
+            return RuntimeUiKit.CreateText(parent, name, value, fontSize, color, fontStyle); // 기본 텍스트 반환
         }
 
-        private static Button CreateButton(Transform parent, string name, string label, Color color) // 공통 UI 버튼 생성
+        private static Button CreateButton(Transform parent, string name, string label, Color color) // 공통 UI 버튼 생성 (RuntimeUiKit 위임, 기존과 같이 색 전환 대상 미연결)
         {
-            GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button)); // UI 버튼 객체 생성
-            buttonObject.transform.SetParent(parent, false); // UI 버튼 부모 연결
-            Image image = buttonObject.GetComponent<Image>(); // UI 버튼 이미지 조회
-            image.color = color; // UI 버튼 색상 적용
-            Button button = buttonObject.GetComponent<Button>(); // UI Button 컴포넌트 조회
-            Text text = CreateText(buttonObject.transform, "Text", label, 16, FontStyle.Bold, new Color(0.10f, 0.10f, 0.10f, 1f)); // UI 버튼 라벨 생성
-            text.horizontalOverflow = HorizontalWrapMode.Wrap; // UI 버튼 라벨 줄바꿈 적용
-            text.verticalOverflow = VerticalWrapMode.Truncate; // UI 버튼 라벨 세로 영역 제한
-            Stretch(text.rectTransform, 7f); // UI 버튼 라벨 확장
-            return button; // 생성 UI 버튼 반환
+            Button button = RuntimeUiKit.CreateButton(parent, name, color, false); // 버튼 생성
+            Text text = CreateText(button.transform, "Text", label, 16, FontStyle.Bold, new Color(0.10f, 0.10f, 0.10f, 1f)).Wrap(); // 줄바꿈 버튼 라벨 생성
+            Stretch(text.rectTransform, 7f); // 라벨 확장
+            return button; // 버튼 반환
         }
 
         private static void AddOutline(GameObject target) // UI 외곽선 추가

@@ -631,22 +631,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return limb; // 팔다리 반환
         }
 
-        private static Text CreateText(Transform parent, string name, string value, int fontSize, Color color, TextAnchor alignment) // 공통 텍스트 생성
+        private static Text CreateText(Transform parent, string name, string value, int fontSize, Color color, TextAnchor alignment) // 공통 텍스트 생성 (RuntimeUiKit 위임)
         {
-            GameObject textObject = new GameObject(name, typeof(RectTransform), typeof(Text)); // 텍스트 객체 생성
-            textObject.transform.SetParent(parent, false); // 부모 연결
-            Text text = textObject.GetComponent<Text>(); // Text 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // 기본 폰트 적용
-            text.text = value; // 문구 적용
-            text.fontSize = fontSize; // 크기 적용
-            text.fontStyle = FontStyle.Bold; // 굵기 적용
-            text.color = color; // 색상 적용
-            text.alignment = alignment; // 정렬 적용
-            text.supportRichText = true; // 색상 태그 허용
-            text.horizontalOverflow = HorizontalWrapMode.Overflow; // 가로 넘침 허용
-            text.verticalOverflow = VerticalWrapMode.Overflow; // 세로 넘침 허용
-            text.raycastTarget = false; // 입력 비활성화
-            return text; // 텍스트 반환
+            return RuntimeUiKit.CreateText(parent, name, value, fontSize, color, FontStyle.Bold, alignment).Overflow(); // 넘침 허용 텍스트 반환
         }
 
         private void OnDestroy() // 로딩창 제거 처리

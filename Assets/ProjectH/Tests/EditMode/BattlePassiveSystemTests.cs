@@ -13,8 +13,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [SetUp] // 테스트 초기화
         public void SetUp() // 전투 패시브 테스트 준비
         {
-            BattleSkillRuntimeState.ResetAll(); // 스킬 Runtime 상태 초기화
-            BattlePassiveRuntimeState.ResetAll(); // 패시브 Runtime 상태 초기화
+            BattleRuntimeStates.ResetAll(); // 전투 정적 상태 전체 초기화 (최적화 통합 창구)
             registryObject = new GameObject("Registry"); // Registry 테스트 객체 생성
             registry = registryObject.AddComponent<BattleCombatRegistry>(); // Registry 컴포넌트 생성
             BattlePassiveSystem.Initialize(registry); // 패시브 시스템 초기화

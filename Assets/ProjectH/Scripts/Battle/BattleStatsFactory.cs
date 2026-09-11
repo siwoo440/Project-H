@@ -29,7 +29,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 throw new ArgumentException($"Character ID mismatch. Data={characterData.Id}, Save={saveData.CharacterId}.", nameof(saveData)); // ID 불일치 예외 발생
             }
 
-            return CreateCharacter(characterData, saveData.Level, runtimeId, equipmentBonus); // 저장 레벨 및 장비 기반 스탯 재계산
+            return CreateCharacter(characterData, saveData.Level, runtimeId, equipmentBonus, AffinityRewardCatalog.GetClaimedBonus(saveData)); // 저장 레벨·장비·수령 호감도 보상 기반 스탯 재계산 (Day56 수정)
         }
 
         public static BattleStats CreateCharacter(CharacterData characterData, int level, string runtimeId) // 레벨 기반 캐릭터 스탯 생성
@@ -38,6 +38,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         }
 
         public static BattleStats CreateCharacter(CharacterData characterData, int level, string runtimeId, BattleEquipmentStatBonus equipmentBonus) // 레벨 및 장비 기반 캐릭터 스탯 생성
+        {
+            return CreateCharacter(characterData, level, runtimeId, equipmentBonus, AffinityBattleBonus.Empty); // 호감도 보너스 없는 호환 스탯 생성
+        }
+
+        public static BattleStats CreateCharacter(CharacterData characterData, int level, string runtimeId, BattleEquipmentStatBonus equipmentBonus, AffinityBattleBonus affinityBonus) // 레벨·장비·호감도 보너스 기반 캐릭터 스탯 생성 (Day56 추가)
         {
             if (characterData == null) // 캐릭터 원본 확인
             {
@@ -50,8 +55,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             int grownAttack = BattleGrowthFormula.ScaleStat(characterData.BaseAttack, safeLevel); // 성장 공격력 계산
             int grownDefense = BattleGrowthFormula.ScaleStat(characterData.BaseDefense, safeLevel); // 성장 방어력 계산
             int grownResistance = BattleGrowthFormula.ScaleStat(characterData.BaseResistance, safeLevel); // 성장 저항력 계산
-            int maxHp = Mathf.RoundToInt(grownMaxHp + safeBonus.MaxHp); // 장비 포함 최대 체력 계산
-            int attack = Mathf.RoundToInt(grownAttack + safeBonus.Attack); // 장비 포함 공격력 계산
+            int maxHp = Mathf.RoundToInt((grownMaxHp + safeBonus.MaxHp) * (1f + affinityBonus.HpPercent)); // 장비·호감도 보너스 포함 최대 체력 계산 (보너스 없으면 기존과 동일)
+            int attack = Mathf.RoundToInt((grownAttack + safeBonus.Attack) * (1f + affinityBonus.AttackPercent)); // 장비·호감도 보너스 포함 공격력 계산 (보너스 없으면 기존과 동일)
             int defense = Mathf.RoundToInt(grownDefense + safeBonus.Defense); // 장비 포함 방어력 계산
             int resistance = Mathf.RoundToInt(grownResistance + safeBonus.Resistance); // 장비 포함 저항력 계산
             float attackSpeed = characterData.AttackSpeed + safeBonus.AttackSpeed; // 장비 포함 공격속도 계산

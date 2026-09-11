@@ -13,17 +13,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // 첫 씬 로드 전 이벤트 구독 지정
         private static void RegisterSceneLoadedHandler() // 씬 로드 이벤트 구독
         {
-            SceneManager.sceneLoaded -= HandleSceneLoaded; // 중복 씬 로드 구독 해제
-            SceneManager.sceneLoaded += HandleSceneLoaded; // 씬 로드 이벤트 구독
+            SceneRuntimePatch.Register(GameScenes.Title, HandleSceneLoaded); // Title 씬 로드 시 주입 등록 (최적화 — 공통 등록기 사용)
         }
 
-        private static void HandleSceneLoaded(Scene scene, LoadSceneMode _) // 씬 로드 완료 처리
+        private static void HandleSceneLoaded(Scene scene) // 씬 로드 완료 처리
         {
-            if (scene.name != GameScenes.Title) // 타이틀 씬 여부 확인
-            {
-                return; // 다른 씬 수정 중단
-            }
-
             ApplyBackground(scene); // 타이틀 배경 적용
             HideMenuPanel(scene); // 메뉴 패널 배경 제거
             HideStatus(scene); // 저장 상태 문구 제거

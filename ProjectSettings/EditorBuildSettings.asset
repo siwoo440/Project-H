@@ -30,6 +30,9 @@ EditorBuildSettings:
     path: Assets/ProjectH/Scenes/Village.unity
     guid: 1602b128798a4fef9df3146378c5cf3a
   - enabled: 1
+    path: Assets/ProjectH/Scenes/Diary.unity
+    guid: 0f08123ff16642348c4845f968130521
+  - enabled: 1
     path: Assets/ProjectH/Scenes/Party.unity
     guid: 80f4fcedf7ef2d94c806e4758699c66b
   - enabled: 1

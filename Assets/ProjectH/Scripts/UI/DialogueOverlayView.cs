@@ -2,6 +2,8 @@ using System; // 콜백 델리게이트 기능
 using System.Collections.Generic; // 목록 자료형
 using System.Text; // 로그 문구 조립 기능
 using ProjectH.Battle.Rhythm; // 원형 스프라이트 기능
+using ProjectH.Core; // 저장 관리자 기능 (Day63 본 이야기 기록)
+using ProjectH.Diary; // 일기장 기록 기능 (Day63)
 using ProjectH.Dialogue; // 대화 진행 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.InputSystem; // 키보드 입력 기능
@@ -40,6 +42,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private DialogueRunner runner; // 대화 진행기
         private Action<DialogueRunner> onFinished; // 종료 콜백
         private DialogueStageLayout layout; // 스탠딩 배치
+        private string scriptId = string.Empty; // 대사 파일 ID (Day63 — 끝까지 보면 일기장에 기록)
+        private Image backgroundImage; // 배경 (CG가 나오면 CG로 교체, Day63)
+        private Sprite sceneBackground; // 대사 파일 원래 배경 (Day63)
+        private bool cgActive; // CG 표시 중 (Day63 — 스탠딩 숨김)
         private GameObject uiRoot; // 숨김 대상 UI 묶음
         private RectTransform namePlate; // 이름표
         private Text nameText; // 이름
@@ -79,6 +85,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             view.onFinished = finishedCallback; // 종료 콜백 저장
             view.runner = new DialogueRunner(script); // 진행기 생성
             view.layout = DialogueStageLayout.Build(script); // 좌우 배치 결정 (Day62)
+            view.scriptId = script.Id; // 대사 파일 ID (Day63)
             view.Build(script); // 화면 구성
             view.ShowCurrent(); // 첫 대사 표시
             return view; // 화면 반환
@@ -90,6 +97,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             background.sprite = DialogueArtFactory.GetBackground(script.Background); // 배경 이미지 적용
             background.raycastTarget = false; // 입력 통과
             RuntimeUiKit.Stretch(background.rectTransform); // 전체 화면
+            backgroundImage = background; // 배경 보관 (Day63 CG 교체용)
+            sceneBackground = background.sprite; // 원래 배경 보관 (Day63)
             AddStanding(layout.Left, DialogueStageSlot.Left); // 왼쪽 스탠딩
             AddStanding(layout.Right, DialogueStageSlot.Right); // 오른쪽 스탠딩
             AddStanding(layout.Center, DialogueStageSlot.Center); // 가운데 스탠딩 (1인)
@@ -390,6 +399,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 표시 종료
             }
 
+            if (!string.IsNullOrEmpty(node.Cg)) ApplyCg(node.Cg); // 이 대사부터 CG 표시·해제 (Day63)
             StandingView speakerView = FindStanding(node.Speaker); // 무대 위 화자
             if (speakerView != null && !string.IsNullOrEmpty(node.Expression)) speakerView.Expression = node.Expression; // 표정 갱신
             RefreshStandings(node.Speaker); // 말하는 쪽 강조 (Day62)
@@ -429,6 +439,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return null; // 무대에 없음
         }
 
+        private void ApplyCg(string cgId) // CG 켜기·끄기 (Day63 추가 — CG가 있으면 화면 가득, 스탠딩 숨김)
+        {
+            Sprite cg = cgId == "-" ? null : RuntimeSpriteLoader.Load("Diary/CG/" + cgId); // CG 그림 ("-"은 끄기)
+            cgActive = cg != null; // 표시 여부
+            backgroundImage.sprite = cgActive ? cg : sceneBackground; // CG 또는 원래 배경
+            backgroundImage.preserveAspect = false; // 화면 가득
+        }
+
         private void RefreshStandings(string speaker) // 스탠딩 이미지·밝기 갱신 (말하는 사람 밝게, 듣는 사람 어둡게)
         {
             bool characterSpeaking = FindStanding(speaker) != null; // 무대 위 캐릭터가 말하는지
@@ -436,6 +454,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             for (int index = 0; index < standings.Count; index++) // 무대 순회
             {
                 StandingView view = standings[index]; // 스탠딩
+                view.Image.gameObject.SetActive(!cgActive); // CG 중에는 스탠딩 숨김 (Day63)
                 view.Image.sprite = DialogueArtFactory.GetStanding(view.CharacterId, view.Expression, out bool placeholder); // 표정별 스탠딩
                 Color tint = placeholder ? DialogueArtFactory.GetCharacterTint(view.CharacterId) : Color.white; // 임시 실루엣은 캐릭터 색
                 bool speaking = view.CharacterId == speaker; // 이 캐릭터가 말하는지
@@ -594,6 +613,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             uiRoot.SetActive(true); // UI 표시
         }
 
+        private void RecordSeen(DialogueRunner finished) // 본 이야기 기록 (Day63 — 다시 보기 해금, 새로 기록했을 때만 저장)
+        {
+            if (!finished.IsFinished || GameManager.Instance == null || GameManager.Instance.Save == null) return; // 중간 종료·저장 없음
+            if (DiaryService.MarkDialogueSeen(GameManager.Instance.Save.CurrentSave, scriptId)) GameManager.Instance.Save.SaveCurrent(); // 기록 후 저장
+        }
+
         private void Finish() // 대화 종료
         {
             if (runner == null) // 중복 종료 확인
@@ -604,6 +629,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             DialogueRunner finished = runner; // 종료된 진행기 보관
             runner = null; // 중복 종료 방지
             enabled = false; // Update 중지
+            RecordSeen(finished); // 끝까지 봤으면 일기장에 기록 (Day63)
             onFinished?.Invoke(finished); // 결과 반영 콜백
             Destroy(gameObject); // 화면 제거
         }

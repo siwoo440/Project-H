@@ -1,0 +1,77 @@
+using System; // 문자열 비교 기능
+using System.Collections.Generic; // 목록 자료형
+using UnityEngine; // 좌표·색 기능
+
+namespace ProjectH.Dungeon // 프로젝트 던전 탐험 영역
+{
+    public enum AdventureRegionKind // 지도 지역 종류 (Day63 신규)
+    {
+        Dungeon = 0, // 던전 지역
+        Village = 1, // 마을로 이동
+        Locked = 2 // 아직 열리지 않은 지역
+    }
+
+    public sealed class AdventureRegion // 모험 지도 지역 하나
+    {
+        public string Id { get; } // 지역 ID
+        public string Name { get; } // 지도 이름 (목업 표기)
+        public string LoreName { get; } // 세계관 지명
+        public string Description { get; } // 설명
+        public Vector2 Position { get; } // 지도 위 위치 (0~1)
+        public AdventureRegionKind Kind { get; } // 종류
+        public IReadOnlyList<string> DungeonIds { get; } // 속한 던전
+        public string LockedHint { get; } // 잠김 안내
+
+        public AdventureRegion(string id, string name, string loreName, string description, Vector2 position, AdventureRegionKind kind, string[] dungeonIds, string lockedHint = "") // 지역 생성
+        {
+            Id = id; // ID 저장
+            Name = name; // 이름 저장
+            LoreName = loreName; // 지명 저장
+            Description = description; // 설명 저장
+            Position = position; // 위치 저장
+            Kind = kind; // 종류 저장
+            DungeonIds = dungeonIds ?? Array.Empty<string>(); // 던전 저장
+            LockedHint = lockedHint ?? string.Empty; // 안내 저장
+        }
+    }
+
+    public static class AdventureRegionCatalog // 모험 지도 지역 표 (Day63 신규 — 목업 10번 : 마왕성 · 숲 · 늪지대 · 마을 · 사막 · 바다)
+    {
+        public const string VillageRegionId = "REGION_VILLAGE"; // 마을 지역 ID
+
+        private static readonly AdventureRegion[] Regions = // 지역 목록 (지도 위치는 기획서 2.3 대륙 방위 기준)
+        {
+            new AdventureRegion("REGION_FOREST", "숲", "레티시아 성역의 숲", "주인공이 처음 소환된 성역을 둘러싼 숲. 성역 근처까지 번진 침식을 막는 첫 무대다.", new Vector2(0.55f, 0.50f), AdventureRegionKind.Dungeon, new[] { "DG001", "DG002" }), // 숲
+            new AdventureRegion("REGION_SWAMP", "늪지대", "국경 침식 지대", "왕국 서북쪽 국경의 습지. 침식이 고인 물처럼 번져 회랑 전체가 던전으로 변했다.", new Vector2(0.30f, 0.66f), AdventureRegionKind.Dungeon, new[] { "DG003" }), // 늪지대
+            new AdventureRegion("REGION_DEMON_CASTLE", "마왕성", "검은 균열지대 입구", "대륙 외곽, 검은 안개가 피어오르는 금지된 땅으로 가는 관문. 가장 강한 침식이 기다린다.", new Vector2(0.80f, 0.80f), AdventureRegionKind.Dungeon, new[] { "DG004" }), // 마왕성
+            new AdventureRegion(VillageRegionId, "마을", "모험가의 마을", "여관 · 광장 · 시장 · 온천 · 길드가 있는 쉼터. 동료들과 시간을 보낼 수 있다.", new Vector2(0.44f, 0.36f), AdventureRegionKind.Village, null), // 마을
+            new AdventureRegion("REGION_DESERT", "사막", "아스타르 사막", "고대 문명의 신전과 지하 도시가 잠든 남쪽 사막. 마왕 봉인의 단서가 숨어 있다.", new Vector2(0.60f, 0.15f), AdventureRegionKind.Locked, null, "65~66일차 지역 확장에서 열립니다."), // 사막 (잠김)
+            new AdventureRegion("REGION_SEA", "바다", "서쪽 해안", "노아르 마법도시 너머로 이어지는 바다. 검은 균열이 바다 위에도 나타났다는 소문이 돈다.", new Vector2(0.12f, 0.30f), AdventureRegionKind.Locked, null, "67일차 검은 균열 · 긴급 던전에서 열립니다.") // 바다 (잠김)
+        };
+
+        public static IReadOnlyList<AdventureRegion> All => Regions; // 전체 지역
+
+        public static AdventureRegion Get(string regionId) // ID로 조회
+        {
+            foreach (AdventureRegion region in Regions) // 지역 순회
+            {
+                if (string.Equals(region.Id, regionId, StringComparison.Ordinal)) return region; // 일치
+            }
+
+            return null; // 없음
+        }
+
+        public static AdventureRegion FindByDungeon(string dungeonId) // 던전이 속한 지역
+        {
+            foreach (AdventureRegion region in Regions) // 지역 순회
+            {
+                foreach (string id in region.DungeonIds) // 던전 순회
+                {
+                    if (string.Equals(id, dungeonId, StringComparison.Ordinal)) return region; // 일치
+                }
+            }
+
+            return null; // 없음
+        }
+    }
+}

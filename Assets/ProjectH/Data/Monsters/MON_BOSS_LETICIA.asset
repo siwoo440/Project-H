@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
   id: MON_BOSS_LETICIA
   displayName: "침식의 파수꾼"
+  description: "\uC131\uC5ED\uC744 \uC0BC\uD0A8 \uCE68\uC2DD\uC774 \uD615\uD0DC\uB97C \uC774\uB8EC \uD30C\uC218\uAFBC. \uBB34\uB108\uC9C4 \uC131\uC5ED\uC758 \uAC00\uC7A5 \uAE4A\uC740 \uACF3\uC744 \uC9C0\uD0A4\uBA70, \uCCB4\uB825\uC774 \uC904\uC5B4\uB4E4\uC218\uB85D \uB354\uC6B1 \uACA9\uB82C\uD55C \uACF5\uACA9\uC744 \uD37C\uBD93\uB294\uB2E4."
   aiType: 7
   element: 5
   bossPattern: {fileID: 11400000, guid: b58618303b3e4a5db40c1601259e13d5, type: 2}

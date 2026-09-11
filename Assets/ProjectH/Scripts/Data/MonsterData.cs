@@ -19,6 +19,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
     {
         [SerializeField] private string id; // 몬스터 고유 ID
         [SerializeField] private string displayName; // 몬스터 표시 이름
+        [SerializeField, TextArea(2, 5)] private string description; // 일기장 몬스터 설명 (Day63 추가)
         [SerializeField] private EnemyAIType aiType = EnemyAIType.Normal; // 몬스터 AI 유형
         [SerializeField] private ElementType element = ElementType.None; // 몬스터 전투 속성 (Day52 추가)
         [SerializeField] private BossPatternData bossPattern; // 보스 페이즈·특수 패턴 데이터 (Day54 추가, 비어 있으면 일반 적)
@@ -31,6 +32,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField, Min(0f)] private float moveSpeed = 2f; // 이동속도
         public string Id => id; // 고유 ID 반환
         public string DisplayName => displayName; // 표시 이름 반환
+        public string Description => description ?? string.Empty; // 일기장 몬스터 설명 반환 (Day63 추가)
         public EnemyAIType AIType => aiType; // 적군 AI 유형 반환
         public ElementType Element => element; // 전투 속성 반환 (Day52 추가)
         public BossPatternData BossPattern => bossPattern; // 보스 패턴 데이터 반환 (Day54 추가)

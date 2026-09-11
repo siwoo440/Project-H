@@ -10,6 +10,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
         public const string Shop = "Shop"; // 상점 씬
         public const string Blacksmith = "Blacksmith"; // 대장간 씬 (Day61 추가, 로비 하단 버튼으로 진입)
         public const string Village = "Village"; // 마을 씬 (Day62 추가, 로비 하단 버튼으로 진입)
+        public const string Diary = "Diary"; // 일기장 씬 (Day63 추가, 타이틀·로비 [일기장]으로 진입)
         public const string Party = "Party"; // 파티 씬
         public const string DungeonSelect = "DungeonSelect"; // 던전 선택 씬
         public const string Battle = "Battle"; // 전투 씬

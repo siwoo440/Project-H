@@ -34,7 +34,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public static Sprite GetBackground(string key) // 배경 스프라이트 조회
         {
             string safeKey = string.IsNullOrEmpty(key) ? "DEFAULT" : key; // 빈 키 기본값
-            Sprite art = Resources.Load<Sprite>(BackgroundFolder + safeKey); // 정식 배경 우선 사용
+            Sprite art = RuntimeSpriteLoader.Load(BackgroundFolder + safeKey); // 정식 배경 우선 사용
             if (art != null) return art; // 정식 배경 반환
 
             if (!BackgroundCache.TryGetValue(safeKey, out Sprite cached) || cached == null) // 캐시 확인 (도메인 리로드 대응)
@@ -48,8 +48,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         public static Sprite GetStanding(string characterId, string expression, out bool isPlaceholder) // 스탠딩 스프라이트 조회
         {
-            Sprite art = string.IsNullOrEmpty(expression) ? null : Resources.Load<Sprite>($"{StandingFolder}{characterId}_{expression}"); // 표정별 정식 스탠딩
-            if (art == null) art = Resources.Load<Sprite>(StandingFolder + characterId); // 기본 정식 스탠딩
+            Sprite art = string.IsNullOrEmpty(expression) ? null : RuntimeSpriteLoader.Load($"{StandingFolder}{characterId}_{expression}"); // 표정별 정식 스탠딩
+            if (art == null) art = RuntimeSpriteLoader.Load(StandingFolder + characterId); // 기본 정식 스탠딩
             isPlaceholder = art == null; // 임시 이미지 여부
             if (art != null) return art; // 정식 스탠딩 반환
 
@@ -63,7 +63,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         public static Sprite GetCutIn(string characterId, out bool isPlaceholder) // 궁극기 컷인 일러스트 조회 (Day59 추가 — 전용 컷인 → 대화 스탠딩 → 임시 실루엣)
         {
-            Sprite art = Resources.Load<Sprite>(CutInFolder + characterId); // 궁극기 전용 일러스트 우선
+            Sprite art = RuntimeSpriteLoader.Load(CutInFolder + characterId); // 궁극기 전용 일러스트 우선
             if (art != null) { isPlaceholder = false; return art; } // 전용 일러스트 반환
             return GetStanding(characterId, string.Empty, out isPlaceholder); // 없으면 대화 스탠딩 재사용
         }

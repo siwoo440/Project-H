@@ -30,6 +30,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private int lastBondRefillDay; // 결속 자원을 마지막으로 채운 일차 (Day59 추가, 0이면 첫 지급 전)
         [SerializeField] private List<RuneInstanceSaveData> runeInventory = new List<RuneInstanceSaveData>(); // 보유 룬 목록 (Day60 추가)
         [SerializeField] private List<ShopStateSaveData> shopStates = new List<ShopStateSaveData>(); // 상점별 하루 상태 (Day61 추가 — 오늘의 상품·재고·리롤)
+        [SerializeField] private List<string> seenDialogueIds = new List<string>(); // 끝까지 본 대화 ID (Day63 추가 — 일기장 다시 보기)
+        [SerializeField] private List<string> seenMonsterIds = new List<string>(); // 전투에서 만난 몬스터 ID (Day63 추가 — 일기장 몬스터 정보)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -48,6 +50,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public int LastBondRefillDay => lastBondRefillDay; // 결속 자원 마지막 회복 일차 반환 (Day59 추가)
         public IReadOnlyList<RuneInstanceSaveData> RuneInventory => runeInventory; // 보유 룬 목록 반환 (Day60 추가)
         public IReadOnlyList<ShopStateSaveData> ShopStates => shopStates; // 상점 상태 목록 반환 (Day61 추가)
+        public IReadOnlyList<string> SeenDialogueIds => seenDialogueIds; // 본 대화 목록 반환 (Day63 추가)
+        public IReadOnlyList<string> SeenMonsterIds => seenMonsterIds; // 만난 몬스터 목록 반환 (Day63 추가)
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -153,6 +157,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             {
                 shopStates[index].EnsureDefaults(); // 상태 기본값 보정
             }
+
+            if (seenDialogueIds == null) seenDialogueIds = new List<string>(); // 본 대화 목록 복원 (Day63 추가, 기존 세이브는 빈 목록)
+            if (seenMonsterIds == null) seenMonsterIds = new List<string>(); // 만난 몬스터 목록 복원 (Day63 추가)
+            seenDialogueIds.RemoveAll(string.IsNullOrWhiteSpace); // 빈 ID 제거
+            seenMonsterIds.RemoveAll(string.IsNullOrWhiteSpace); // 빈 ID 제거
 
             if (currentChapter == null) // 현재 챕터 확인
             {
@@ -581,6 +590,26 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
 
             return null; // 조회 실패 반환
+        }
+
+        public bool HasSeenDialogue(string dialogueId) => !string.IsNullOrEmpty(dialogueId) && seenDialogueIds != null && seenDialogueIds.Contains(dialogueId); // 본 대화 여부 (Day63 추가)
+
+        public bool HasSeenMonster(string monsterId) => !string.IsNullOrEmpty(monsterId) && seenMonsterIds != null && seenMonsterIds.Contains(monsterId); // 만난 몬스터 여부 (Day63 추가)
+
+        internal bool AddSeenDialogue(string dialogueId) // 본 대화 기록 (Day63 추가, 새로 기록하면 true)
+        {
+            EnsureDefaults(); // 목록 확인
+            if (string.IsNullOrWhiteSpace(dialogueId) || seenDialogueIds.Contains(dialogueId)) return false; // 빈 ID·중복
+            seenDialogueIds.Add(dialogueId); // 기록
+            return true; // 새로 기록
+        }
+
+        internal bool AddSeenMonster(string monsterId) // 만난 몬스터 기록 (Day63 추가, 새로 기록하면 true)
+        {
+            EnsureDefaults(); // 목록 확인
+            if (string.IsNullOrWhiteSpace(monsterId) || seenMonsterIds.Contains(monsterId)) return false; // 빈 ID·중복
+            seenMonsterIds.Add(monsterId); // 기록
+            return true; // 새로 기록
         }
 
         internal ShopStateSaveData GetOrCreateShopState(string shopId) // 상점 상태 조회·생성 (Day61 추가, ShopRotationService 전용)

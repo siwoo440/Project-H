@@ -12,7 +12,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         public static Sprite Get(SaveTimeOfDay phase) // 시간대 그림 (정식 그림 우선)
         {
-            Sprite art = Resources.Load<Sprite>(ResourceFolder + phase.ToString().ToUpperInvariant()); // 정식 그림
+            Sprite art = RuntimeSpriteLoader.Load(ResourceFolder + phase.ToString().ToUpperInvariant()); // 정식 그림
             if (art != null) return art; // 정식 그림 반환
 
             if (!Cache.TryGetValue(phase, out Sprite cached) || cached == null) // 캐시 확인 (도메인 리로드 대응)

@@ -29,7 +29,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             saveData.EnsureDefaults(); // 저장 기본값 보정
-            string status = $"DAY {saveData.CurrentDay}  ·  {saveData.CurrentTime}"; // 일차 및 시간 문구 생성
+            string status = $"DAY {saveData.CurrentDay}  ·  {GameTimeService.GetPhaseLabel(saveData.CurrentTime)}"; // 일차 및 시간 문구 생성 (Day63 한글 표기 — 아침·점심·저녁·밤)
             string body = $"{saveData.CurrentChapter}\n{saveData.CurrentMainQuest}"; // 챕터 및 목표 문구 생성
             string saveState = hasSaveData ? "SAVE DATA · ONLINE" : "SAVE DATA · UNSAVED"; // 저장 상태 문구 생성
             string party = BuildPartySummary(dataManager, saveData); // 파티 요약 문구 생성

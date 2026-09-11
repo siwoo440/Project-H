@@ -33,8 +33,10 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역 (Day58 신규)
         [SerializeField] private string expression; // 표정 이름 (기획서 12.3)
         [SerializeField] private string text; // 대사
         [SerializeField] private string next; // 다음 노드 ID (비우면 바로 아래 노드)
+        [SerializeField] private string cg; // 이 대사부터 보여 줄 CG ID (Day63 추가 — Resources/Diary/CG/{ID}, "-"면 CG를 끄고 배경으로)
         [SerializeField] private List<DialogueChoice> choices = new List<DialogueChoice>(); // 선택지 목록
         public string Id => id ?? string.Empty; // 노드 ID 반환
+        public string Cg => cg ?? string.Empty; // CG ID 반환 (Day63 추가)
         public string Speaker => string.IsNullOrEmpty(speaker) ? DialogueSpeakers.Narration : speaker; // 화자 반환 (비우면 나레이션)
         public string Expression => expression ?? string.Empty; // 표정 반환
         public string Text => text ?? string.Empty; // 대사 반환

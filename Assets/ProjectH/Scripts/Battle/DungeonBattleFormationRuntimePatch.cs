@@ -37,12 +37,26 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             ApplyEncounterWaves(controller, dungeonId, profile); // 던전 인카운터 웨이브 편성 적용 (Day45)
         }
 
+        private static void RecordMonsters(List<string[]> waves) // 이번 전투 몬스터를 일기장 몬스터 정보에 기록 (Day63 추가)
+        {
+            ProjectH.SaveSystem.SaveData saveData = GameManager.Instance == null || GameManager.Instance.Save == null ? null : GameManager.Instance.Save.CurrentSave; // 현재 저장
+            int added = 0; // 새 기록 수
+
+            foreach (string[] wave in waves) // 웨이브 순회
+            {
+                added += ProjectH.Diary.DiaryService.MarkMonstersSeen(saveData, wave); // 몬스터 기록
+            }
+
+            if (added > 0) GameManager.Instance.Save.SaveCurrent(); // 새로 만난 몬스터가 있으면 저장
+        }
+
         private static void ApplyEncounterWaves(BattleScreenController controller, string dungeonId, DungeonBattleFormationProfile fallbackProfile) // 던전 인카운터 웨이브 편성 적용 (Day45)
         {
             DungeonData dungeon = GameManager.Instance == null || GameManager.Instance.Data == null ? null : GameManager.Instance.Data.GetDungeon(dungeonId); // 확정 던전 원본 데이터 조회
             List<string[]> waves = DungeonEncounterResolver.ResolveWaves(dungeon, fallbackProfile.CreateEnemyIds()); // 던전 데이터 기반 웨이브 목록 해석
             waves = ProjectH.Dungeon.DungeonRunState.ResolveBattleWaves(waves); // 노드형 탐험 중이면 노드 종류별 웨이브로 교체 (Day55 추가, 탐험 외 전투는 원본 유지)
             controller.ConfigureEncounterWaves(waves); // 전투 화면에 웨이브 편성 주입
+            RecordMonsters(waves); // 등장 몬스터를 일기장에 기록 (Day63)
             Debug.Log($"[Project H][DAY45] {dungeonId} 인카운터 웨이브 {waves.Count}개 적용"); // 웨이브 편성 적용 로그 출력
         }
     }

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
   id: MON_CORRUPTED_WOLF
   displayName: "\uCE68\uC2DD\uB41C \uB291\uB300"
+  description: "\uCE68\uC2DD\uC5D0 \uC0BC\uCF1C\uC9C4 \uC232\uC758 \uB291\uB300. \uBB34\uB9AC\uB97C \uC9C0\uC5B4 \uBA39\uC787\uAC10\uC744 \uCAD3\uC73C\uBA70, \uB208\uB3D9\uC790\uC5D0 \uAC80\uC740 \uC548\uAC1C\uAC00 \uC5B4\uB824 \uC788\uB2E4. \uC6D0\uB798\uB294 \uC0AC\uB78C\uC744 \uD53C\uD558\uB358 \uC628\uC21C\uD55C \uC9D0\uC2B9\uC774\uC5C8\uB2E4."
   aiType: 1
   element: 2
   maxHp: 2100

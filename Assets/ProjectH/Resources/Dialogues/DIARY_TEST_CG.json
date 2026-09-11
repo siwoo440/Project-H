@@ -1,0 +1,41 @@
+{
+  "id": "DIARY_TEST_CG",
+  "title": "테스트 CG 장면",
+  "characterId": "CH_SERENA",
+  "background": "EVENING",
+  "location": "일기장 · 개발용 테스트",
+  "nodes": [
+    {
+      "id": "t1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "개발용 테스트 장면입니다. 다음 대사부터 CG가 화면 가득 나타납니다."
+    },
+    {
+      "id": "t2",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "노을이 정말 예쁘네요… 이 장면, 오래 기억하고 싶어요.",
+      "cg": "CG_TEST"
+    },
+    {
+      "id": "t3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "CG가 보이는 동안에는 스탠딩이 숨겨지고, 대화창은 그대로 나와."
+    },
+    {
+      "id": "t4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "대사에 \"cg\": \"-\"를 넣으면 CG가 꺼지고 원래 배경으로 돌아옵니다.",
+      "cg": "-"
+    },
+    {
+      "id": "t5",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "테스트 끝이에요. 정식 CG는 Resources/Diary/CG에 같은 이름으로 넣어 주세요."
+    }
+  ]
+}

@@ -82,6 +82,23 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             }
         }
 
+        [Test] // 결속 대사 20편 파일 검사 (Day59 추가)
+        public void BondDialogues_ExistForEveryStarterAndStage() // 결속 대사 파일 테스트
+        {
+            foreach (string characterId in Starters) // 초기 4인 순회
+            {
+                for (int level = 1; level <= BondCatalog.MaxLevel; level++) // 1~5단계
+                {
+                    string scriptId = BondCatalog.GetBondScriptId(characterId, level); // 파일 ID
+                    DialogueScript script = DialogueLibrary.Load(scriptId); // 불러오기
+                    List<string> errors = new List<string>(); // 오류 목록
+                    Assert.That(script, Is.Not.Null, scriptId); // 파일 존재 검증
+                    Assert.That(DialogueLibrary.Validate(script, errors), Is.True, string.Join("\n", errors)); // 구조 검사 검증
+                    Assert.That(script.CharacterId, Is.EqualTo(characterId), scriptId); // 캐릭터 일치 검증
+                }
+            }
+        }
+
         private static bool HasPreferredChoice(DialogueScript script) // 선호 선택지 포함 여부
         {
             foreach (DialogueNode node in script.Nodes) // 노드 순회

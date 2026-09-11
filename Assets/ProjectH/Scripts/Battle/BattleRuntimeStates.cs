@@ -14,6 +14,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             BattleSkillRuntimeState.SetRegistry(registry); // 스킬 Runtime 상태에 현재 Registry 연결
             BattleSkillRuntimeState.ResetAll(); // 스킬·상태이상 효과 초기화
             BattleUltimateGaugeRuntimeState.ResetAll(); // 궁극기 게이지 초기화
+            BattleBondRuntimeState.ResetBattleEffects(); // 결속 전투 효과 초기화 (등록 단계는 유지, Day59 추가)
         }
 
         public static void EndBattle() // 전투 종료 초기화 (Runtime Driver 제거 시점)
@@ -23,6 +24,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             BattleDisarrayRuntimeState.ResetAll(); // 흐트러짐 등록 초기화
             BattleElementRuntimeState.ResetAll(); // 속성 등록 초기화
             BattlePassiveRuntimeState.ResetAll(); // 패시브 효과 초기화
+            BattleBondRuntimeState.ResetAll(); // 결속 단계·효과 초기화 (Day59 추가)
             BattleSelectionRuntimeState.Clear(); // 캐릭터 선택 해제 (구독 유지)
             BattleSkillRuntimeState.SetRegistry(null); // Registry 연결 해제
         }

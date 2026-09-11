@@ -1,0 +1,21 @@
+{
+  "id": "BOND_LILIA_1",
+  "title": "결속 1단계",
+  "characterId": "CH_LILIA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "마력 관측실 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_LILIA",
+      "expression": "흥미",
+      "text": "결속 수치 첫 관측. …측정기가 고장 난 줄 알았어."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "기록해 둘게. 연구 대상이니까."
+    }
+  ]
+}

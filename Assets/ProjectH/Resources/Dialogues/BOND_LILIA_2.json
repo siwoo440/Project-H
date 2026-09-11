@@ -1,0 +1,21 @@
+{
+  "id": "BOND_LILIA_2",
+  "title": "결속 2단계",
+  "characterId": "CH_LILIA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "마력 관측실 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "그날 소수 세던 거, 혼자 다시 해 봤는데 효과가 없더라."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "…비교 실험이야. 다른 뜻 없어."
+    }
+  ]
+}

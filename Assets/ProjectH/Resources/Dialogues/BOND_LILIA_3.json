@@ -1,0 +1,21 @@
+{
+  "id": "BOND_LILIA_3",
+  "title": "결속 3단계",
+  "characterId": "CH_LILIA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "마력 관측실 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "마력 안정 조건을 정리해 봤어. 변수가 하나 남아."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "그게 너야. 설명은… 아직 못 하겠어."
+    }
+  ]
+}

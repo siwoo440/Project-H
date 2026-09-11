@@ -1,0 +1,15 @@
+{
+  "id": "BOND_LILIA_4",
+  "title": "결속 4단계",
+  "characterId": "CH_LILIA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "마력 관측실 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "오늘은 기록하지 않을래. 그냥 옆에 있어도 되잖아."
+    }
+  ]
+}

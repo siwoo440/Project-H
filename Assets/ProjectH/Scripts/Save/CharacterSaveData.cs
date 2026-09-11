@@ -16,6 +16,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
         [SerializeField] private int lastGiftDay; // 마지막으로 선물한 일차 (Day57 추가, 0이면 선물 기록 없음)
         [SerializeField] private int giftsGivenToday; // 마지막 선물 일차에 받은 선물 횟수 (Day57 추가)
         [SerializeField] private int lastTalkSlot; // 마지막 일상 대화 시간 칸 (Day58 추가, 일차×4+시간대, 0이면 기록 없음)
+        [SerializeField] private int bondLevel; // 결속 단계 0~5 (Day59 추가, 0이면 결속 전)
         [SerializeField] private CharacterEquipmentSaveData equipment = new CharacterEquipmentSaveData(); // 캐릭터 장착 장비 저장
         public string CharacterId => characterId; // 캐릭터 ID 반환
         public int Level => level; // 레벨 반환
@@ -24,6 +25,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
         public int AffinityRewardClaimMask => affinityRewardClaimMask; // 수령한 호감도 단계 보상 비트 목록 반환 (Day56 추가)
         public int LastGiftDay => lastGiftDay; // 마지막 선물 일차 반환 (Day57 추가)
         public int LastTalkSlot => lastTalkSlot; // 마지막 일상 대화 시간 칸 반환 (Day58 추가)
+        public int BondLevel => bondLevel; // 결속 단계 반환 (Day59 추가)
         public CharacterEquipmentSaveData Equipment // 캐릭터 장착 장비 반환
         {
             get
@@ -42,6 +44,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
             lastGiftDay = 0; // 초기 선물 기록 없음 (Day57 추가)
             giftsGivenToday = 0; // 초기 선물 횟수 설정 (Day57 추가)
             lastTalkSlot = 0; // 초기 대화 기록 없음 (Day58 추가)
+            bondLevel = 0; // 초기 결속 전 (Day59 추가)
             equipment = new CharacterEquipmentSaveData(); // 초기 장착 장비 저장 생성
         }
 
@@ -59,6 +62,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
             lastGiftDay = Mathf.Max(0, lastGiftDay); // 선물 일차 음수 방지 (Day57 추가, 기존 저장은 0으로 시작)
             giftsGivenToday = Mathf.Max(0, giftsGivenToday); // 선물 횟수 음수 방지 (Day57 추가)
             lastTalkSlot = Mathf.Max(0, lastTalkSlot); // 대화 기록 음수 방지 (Day58 추가, 기존 저장은 0으로 시작)
+            bondLevel = Mathf.Clamp(bondLevel, 0, 5); // 결속 단계 범위 보정 (Day59 추가, 기존 저장은 0으로 시작)
 
             if (equipment == null) // 장착 장비 저장 확인
             {
@@ -118,6 +122,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역 (최적화 — SaveD
         public void MarkTalked(int slot) // 일상 대화 시간 칸 기록 (Day58 추가)
         {
             lastTalkSlot = Mathf.Max(0, slot); // 시간 칸 저장
+        }
+
+        public void SetBondLevel(int value) // 결속 단계 변경 (Day59 추가)
+        {
+            bondLevel = Mathf.Clamp(value, 0, 5); // 0~5 범위 보정 후 저장
         }
     }
 }

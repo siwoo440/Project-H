@@ -1,0 +1,27 @@
+{
+  "id": "BOND_SERENA_3",
+  "title": "결속 3단계",
+  "characterId": "CH_SERENA",
+  "background": "SANCTUARY_PRACTICE",
+  "location": "성역 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "요즘은 '괜찮아요' 대신 '조금 힘들어요'라고 말하는 연습을 해요."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "잘하고 있어."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "용사님 앞에서만요. 아직은."
+    }
+  ]
+}

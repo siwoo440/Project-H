@@ -26,6 +26,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private bool ultimateChallengeActive; // 리듬 챌린지 진행 여부 (Day50 추가)
         private BattleStatusEffectStripView statusStrip; // 초상화 위 상태이상 표시 (Day51 추가)
         private Text slotNumberText; // 초상화 좌상단 숫자키 슬롯 번호 텍스트 (Day54 추가)
+        private Text bondBadgeText; // 초상화 우상단 결속 단계 배지 텍스트 (Day59 추가)
         [SerializeField] private Outline portraitSelectionOutline; // 선택 캐릭터 초상화 윤곽 효과
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
@@ -82,6 +83,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetText(portraitText, Stats.DisplayName); // 임시 초상화 이름 표시
             EnsurePortraitSelectionOutline(); // 현재 초상화 선택 윤곽 효과 준비
             EnsurePortraitButton(); // 현재 초상화 궁극기 입력 버튼 준비 (Day49 추가)
+            RefreshBondBadge(); // 결속 단계 배지 표시 (Day59 추가)
             Refresh(); // 현재 HUD 상태 표시
         }
 
@@ -134,8 +136,49 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             pendingUltimate = begin; // 챌린지 종료 후 사용할 선행 단계 결과 보관
             ultimateChallengeActive = true; // 리듬 챌린지 진행 상태 기록
             PauseBattleForChallenge(); // 챌린지 집중을 위한 전투 일시정지 적용
-            UltimateRhythmChallengeView.Show(begin.UltimateName, HandleRhythmChallengeCompleted); // 궁극기 리듬 챌린지 표시 (Day50, 종료 시 성적 배율로 효과 실행)
+            string characterId = Stats.CharacterId; // 컷인 종료 시점용 캐릭터 ID 보관 (Day59 추가)
+            UltimateCutInInfo cutIn = UltimateCutInCatalog.Build(characterId, Stats.DisplayName, begin.UltimateName, BattleBondRuntimeState.GetLevel(characterId)); // 컷인 정보 생성 (Day59 추가)
+            UltimateCutInView.Show(cutIn, () => ShowRhythmChallenge(begin.UltimateName, characterId)); // 궁극기 컷인 → 끝나면 리듬 챌린지 (Day59 추가)
             return true; // 궁극기 선행 단계 성공 반환
+        }
+
+        private void ShowRhythmChallenge(string ultimateName, string characterId) // 컷인 뒤 리듬 챌린지 표시 (Day59 추가 — 결속 3단계 Perfect 보너스 전달)
+        {
+            if (this == null) // HUD 제거 확인 (컷인 도중 씬 전환 대비)
+            {
+                return; // 표시 중단
+            }
+
+            UltimateRhythmChallengeView.Show(ultimateName, HandleRhythmChallengeCompleted, BattleBondRuntimeState.GetPerfectBonusPerHit(characterId)); // 궁극기 리듬 챌린지 표시 (Day50, 종료 시 성적 배율로 효과 실행)
+        }
+
+        private void RefreshBondBadge() // 초상화 우상단 결속 단계 배지 갱신 (Day59 추가)
+        {
+            RectTransform portraitRect = portraitText == null ? null : portraitText.transform.parent as RectTransform; // 초상화 배경 조회
+
+            if (portraitRect == null || Stats == null) // 초상화·스탯 확인
+            {
+                return; // 갱신 중단
+            }
+
+            if (bondBadgeText == null) // 배지 생성 여부 확인
+            {
+                bondBadgeText = CreateSlotNumberBadge(portraitRect); // 숫자키 배지와 같은 모양으로 생성
+                RectTransform badge = (RectTransform)bondBadgeText.transform.parent; // 배지 배경 조회
+                badge.gameObject.name = "BondBadge"; // 이름 구분
+                badge.anchorMin = new Vector2(1f, 1f); // 우상단 앵커
+                badge.anchorMax = new Vector2(1f, 1f); // 우상단 앵커
+                badge.pivot = new Vector2(1f, 1f); // 우상단 피벗
+                badge.sizeDelta = new Vector2(34f, 24f); // 배지 크기
+                badge.anchoredPosition = new Vector2(-5f, -5f); // 안쪽 여백
+                badge.GetComponent<Image>().color = new Color(0.24f, 0.14f, 0.34f, 0.90f); // 보라색 배경
+                bondBadgeText.color = new Color(1f, 0.84f, 0.36f, 1f); // 금색 글자
+                bondBadgeText.fontSize = 15; // 글자 크기
+            }
+
+            int level = BattleBondRuntimeState.GetLevel(Stats.CharacterId); // 결속 단계 조회
+            bondBadgeText.transform.parent.gameObject.SetActive(level > 0); // 결속 전이면 숨김
+            bondBadgeText.text = $"◆{level}"; // 단계 표시
         }
 
         private void PauseBattleForChallenge() // 리듬 챌린지 동안 전투 일시정지 적용 (Day50 추가)
@@ -165,7 +208,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         {
             try // 효과 실행 중 예외와 무관하게 전투 재개를 보장
             {
-                float powerMultiplier = RhythmPowerScaler.Evaluate(result); // 리듬 성적 기반 궁극기 위력 배율 계산
+                float powerMultiplier = RhythmPowerScaler.Evaluate(result, BattleBondRuntimeState.GetPerfectBonusPerHit(pendingUltimate.CharacterId)); // 리듬 성적·결속 Perfect 보너스 기반 궁극기 위력 배율 계산 (Day59 수정)
                 BattleUltimateExecutionResult execution = BattleUltimateExecutor.ExecuteUltimateEffect(pendingUltimate, powerMultiplier); // 계산 배율로 궁극기 효과 실행
                 Debug.Log($"[Project H][RHYTHM] {Stats?.CharacterId}, {result}, Accuracy={result.Accuracy:P0}, MaxCombo={result.MaxCombo}, FullCombo={result.IsFullCombo}, Power=x{powerMultiplier:0.00}"); // 리듬 챌린지 결과와 적용 배율 로그 출력
 

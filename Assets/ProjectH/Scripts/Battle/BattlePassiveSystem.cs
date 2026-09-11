@@ -112,8 +112,29 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 피해 기반 패시브 처리 중단
             }
 
+            TrySerenaGuardPrayer(damagedActor); // 세레나 결속 5단계 수호의 기도 (Day59 추가, 일반 보호막보다 먼저)
             TrySerenaShield(damagedActor); // 세레나 저체력 아군 보호막 처리
             TryEllenDefense(damagedActor); // 엘렌 저체력 방어 증가 처리
+        }
+
+        public static void HandleBasicAttackCritical(BattleActor attacker, BattleActor target) // 기본 공격 치명타 처리 (Day59 추가 — 이브 결속 스킬 정령의 화살)
+        {
+            if (registry == null) // 전투 초기화 확인
+            {
+                return; // 처리 중단
+            }
+
+            BattleBondSkills.TryEveSpiritArrow(attacker, target); // 정령의 화살 시도
+        }
+
+        private static void TrySerenaGuardPrayer(BattleActor damagedAlly) // 세레나 결속 스킬 수호의 기도 (Day59 추가)
+        {
+            if (GetHealthRatio(damagedAlly.Stats) > 0.30f) // 아군 체력 30퍼센트 이하 확인
+            {
+                return; // 조건 미충족
+            }
+
+            BattleBondSkills.TrySerenaGuardPrayer(FindLivingCharacter(SerenaCharacterId), damagedAlly); // 생존 세레나 기준 발동 시도
         }
 
         private static void TrySerenaShield(BattleActor damagedAlly) // 세레나 저체력 아군 보호막 처리
@@ -137,7 +158,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 세레나 패시브 쿨다운 중단
             }
 
-            int shieldAmount = Mathf.Max(1, Mathf.RoundToInt(damagedAlly.Stats.MaxHp * 0.06f)); // 대상 최대 체력 6퍼센트 보호막 계산
+            float shieldRatio = BattleBondRuntimeState.HasPassiveBoost(SerenaCharacterId) ? 0.06f * 1.3f : 0.06f; // 결속 4단계 보호막 +30% (Day59 추가)
+            int shieldAmount = Mathf.Max(1, Mathf.RoundToInt(damagedAlly.Stats.MaxHp * shieldRatio)); // 대상 최대 체력 비율 보호막 계산
             BattlePassiveRuntimeState.GrantShield(damagedAlly.Stats.RuntimeId, shieldAmount); // 저체력 아군 보호막 부여
             BattlePassiveRuntimeState.StartCooldown(cooldownKey, 12f); // 세레나 패시브 12초 쿨다운 시작
             Debug.Log($"[Project H][PASSIVE] Serena shield -> {damagedAlly.Stats.RuntimeId}, Shield={shieldAmount}"); // 세레나 패시브 로그
@@ -157,7 +179,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 엘렌 패시브 쿨다운 중단
             }
 
-            BattleSkillRuntimeState.AddModifier(damagedActor.Stats.RuntimeId, BattleRuntimeModifierKind.DefensePercent, 0.20f, 10f, "PASSIVE_ELLEN_DEFENSE"); // 엘렌 방어력 20퍼센트 증가 적용
+            float defenseBonus = BattleBondRuntimeState.HasPassiveBoost(EllenCharacterId) ? 0.25f : 0.20f; // 결속 4단계 방어력 증가 20% → 25% (Day59 추가)
+            BattleSkillRuntimeState.AddModifier(damagedActor.Stats.RuntimeId, BattleRuntimeModifierKind.DefensePercent, defenseBonus, 10f, "PASSIVE_ELLEN_DEFENSE"); // 엘렌 방어력 증가 적용
             BattlePassiveRuntimeState.StartCooldown(cooldownKey, 20f); // 엘렌 패시브 20초 쿨다운 시작
             Debug.Log($"[Project H][PASSIVE] Ellen defense -> {damagedActor.Stats.RuntimeId}"); // 엘렌 패시브 로그
         }
@@ -178,7 +201,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     continue; // 릴리아 방어 감소 대상 제외
                 }
 
-                BattlePassiveRuntimeState.SetDefenseReduction(target.Stats.RuntimeId, 0.05f, 6f); // 적군 방어력 5퍼센트 감소 6초 적용
+                BattlePassiveRuntimeState.SetDefenseReduction(target.Stats.RuntimeId, BattleBondRuntimeState.HasPassiveBoost(LiliaCharacterId) ? 0.10f : 0.05f, 6f); // 적군 방어력 감소 6초 적용 (결속 4단계 5% → 10%, Day59 추가)
             }
 
             Debug.Log($"[Project H][PASSIVE] Lilia area defense reduction -> Skill={request.SkillId}"); // 릴리아 패시브 로그
@@ -199,7 +222,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             BattlePassiveRuntimeState.ResetCounter(attacker.Stats.RuntimeId, EveHitCounterKey); // 이브 연속 적중 카운터 초기화
-            BattlePassiveRuntimeState.SetCriticalChanceBonus(attacker.Stats.RuntimeId, 0.04f, 10f); // 이브 치명타율 4퍼센트포인트 증가 10초 적용
+            BattlePassiveRuntimeState.SetCriticalChanceBonus(attacker.Stats.RuntimeId, BattleBondRuntimeState.HasPassiveBoost(EveCharacterId) ? 0.09f : 0.04f, 10f); // 이브 치명타율 증가 10초 적용 (결속 4단계 +4% → +9%, Day59 추가)
             Debug.Log($"[Project H][PASSIVE] Eve critical chance +4% -> {attacker.Stats.RuntimeId}"); // 이브 패시브 로그
         }
 

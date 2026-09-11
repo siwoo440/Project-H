@@ -1,0 +1,21 @@
+{
+  "id": "BOND_ELLEN_3",
+  "title": "결속 3단계",
+  "characterId": "CH_ELLEN",
+  "background": "CORRIDOR_MORNING",
+  "location": "전초기지 회랑 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_ELLEN",
+      "expression": "상처",
+      "text": "제 뒤에 선 사람들을 잃은 적이 있습니다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "그래서 이번에는 명령이 아니라 제 판단으로 방패를 들겠습니다."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "BOND_ELLEN_2",
+  "title": "결속 2단계",
+  "characterId": "CH_ELLEN",
+  "background": "CORRIDOR_MORNING",
+  "location": "전초기지 회랑 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "그날 회랑에서 기다려 주신 것. 기록에는 없지만, 기억하고 있습니다."
+    }
+  ]
+}

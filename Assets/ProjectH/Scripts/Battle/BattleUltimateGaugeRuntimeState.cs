@@ -48,6 +48,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return currentGauge; // 변경 없는 현재 게이지 반환
             }
 
+            amount = BattleBondRuntimeState.ScaleGaugeGain(characterId, amount); // 결속 2단계·결속의 원탁 충전 증가 반영 (Day59 추가, 결속 없으면 그대로)
             int nextGauge = Math.Min(MaxGauge, currentGauge + amount); // 최대 100 기준 신규 게이지 계산
             gauges[characterId] = nextGauge; // 캐릭터별 신규 게이지 저장
             GaugeChanged?.Invoke(characterId, nextGauge); // HUD 등 게이지 변경 알림

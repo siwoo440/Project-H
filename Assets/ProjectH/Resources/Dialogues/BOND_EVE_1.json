@@ -1,0 +1,21 @@
+{
+  "id": "BOND_EVE_1",
+  "title": "결속 1단계",
+  "characterId": "CH_EVE",
+  "background": "GARDEN_POND",
+  "location": "성역 정원 연못 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_EVE",
+      "expression": "경계",
+      "text": "…정령들이 당신 쪽으로 기울어. 결속이라는 거, 이런 거야?"
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "싫지는 않아."
+    }
+  ]
+}

@@ -29,7 +29,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 throw new ArgumentException($"Character ID mismatch. Data={characterData.Id}, Save={saveData.CharacterId}.", nameof(saveData)); // ID 불일치 예외 발생
             }
 
-            return CreateCharacter(characterData, saveData.Level, runtimeId, equipmentBonus, AffinityRewardCatalog.GetClaimedBonus(saveData)); // 저장 레벨·장비·수령 호감도 보상 기반 스탯 재계산 (Day56 수정)
+            AffinityBattleBonus affinity = AffinityRewardCatalog.GetClaimedBonus(saveData); // 수령 호감도 보상 보너스 (Day56)
+            AffinityBattleBonus combined = new AffinityBattleBonus(affinity.HpPercent + BondCatalog.GetHpBonus(saveData.BondLevel), affinity.AttackPercent, affinity.StartUltimateGauge); // 결속 1단계 체력 보너스 합산 (Day59 추가, 결속 0이면 기존과 동일)
+            BattleBondRuntimeState.Register(characterData.Id, saveData.BondLevel); // 전투 결속 단계 등록 (Day59 추가, 속성과 같은 등록형)
+            return CreateCharacter(characterData, saveData.Level, runtimeId, equipmentBonus, combined); // 저장 레벨·장비·호감도·결속 보너스 기반 스탯 재계산
         }
 
         public static BattleStats CreateCharacter(CharacterData characterData, int level, string runtimeId) // 레벨 기반 캐릭터 스탯 생성

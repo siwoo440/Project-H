@@ -1,0 +1,21 @@
+{
+  "id": "BOND_SERENA_4",
+  "title": "결속 4단계",
+  "characterId": "CH_SERENA",
+  "background": "SANCTUARY_PRACTICE",
+  "location": "성역 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_SERENA",
+      "expression": "각오",
+      "text": "모두를 지키는 성녀가 아니라, 제가 지키고 싶은 사람을 지킬게요."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "그 안에… 저 자신도 넣어 볼게요."
+    }
+  ]
+}

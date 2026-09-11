@@ -1,0 +1,21 @@
+{
+  "id": "BOND_ELLEN_4",
+  "title": "결속 4단계",
+  "characterId": "CH_ELLEN",
+  "background": "CORRIDOR_MORNING",
+  "location": "전초기지 회랑 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "갑옷 끈을 맡길 수 있는 사람이 생겼습니다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "…이상한 뜻은 아닙니다. 신뢰의 문제입니다."
+    }
+  ]
+}

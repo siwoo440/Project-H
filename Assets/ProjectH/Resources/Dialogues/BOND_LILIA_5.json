@@ -1,0 +1,27 @@
+{
+  "id": "BOND_LILIA_5",
+  "title": "결속 5단계",
+  "characterId": "CH_LILIA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "마력 관측실 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "별빛 연산 원이 두 사람 사이를 잇듯 가지런히 정렬됐다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_LILIA",
+      "expression": "각오",
+      "text": "좌표는 이미 정해졌어. 네가 있는 쪽."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "아직 모르겠어. 그래도 믿어 볼게."
+    }
+  ]
+}

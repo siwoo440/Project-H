@@ -9,7 +9,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         DayAtLeast = 1, // 일차 이상
         TimeOfDay = 2, // 특정 시간대
         DungeonCleared = 3, // 던전 클리어
-        StoryFlag = 4 // 스토리 플래그 보유
+        StoryFlag = 4, // 스토리 플래그 보유
+        AffinityValueAtLeast = 5 // 캐릭터 호감도 수치 이상 (Day59 추가, 결속 5단계 호감도 100 조건)
     }
 
     public sealed class GameEventCondition // 단일 이벤트 해금 조건 (Day56 신규 — 대화·개인 이벤트·결속 스토리 공용)
@@ -31,6 +32,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public static GameEventCondition DayAtLeast(int day) => new GameEventCondition(GameEventConditionKind.DayAtLeast, string.Empty, day, string.Empty); // 일차 조건 생성
         public static GameEventCondition AtTime(SaveTimeOfDay phase) => new GameEventCondition(GameEventConditionKind.TimeOfDay, string.Empty, (int)phase, string.Empty); // 시간대 조건 생성
         public static GameEventCondition Cleared(string dungeonId, string dungeonLabel = "") => new GameEventCondition(GameEventConditionKind.DungeonCleared, dungeonId, 0, dungeonLabel); // 던전 클리어 조건 생성
+        public static GameEventCondition AffinityValueAtLeast(string characterId, int value, string characterLabel = "") => new GameEventCondition(GameEventConditionKind.AffinityValueAtLeast, characterId, value, characterLabel); // 호감도 수치 조건 생성 (Day59 추가)
         public static GameEventCondition Flag(string flagId, string flagLabel) => new GameEventCondition(GameEventConditionKind.StoryFlag, flagId, 0, flagLabel); // 스토리 플래그 조건 생성
     }
 
@@ -82,6 +84,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                     return DungeonProgressSaveAdapter.IsCleared(saveData, condition.TargetId); // 클리어 여부 조회
                 case GameEventConditionKind.StoryFlag: // 스토리 플래그 처리
                     return saveData.HasStoryFlag(condition.TargetId); // 플래그 보유 여부 조회
+                case GameEventConditionKind.AffinityValueAtLeast: // 호감도 수치 처리 (Day59 추가)
+                    return AffinityService.GetAffinity(saveData, condition.TargetId) >= condition.Value; // 현재 호감도 비교
                 default: // 미정의 조건 처리
                     return false; // 미충족 반환
             }
@@ -101,6 +105,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                     return $"{GetPhaseLabel((SaveTimeOfDay)condition.Value)}에만"; // 시간대 조건 문구
                 case GameEventConditionKind.DungeonCleared: // 던전 클리어 처리
                     return $"{(string.IsNullOrEmpty(condition.Label) ? condition.TargetId : condition.Label)} 클리어"; // 클리어 조건 문구
+                case GameEventConditionKind.AffinityValueAtLeast: // 호감도 수치 처리 (Day59 추가)
+                    return $"{subject}호감도 {condition.Value}"; // 호감도 수치 조건 문구
                 default: // 스토리 플래그 처리
                     return string.IsNullOrEmpty(condition.Label) ? "특정 이야기 진행" : condition.Label; // 플래그 조건 문구
             }

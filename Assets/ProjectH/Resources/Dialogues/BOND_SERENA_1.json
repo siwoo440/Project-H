@@ -1,0 +1,21 @@
+{
+  "id": "BOND_SERENA_1",
+  "title": "결속 1단계",
+  "characterId": "CH_SERENA",
+  "background": "SANCTUARY_PRACTICE",
+  "location": "성역 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "두 사람 사이로 옅은 빛이 이어진다. 결속의 첫 매듭이었다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "용사님과 이어진 느낌이 들어요. …이상하죠, 조금 따뜻해요."
+    }
+  ]
+}

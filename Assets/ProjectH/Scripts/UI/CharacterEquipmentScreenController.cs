@@ -39,6 +39,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text affinityText; // 캐릭터 호감도 디버그 텍스트 (Day43)
         private CharacterAffinityRewardPanel affinityRewardPanel; // 호감도 보상 패널 (Day56 추가, 최적화로 별도 클래스 분리)
         private CharacterGiftPanel giftPanel; // 선물하기 패널 (Day57 추가)
+        private CharacterBondPanel bondPanel; // 결속 패널 (Day59 추가)
         private Button actionButton; // 장착 액션 버튼
         private Text actionButtonText; // 장착 액션 라벨
         private int selectedCharacterIndex; // 현재 캐릭터 목록 번호
@@ -101,26 +102,43 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             affinityText = CreateText(parent, "AffinityDebugText", "호감도 · -", 15, FontStyle.Bold, new Color(0.36f, 0.20f, 0.30f, 1f)); // 호감도 디버그 텍스트 생성
             affinityText.alignment = TextAnchor.MiddleLeft; // 호감도 디버그 텍스트 왼쪽 정렬
-            SetRect(affinityText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.30f, 0.045f)); // 하단 여백에 호감도 디버그 텍스트 배치 (Day58 버튼 추가로 폭 조정)
+            SetRect(affinityText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.26f, 0.045f)); // 하단 여백에 호감도 디버그 텍스트 배치 (Day59 결속 버튼 추가로 폭 조정)
             Button minusButton = CreateButton(parent, "AffinityMinusDebug", "호감도 -10", new Color(0.98f, 0.90f, 0.95f, 1f)); // 호감도 감소 디버그 버튼 생성
-            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.31f, 0.005f), new Vector2(0.41f, 0.045f)); // 호감도 감소 버튼 배치 (Day58 재배치)
+            SetRect(minusButton.GetComponent<RectTransform>(), new Vector2(0.27f, 0.005f), new Vector2(0.35f, 0.045f)); // 호감도 감소 버튼 배치 (Day59 재배치)
             minusButton.onClick.AddListener(DecreaseAffinityDebug); // 호감도 감소 버튼 이벤트 연결
             DevelopmentFeatures.HideInRelease(minusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
             Button plusButton = CreateButton(parent, "AffinityPlusDebug", "호감도 +10", new Color(0.90f, 0.95f, 1f, 1f)); // 호감도 증가 디버그 버튼 생성
-            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.42f, 0.005f), new Vector2(0.52f, 0.045f)); // 호감도 증가 버튼 배치 (Day58 재배치)
+            SetRect(plusButton.GetComponent<RectTransform>(), new Vector2(0.36f, 0.005f), new Vector2(0.44f, 0.045f)); // 호감도 증가 버튼 배치 (Day59 재배치)
             plusButton.onClick.AddListener(IncreaseAffinityDebug); // 호감도 증가 버튼 이벤트 연결
             DevelopmentFeatures.HideInRelease(plusButton); // 출시 빌드에서는 호감도 디버그 버튼 숨김 (최적화)
             Button rewardButton = CreateButton(parent, "AffinityRewardButton", "호감도 보상", new Color(1f, 0.88f, 0.60f, 1f)); // 호감도 보상 버튼 생성 (Day56 추가)
-            SetRect(rewardButton.GetComponent<RectTransform>(), new Vector2(0.53f, 0.005f), new Vector2(0.65f, 0.045f)); // 호감도 보상 버튼 배치 (Day58 재배치)
+            SetRect(rewardButton.GetComponent<RectTransform>(), new Vector2(0.45f, 0.005f), new Vector2(0.57f, 0.045f)); // 호감도 보상 버튼 배치 (Day59 재배치)
             affinityRewardPanel = CharacterAffinityRewardPanel.Create(parent, Refresh, PlayCharacterEvent); // 호감도 보상 패널 생성 (수령 후 화면 갱신·Day58 개인 이벤트 보기 연결)
             rewardButton.onClick.AddListener(ToggleAffinityRewardPanel); // 보상 패널 열기·닫기 연결 (Day57 선물 패널과 겹치지 않도록 전용 함수 사용)
             Button giftButton = CreateButton(parent, "GiftButton", "선물하기", new Color(1f, 0.82f, 0.88f, 1f)); // 선물하기 버튼 생성 (Day57 추가)
-            SetRect(giftButton.GetComponent<RectTransform>(), new Vector2(0.66f, 0.005f), new Vector2(0.78f, 0.045f)); // 선물하기 버튼 배치 (Day58 재배치)
+            SetRect(giftButton.GetComponent<RectTransform>(), new Vector2(0.58f, 0.005f), new Vector2(0.70f, 0.045f)); // 선물하기 버튼 배치 (Day59 재배치)
             giftPanel = CharacterGiftPanel.Create(parent, Refresh, OpenAffinityRewardFromGift); // 선물 패널 생성 (선물 후 갱신·보상 바로가기 연결)
             giftButton.onClick.AddListener(ToggleGiftPanel); // 선물 패널 열기·닫기 연결
             Button talkButton = CreateButton(parent, "TalkButton", "대화하기", new Color(0.84f, 0.80f, 0.98f, 1f)); // 대화하기 버튼 생성 (Day58 추가)
-            SetRect(talkButton.GetComponent<RectTransform>(), new Vector2(0.79f, 0.005f), new Vector2(0.91f, 0.045f)); // 대화하기 버튼 배치
+            SetRect(talkButton.GetComponent<RectTransform>(), new Vector2(0.71f, 0.005f), new Vector2(0.83f, 0.045f)); // 대화하기 버튼 배치 (Day59 재배치)
             talkButton.onClick.AddListener(StartDailyTalk); // 일상 대화 연결
+            Button bondButton = CreateButton(parent, "BondButton", "결속", new Color(0.78f, 0.70f, 0.96f, 1f)); // 결속 버튼 생성 (Day59 추가)
+            SetRect(bondButton.GetComponent<RectTransform>(), new Vector2(0.84f, 0.005f), new Vector2(0.96f, 0.045f)); // 결속 버튼 배치
+            bondPanel = CharacterBondPanel.Create(parent, Refresh); // 결속 패널 생성 (단계 상승 후 갱신 연결)
+            bondButton.onClick.AddListener(ToggleBondPanel); // 결속 패널 열기·닫기 연결
+        }
+
+        private void CloseOtherPanels(MonoBehaviour keep) // 호감도 보상·선물·결속 패널이 겹치지 않게 닫기 (Day59 추가)
+        {
+            if (affinityRewardPanel != null && keep != affinityRewardPanel && affinityRewardPanel.IsOpen) affinityRewardPanel.Toggle(); // 보상 패널 닫기
+            if (giftPanel != null && keep != giftPanel && giftPanel.IsOpen) giftPanel.Toggle(); // 선물 패널 닫기
+            if (bondPanel != null && keep != bondPanel && bondPanel.IsOpen) bondPanel.Toggle(); // 결속 패널 닫기
+        }
+
+        private void ToggleBondPanel() // 결속 패널 열기·닫기 (Day59 추가)
+        {
+            CloseOtherPanels(bondPanel); // 다른 패널 닫기
+            bondPanel.Toggle(); // 결속 패널 전환
         }
 
         private void StartDailyTalk() // 선택 캐릭터와 현재 시간대 일상 대화 (Day58 추가)
@@ -206,13 +224,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private void ToggleAffinityRewardPanel() // 호감도 보상 패널 열기·닫기 (Day57 추가, 선물 패널은 닫음)
         {
-            if (giftPanel != null && giftPanel.IsOpen) giftPanel.Toggle(); // 열린 선물 패널 닫기
+            CloseOtherPanels(affinityRewardPanel); // 다른 패널 닫기 (Day59 결속 패널 포함)
             affinityRewardPanel.Toggle(); // 보상 패널 전환
         }
 
         private void ToggleGiftPanel() // 선물 패널 열기·닫기 (Day57 추가, 보상 패널은 닫음)
         {
-            if (affinityRewardPanel != null && affinityRewardPanel.IsOpen) affinityRewardPanel.Toggle(); // 열린 보상 패널 닫기
+            CloseOtherPanels(giftPanel); // 다른 패널 닫기 (Day59 결속 패널 포함)
             giftPanel.Toggle(); // 선물 패널 전환
         }
 
@@ -388,6 +406,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             UpdateAffinityDebugText(saveData, characterSave); // 호감도 디버그 텍스트 갱신 (Day43)
             if (affinityRewardPanel != null) affinityRewardPanel.Refresh(saveData, characterSave, displayName); // 호감도 보상 패널 갱신 (Day56 추가, Unity 객체 null 비교)
             if (giftPanel != null) giftPanel.Refresh(saveData, dataManager, characterSave, displayName); // 선물 패널 갱신 (Day57 추가)
+            if (bondPanel != null) bondPanel.Refresh(saveData, characterSave, displayName); // 결속 패널 갱신 (Day59 추가)
             UpdateCurrentStats(saveData, dataManager, characterSave, characterData); // 현재 최종 능력치 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Weapon, weaponSlotText, "무기"); // 무기 슬롯 갱신
             UpdateSlotText(saveData, dataManager, characterSave, EquipmentSlot.Armor, armorSlotText, "방어구"); // 방어구 슬롯 갱신
@@ -455,7 +474,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             int affinity = AffinityService.GetAffinity(saveData, characterSave.CharacterId); // 선택 캐릭터 호감도 조회
             AffinityTier tier = AffinityService.GetAffinityTier(saveData, characterSave.CharacterId); // 선택 캐릭터 호감도 등급 조회
-            affinityText.text = $"호감도 · {affinity}/{CharacterSaveData.MaxAffinity} · {GetAffinityTierLabel(tier)}"; // 호감도 디버그 문구 표시
+            affinityText.text = $"호감도 · {affinity}/{CharacterSaveData.MaxAffinity} · {GetAffinityTierLabel(tier)} · 결속 {characterSave.BondLevel}"; // 호감도·결속 문구 표시 (Day59 결속 단계 추가)
         }
 
         private void DecreaseAffinityDebug() // 호감도 디버그 감소 처리 (Day43)

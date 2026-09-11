@@ -37,6 +37,7 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
         private int resolvedCircleCount; // 판정 완료 원 누적 수 (Day50)
         private float challengeElapsed; // 챌린지 시작 기준 경과 시간
         private int perfectCount; // 누적 Perfect 수
+        private float perfectBonusPerHit; // 결속 3단계 Perfect 1개당 추가 위력 (Day59 추가)
         private int goodCount; // 누적 Good 수
         private int missCount; // 누적 Miss 수
         private bool finished; // 전체 챌린지 종료 여부
@@ -58,7 +59,7 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             public bool Resolved; // 판정 완료 여부
         }
 
-        public static UltimateRhythmChallengeView Show(string ultimateName, Action<RhythmChallengeResult> onComplete) // 궁극기 리듬 챌린지 표시 시작
+        public static UltimateRhythmChallengeView Show(string ultimateName, Action<RhythmChallengeResult> onComplete, float perfectBonusPerHit = 0f) // 궁극기 리듬 챌린지 표시 시작 (Day59 결속 Perfect 보너스 인자 추가)
         {
             GameObject canvasObject = new GameObject("UltimateRhythmChallengeRuntime", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(UltimateRhythmChallengeView)); // 챌린지 Canvas 생성
             Canvas canvas = canvasObject.GetComponent<Canvas>(); // 챌린지 Canvas 조회
@@ -71,6 +72,7 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             scaler.matchWidthOrHeight = 0.5f; // 가로 세로 중간 스케일 적용
             UltimateRhythmChallengeView view = canvasObject.GetComponent<UltimateRhythmChallengeView>(); // 챌린지 뷰 컴포넌트 조회
             view.onComplete = onComplete; // 종료 콜백 연결
+            view.perfectBonusPerHit = Mathf.Max(0f, perfectBonusPerHit); // 결속 Perfect 보너스 저장 (Day59 추가)
             view.BuildChallenge(ultimateName); // 챌린지 원 생성 및 배치
             return view; // 생성 챌린지 뷰 반환
         }
@@ -386,7 +388,7 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
 
             finished = true; // 챌린지 종료 상태 저장
             RhythmChallengeResult result = new RhythmChallengeResult(perfectCount, goodCount, missCount, comboTracker.MaxCombo); // 종합 결과 생성 (Day50 최고 콤보 포함)
-            float powerMultiplier = RhythmPowerScaler.Evaluate(result); // 리듬 성적 기반 궁극기 위력 배율 계산
+            float powerMultiplier = RhythmPowerScaler.Evaluate(result, perfectBonusPerHit); // 리듬 성적·결속 Perfect 보너스 기반 궁극기 위력 배율 계산 (Day59 수정)
             titleText.gameObject.SetActive(false); // 안내 제목 숨김
 
             if (comboText != null) // 콤보 카운터 존재 확인

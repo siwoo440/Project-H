@@ -7,6 +7,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     {
         private const string BackgroundFolder = "Dialogues/Backgrounds/"; // 정식 배경 Resources 경로 (배경 키 이름의 Sprite)
         private const string StandingFolder = "Dialogues/Standing/"; // 정식 스탠딩 Resources 경로 ({캐릭터ID}_{표정} 또는 {캐릭터ID})
+        private const string CutInFolder = "UltimateCutIns/"; // 궁극기 컷인 전용 일러스트 Resources 경로 (Day59 추가, {캐릭터ID})
         private const int BackgroundWidth = 320; // 임시 배경 가로 픽셀
         private const int BackgroundHeight = 180; // 임시 배경 세로 픽셀
         private const int StandingWidth = 256; // 임시 스탠딩 가로 픽셀
@@ -58,6 +59,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             return silhouetteSprite; // 임시 실루엣 반환 (색은 GetCharacterTint로 입힘)
+        }
+
+        public static Sprite GetCutIn(string characterId, out bool isPlaceholder) // 궁극기 컷인 일러스트 조회 (Day59 추가 — 전용 컷인 → 대화 스탠딩 → 임시 실루엣)
+        {
+            Sprite art = Resources.Load<Sprite>(CutInFolder + characterId); // 궁극기 전용 일러스트 우선
+            if (art != null) { isPlaceholder = false; return art; } // 전용 일러스트 반환
+            return GetStanding(characterId, string.Empty, out isPlaceholder); // 없으면 대화 스탠딩 재사용
         }
 
         public static Color GetCharacterTint(string characterId) // 캐릭터 임시 실루엣 색

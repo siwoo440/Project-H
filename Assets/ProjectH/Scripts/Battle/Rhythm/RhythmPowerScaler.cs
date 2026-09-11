@@ -28,6 +28,19 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day50)
             return Mathf.Clamp(multiplier, MinMultiplier, MaxMultiplier); // 최저·최대 배율 범위 보정 후 반환
         }
 
+        public static float Evaluate(RhythmChallengeResult result, float perfectBonusPerHit) // 결속 3단계 Perfect 보너스 포함 배율 (Day59 추가, 보너스 0이면 기존과 동일)
+        {
+            float multiplier = Evaluate(result); // 기본 배율 계산
+
+            if (perfectBonusPerHit <= 0f || result.PerfectCount <= 0) // 보너스 적용 확인
+            {
+                return multiplier; // 기존 배율 반환
+            }
+
+            float bonus = Mathf.Min(ProjectH.SaveSystem.BondCatalog.PerfectBonusCap, result.PerfectCount * perfectBonusPerHit); // Perfect 수만큼 추가 (상한 +0.20)
+            return Mathf.Min(MaxMultiplier + ProjectH.SaveSystem.BondCatalog.PerfectBonusCap, multiplier + bonus); // 최대 1.70 보정 후 반환
+        }
+
         public static string GetSummaryLabel(float multiplier) // 위력 배율 표시 문구 반환
         {
             return $"POWER ×{multiplier:0.00}"; // 소수 둘째 자리 배율 문구 반환

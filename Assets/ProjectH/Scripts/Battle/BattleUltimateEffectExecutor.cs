@@ -210,7 +210,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return new BattleUltimateEffectExecutionResult(appliedEffects, damageTargets + stunTargets); // 이브 궁극기 실행 결과 반환
         }
 
-        private static bool ApplyDamage(BattleActor owner, BattleActor target, float attackRatio, BattleDamageType damageType) // 궁극기 공격력 계수 피해 공통 적용
+        internal static bool ApplyDamage(BattleActor owner, BattleActor target, float attackRatio, BattleDamageType damageType) // 궁극기 공격력 계수 피해 공통 적용 (Day59 결속 스킬 재사용으로 internal 변경)
         {
             if (owner == null || target == null || !owner.IsCombatReady || !target.IsCombatReady || !target.Stats.IsAlive) // 피해 사용자 및 대상 상태 확인
             {

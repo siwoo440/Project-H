@@ -1,0 +1,21 @@
+{
+  "id": "BOND_EVE_4",
+  "title": "결속 4단계",
+  "characterId": "CH_EVE",
+  "background": "GARDEN_POND",
+  "location": "성역 정원 연못 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_EVE",
+      "expression": "당황",
+      "text": "활 쏘는 법 알려 줄게. 손, 여기."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_EVE",
+      "expression": "부끄러움",
+      "text": "…너무 가까워? 괜찮아. 당신이니까."
+    }
+  ]
+}

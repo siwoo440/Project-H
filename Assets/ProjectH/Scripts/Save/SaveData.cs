@@ -26,6 +26,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private List<EquipmentInstanceSaveData> equipmentInventory = new List<EquipmentInstanceSaveData>(); // 보유 장비 인스턴스 목록
         [SerializeField] private List<ItemStackSaveData> itemInventory = new List<ItemStackSaveData>(); // 보유 일반 아이템 스택 목록
         [SerializeField] private List<RegionErosionSaveData> regionErosion = new List<RegionErosionSaveData>(); // 지역별 침식도 목록 (Day44)
+        [SerializeField] private int bondResource; // 결속 자원 (Day59 추가, 최대 5·하루 1 회복)
+        [SerializeField] private int lastBondRefillDay; // 결속 자원을 마지막으로 채운 일차 (Day59 추가, 0이면 첫 지급 전)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -40,6 +42,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public IReadOnlyList<EquipmentInstanceSaveData> EquipmentInventory => equipmentInventory; // 장비 인벤토리 반환
         public IReadOnlyList<ItemStackSaveData> ItemInventory => itemInventory; // 일반 아이템 인벤토리 반환
         public IReadOnlyList<RegionErosionSaveData> RegionErosion => regionErosion; // 지역별 침식도 목록 반환 (Day44)
+        public int BondResource => bondResource; // 결속 자원 반환 (Day59 추가, 회복 반영은 BondService.GetResource 사용)
+        public int LastBondRefillDay => lastBondRefillDay; // 결속 자원 마지막 회복 일차 반환 (Day59 추가)
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -140,6 +144,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             }
 
             currentVitality = Mathf.Clamp(currentVitality, 0, MaxVitality); // 활력 범위 보정
+            bondResource = Mathf.Max(0, bondResource); // 결속 자원 음수 방지 (Day59 추가)
+            lastBondRefillDay = Mathf.Max(0, lastBondRefillDay); // 결속 회복 일차 음수 방지 (Day59 추가)
             NormalizeActiveParty(); // 활성 파티 데이터 정리
             EnsurePartyPresetCount(); // 편성 프리셋 개수 보정
             selectedPartyPresetIndex = Mathf.Clamp(selectedPartyPresetIndex, 0, PartyPresetCount - 1); // 활성 프리셋 범위 보정
@@ -495,6 +501,12 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public void SetCurrentVitality(int value) // 현재 활력 변경
         {
             currentVitality = Mathf.Clamp(value, 0, MaxVitality); // 활력 범위 보정 후 저장
+        }
+
+        internal void SetBondResourceState(int resource, int refillDay) // 결속 자원·회복 일차 변경 (Day59 추가, BondService 전용)
+        {
+            bondResource = Mathf.Max(0, resource); // 자원 저장
+            lastBondRefillDay = Mathf.Max(0, refillDay); // 회복 일차 저장
         }
 
         public void SetCurrentChapter(string value) // 현재 챕터 변경

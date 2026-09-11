@@ -1,0 +1,15 @@
+{
+  "id": "BOND_EVE_2",
+  "title": "결속 2단계",
+  "characterId": "CH_EVE",
+  "background": "GARDEN_POND",
+  "location": "성역 정원 연못 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "그날 노래, 끝까지 들어 줘서… 정령들이 기억하고 있어."
+    }
+  ]
+}

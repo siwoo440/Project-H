@@ -1,0 +1,21 @@
+{
+  "id": "BOND_SERENA_2",
+  "title": "결속 2단계",
+  "characterId": "CH_SERENA",
+  "background": "SANCTUARY_PRACTICE",
+  "location": "성역 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "치유 기도를 배우신 날 이후로, 기도할 때마다 용사님 얼굴이 떠올라요."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "성녀가 이런 말을 해도 되는지 모르겠지만요."
+    }
+  ]
+}

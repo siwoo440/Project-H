@@ -1,0 +1,27 @@
+{
+  "id": "BOND_EVE_5",
+  "title": "결속 5단계",
+  "characterId": "CH_EVE",
+  "background": "GARDEN_POND",
+  "location": "성역 정원 연못 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "숲의 빛이 화살 끝에 모여 작은 별처럼 반짝였다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_EVE",
+      "expression": "각오",
+      "text": "정령의 화살은, 당신을 지키는 쪽으로만 날아가."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "당신은… 나의 빛."
+    }
+  ]
+}

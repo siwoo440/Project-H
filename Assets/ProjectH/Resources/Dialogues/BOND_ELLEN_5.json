@@ -1,0 +1,21 @@
+{
+  "id": "BOND_ELLEN_5",
+  "title": "결속 5단계",
+  "characterId": "CH_ELLEN",
+  "background": "CORRIDOR_MORNING",
+  "location": "전초기지 회랑 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "방패 위로 은남색 빛이 겹겹이 내려앉았다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "제 의지로 맹세합니다. 당신이 서 있는 곳이, 제가 지킬 전선입니다."
+    }
+  ]
+}

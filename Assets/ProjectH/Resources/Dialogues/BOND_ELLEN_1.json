@@ -1,0 +1,21 @@
+{
+  "id": "BOND_ELLEN_1",
+  "title": "결속 1단계",
+  "characterId": "CH_ELLEN",
+  "background": "CORRIDOR_MORNING",
+  "location": "전초기지 회랑 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "용사님과의 결속을 확인했습니다. 임무로서, 호위를 계속하겠습니다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "…임무로서, 입니다."
+    }
+  ]
+}

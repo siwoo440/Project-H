@@ -163,6 +163,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
                 if (isCritical) // 치명타 발생 확인
                 {
+                    BattlePassiveSystem.HandleBasicAttackCritical(actor, currentTarget); // 치명타 결속 스킬 처리 (Day59 이브 정령의 화살)
                     Debug.Log($"[Project H][CRIT] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Chance={criticalChance:0.00}, Damage={appliedDamage}"); // 기본 공격 치명타 로그
                 }
             }

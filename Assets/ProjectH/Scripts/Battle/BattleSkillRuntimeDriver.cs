@@ -1,3 +1,5 @@
+using System.Collections.Generic; // 목록 자료형 (Day59 추가)
+using ProjectH.SaveSystem; // 결속 시너지 판정 기능 (Day59 추가)
 using UnityEngine; // Unity 컴포넌트 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -7,6 +9,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         private BattleCombatRegistry registry; // 전투 객체 Registry
         private bool affinityGaugeApplied; // 호감도 시작 게이지 적용 완료 여부 (Day56 추가)
+        private bool bondSynergyApplied; // 결속 조합 시너지 적용 완료 여부 (Day59 추가)
         private readonly BattleUltimateGaugeTickAccumulator ultimateGaugeAccumulator = new BattleUltimateGaugeTickAccumulator(); // 궁극기 게이지 시간 누적기
 
         private void Awake() // Runtime Driver 초기화
@@ -17,6 +20,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private void Update() // 전투 Runtime 매 프레임 갱신
         {
             TryApplyDungeonRunModifiers(); // 노드형 탐험 다음 전투 효과 1회 적용 (Day55 추가)
+            TryApplyBondSynergy(); // 결속 조합 시너지 1회 적용 (Day59 추가, 시작 게이지보다 먼저 — 결속의 원탁 배율 반영)
             TryApplyAffinityStartGauge(); // 호감도 유대 보상 궁극기 시작 게이지 1회 적용 (Day56 추가)
             BattleSkillRuntimeState.TickPeriodicEffects(Time.time); // 현재 전투 시간 기준 주기 피해 Tick 처리
             TickUltimateGauge(Time.deltaTime); // 전투 경과 시간 기준 궁극기 게이지 충전 처리
@@ -54,6 +58,50 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     BattleUltimateGaugeRuntimeState.AddGauge(stats.CharacterId, gauge); // 궁극기 게이지 선충전 (HUD 게이지 자동 갱신)
                 }
             }
+        }
+
+        private void TryApplyBondSynergy() // 파티 조합 시너지 적용 (Day59 추가 — 균형 파티·결속의 원탁)
+        {
+            if (bondSynergyApplied || registry == null || registry.CountLiving(BattleTeam.Ally) <= 0) // 적용 완료·아군 생성 확인
+            {
+                return; // 적용 대기 또는 완료
+            }
+
+            bondSynergyApplied = true; // 1회 적용 기록
+            List<BattleActor> allies = new List<BattleActor>(); // 아군 목록
+            List<string> ids = new List<string>(); // 아군 캐릭터 ID
+            List<int> levels = new List<int>(); // 아군 결속 단계
+
+            for (int index = 0; index < registry.Actors.Count; index++) // 전체 전투 객체 순회
+            {
+                BattleActor actor = registry.Actors[index]; // 현재 전투 액터 조회
+                BattleStats stats = actor == null || actor.Team != BattleTeam.Ally ? null : actor.Stats as BattleStats; // 아군 캐릭터 스탯 조회
+
+                if (stats == null) // 아군 캐릭터 확인
+                {
+                    continue; // 대상 제외
+                }
+
+                allies.Add(actor); // 아군 등록
+                ids.Add(stats.CharacterId); // ID 등록
+                levels.Add(BattleBondRuntimeState.GetLevel(stats.CharacterId)); // 결속 단계 등록
+            }
+
+            BondSynergyResult synergy = BondCatalog.EvaluateSynergy(ids, levels); // 시너지 판정
+            BattleBondRuntimeState.SetRoundTable(synergy.RoundTable); // 결속의 원탁 게이지 보너스 설정
+
+            if (synergy.BalancedParty) // 균형 파티 확인
+            {
+                for (int index = 0; index < allies.Count; index++) // 아군 순회
+                {
+                    string runtimeId = allies[index].Stats.RuntimeId; // 대상 Runtime ID
+                    BattleSkillRuntimeState.AddModifier(runtimeId, BattleRuntimeModifierKind.AttackPercent, BondCatalog.BalancedPartyBonus, float.PositiveInfinity, "SYNERGY_BALANCED_ATK"); // 공격력 +3%
+                    BattleSkillRuntimeState.AddModifier(runtimeId, BattleRuntimeModifierKind.DefensePercent, BondCatalog.BalancedPartyBonus, float.PositiveInfinity, "SYNERGY_BALANCED_DEF"); // 방어력 +3%
+                    BattleSkillRuntimeState.AddModifier(runtimeId, BattleRuntimeModifierKind.HealingReceivedPercent, BondCatalog.BalancedPartyBonus, float.PositiveInfinity, "SYNERGY_BALANCED_HEAL"); // 받는 회복량 +3%
+                }
+            }
+
+            Debug.Log($"[Project H][BOND] 시너지 · 균형 파티={synergy.BalancedParty}, 결속의 원탁={synergy.RoundTable}"); // 시너지 로그
         }
 
         private void TryApplyDungeonRunModifiers() // 함정·휴식·이벤트가 쌓은 다음 전투 효과를 아군 전원에게 적용 (Day55 추가)

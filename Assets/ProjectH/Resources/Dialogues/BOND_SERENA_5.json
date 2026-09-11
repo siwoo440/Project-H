@@ -1,0 +1,27 @@
+{
+  "id": "BOND_SERENA_5",
+  "title": "결속 5단계",
+  "characterId": "CH_SERENA",
+  "background": "SANCTUARY_PRACTICE",
+  "location": "성역 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "결속의 빛이 한순간 눈부시게 타올랐다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_SERENA",
+      "expression": "각오",
+      "text": "쓰러질 것 같은 사람이 있다면, 제 기도가 먼저 닿을 거예요."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "…그러니 용사님도, 제 곁에서 너무 무리하지 마세요."
+    }
+  ]
+}

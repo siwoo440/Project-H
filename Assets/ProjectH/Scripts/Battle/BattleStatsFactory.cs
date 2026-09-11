@@ -59,8 +59,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             float criticalRate = characterData.CriticalRate + safeBonus.CriticalRate; // 장비 포함 치명타율 계산
             float attackRange = characterData.AttackRange + safeBonus.AttackRange; // 장비 포함 공격 사거리 계산
             float moveSpeed = characterData.MoveSpeed + safeBonus.MoveSpeed; // 장비 포함 이동속도 계산
-            BattleElementRuntimeState.Register(runtimeId, (BattleElement)characterData.Element); // 캐릭터 전투 속성 Runtime 등록 (Day52 추가)
-            return new BattleStats(runtimeId, characterData.Id, characterData.DisplayName, characterData.Position, safeLevel, maxHp, attack, defense, attackSpeed, accuracy, criticalRate, attackRange, moveSpeed, resistance); // 최종 런타임 스탯 반환
+            BattleStats stats = new BattleStats(runtimeId, characterData.Id, characterData.DisplayName, characterData.Position, safeLevel, maxHp, attack, defense, attackSpeed, accuracy, criticalRate, attackRange, moveSpeed, resistance); // 최종 런타임 스탯 생성 (생성자가 잔여 상태 정리)
+            BattleElementRuntimeState.Register(runtimeId, (BattleElement)characterData.Element); // 캐릭터 전투 속성 Runtime 등록 (Day52 추가, Day55 생성 후 등록으로 순서 변경)
+            return stats; // 최종 런타임 스탯 반환
         }
     }
 }

@@ -29,6 +29,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public BattleStats(string runtimeId, string characterId, string displayName, BattlePosition position, int level, int maxHp, int attack, int defense, float attackSpeed, float accuracy, float criticalRate, float attackRange = 1.6f, float moveSpeed = 2f, int resistance = 0) // 런타임 스탯 생성
         {
             RuntimeId = runtimeId ?? string.Empty; // 런타임 ID 저장
+            BattleElementRuntimeState.Unregister(RuntimeId); // 같은 RuntimeId의 이전 전투·테스트 잔여 속성 제거 (Day55 수정, 속성은 팩토리가 생성 후 등록)
+            BattleDisarrayRuntimeState.Unregister(RuntimeId); // 같은 RuntimeId의 이전 흐트러짐 잔여 상태 제거 (Day55 수정)
             CharacterId = characterId ?? string.Empty; // 캐릭터 ID 저장
             DisplayName = displayName ?? string.Empty; // 표시 이름 저장
             Position = position; // 전투 포지션 저장

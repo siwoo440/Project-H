@@ -29,6 +29,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public BattleEnemyStats(string runtimeId, string monsterId, string displayName, int maxHp, int attack, int defense, int resistance, float attackSpeed, float attackRange, float moveSpeed, EnemyAIType aiType = EnemyAIType.Normal, float accuracy = 1f) // 적 전투 스탯 생성
         {
             RuntimeId = runtimeId ?? string.Empty; // 런타임 ID 저장
+            BattleElementRuntimeState.Unregister(RuntimeId); // 같은 RuntimeId의 이전 전투·테스트 잔여 속성 제거 (Day55 수정, 속성은 팩토리가 생성 후 등록)
+            BattleDisarrayRuntimeState.Unregister(RuntimeId); // 같은 RuntimeId의 이전 흐트러짐 잔여 상태 제거 (Day55 수정, 흐트러짐은 팩토리가 생성 후 등록)
             MonsterId = monsterId ?? string.Empty; // 몬스터 ID 저장
             DisplayName = displayName ?? string.Empty; // 표시 이름 저장
             AIType = aiType; // 적군 AI 유형 저장
@@ -95,9 +97,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             int scaledAttack = Mathf.Max(0, Mathf.RoundToInt(monsterData.Attack * profile.AttackMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 공격력
             int scaledDefense = Mathf.Max(0, Mathf.RoundToInt(monsterData.Defense * profile.DefenseMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 방어력
             int scaledResistance = Mathf.Max(0, Mathf.RoundToInt(monsterData.Resistance * profile.ResistanceMultiplier * erosionMultiplier)); // 던전 및 침식도 배율 적용 저항력
-            BattleElementRuntimeState.Register(runtimeId, (BattleElement)monsterData.Element); // 몬스터 전투 속성 Runtime 등록 (Day52 추가)
+            BattleEnemyStats stats = new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, scaledMaxHp, scaledAttack, scaledDefense, scaledResistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType, 1f); // 원본 이름 및 전투 컨텍스트 배율 적용 적 스탯 생성 (생성자가 잔여 상태 정리)
+            BattleElementRuntimeState.Register(runtimeId, (BattleElement)monsterData.Element); // 몬스터 전투 속성 Runtime 등록 (Day52 추가, Day55 생성 후 등록으로 순서 변경)
             BattleDisarrayRuntimeState.Register(runtimeId, scaledMaxHp); // 몬스터 흐트러짐 게이지 Runtime 등록 (Day53 추가, 적 전용)
-            return new BattleEnemyStats(runtimeId, monsterData.Id, monsterData.DisplayName, scaledMaxHp, scaledAttack, scaledDefense, scaledResistance, monsterData.AttackSpeed, monsterData.AttackRange, monsterData.MoveSpeed, monsterData.AIType, 1f); // 원본 이름 및 전투 컨텍스트 배율 적용 적 스탯 반환
+            return stats; // 적 스탯 반환
         }
 
         private static float ResolveRegionErosionMultiplier(string dungeonId) // 던전 소속 지역의 침식도 배율 조회 (Day44)

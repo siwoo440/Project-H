@@ -43,3 +43,4 @@ MonoBehaviour:
     - MON_CORRUPTED_SOLDIER
   - monsterIds:
     - MON_BOSS_LETICIA
+  mapFloorCount: 6

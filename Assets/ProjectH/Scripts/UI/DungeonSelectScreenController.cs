@@ -378,7 +378,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (enterButtonLabel != null) // 전투 진입 라벨 참조 확인
             {
-                enterButtonLabel.text = interactable ? "전투 시작" : "던전 선택 필요"; // 전투 진입 라벨 상태 적용
+                enterButtonLabel.text = interactable ? "탐험 시작" : "던전 선택 필요"; // 탐험 진입 라벨 상태 적용 (Day55 수정)
             }
         }
 
@@ -396,7 +396,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 전투 진입 중단
             }
 
-            GameManager.Instance.Scenes.LoadScene(GameScenes.Battle); // 전투 씬 이동
+            DungeonMapOverlayView.StartRun(DungeonSelectionRuntimeState.SelectedDungeonId); // 전투 대신 노드형 탐험 지도 시작 (Day55 수정, 전투 노드 선택 시 전투 씬 이동)
         }
 
         private void ReturnToLobby() // 로비 복귀 처리

@@ -32,3 +32,4 @@ MonoBehaviour:
     - MON_CORRUPTED_WOLF
   - monsterIds:
     - MON_CORRUPTED_WOLF
+  mapFloorCount: 3

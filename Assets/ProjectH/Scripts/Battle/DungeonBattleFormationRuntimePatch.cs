@@ -56,6 +56,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         {
             DungeonData dungeon = GameManager.Instance == null || GameManager.Instance.Data == null ? null : GameManager.Instance.Data.GetDungeon(dungeonId); // 확정 던전 원본 데이터 조회
             List<string[]> waves = DungeonEncounterResolver.ResolveWaves(dungeon, fallbackProfile.CreateEnemyIds()); // 던전 데이터 기반 웨이브 목록 해석
+            waves = ProjectH.Dungeon.DungeonRunState.ResolveBattleWaves(waves); // 노드형 탐험 중이면 노드 종류별 웨이브로 교체 (Day55 추가, 탐험 외 전투는 원본 유지)
             controller.ConfigureEncounterWaves(waves); // 전투 화면에 웨이브 편성 주입
             Debug.Log($"[Project H][DAY45] {dungeonId} 인카운터 웨이브 {waves.Count}개 적용"); // 웨이브 편성 적용 로그 출력
         }

@@ -39,3 +39,4 @@ MonoBehaviour:
     - MON_POLLUTED_PLANT
   - monsterIds:
     - MON_CORRUPTED_SOLDIER
+  mapFloorCount: 5

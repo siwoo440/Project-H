@@ -175,6 +175,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 GameManager.Instance.Save.SaveCurrent(); // 전투 결과 즉시 저장
             }
 
+            ProjectH.Dungeon.DungeonRunState.ReportBattleOutcome(outcome, resultData.Gold); // 노드형 탐험 결과 반영 (Day55 추가, 탐험 외 전투는 무시)
             BattleResultOverlay.ShowRuntime(resultData, ReturnToDungeonSelect); // 전투 결과 화면 표시
         }
 

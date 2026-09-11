@@ -1,3 +1,4 @@
+using System; // 이벤트 델리게이트 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.SceneManagement; // 씬 관리 기능
 
@@ -7,6 +8,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
     public sealed class SceneLoader : MonoBehaviour // 공통 씬 로더
     {
         public bool IsLoading { get; private set; } // 씬 전환 상태
+        public static event Action<AsyncOperation, string> LoadStarted; // 비동기 씬 전환 시작 이벤트 (Day55 추가, 로딩창 표시용)
 
         public AsyncOperation LoadScene(string sceneName) // 이름 기반 씬 전환
         {
@@ -39,6 +41,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             }
 
             operation.completed += OnSceneLoadCompleted; // 완료 이벤트 연결
+            LoadStarted?.Invoke(operation, sceneName); // 로딩창 등 구독자에게 전환 시작 알림 (Day55 추가)
             return operation; // 전환 작업 반환
         }
 

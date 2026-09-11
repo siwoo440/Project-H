@@ -15,6 +15,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public int Gold { get; } // 획득 골드 반환
         public int Experience { get; } // 획득 경험치 반환
         public int StarCount { get; } // 결과 별 개수 반환
+        public float RewardScale { get; } // 노드형 탐험 보상 배율 반환 (Day55 추가, 탐험 외 전투는 1.0)
+        public bool CountsAsDungeonClear { get; } // 던전 클리어·별점 기록 여부 반환 (Day55 추가, 탐험 중에는 보스 노드만 기록)
         public IReadOnlyList<BattleResultPartyMember> Members => members; // 종료 파티원 목록 반환
         public IReadOnlyList<DungeonDropResult> Drops => drops; // 실제 던전 드롭 결과 반환
 
@@ -23,8 +25,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             ResultId = resultId ?? string.Empty; // 결과 고유 ID 저장
             DungeonId = BattleContextRuntimeState.ResolveDungeonId(dungeonId); // 결과 던전 ID 저장
             Outcome = outcome; // 최종 승패 저장
-            Gold = reward == null ? 0 : reward.Gold; // 획득 골드 저장
-            Experience = reward == null ? 0 : reward.Experience; // 획득 경험치 저장
+            RewardScale = ProjectH.Dungeon.DungeonRunState.GetPendingRewardScale(); // 노드 종류별 보상 배율 저장 (Day55 추가)
+            CountsAsDungeonClear = ProjectH.Dungeon.DungeonRunState.PendingBattleCountsAsClear; // 던전 클리어 기록 여부 저장 (Day55 추가)
+            Gold = reward == null ? 0 : UnityEngine.Mathf.RoundToInt(reward.Gold * RewardScale); // 보상 배율 반영 획득 골드 저장
+            Experience = reward == null ? 0 : UnityEngine.Mathf.RoundToInt(reward.Experience * RewardScale); // 보상 배율 반영 획득 경험치 저장
             StarCount = outcome == BattleOutcome.Victory ? 3 : 0; // 임시 승리 별 세 개 설정
             members = partyMembers ?? new List<BattleResultPartyMember>(); // 파티원 스냅샷 저장
             drops = dropResults ?? new List<DungeonDropResult>(); // 던전 드롭 결과 저장
@@ -65,9 +69,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private static List<DungeonDropResult> CreateDrops(BattleOutcome outcome, string dungeonId, string resultId) // 현재 던전 드롭 결과 생성
         {
-            if (outcome != BattleOutcome.Victory) // 승리 여부 확인
+            if (outcome != BattleOutcome.Victory || !ProjectH.Dungeon.DungeonRunState.PendingBattleGrantsDrops) // 승리 및 드롭 지급 노드 여부 확인 (Day55 — 일반 전투 노드는 드롭 없음)
             {
-                return new List<DungeonDropResult>(); // 패배 드롭 없음 반환
+                return new List<DungeonDropResult>(); // 패배 또는 일반 전투 노드 드롭 없음 반환
             }
 
             if (GameManager.Instance == null || GameManager.Instance.Data == null || !GameManager.Instance.Data.IsInitialized) // 던전 데이터 조회 가능 상태 확인

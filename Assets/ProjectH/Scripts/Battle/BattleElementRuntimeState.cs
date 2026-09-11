@@ -21,6 +21,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             elements[runtimeId] = element; // Runtime ID 기준 속성 저장 또는 갱신
         }
 
+        public static void Unregister(string runtimeId) // 전투 참가자 속성 등록 해제 (Day55 추가, 새 스탯 생성 시 이전 잔여 속성 제거)
+        {
+            if (!string.IsNullOrWhiteSpace(runtimeId)) // Runtime ID 확인
+            {
+                elements.Remove(runtimeId); // 등록 속성 제거
+            }
+        }
+
         public static BattleElement GetElement(string runtimeId) // 전투 참가자 속성 조회
         {
             if (string.IsNullOrWhiteSpace(runtimeId)) // Runtime ID 확인

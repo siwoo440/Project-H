@@ -109,6 +109,25 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(BattleElementRuntimeState.ResolveAttackElement(BattleElement.None, "UNKNOWN"), Is.EqualTo(BattleElement.None)); // 미등록 시전자 무속성 검증
         }
 
+        [Test] // 새 스탯 생성 시 같은 RuntimeId 잔여 속성·흐트러짐 제거 검증 (Day55 테스트 간 상태 누수 수정)
+        public void NewStats_ClearsStaleElementAndDisarrayForSameRuntimeId() // 잔여 상태 제거 테스트
+        {
+            BattleElementRuntimeState.Register("ALLY_0", BattleElement.Light); // 이전 전투·테스트가 남긴 빛 속성 가정
+            BattleElementRuntimeState.Register("ENEMY_0", BattleElement.Fire); // 이전 전투·테스트가 남긴 불 속성 가정
+            BattleDisarrayRuntimeState.Register("ENEMY_0", 800); // 이전 흐트러짐 등록 가정
+
+            BattleStats ally = new BattleStats("ALLY_0", "CH_TEST", "Ally", BattlePosition.Dealer, 1, 100, 200, 0, 1f, 1f, 0f); // 같은 ID 아군 스탯 새로 생성
+            BattleEnemyStats enemy = new BattleEnemyStats("ENEMY_0", "MON_TEST", "Enemy", 100, 10, 100, 0, 1f, 1f, 1f); // 같은 ID 적 스탯 새로 생성
+
+            Assert.That(BattleElementRuntimeState.GetElement(ally.RuntimeId), Is.EqualTo(BattleElement.None)); // 아군 잔여 속성 제거 검증
+            Assert.That(BattleElementRuntimeState.GetElement(enemy.RuntimeId), Is.EqualTo(BattleElement.None)); // 적 잔여 속성 제거 검증
+            Assert.That(BattleDisarrayRuntimeState.IsRegistered(enemy.RuntimeId), Is.False); // 적 잔여 흐트러짐 제거 검증
+
+            BattleDamageResult result = BattleDamageResolver.Resolve(new BattleDamageRequest(ally, enemy, BattleDamageType.Physical, 200)); // 무속성끼리 피해 계산
+            Assert.That(result.Affinity, Is.EqualTo(BattleElementAffinity.Neutral)); // 잔여 빛 속성이 약점 판정을 만들지 않는지 검증
+            BattleDisarrayRuntimeState.ResetAll(); // 다음 테스트 영향 방지
+        }
+
         [Test] // 데이터 계층 열거형과 전투 열거형 순서 일치 검증
         public void ElementType_MatchesBattleElementOrder() // 열거형 동기화 테스트
         {

@@ -48,6 +48,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             };
         }
 
+        public static void Unregister(string runtimeId) // 대상 흐트러짐 게이지 등록 해제 (Day55 추가, 새 스탯 생성 시 이전 잔여 상태 제거)
+        {
+            if (!string.IsNullOrWhiteSpace(runtimeId)) // Runtime ID 확인
+            {
+                entries.Remove(runtimeId); // 등록 상태 제거
+            }
+        }
+
         public static int CalculateMaxGauge(int maxHp) // 최대 체력 기반 흐트러짐 최대치 계산
         {
             return Mathf.Max(MinMaxGauge, Mathf.RoundToInt(Mathf.Max(0, maxHp) / (float)MaxHpDivisor)); // 하한 적용 최대치 반환

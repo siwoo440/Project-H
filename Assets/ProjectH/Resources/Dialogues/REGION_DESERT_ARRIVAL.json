@@ -1,0 +1,73 @@
+{
+  "id": "REGION_DESERT_ARRIVAL",
+  "title": "모래 아래의 봉인",
+  "characterId": "CH_SERENA",
+  "background": "DESERT",
+  "location": "아스타르 사막",
+  "nodes": [
+    {
+      "id": "d1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "끝없는 모래 언덕 한가운데, 반쯤 묻힌 거대한 신전이 햇빛에 하얗게 빛나고 있다."
+    },
+    {
+      "id": "d2",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "여기가 아스타르… 신탁에서 몇 번이나 보았던 곳이에요. 직접 오게 될 줄은 몰랐어요."
+    },
+    {
+      "id": "d3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "신탁에서? 이 신전이 나왔다고?"
+    },
+    {
+      "id": "d4",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "네. 저 신전 깊은 곳에 마왕을 봉인하던 고대 장치가 잠들어 있대요. 그런데 여신님은… 그 이상은 한 번도 보여 주지 않으셨어요."
+    },
+    {
+      "id": "d5",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "모래바람이 강해지면 앞이 보이지 않게 돼요. 그럴 땐 제가 기도로 눈을 맑게 해 드릴게요.",
+      "choices": [
+        {
+          "text": "여신이 숨긴 게 뭔지, 같이 알아보자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "d6a"
+        },
+        {
+          "text": "세레나가 있으면 든든해.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "d6b"
+        }
+      ]
+    },
+    {
+      "id": "d6a",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "…네. 두렵지만, 용사님과 함께라면 진실을 마주할 수 있을 것 같아요.",
+      "next": "d7"
+    },
+    {
+      "id": "d6b",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "그, 그렇게 말씀해 주시면… 기도에 더 힘이 들어가겠네요.",
+      "next": "d7"
+    },
+    {
+      "id": "d7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "뜨거운 바람이 모래를 쓸어 간 자리에, 누군가 일부러 지운 듯한 문양이 희미하게 드러났다가 다시 묻혔다."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_ImperialGeneral
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "\uC81C\uAD6D\uC758 \uBA85\uB839"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "\uCD5C\uD6C4\uC758 \uB3CC\uACA9"
+    enterHealthRatio: 0.5
+    forceAfterSeconds: 150
+    attackBonus: 0.25
+    attackSpeedBonus: 0.2
+  patterns:
+  - displayName: "\uC9C4\uACA9 \uBA85\uB839"
+    kind: 0
+    damageType: 0
+    powerRatio: 1.3
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.5
+    cooldownSeconds: 11
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uCCA0\uBCBD \uBC29\uC9C4"
+    kind: 2
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.45
+    effectDuration: 8
+    windupSeconds: 1.5
+    cooldownSeconds: 18
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uC7A5\uAD70\uC758 \uC77C\uACA9"
+    kind: 1
+    damageType: 0
+    powerRatio: 3.0
+    effectValue: 0
+    effectDuration: 1.5
+    windupSeconds: 3
+    cooldownSeconds: 15
+    minPhase: 2
+    interruptible: 1
+  - displayName: "\uC5BC\uC74C \uCC3D \uC77C\uC81C \uD22C\uCC99"
+    kind: 0
+    damageType: 0
+    powerRatio: 2.4
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 4
+    cooldownSeconds: 24
+    minPhase: 2
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

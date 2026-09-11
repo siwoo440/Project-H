@@ -85,6 +85,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
 
             foreach (CharacterEventDefinition definition in CharacterEventCatalog.All) // 개인 이벤트
             {
+                if (DialogueLibrary.Load(definition.ScriptId) == null) continue; // 대사 파일이 있는 화만 (2화 이후는 70일차 개인 스토리에서 추가되면 자동으로 들어옴)
                 result.Add(new DiaryScenarioEntry(definition.ScriptId, definition.CharacterId, DiaryScenarioCategory.Personal)); // 추가
             }
 

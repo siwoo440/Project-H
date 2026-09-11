@@ -25,6 +25,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static readonly Color ActionColor = new Color(0.78f, 0.50f, 0.18f, 1f); // 실행 버튼 주황
         private const float MapRight = 0.655f; // 지도 영역 오른쪽 끝
         private const float MapTop = 0.915f; // 지도 영역 위쪽 끝
+        private const float AlertHeight = 50f; // 지역 원 위 안내 아이콘 높이 (Day66 추가)
 
         private sealed class RegionMarker // 지도 위 지역 표시
         {
@@ -32,6 +33,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             public Image Disc; // 원
             public Outline Ring; // 선택 테두리
             public Text Label; // 이름
+            public RectTransform Alert; // 새 던전 "!" 안내 (Day66 추가)
         }
 
         private readonly List<RegionMarker> markers = new List<RegionMarker>(); // 지역 표시 목록
@@ -136,7 +138,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 labelRect.anchoredPosition = new Vector2(0f, -50f); // 원 아래
                 labelRect.sizeDelta = new Vector2(200f, 32f); // 크기
                 button.onClick.AddListener(() => SelectRegion(captured)); // 지역 선택
-                markers.Add(new RegionMarker { Region = region, Disc = disc, Ring = ring, Label = label }); // 목록 등록
+                RectTransform alert = CreateAlertBadge(root, "Alert_" + region.Id, 30f); // 원 위 "!" (Day66 추가)
+                alert.anchorMin = anchor; // 기준점
+                alert.anchorMax = anchor; // 기준점
+                alert.anchoredPosition = new Vector2(0f, AlertHeight); // 원 위
+                markers.Add(new RegionMarker { Region = region, Disc = disc, Ring = ring, Label = label, Alert = alert }); // 목록 등록
             }
         }
 
@@ -203,6 +209,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 marker.Ring.effectColor = selected ? GoldColor : new Color(0f, 0f, 0f, 0.6f); // 선택 금테
                 marker.Disc.rectTransform.localScale = Vector3.one * (selected ? 1.18f : 1f); // 선택 확대
                 marker.Label.color = selected ? GoldColor : Color.white; // 이름 강조
+                marker.Alert.gameObject.SetActive(DungeonGuideService.HasNewDungeon(saveData, marker.Region)); // 새 던전이 있는 지역에 "!" (Day66 추가)
             }
 
             if (selectedRegion != null) RefreshPanel(saveData); // 패널
@@ -264,18 +271,58 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button card = CreateButton(panelContent, "DungeonCard_" + dungeonId, string.Empty, locked ? LockedCardColor : selected ? SelectedCardColor : CardColor); // 카드
             SetRect(card.GetComponent<RectTransform>(), new Vector2(0f, top - 0.17f), new Vector2(1f, top)); // 배치
             if (selected) card.gameObject.AddComponent<Outline>().effectColor = GoldColor; // 선택 금테
+            bool isNew = !locked && DungeonGuideService.IsNewDungeon(saveData, dungeonId); // 아직 클리어하지 않은 새 던전 (Day66 추가)
+            float textLeft = isNew ? 0.13f : 0.04f; // "!" 자리만큼 글자를 오른쪽으로
+
+            if (isNew) // 새 던전 안내
+            {
+                RectTransform alert = CreateAlertBadge(card.transform, "NewAlert", 34f); // 칸 앞부분 "!"
+                alert.anchorMin = new Vector2(0f, 0.5f); // 왼쪽 가운데
+                alert.anchorMax = new Vector2(0f, 0.5f); // 왼쪽 가운데
+                alert.anchoredPosition = new Vector2(28f, 0f); // 칸 앞부분
+            }
+
             card.onClick.AddListener(() => SelectDungeon(dungeonId)); // 선택
             card.interactable = !locked; // 잠김이면 비활성
             Text name = CreateText(card.transform, "Name", dungeon == null ? dungeonId : dungeon.DisplayName, 22, Color.white, FontStyle.Bold, TextAnchor.UpperLeft).BestFit(14); // 이름
-            SetRect(name.rectTransform, new Vector2(0.04f, 0.52f), new Vector2(0.96f, 0.92f)); // 위
+            SetRect(name.rectTransform, new Vector2(textLeft, 0.52f), new Vector2(0.96f, 0.92f)); // 위
             string info = dungeon == null ? "데이터 없음" : $"권장 Lv.{dungeon.RecommendedLevel}   활력 {dungeon.VitalityCost}   ● {dungeon.RewardGold}G"; // 정보
             Text detail = CreateText(card.transform, "Info", info, 15, HintColor, FontStyle.Normal, TextAnchor.MiddleLeft).BestFit(10); // 정보 글자
-            SetRect(detail.rectTransform, new Vector2(0.04f, 0.28f), new Vector2(0.96f, 0.52f)); // 가운데
-            string stateText = state == DungeonProgressState.Cleared ? $"클리어 {Stars(DungeonProgressSaveAdapter.GetBestStars(saveData, dungeonId))}" : locked ? DungeonProgressionPolicy.GetLockReason(dungeonId) : "진입 가능"; // 진행 상태
+            SetRect(detail.rectTransform, new Vector2(textLeft, 0.28f), new Vector2(0.96f, 0.52f)); // 가운데
+            string stateText = state == DungeonProgressState.Cleared ? $"클리어 {Stars(DungeonProgressSaveAdapter.GetBestStars(saveData, dungeonId))}" : locked ? BuildLockReason(dungeonId) : "진입 가능"; // 진행 상태 (Day66 — 앞 던전 이름으로 안내)
             Text status = CreateText(card.transform, "Status", stateText, 15, state == DungeonProgressState.Cleared ? new Color(0.50f, 0.90f, 0.62f, 1f) : locked ? new Color(0.62f, 0.64f, 0.68f, 1f) : GoldColor, FontStyle.Bold, TextAnchor.MiddleLeft).BestFit(10); // 상태 글자
-            SetRect(status.rectTransform, new Vector2(0.04f, 0.05f), new Vector2(0.96f, 0.28f)); // 아래
+            SetRect(status.rectTransform, new Vector2(textLeft, 0.05f), new Vector2(0.96f, 0.28f)); // 아래
             panelItems.Add(card.gameObject); // 목록 등록
             return top - 0.185f; // 다음 위치
+        }
+
+        private void Update() // 새 던전 "!" 가 위아래로 살짝 움직여 눈에 띄게 (Day66 추가)
+        {
+            float bob = Mathf.Sin(Time.unscaledTime * 4f) * 4f; // 흔들림
+            foreach (RegionMarker marker in markers) // 지역 표시 순회
+            {
+                if (marker.Alert.gameObject.activeSelf) marker.Alert.anchoredPosition = new Vector2(0f, AlertHeight + bob); // 원 위에서 흔들림
+            }
+        }
+
+        private static RectTransform CreateAlertBadge(Transform parent, string name, float size) // 새 던전 안내 아이콘 (Day66 추가 — 글자 대신 그림 : 노란 원 + 느낌표 모양)
+        {
+            Image badge = CreateImage(parent, name, Color.white); // 아이콘 이미지
+            badge.sprite = DungeonAlertArt.Get(); // 정식 아이콘 우선, 없으면 코드로 그린 임시 아이콘
+            badge.preserveAspect = true; // 비율 유지
+            badge.raycastTarget = false; // 입력 통과 (지역·던전 선택 방해 없음)
+            RectTransform rect = badge.rectTransform; // 영역
+            rect.sizeDelta = new Vector2(size, size); // 크기
+            return rect; // 영역 반환
+        }
+
+        private string BuildLockReason(string dungeonId) // 잠김 안내 (앞 던전 ID 대신 지역 · 이름, Day66 추가 — 던전이 14개로 늘어 ID로는 알아보기 어려움)
+        {
+            string previousId = DungeonProgressionPolicy.GetPreviousDungeonId(dungeonId); // 앞 던전
+            DungeonData previous = string.IsNullOrEmpty(previousId) ? null : GetDungeon(previousId); // 앞 던전 데이터
+            if (previous == null) return DungeonProgressionPolicy.GetLockReason(dungeonId); // 기본 안내
+            AdventureRegion region = AdventureRegionCatalog.FindByDungeon(previousId); // 앞 던전 지역
+            return $"{(region == null ? string.Empty : region.Name + " · ")}{previous.DisplayName} 클리어 필요"; // 예: 사막 · 지하 고대 도시 클리어 필요
         }
 
         private float AddLabel(string text, int size, Color color, FontStyle style, float top, float height) // 패널 글자 한 줄

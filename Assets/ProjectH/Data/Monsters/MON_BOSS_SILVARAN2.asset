@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_BOSS_SILVARAN2
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_BOSS_SILVARAN2
+  displayName: "\uC138\uACC4\uC218 \uBFCC\uB9AC\uC758 \uD30C\uC218\uB8E1"
+  description: "\uC138\uACC4\uC218 \uBFCC\uB9AC\uB97C \uC9C0\uD0A4\uB358 \uBE5B\uC758 \uC6A9. \uBFCC\uB9AC\uAE4C\uC9C0 \uBC88\uC9C4 \uCE68\uC2DD\uC744 \uB9C9\uC73C\uB824\uB2E4 \uC2A4\uC2A4\uB85C \uBB3C\uB4E4\uC5B4 \uBC84\uB838\uB2E4."
+  aiType: 7
+  element: 4
+  bossPattern: {fileID: 11400000, guid: 52081f7a1556401cbc64d791b2e1baa9, type: 2}
+  maxHp: 18000
+  attack: 32
+  defense: 85
+  resistance: 70
+  attackSpeed: 0.8
+  attackRange: 2.6
+  moveSpeed: 1.2

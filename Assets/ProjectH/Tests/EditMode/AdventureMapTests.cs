@@ -16,7 +16,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             List<string> names = new List<string>(); // 이름 목록
             foreach (AdventureRegion region in AdventureRegionCatalog.All) names.Add(region.Name); // 이름 수집
 
-            Assert.That(names, Is.EquivalentTo(new[] { "숲", "늪지대", "마왕성", "마을", "사막", "바다", "노아르", "실바란" })); // 목업 10번 지역 + 65일차 지역 확장
+            Assert.That(names, Is.EquivalentTo(new[] { "숲", "늪지대", "마왕성", "마을", "사막", "바다", "노아르", "실바란", "카르니안" })); // 목업 10번 지역 + 65~66일차 지역 확장
             Assert.That(AdventureRegionCatalog.Get(AdventureRegionCatalog.VillageRegionId).Kind, Is.EqualTo(AdventureRegionKind.Village)); // 마을 연결
             Assert.That(AdventureRegionCatalog.FindByDungeon("DG003").Name, Is.EqualTo("늪지대")); // 던전 → 지역
         }

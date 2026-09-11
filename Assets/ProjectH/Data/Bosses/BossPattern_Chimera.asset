@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_Chimera
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "\uC2E4\uD5D8\uCCB4 \uAC01\uC131"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "\uD1B5\uC81C \uBD88\uB2A5"
+    enterHealthRatio: 0.5
+    forceAfterSeconds: 150
+    attackBonus: 0.25
+    attackSpeedBonus: 0.2
+  patterns:
+  - displayName: "\uD63C\uD569 \uB9C8\uB825\uD0C4"
+    kind: 0
+    damageType: 1
+    powerRatio: 1.3
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.2
+    cooldownSeconds: 10
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uB4A4\uD2C0\uB9B0 \uBC1C\uD1B1"
+    kind: 1
+    damageType: 0
+    powerRatio: 2.7
+    effectValue: 0
+    effectDuration: 1.2
+    windupSeconds: 2.6
+    cooldownSeconds: 13
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uC7AC\uC0DD \uCD09\uC9C4"
+    kind: 3
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.45
+    effectDuration: 0
+    windupSeconds: 2
+    cooldownSeconds: 18
+    minPhase: 2
+    interruptible: 1
+  - displayName: "\uAE08\uB2E8 \uB9C8\uBC95 \uD3ED\uC8FC"
+    kind: 0
+    damageType: 1
+    powerRatio: 2.5
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 3.8
+    cooldownSeconds: 22
+    minPhase: 2
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

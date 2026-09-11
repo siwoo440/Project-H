@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_BOSS_NOIR2
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_BOSS_NOIR2
+  displayName: "\uC2E4\uD5D8\uCCB4 \uD0A4\uBA54\uB77C"
+  description: "\uC758\uD68C \uAE08\uB2E8 \uC2E4\uD5D8\uC2E4\uC5D0\uC11C \uB9CC\uB4E4\uC5B4\uC9C4 \uD569\uC131 \uB9C8\uC218. \uC5EC\uB7EC \uB9C8\uB825\uC774 \uB4A4\uC11E\uC5EC \uC0C1\uCC98\uAC00 \uC2A4\uC2A4\uB85C \uC544\uBB38\uB2E4."
+  aiType: 7
+  element: 5
+  bossPattern: {fileID: 11400000, guid: b2059a6a5ef84bc1a02c17aa907bfdf9, type: 2}
+  maxHp: 17000
+  attack: 32
+  defense: 55
+  resistance: 95
+  attackSpeed: 0.95
+  attackRange: 2.0
+  moveSpeed: 1.8

@@ -14,6 +14,14 @@ namespace ProjectH.Tests // 프로젝트 테스트 영역
         [TestCase("DG004")] // 네 번째 던전 검증 지정
         [TestCase("DG005")] // 노아르 던전 검증 지정 (Day65)
         [TestCase("DG006")] // 실바란 던전 검증 지정 (Day65)
+        [TestCase("DG007")] // 카르니안 얼어붙은 요새 (Day66)
+        [TestCase("DG008")] // 아스타르 잠든 봉인 신전 (Day66)
+        [TestCase("DG009")] // 늪지대 독안개 저습지 (Day66)
+        [TestCase("DG010")] // 노아르 의회 금단 실험실 (Day66)
+        [TestCase("DG011")] // 실바란 세계수 뿌리 성소 (Day66)
+        [TestCase("DG012")] // 마왕성 검은 성벽 (Day66)
+        [TestCase("DG013")] // 카르니안 설원 전선 병영 (Day66)
+        [TestCase("DG014")] // 아스타르 지하 고대 도시 (Day66)
         public void DungeonAsset_ExistsWithMatchingId(string dungeonId) // 던전 에셋 ID 일치 검증
         {
             string path = $"Assets/ProjectH/Data/Dungeons/{dungeonId}.asset"; // 던전 에셋 경로 생성

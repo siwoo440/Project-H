@@ -533,7 +533,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             foreach (string id in DungeonSelectionRuntimeState.SupportedDungeonIds) // 던전 순회
             {
                 DungeonData dungeon = data == null ? null : data.GetDungeon(id); // 던전
-                if (dungeon != null) builder.Append($"  {dungeon.DisplayName}(활력 {dungeon.VitalityCost} · {dungeon.RewardGold}G)"); // 이름·활력·골드
+                if (dungeon != null && ProjectH.Battle.DungeonProgressionPolicy.IsUnlocked(GetSave(), id)) builder.Append($"  {dungeon.DisplayName}(활력 {dungeon.VitalityCost} · {dungeon.RewardGold}G)"); // 열린 던전만 (Day66 — 던전 14개로 늘어 안내가 넘치지 않게)
             }
 
             SetStatus(builder.ToString()); // 안내

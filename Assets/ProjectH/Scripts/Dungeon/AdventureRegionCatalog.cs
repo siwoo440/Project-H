@@ -42,12 +42,13 @@ namespace ProjectH.Dungeon // 프로젝트 던전 탐험 영역
         private static readonly AdventureRegion[] Regions = // 지역 목록 (지도 위치는 기획서 2.3 대륙 방위 기준)
         {
             new AdventureRegion("REGION_FOREST", "숲", "레티시아 성역의 숲", "주인공이 처음 소환된 성역을 둘러싼 숲. 성역 근처까지 번진 침식을 막는 첫 무대다.", new Vector2(0.55f, 0.50f), AdventureRegionKind.Dungeon, new[] { "DG001", "DG002" }), // 숲
-            new AdventureRegion("REGION_SWAMP", "늪지대", "국경 침식 지대", "왕국 서북쪽 국경의 습지. 침식이 고인 물처럼 번져 회랑 전체가 던전으로 변했다.", new Vector2(0.30f, 0.66f), AdventureRegionKind.Dungeon, new[] { "DG003" }), // 늪지대
-            new AdventureRegion("REGION_DEMON_CASTLE", "마왕성", "검은 균열지대 입구", "대륙 외곽, 검은 안개가 피어오르는 금지된 땅으로 가는 관문. 가장 강한 침식이 기다린다.", new Vector2(0.80f, 0.80f), AdventureRegionKind.Dungeon, new[] { "DG004" }), // 마왕성
+            new AdventureRegion("REGION_SWAMP", "늪지대", "국경 침식 지대", "왕국 서북쪽 국경의 습지. 침식이 고인 물처럼 번져 회랑 전체가 던전으로 변했다.", new Vector2(0.30f, 0.66f), AdventureRegionKind.Dungeon, new[] { "DG003", "DG009" }), // 늪지대 (Day66 독안개 저습지 추가)
+            new AdventureRegion("REGION_DEMON_CASTLE", "마왕성", "검은 균열지대 입구", "대륙 외곽, 검은 안개가 피어오르는 금지된 땅으로 가는 관문. 가장 강한 침식이 기다린다.", new Vector2(0.80f, 0.80f), AdventureRegionKind.Dungeon, new[] { "DG004", "DG012" }), // 마왕성 (Day66 검은 성벽 추가)
             new AdventureRegion(VillageRegionId, "마을", "모험가의 마을", "여관 · 광장 · 시장 · 온천 · 길드가 있는 쉼터. 동료들과 시간을 보낼 수 있다.", new Vector2(0.44f, 0.36f), AdventureRegionKind.Village, null), // 마을
-            new AdventureRegion("REGION_NOIR", "노아르", "노아르 마법도시", "대륙 서부, 마법사 의회가 다스리는 독립 도시. 푸른 마법등 아래 지하 서고에서 폭주한 마력이 새어 나오고 있다.", new Vector2(0.18f, 0.52f), AdventureRegionKind.Dungeon, new[] { "DG005" }), // 노아르 (Day65)
-            new AdventureRegion("REGION_SILVARAN", "실바란", "실바란 숲", "대륙 동부의 거대한 원시림. 마나가 모이는 신성한 숲이지만, 침식에 물든 정령들이 울부짖고 있다.", new Vector2(0.78f, 0.46f), AdventureRegionKind.Dungeon, new[] { "DG006" }), // 실바란 (Day65)
-            new AdventureRegion("REGION_DESERT", "사막", "아스타르 사막", "고대 문명의 신전과 지하 도시가 잠든 남쪽 사막. 마왕 봉인의 단서가 숨어 있다.", new Vector2(0.60f, 0.15f), AdventureRegionKind.Locked, null, "66일차 카르니안 · 아스타르 지역 확장에서 열립니다."), // 사막 (잠김)
+            new AdventureRegion("REGION_NOIR", "노아르", "노아르 마법도시", "대륙 서부, 마법사 의회가 다스리는 독립 도시. 푸른 마법등 아래 지하 서고에서 폭주한 마력이 새어 나오고 있다.", new Vector2(0.18f, 0.52f), AdventureRegionKind.Dungeon, new[] { "DG005", "DG010" }), // 노아르 (Day65, Day66 의회 금단 실험실 추가)
+            new AdventureRegion("REGION_SILVARAN", "실바란", "실바란 숲", "대륙 동부의 거대한 원시림. 마나가 모이는 신성한 숲이지만, 침식에 물든 정령들이 울부짖고 있다.", new Vector2(0.78f, 0.46f), AdventureRegionKind.Dungeon, new[] { "DG006", "DG011" }), // 실바란 (Day65, Day66 세계수 뿌리 성소 추가)
+            new AdventureRegion("REGION_KARNIAN", "카르니안", "카르니안 제국", "대륙 북부의 설원 군사 국가. 침식에 물든 제국군이 얼어붙은 요새와 전선을 지키고 있다.", new Vector2(0.54f, 0.84f), AdventureRegionKind.Dungeon, new[] { "DG007", "DG013" }), // 카르니안 (Day66)
+            new AdventureRegion("REGION_DESERT", "사막", "아스타르 사막", "고대 문명의 신전과 지하 도시가 잠든 남쪽 사막. 마왕 봉인 장치의 잔해가 모래 아래에서 깨어나고 있다.", new Vector2(0.60f, 0.15f), AdventureRegionKind.Dungeon, new[] { "DG008", "DG014" }), // 사막 (Day66 열림)
             new AdventureRegion("REGION_SEA", "바다", "서쪽 해안", "노아르 마법도시 너머로 이어지는 바다. 검은 균열이 바다 위에도 나타났다는 소문이 돈다.", new Vector2(0.12f, 0.30f), AdventureRegionKind.Locked, null, "67일차 검은 균열 · 긴급 던전에서 열립니다.") // 바다 (잠김)
         };
 

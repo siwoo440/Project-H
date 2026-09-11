@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_SandPharaoh
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "\uB9DD\uC790\uC758 \uC655\uC88C"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "\uBAA8\uB798 \uC81C\uAD6D\uC758 \uBD80\uD65C"
+    enterHealthRatio: 0.5
+    forceAfterSeconds: 150
+    attackBonus: 0.25
+    attackSpeedBonus: 0.2
+  patterns:
+  - displayName: "\uBAA8\uB798 \uC800\uC8FC"
+    kind: 0
+    damageType: 1
+    powerRatio: 1.35
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.4
+    cooldownSeconds: 11
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uB9DD\uC790 \uC18C\uD658\uC758 \uC758\uC2DD"
+    kind: 3
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.5
+    effectDuration: 0
+    windupSeconds: 2
+    cooldownSeconds: 18
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uC655\uC758 \uD640"
+    kind: 1
+    damageType: 1
+    powerRatio: 2.9
+    effectValue: 0
+    effectDuration: 1.5
+    windupSeconds: 2.8
+    cooldownSeconds: 14
+    minPhase: 2
+    interruptible: 1
+  - displayName: "\uBAA8\uB798 \uD3ED\uD48D\uC758 \uC7A5\uB840"
+    kind: 0
+    damageType: 1
+    powerRatio: 2.8
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 4.2
+    cooldownSeconds: 24
+    minPhase: 2
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

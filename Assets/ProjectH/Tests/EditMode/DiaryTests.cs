@@ -76,7 +76,10 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
                 Assert.That(DialogueLibrary.Load(entry.ScriptId), Is.Not.Null, entry.ScriptId); // 대사 파일 존재
             }
 
-            Assert.That(DiaryCatalog.Scenarios.Count, Is.EqualTo(CharacterEventCatalog.All.Count + 2 + 8 + 20 + 16 + 4)); // 개인 + 지역 2 (Day65) + 합류 8 (Day64) + 결속 20 + 마을 16 + 특별한 밤 4
+            int personal = 0; // 대사 파일이 있는 개인 이벤트 수
+            foreach (CharacterEventDefinition definition in CharacterEventCatalog.All) if (DialogueLibrary.Load(definition.ScriptId) != null) personal++; // 2화 이후는 70일차에 추가
+            Assert.That(personal, Is.GreaterThanOrEqualTo(4)); // 초기 4인 1화
+            Assert.That(DiaryCatalog.Scenarios.Count, Is.EqualTo(personal + 4 + 8 + 20 + 16 + 4)); // 개인 + 지역 4 (Day65~66) + 합류 8 (Day64) + 결속 20 + 마을 16 + 특별한 밤 4
             Assert.That(DiaryCatalog.AllCharacters.Count, Is.EqualTo(12)); // 궁극기 컷신 12인 (Day64)
             Assert.That(DiaryCatalog.Cgs.Count, Is.EqualTo(12)); // 캐릭터당 3장
 

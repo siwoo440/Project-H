@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_SealGuardian
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "\uBD09\uC778 \uC218\uD638 \uADDC\uC57D"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "\uADDC\uC57D \uBD95\uAD34"
+    enterHealthRatio: 0.5
+    forceAfterSeconds: 150
+    attackBonus: 0.25
+    attackSpeedBonus: 0.2
+  patterns:
+  - displayName: "\uD0DC\uC591 \uAD11\uC120"
+    kind: 0
+    damageType: 1
+    powerRatio: 1.35
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.6
+    cooldownSeconds: 11
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uBD09\uC778 \uC7AC\uC815\uB82C"
+    kind: 3
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.5
+    effectDuration: 0
+    windupSeconds: 2
+    cooldownSeconds: 18
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uC2EC\uD310\uC758 \uBB38\uC591"
+    kind: 1
+    damageType: 1
+    powerRatio: 2.8
+    effectValue: 0
+    effectDuration: 1.5
+    windupSeconds: 3
+    cooldownSeconds: 15
+    minPhase: 2
+    interruptible: 1
+  - displayName: "\uACE0\uB300 \uC7A5\uCE58 \uACFC\uC5F4"
+    kind: 0
+    damageType: 1
+    powerRatio: 2.6
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 4.2
+    cooldownSeconds: 24
+    minPhase: 2
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

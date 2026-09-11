@@ -8,7 +8,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         None = 0, // 특징 없음
         ManaSurge = 1, // 노아르 : 마나 폭주
-        SpiritBlessing = 2 // 실바란 : 정령의 가호
+        SpiritBlessing = 2, // 실바란 : 정령의 가호
+        FrostMarch = 3, // 카르니안 : 혹한 (Day66 추가 — 아군 약화형)
+        Sandstorm = 4 // 아스타르 : 모래폭풍 (Day66 추가 — 아군 약화형)
     }
 
     public static class BattleRegionTraitCatalog // 지역 특징 수치표 (Day65 신규 — 수치는 67일차 1차 밸런스에서 조정)
@@ -21,15 +23,47 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public const float SpiritBlessingDebuffedMultiplier = 0.5f; // 약화 상태인 적은 회복 절반
         public const string ManaAttackSourceKey = "REGION_MANA_ATK"; // 마나 폭주 공격 증가 출처
         public const string ManaDefenseSourceKey = "REGION_MANA_DEF"; // 마나 폭주 방어 감소 출처
+        public const float FrostInterval = 8f; // 혹한 간격 (초)
+        public const float FrostStep = 0.10f; // 1중첩당 아군 공격 속도 -10%
+        public const int FrostMaxStacks = 3; // 최대 3중첩 (-30%)
+        public const float FrostDuration = 20f; // 혹한 지속 (다음 발동 전에 끊기지 않게, 정화하면 0중첩부터)
+        public const float SandstormInterval = 12f; // 모래폭풍 간격 (초)
+        public const float SandstormAccuracyReduction = 0.25f; // 아군 명중률 -25%
+        public const float SandstormDuration = 6f; // 모래폭풍 지속 (초)
+        public const string FrostSourceKey = "REGION_FROST"; // 혹한 출처 (정화 가능)
+        public const string SandstormSourceKey = "REGION_SANDSTORM"; // 모래폭풍 출처 (정화 가능)
 
-        public static BattleRegionTraitKind GetKind(string dungeonId) // 던전의 지역 특징
+        public static BattleRegionTraitKind GetKind(string dungeonId) // 던전의 지역 특징 (같은 지역 던전은 같은 특징)
         {
-            if (string.Equals(dungeonId, "DG005", StringComparison.Ordinal)) return BattleRegionTraitKind.ManaSurge; // 노아르 금지된 지하 서고
-            if (string.Equals(dungeonId, "DG006", StringComparison.Ordinal)) return BattleRegionTraitKind.SpiritBlessing; // 실바란 울부짖는 정령의 숲
-            return BattleRegionTraitKind.None; // 그 외 던전
+            switch (dungeonId) // 던전 분기
+            {
+                case "DG005": // 노아르 금지된 지하 서고
+                case "DG010": // 노아르 의회 금단 실험실 (Day66)
+                    return BattleRegionTraitKind.ManaSurge; // 마나 폭주
+                case "DG006": // 실바란 울부짖는 정령의 숲
+                case "DG011": // 실바란 세계수 뿌리 성소 (Day66)
+                    return BattleRegionTraitKind.SpiritBlessing; // 정령의 가호
+                case "DG007": // 카르니안 얼어붙은 요새 (Day66)
+                case "DG013": // 카르니안 설원 전선 병영 (Day66)
+                    return BattleRegionTraitKind.FrostMarch; // 혹한
+                case "DG008": // 아스타르 잠든 봉인 신전 (Day66)
+                case "DG014": // 아스타르 지하 고대 도시 (Day66)
+                    return BattleRegionTraitKind.Sandstorm; // 모래폭풍
+                default: // 숲 · 늪지대 · 마왕성
+                    return BattleRegionTraitKind.None; // 특징 없음
+            }
         }
 
-        public static float GetInterval(BattleRegionTraitKind kind) => kind == BattleRegionTraitKind.ManaSurge ? ManaSurgeInterval : SpiritBlessingInterval; // 발동 간격
+        public static float GetInterval(BattleRegionTraitKind kind) // 발동 간격
+        {
+            switch (kind) // 종류 분기
+            {
+                case BattleRegionTraitKind.ManaSurge: return ManaSurgeInterval; // 10초
+                case BattleRegionTraitKind.FrostMarch: return FrostInterval; // 8초
+                case BattleRegionTraitKind.Sandstorm: return SandstormInterval; // 12초
+                default: return SpiritBlessingInterval; // 5초
+            }
+        }
 
         public static string GetName(BattleRegionTraitKind kind) // 특징 이름
         {
@@ -37,6 +71,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 case BattleRegionTraitKind.ManaSurge: return "마나 폭주"; // 노아르
                 case BattleRegionTraitKind.SpiritBlessing: return "정령의 가호"; // 실바란
+                case BattleRegionTraitKind.FrostMarch: return "혹한"; // 카르니안 (Day66)
+                case BattleRegionTraitKind.Sandstorm: return "모래폭풍"; // 아스타르 (Day66)
                 default: return string.Empty; // 없음
             }
         }
@@ -47,6 +83,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 case BattleRegionTraitKind.ManaSurge: return $"{ManaSurgeInterval:0}초마다 적 공격력 +{ManaSurgeStep * 100f:0}% · 방어력 -{ManaSurgeStep * 100f:0}% (최대 {ManaSurgeMaxStacks}중첩). 오래 끌수록 위험하니 빠르게 끝내세요."; // 노아르
                 case BattleRegionTraitKind.SpiritBlessing: return $"{SpiritBlessingInterval:0}초마다 적이 최대 체력 {SpiritBlessingHealRatio * 100f:0}% 회복. 약화(방어·공격 감소, 독·화상 등)가 걸린 적은 절반만 회복해요."; // 실바란
+                case BattleRegionTraitKind.FrostMarch: return $"{FrostInterval:0}초마다 아군 공격 속도 -{FrostStep * 100f:0}% (최대 {FrostMaxStacks}중첩). 정화하면 처음부터 다시 쌓여요."; // 카르니안 (Day66)
+                case BattleRegionTraitKind.Sandstorm: return $"{SandstormInterval:0}초마다 {SandstormDuration:0}초간 아군 명중률 -{SandstormAccuracyReduction * 100f:0}%. 폭풍이 없는 틈에 몰아치거나 정화하세요."; // 아스타르 (Day66)
                 default: return string.Empty; // 없음
             }
         }
@@ -87,8 +125,57 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 종료
             }
 
+            if (kind == BattleRegionTraitKind.FrostMarch) // 혹한 (Day66)
+            {
+                int frozen = ApplyFrostMarch(registry); // 적용
+                Debug.Log($"[Project H][REGION] 혹한 · 아군 {frozen}명"); // 로그
+                return; // 종료
+            }
+
+            if (kind == BattleRegionTraitKind.Sandstorm) // 모래폭풍 (Day66)
+            {
+                int blinded = ApplySandstorm(registry); // 적용
+                Debug.Log($"[Project H][REGION] 모래폭풍 · 아군 {blinded}명"); // 로그
+                return; // 종료
+            }
+
             int healed = ApplySpiritBlessing(registry, statusBuffer); // 정령의 가호
             Debug.Log($"[Project H][REGION] 정령의 가호 · 적 {healed}명 회복"); // 로그
+        }
+
+        public static int ApplyFrostMarch(BattleCombatRegistry registry) // 살아 있는 아군마다 혹한 1중첩 추가 (정화된 아군은 1중첩부터)
+        {
+            int count = 0; // 적용 수
+            if (registry == null) return 0; // 입력 확인
+
+            foreach (BattleActor actor in registry.Actors) // 전투 객체 순회
+            {
+                if (actor == null || actor.Team != BattleTeam.Ally || !actor.IsCombatReady || !actor.Stats.IsAlive) continue; // 살아 있는 아군만
+                string id = actor.Stats.RuntimeId; // 런타임 ID
+                float current = BattleSkillRuntimeState.GetModifierValue(id, BattleRuntimeModifierKind.AttackSpeedReductionPercent, BattleRegionTraitCatalog.FrostSourceKey); // 현재 혹한 수치
+                int stacks = Mathf.Min(BattleRegionTraitCatalog.FrostMaxStacks, Mathf.RoundToInt(current / BattleRegionTraitCatalog.FrostStep) + 1); // 1중첩 추가
+                BattleSkillRuntimeState.AddModifier(id, BattleRuntimeModifierKind.AttackSpeedReductionPercent, BattleRegionTraitCatalog.FrostStep * stacks, BattleRegionTraitCatalog.FrostDuration, BattleRegionTraitCatalog.FrostSourceKey); // 공격 속도 감소
+                BattleSkillRuntimeState.RegisterRemovableDebuff(id, BattleRegionTraitCatalog.FrostSourceKey); // 정화 가능
+                count++; // 적용 수 증가
+            }
+
+            return count; // 적용 수 반환
+        }
+
+        public static int ApplySandstorm(BattleCombatRegistry registry) // 살아 있는 아군 명중률 감소 (정화 가능)
+        {
+            int count = 0; // 적용 수
+            if (registry == null) return 0; // 입력 확인
+
+            foreach (BattleActor actor in registry.Actors) // 전투 객체 순회
+            {
+                if (actor == null || actor.Team != BattleTeam.Ally || !actor.IsCombatReady || !actor.Stats.IsAlive) continue; // 살아 있는 아군만
+                BattleSkillRuntimeState.AddModifier(actor.Stats.RuntimeId, BattleRuntimeModifierKind.AccuracyReductionPercent, BattleRegionTraitCatalog.SandstormAccuracyReduction, BattleRegionTraitCatalog.SandstormDuration, BattleRegionTraitCatalog.SandstormSourceKey); // 명중 감소
+                BattleSkillRuntimeState.RegisterRemovableDebuff(actor.Stats.RuntimeId, BattleRegionTraitCatalog.SandstormSourceKey); // 정화 가능
+                count++; // 적용 수 증가
+            }
+
+            return count; // 적용 수 반환
         }
 
         public static int ApplyManaSurge(BattleCombatRegistry registry, int stacks) // 살아 있는 적 전원에 중첩 수치 적용 (같은 출처라 값이 갱신됨)

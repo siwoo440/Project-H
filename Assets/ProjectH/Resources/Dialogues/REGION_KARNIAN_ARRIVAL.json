@@ -1,0 +1,73 @@
+{
+  "id": "REGION_KARNIAN_ARRIVAL",
+  "title": "돌아온 설원",
+  "characterId": "CH_ELLEN",
+  "background": "KARNIAN",
+  "location": "카르니안 제국",
+  "nodes": [
+    {
+      "id": "k1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "눈보라가 시야를 가린다. 그 너머로 검은 성벽의 요새가 희미하게 모습을 드러냈다."
+    },
+    {
+      "id": "k2",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…카르니안 제국입니다. 제가 검을 처음 받은 곳이죠."
+    },
+    {
+      "id": "k3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "엘렌, 안색이 안 좋아. 추워서만은 아닌 것 같은데."
+    },
+    {
+      "id": "k4",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "저 요새에서… 명령을 받았습니다. 마왕군을 막으려면 마을 하나를 버려야 한다고. 저는 그 명령을 따랐습니다."
+    },
+    {
+      "id": "k5",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "지금 저 안을 지키는 건 침식에 삼켜진 제 옛 동료들입니다. 이 추위는 사람을 느리게 만들어요. 오래 버틸수록 검이 무거워질 겁니다.",
+      "choices": [
+        {
+          "text": "이번엔 네가 옳다고 믿는 걸 지키자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "k6a"
+        },
+        {
+          "text": "무리하지 마. 힘들면 뒤로 빠져도 돼.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "k6b"
+        }
+      ]
+    },
+    {
+      "id": "k6a",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "…네. 명령이 아니라, 제 뜻으로 검을 들겠습니다.",
+      "next": "k7"
+    },
+    {
+      "id": "k6b",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "…걱정해 주시는 건 감사합니다. 하지만 이곳만큼은, 제가 앞에 서야 합니다.",
+      "next": "k7"
+    },
+    {
+      "id": "k7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "엘렌이 방패를 들어 눈보라를 막아서며 앞장선다. 그 등은 떨리고 있었지만, 걸음은 멈추지 않았다."
+    }
+  ]
+}

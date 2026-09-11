@@ -23,7 +23,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 new Vector3(0.50f, 0.50f, 0.30f), new Vector3(0.36f, 0.64f, 0.20f), new Vector3(0.66f, 0.66f, 0.20f), // 중앙·북서·북동
                 new Vector3(0.80f, 0.80f, 0.14f), new Vector3(0.58f, 0.22f, 0.20f), new Vector3(0.30f, 0.38f, 0.16f), // 균열지대·사막·서부
-                new Vector3(0.70f, 0.40f, 0.16f), new Vector3(0.20f, 0.52f, 0.10f), new Vector3(0.80f, 0.48f, 0.10f) // 동부 숲 · 서부 노아르 · 동쪽 끝 실바란 (Day65)
+                new Vector3(0.70f, 0.40f, 0.16f), new Vector3(0.20f, 0.52f, 0.10f), new Vector3(0.80f, 0.48f, 0.10f), // 동부 숲 · 서부 노아르 · 동쪽 끝 실바란 (Day65)
+                new Vector3(0.54f, 0.84f, 0.12f) // 북부 카르니안 설원 (Day66)
             };
             Texture2D texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false); // 텍스처
             texture.wrapMode = TextureWrapMode.Clamp; // 가장자리 반복 없음
@@ -80,6 +81,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             color = Color.Lerp(color, rift, Weight(u, v, 0.82f, 0.82f, 0.13f)); // 균열
             color = Color.Lerp(color, noir, Weight(u, v, 0.18f, 0.52f, 0.10f)); // 노아르
             color = Color.Lerp(color, silvaran, Weight(u, v, 0.80f, 0.46f, 0.12f)); // 실바란
+            color = Color.Lerp(color, new Color(0.90f, 0.93f, 0.96f), Weight(u, v, 0.54f, 0.86f, 0.12f)); // 카르니안 눈 덮인 설원 (Day66)
             color = Color.Lerp(color * 0.85f, color, Mathf.Clamp01(land * 6f)); // 해안 쪽 살짝 어둡게
             color.a = 1f; // 불투명
             return color; // 땅 색 반환

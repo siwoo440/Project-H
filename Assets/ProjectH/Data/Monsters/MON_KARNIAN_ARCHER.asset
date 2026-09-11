@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_KARNIAN_ARCHER
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_KARNIAN_ARCHER
+  displayName: "\uC81C\uAD6D \uAD81\uC218"
+  description: "\uC694\uC0C8 \uC131\uBCBD \uC704\uC5D0\uC11C \uC5BC\uC74C \uD654\uC0B4\uC744 \uC3D8\uB294 \uAD81\uC218. \uBAB8\uC740 \uC57D\uD558\uC9C0\uB9CC \uC0AC\uAC70\uB9AC\uAC00 \uAE38\uC5B4 \uC55E\uC904 \uB4A4\uC5D0 \uC228\uB294\uB2E4."
+  aiType: 2
+  element: 0
+  bossPattern: {fileID: 0}
+  maxHp: 2300
+  attack: 13
+  defense: 24
+  resistance: 30
+  attackSpeed: 0.85
+  attackRange: 3.6
+  moveSpeed: 1.2

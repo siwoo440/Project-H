@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_DESERT_SCORPION
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_DESERT_SCORPION
+  displayName: "\uBAA8\uB798 \uC804\uAC08"
+  description: "\uC0AC\uB9C9 \uBAA8\uB798 \uC18D\uC5D0 \uC228\uC5B4 \uC788\uB2E4 \uD280\uC5B4\uB098\uC624\uB294 \uAC70\uB300 \uC804\uAC08. \uB2EC\uAD88\uC9C4 \uAF2C\uB9AC\uB85C \uBE60\uB974\uAC8C \uCC0C\uB978\uB2E4."
+  aiType: 1
+  element: 1
+  bossPattern: {fileID: 0}
+  maxHp: 2500
+  attack: 13
+  defense: 40
+  resistance: 20
+  attackSpeed: 1.1
+  attackRange: 1.3
+  moveSpeed: 2.6

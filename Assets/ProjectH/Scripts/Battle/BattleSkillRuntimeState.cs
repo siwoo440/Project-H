@@ -143,6 +143,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return Mathf.Max(0f, total); // 음수 방지 Modifier 합계 반환
         }
 
+        public static float GetModifierValue(string runtimeId, BattleRuntimeModifierKind kind, string sourceKey, float nowSeconds = -1f) // 특정 출처 Modifier 현재 수치 (없거나 정화되면 0, Day66 추가 — 혹한 중첩 확인)
+        {
+            if (string.IsNullOrWhiteSpace(runtimeId) || string.IsNullOrEmpty(sourceKey)) return 0f; // 입력 확인
+            CleanupExpired(ResolveNow(nowSeconds)); // 만료 정리
+
+            for (int index = 0; index < modifiers.Count; index++) // Modifier 순회
+            {
+                TimedModifier modifier = modifiers[index]; // 현재 Modifier
+                if (modifier.RuntimeId == runtimeId && modifier.Kind == kind && modifier.SourceKey == sourceKey) return modifier.Value; // 같은 출처
+            }
+
+            return 0f; // 없음
+        }
+
         public static int GetEffectiveDefense(IBattleCombatantStats target, float nowSeconds = -1f) // 방어력 증가 반영 최종 방어력 계산
         {
             if (target == null) // 전투 대상 확인

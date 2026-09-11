@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8af8d17c05274a54eb3ff5eee4e7fd7a, type: 3}
+  m_Name: DG007
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.DungeonData
+  id: DG007
+  displayName: "\uC5BC\uC5B4\uBD99\uC740 \uC694\uC0C8"
+  regionId: REG_KARNIAN
+  recommendedLevel: 9
+  rewardGold: 780
+  rewardExp: 240
+  dropTable:
+  - itemId: IT_MATERIAL_001
+    dropChance: 1
+    minQuantity: 4
+    maxQuantity: 6
+  - itemId: IT_POTION_SMALL
+    dropChance: 0.7
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: EQ_ARMOR_GUARD
+    dropChance: 0.11
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_RUNE_SHARD
+    dropChance: 0.9
+    minQuantity: 3
+    maxQuantity: 5
+  - itemId: IT_RUNE_BOX_1
+    dropChance: 0.4
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_RUNE_BOX_2
+    dropChance: 0.16
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_SCROLL_WEAPON_C
+    dropChance: 0.55
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: IT_SCROLL_ARMOR_C
+    dropChance: 0.55
+    minQuantity: 1
+    maxQuantity: 2
+  - itemId: IT_SCROLL_WEAPON_B
+    dropChance: 0.18
+    minQuantity: 1
+    maxQuantity: 1
+  - itemId: IT_SCROLL_ARMOR_B
+    dropChance: 0.18
+    minQuantity: 1
+    maxQuantity: 1
+  encounterWaves:
+  - monsterIds:
+    - MON_KARNIAN_INFANTRY
+    - MON_KARNIAN_WOLF
+  - monsterIds:
+    - MON_KARNIAN_ARCHER
+    - MON_KARNIAN_INFANTRY
+  - monsterIds:
+    - MON_KARNIAN_WOLF
+    - MON_KARNIAN_WOLF
+    - MON_KARNIAN_ARCHER
+  - monsterIds:
+    - MON_BOSS_KARNIAN
+  mapFloorCount: 5
+  vitalityCost: 30

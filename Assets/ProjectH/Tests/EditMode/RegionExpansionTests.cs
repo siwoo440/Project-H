@@ -41,13 +41,13 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Object.DestroyImmediate(registryObject); // Registry 제거
         }
 
-        [Test] // 지도 : 노아르 → DG005, 실바란 → DG006, 사막 안내는 66일차
+        [Test] // 지도 : 노아르 → DG005, 실바란 → DG006, 남은 잠김 지역(바다) 안내는 67일차
         public void Regions_LinkNewDungeons() // 지역 연결 테스트
         {
             Assert.That(AdventureRegionCatalog.FindByDungeon("DG005").Id, Is.EqualTo("REGION_NOIR")); // 노아르
             Assert.That(AdventureRegionCatalog.FindByDungeon("DG006").Id, Is.EqualTo("REGION_SILVARAN")); // 실바란
             Assert.That(AdventureRegionCatalog.Get("REGION_NOIR").Kind, Is.EqualTo(AdventureRegionKind.Dungeon)); // 던전 지역
-            Assert.That(AdventureRegionCatalog.Get("REGION_DESERT").LockedHint, Does.Contain("66일차")); // 사막 안내 갱신
+            Assert.That(AdventureRegionCatalog.Get("REGION_SEA").LockedHint, Does.Contain("67일차")); // 바다 안내 (사막은 66일차에 열림)
         }
 
         [Test] // 신규 던전 : 웨이브 4개(마지막은 2페이즈 보스) · 몬스터 에셋 · 카탈로그 등록

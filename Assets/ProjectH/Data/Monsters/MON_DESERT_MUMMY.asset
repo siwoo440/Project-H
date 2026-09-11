@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_DESERT_MUMMY
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_DESERT_MUMMY
+  displayName: "\uD0DC\uC591 \uC2E0\uC804 \uBBF8\uB77C"
+  description: "\uACE0\uB300 \uD0DC\uC591 \uC2E0\uC804\uC758 \uC2E0\uAD00\uC774 \uC7A0\uB4E0 \uCC44 \uAE68\uC5B4\uB09C \uBAA8\uC2B5. \uB290\uB9AC\uC9C0\uB9CC \uBE5B\uC758 \uC800\uC8FC\uB97C \uD488\uC5B4 \uC27D\uAC8C \uC4F0\uB7EC\uC9C0\uC9C0 \uC54A\uB294\uB2E4."
+  aiType: 0
+  element: 4
+  bossPattern: {fileID: 0}
+  maxHp: 3500
+  attack: 12
+  defense: 45
+  resistance: 50
+  attackSpeed: 0.8
+  attackRange: 1.6
+  moveSpeed: 1.4

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_BOSS_CASTLE2
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_BOSS_CASTLE2
+  displayName: "\uAC80\uC740 \uAE30\uC0AC\uB2E8\uC7A5"
+  description: "\uB9C8\uC655\uC131 \uC678\uC131\uC744 \uC9C0\uD0A4\uB294 \uB9C8\uC655\uAD70 \uAE30\uC0AC\uB2E8\uC7A5. \uAC01\uC9C0\uC5D0\uC11C \uBAA8\uC740 \uAD34\uBB3C\uC744 \uC774\uB04C\uBA70, \uCCB4\uB825\uC774 \uC904\uC218\uB85D \uB354 \uBE60\uB974\uACE0 \uC794\uD639\uD574\uC9C4\uB2E4."
+  aiType: 7
+  element: 5
+  bossPattern: {fileID: 11400000, guid: e88e506061ac4568a9ccdddfcd6d8a6b, type: 2}
+  maxHp: 20000
+  attack: 38
+  defense: 100
+  resistance: 90
+  attackSpeed: 0.9
+  attackRange: 2.2
+  moveSpeed: 1.6

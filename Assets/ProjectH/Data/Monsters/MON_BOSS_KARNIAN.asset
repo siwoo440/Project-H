@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_BOSS_KARNIAN
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_BOSS_KARNIAN
+  displayName: "\uCE68\uC2DD\uB41C \uC81C\uAD6D \uC7A5\uAD70"
+  description: "\uC5BC\uC5B4\uBD99\uC740 \uC694\uC0C8\uB97C \uC9C0\uD718\uD558\uB358 \uC81C\uAD6D \uC7A5\uAD70. \uCE68\uC2DD\uC5D0 \uC0BC\uCF1C\uC9C4 \uB4A4\uC5D0\uB3C4 '\uBB3C\uB7EC\uC11C\uC9C0 \uB9C8\uB77C'\uB294 \uB9C8\uC9C0\uB9C9 \uBA85\uB839\uB9CC \uB418\uD480\uC774\uD55C\uB2E4."
+  aiType: 7
+  element: 0
+  bossPattern: {fileID: 11400000, guid: 0c3ba49443d34cdea4d2dbd3ba77aa86, type: 2}
+  maxHp: 17000
+  attack: 33
+  defense: 95
+  resistance: 60
+  attackSpeed: 0.85
+  attackRange: 2.0
+  moveSpeed: 1.5

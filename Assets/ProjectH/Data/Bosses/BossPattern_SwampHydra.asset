@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_SwampHydra
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "\uB2AA\uC758 \uD3EC\uC2DD\uC790"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "\uB3C5\uC548\uAC1C \uD3ED\uC8FC"
+    enterHealthRatio: 0.5
+    forceAfterSeconds: 150
+    attackBonus: 0.25
+    attackSpeedBonus: 0.2
+  patterns:
+  - displayName: "\uB3C5\uC548\uAC1C \uC228\uACB0"
+    kind: 0
+    damageType: 1
+    powerRatio: 1.2
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.4
+    cooldownSeconds: 11
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uB2AA \uBE44\uB298"
+    kind: 2
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.3
+    effectDuration: 8
+    windupSeconds: 1.5
+    cooldownSeconds: 18
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uC138 \uBA38\uB9AC \uBB3C\uAE30"
+    kind: 1
+    damageType: 0
+    powerRatio: 2.6
+    effectValue: 0
+    effectDuration: 1.5
+    windupSeconds: 2.8
+    cooldownSeconds: 15
+    minPhase: 2
+    interruptible: 1
+  - displayName: "\uB9F9\uB3C5 \uD574\uC77C"
+    kind: 0
+    damageType: 1
+    powerRatio: 2.2
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 3.8
+    cooldownSeconds: 24
+    minPhase: 2
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

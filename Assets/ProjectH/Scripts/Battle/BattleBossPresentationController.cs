@@ -13,6 +13,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private Image flashImage; // 붉은 번쩍임 전체 화면 이미지
         private Text introText; // 보스 등장 안내 텍스트
         private GameObject healthBarRoot; // 상단 보스 체력바 루트
+        private BattleDisarrayGaugeView bossDisarrayGauge; // 보스 체력바 아래 흐트러짐 게이지 (Day53 추가)
         private Text bossNameText; // 보스 체력바 이름 텍스트
         private Image bossHpFillImage; // 보스 체력바 채움 이미지
         private Text bossHpText; // 보스 체력바 수치 텍스트
@@ -91,12 +92,30 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             introRoutine = StartCoroutine(PlayIntroRoutine(bossStats.DisplayName)); // 보스 등장 연출 시작
         }
 
+        private void EnsureDisarrayGauge() // 보스 체력바 아래 흐트러짐 게이지 준비 (Day53 추가)
+        {
+            if (bossHpFillImage == null || boundBoss == null) // 보스 체력 게이지 및 스탯 확인
+            {
+                return; // 흐트러짐 게이지 준비 중단
+            }
+
+            RectTransform hpBackRect = bossHpFillImage.rectTransform.parent as RectTransform; // 보스 체력 게이지 배경 RectTransform 조회
+
+            if (hpBackRect == null) // 보스 체력 게이지 배경 확인
+            {
+                return; // 흐트러짐 게이지 준비 중단
+            }
+
+            bossDisarrayGauge = BattleDisarrayGaugeView.AttachBelow(hpBackRect, boundBoss.RuntimeId); // 보스 체력바 아래쪽에 흐트러짐 게이지 부착
+        }
+
         private void BindHealthBar(BattleEnemyStats bossStats) // 보스 체력바 전투 스탯 연결
         {
             UnbindHealthBar(); // 기존 보스 체력바 연결 해제
             boundBoss = bossStats; // 신규 보스 전투 스탯 저장
             boundBoss.HealthChanged += RefreshHealthBar; // 보스 체력 변경 이벤트 연결
             SetText(bossNameText, boundBoss.DisplayName); // 보스 체력바 이름 표시
+            EnsureDisarrayGauge(); // 보스 체력바 아래 흐트러짐 게이지 준비 (Day53 추가)
             healthBarRoot.SetActive(true); // 보스 체력바 표시
             RefreshHealthBar(); // 보스 체력바 초기 상태 표시
         }

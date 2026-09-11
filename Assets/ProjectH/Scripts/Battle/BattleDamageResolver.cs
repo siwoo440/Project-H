@@ -111,6 +111,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 damage = Mathf.Max(1, Mathf.RoundToInt(damage * BattleElementAffinityTable.GetMultiplier(affinity))); // 최종 피해에 속성 상성 배율 적용 (Day52 추가)
             }
 
+            float disarrayMultiplier = BattleDisarrayRuntimeState.GetDamageMultiplier(request.Target.RuntimeId); // 흐트러짐 상태 추가 피해 배율 조회 (Day53 추가, 흐트러지지 않았으면 1.0)
+
+            if (disarrayMultiplier > 1f && damage > 0) // 흐트러짐 추가 피해 적용 대상 확인
+            {
+                damage = Mathf.Max(1, Mathf.RoundToInt(damage * disarrayMultiplier)); // 흐트러짐 추가 피해 Window 배율 적용
+            }
+
             return new BattleDamageResult(request.Type, request.Attacker.RuntimeId, request.Target.RuntimeId, rawPower, mitigation, damage, attackElement, affinity); // 속성 상성 포함 피해 결과 반환
         }
 

@@ -205,6 +205,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             FlashHitPreview(); // 피해 피격 표시
             floatingValueText?.ShowDamage(applied, result.Affinity); // 속성 상성 반영 피해 숫자 표시 (Day52 수정)
+            AccumulateDisarray(result); // 실제 피해 발생 시에만 흐트러짐 누적 (Day53 추가)
             BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateDamageTaken(this, applied)); // 피해 수신 패시브 Trigger 처리
 
             if (Stats.IsAlive) // 피해 후 생존 여부 확인
@@ -213,6 +214,28 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             return applied; // 실제 피해량 반환
+        }
+
+        private void AccumulateDisarray(BattleDamageResult result) // 흐트러짐 게이지 누적 및 발생 처리 (Day53 추가)
+        {
+            if (Stats == null || !BattleDisarrayRuntimeState.IsRegistered(Stats.RuntimeId)) // 흐트러짐 게이지 등록 대상 확인
+            {
+                return; // 흐트러짐 누적 중단 (아군은 미등록이라 자연히 제외됨)
+            }
+
+            if (string.IsNullOrWhiteSpace(result.AttackerRuntimeId)) // 지속 피해 등 공격자 없는 피해 확인
+            {
+                return; // 지속 피해는 흐트러짐을 누적시키지 않음 (방치 흐트러짐 방지)
+            }
+
+            if (!BattleDisarrayRuntimeState.AddDisarray(Stats.RuntimeId, BattleDisarrayRuntimeState.GetHitAmount(result.Affinity))) // 상성 반영 누적 후 발생 여부 확인
+            {
+                return; // 흐트러짐 미발생 처리
+            }
+
+            BattleSkillRuntimeState.AddModifier(Stats.RuntimeId, BattleRuntimeModifierKind.Stun, 1f, BattleDisarrayRuntimeState.DisarrayedSeconds, BattleDisarrayRuntimeState.DisarraySourceKey); // 기존 기절 게이트를 재사용한 경직 적용
+            BattleDisarrayPresentation.Announce(this); // 흐트러짐 발생 연출 실행
+            Debug.Log($"[Project H][DISARRAY] {Stats.RuntimeId}, Count={BattleDisarrayRuntimeState.GetDisarrayCount(Stats.RuntimeId)}, NextMax={BattleDisarrayRuntimeState.GetMaxGauge(Stats.RuntimeId)}"); // 흐트러짐 발생 로그 출력
         }
 
         public int ApplyHealing(BattleHealingResult result) // 계산 완료 회복 적용

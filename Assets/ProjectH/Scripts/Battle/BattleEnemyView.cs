@@ -18,6 +18,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public BattleEnemyStats Stats { get; private set; } // 연결된 적 전투 스탯
         public BattleActor Actor => actor; // 공통 전투 액터 반환
         private BattleStatusEffectStripView statusStrip; // 적군 하단 상태이상 표시 (Day51 추가)
+        private BattleDisarrayGaugeView disarrayGauge; // 적군 체력바 아래 흐트러짐 게이지 (Day53 추가)
 
         public void Configure(Canvas canvas, Image body, Text displayName, Text runtimeId, Text hp, Image hpFill, BattleActor battleActor, BattleActionDebugText debugText) // 에디터 참조 설정
         {
@@ -75,6 +76,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             EnsureStatusStrip(); // 적군 하단 상태이상 표시 준비 (Day51 추가)
+            EnsureDisarrayGauge(); // 적군 흐트러짐 게이지 준비 (Day53 추가)
             Refresh(); // 적군 현재 상태 표시
         }
 
@@ -96,6 +98,29 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             statusStrip = BattleStatusEffectStripView.AttachBelow(anchorRect, Stats.RuntimeId); // 적군 아래쪽에 상태이상 표시 부착
             RefreshElementChip(); // 적군 속성 칩 표시 갱신 (Day52 추가)
+        }
+
+        private void EnsureDisarrayGauge() // 적군 체력바 아래 흐트러짐 게이지 준비 (Day53 추가)
+        {
+            if (hpFillImage == null || Stats == null) // 체력 게이지 및 적군 스탯 확인
+            {
+                return; // 흐트러짐 게이지 준비 중단
+            }
+
+            RectTransform hpBarRect = hpFillImage.rectTransform.parent as RectTransform; // 체력바 배경 RectTransform 조회 (채움이 아닌 바 전체 기준)
+
+            if (hpBarRect == null) // 체력바 배경 확인
+            {
+                return; // 흐트러짐 게이지 준비 중단
+            }
+
+            if (disarrayGauge != null) // 기존 흐트러짐 게이지 존재 확인
+            {
+                disarrayGauge.Bind(Stats.RuntimeId); // 표시 대상만 갱신
+                return; // 중복 생성 차단
+            }
+
+            disarrayGauge = BattleDisarrayGaugeView.AttachBelow(hpBarRect, Stats.RuntimeId); // 체력바 아래쪽에 흐트러짐 게이지 부착
         }
 
         private void RefreshElementChip() // 적군 속성 칩 표시 갱신 (Day52 추가)

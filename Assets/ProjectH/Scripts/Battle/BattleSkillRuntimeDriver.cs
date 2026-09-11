@@ -68,6 +68,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             ultimateGaugeAccumulator.Reset(); // 궁극기 게이지 시간 누적값 초기화
             BattleUltimateGaugeRuntimeState.ResetAll(); // 전투 종료 시 궁극기 게이지 Runtime 상태 초기화
             BattleSkillRuntimeState.ResetAll(); // 전투 종료 시 스킬 Runtime 상태 초기화
+            BattleDisarrayRuntimeState.ResetAll(); // 전투 종료 시 흐트러짐 상태 초기화 (Day53 추가)
             BattleElementRuntimeState.ResetAll(); // 전투 종료 시 속성 등록 초기화 (Day52 추가 — 전투 시작 시점에 초기화하면 스탯 생성 순서와 경합해 등록이 지워질 수 있음)
             BattleSkillRuntimeState.SetRegistry(null); // 전투 종료 시 Registry 연결 해제
             registry = null; // 전투 Registry 참조 해제

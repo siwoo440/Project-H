@@ -1,0 +1,73 @@
+{
+  "id": "REGION_NOIR_ARRIVAL",
+  "title": "푸른 등불의 도시",
+  "characterId": "CH_LILIA",
+  "background": "NOIR",
+  "location": "노아르 마법도시",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "해가 지자 거리의 마법등이 하나둘 켜졌다. 돌바닥까지 푸르게 물드는 도시, 노아르."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "…여기가 노아르야. 내가 태어나서 열여섯 살까지 산 곳."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "생각보다 조용하네. 마법도시라길래 더 시끌벅적할 줄 알았어."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "원래는 밤새 강의가 열리고 실험 폭음이 들렸어. 지금은 의회가 야간 통행을 막고 있어. 지하 서고에서 마력이 새어 나오거든."
+    },
+    {
+      "id": "n5",
+      "speaker": "CH_LILIA",
+      "expression": "생각",
+      "text": "금지된 서고… 어릴 때 몰래 들어가 보려다 스승님께 된통 혼난 곳이야. 거기서 폭주한 마력은 시간이 지날수록 짙어져.",
+      "choices": [
+        {
+          "text": "그럼 빨리 끝내자. 네가 길을 알려 줘.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "n6a"
+        },
+        {
+          "text": "릴리아가 몰래 들어갔었다고?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "n6b"
+        }
+      ]
+    },
+    {
+      "id": "n6a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "좋아, 합리적인 판단이야. 오래 끌면 적이 강해지고 방어는 약해져. 짧고 굵게 가자.",
+      "next": "n7"
+    },
+    {
+      "id": "n6b",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "…열 살 때 일이야. 호기심은 연구자의 기본이라고. 아무튼, 안에서는 오래 끌지 마. 마력이 폭주하니까.",
+      "next": "n7"
+    },
+    {
+      "id": "n7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아가 앞장서 서고로 향하는 계단을 내려간다. 푸른 등불 아래, 그녀의 발걸음이 조금 가벼워 보였다."
+    }
+  ]
+}

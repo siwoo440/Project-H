@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_NOIR_SLIME
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_NOIR_SLIME
+  displayName: "\uD3ED\uC8FC\uD55C \uB9C8\uB098 \uC2AC\uB77C\uC784"
+  description: "\uC0C8\uC5B4 \uB098\uC628 \uB9C8\uB825\uC774 \uBB49\uCCD0 \uC0DD\uAE34 \uD478\uB978 \uB369\uC5B4\uB9AC. \uAC00\uAE4C\uC774 \uB2E4\uAC00\uC624\uBA74 \uBAB8\uC18D \uB9C8\uB098\uAC00 \uD280\uC5B4 \uC62C\uB77C \uB530\uB054\uD55C \uCDA9\uACA9\uC744 \uC900\uB2E4."
+  aiType: 1
+  element: 2
+  bossPattern: {fileID: 0}
+  maxHp: 2400
+  attack: 10
+  defense: 20
+  resistance: 55
+  attackSpeed: 1.1
+  attackRange: 1.2
+  moveSpeed: 2.4

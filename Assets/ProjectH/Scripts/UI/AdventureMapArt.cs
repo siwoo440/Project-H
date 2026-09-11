@@ -23,7 +23,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 new Vector3(0.50f, 0.50f, 0.30f), new Vector3(0.36f, 0.64f, 0.20f), new Vector3(0.66f, 0.66f, 0.20f), // 중앙·북서·북동
                 new Vector3(0.80f, 0.80f, 0.14f), new Vector3(0.58f, 0.22f, 0.20f), new Vector3(0.30f, 0.38f, 0.16f), // 균열지대·사막·서부
-                new Vector3(0.70f, 0.40f, 0.16f) // 동부 숲
+                new Vector3(0.70f, 0.40f, 0.16f), new Vector3(0.20f, 0.52f, 0.10f), new Vector3(0.80f, 0.48f, 0.10f) // 동부 숲 · 서부 노아르 · 동쪽 끝 실바란 (Day65)
             };
             Texture2D texture = new Texture2D(Width, Height, TextureFormat.RGBA32, false); // 텍스처
             texture.wrapMode = TextureWrapMode.Clamp; // 가장자리 반복 없음
@@ -70,12 +70,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Color sand = new Color(0.86f, 0.74f, 0.48f); // 남부 사막 (아스타르)
             Color swamp = new Color(0.34f, 0.42f, 0.30f); // 북서 늪지대
             Color rift = new Color(0.28f, 0.10f, 0.14f); // 북동 검은 균열
+            Color noir = new Color(0.30f, 0.38f, 0.66f); // 서부 노아르 마법도시 (푸른 마법등, Day65)
+            Color silvaran = new Color(0.12f, 0.36f, 0.20f); // 동부 실바란 원시림 (Day65)
             Color color = plain; // 기본 초원
             color = Color.Lerp(color, forest, Weight(u, v, 0.64f, 0.46f, 0.18f)); // 숲
             color = Color.Lerp(color, north, Weight(u, v, 0.52f, 0.80f, 0.20f)); // 북부
             color = Color.Lerp(color, sand, Weight(u, v, 0.58f, 0.18f, 0.20f)); // 사막
             color = Color.Lerp(color, swamp, Weight(u, v, 0.30f, 0.66f, 0.14f)); // 늪지대
             color = Color.Lerp(color, rift, Weight(u, v, 0.82f, 0.82f, 0.13f)); // 균열
+            color = Color.Lerp(color, noir, Weight(u, v, 0.18f, 0.52f, 0.10f)); // 노아르
+            color = Color.Lerp(color, silvaran, Weight(u, v, 0.80f, 0.46f, 0.12f)); // 실바란
             color = Color.Lerp(color * 0.85f, color, Mathf.Clamp01(land * 6f)); // 해안 쪽 살짝 어둡게
             color.a = 1f; // 불투명
             return color; // 땅 색 반환

@@ -3,6 +3,7 @@ using ProjectH.Battle; // 던전 진행 상태 기능
 using ProjectH.Battle.Rhythm; // 원형 스프라이트 기능
 using ProjectH.Core; // 프로젝트 핵심 기능
 using ProjectH.Data; // 프로젝트 데이터 기능
+using ProjectH.Dialogue; // 첫 방문 대사 파일 기능
 using ProjectH.Dungeon; // 던전 입장 비용 · 모험 지역 기능
 using ProjectH.SaveSystem; // 저장 및 지역 침식도 기능
 using UnityEngine; // Unity 기본 기능
@@ -238,6 +239,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 if (first != null) y = AddLabel(BuildErosionLine(saveData, first.RegionId), 16, new Color(1f, 0.66f, 0.46f, 1f), FontStyle.Bold, y, 0.045f); // 침식도
             }
 
+            BattleRegionTraitKind trait = region.DungeonIds.Count > 0 ? BattleRegionTraitCatalog.GetKind(region.DungeonIds[0]) : BattleRegionTraitKind.None; // 지역 특징 (Day65)
+            if (trait != BattleRegionTraitKind.None) y = AddLabel($"지역 특징 · {BattleRegionTraitCatalog.GetName(trait)} — {BattleRegionTraitCatalog.GetDescription(trait)}", 15, new Color(0.62f, 0.82f, 1f, 1f), FontStyle.Normal, y, 0.075f); // 특징 안내
+
             y -= 0.015f; // 간격
 
             foreach (string dungeonId in region.DungeonIds) // 던전 카드
@@ -325,7 +329,23 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             GameManager.Instance.Save.SaveCurrent(); // 활력 소비 저장
-            DungeonMapOverlayView.StartRun(DungeonSelectionRuntimeState.SelectedDungeonId); // 노드형 탐험 지도 시작 (Day55, 전투 노드 선택 시 전투 씬 이동)
+            string dungeonId = DungeonSelectionRuntimeState.SelectedDungeonId; // 입장 던전 ID
+            RegionArrivalDefinition arrival = RegionVisitService.GetPendingArrival(entrySave, dungeonId); // 지역 첫 방문 이야기 (Day65)
+
+            if (arrival != null) // 처음 온 지역
+            {
+                DialogueOverlayView view = DialogueOverlayView.Open(DialogueLibrary.Load(arrival.ScriptId), runner => // 고향 동료의 소개 이야기
+                {
+                    RegionVisitService.CompleteArrival(GetSave(), arrival, runner); // 방문 기록 · 호감도
+                    GameManager.Instance.Save.SaveCurrent(); // 저장
+                    DungeonMapOverlayView.StartRun(dungeonId); // 이야기가 끝나면 탐험 시작
+                });
+
+                if (view != null) return; // 이야기 진행 중
+                RegionVisitService.CompleteArrival(entrySave, arrival, null); // 대사 파일이 없으면 방문만 기록
+            }
+
+            DungeonMapOverlayView.StartRun(dungeonId); // 노드형 탐험 지도 시작 (Day55, 전투 노드 선택 시 전투 씬 이동)
         }
 
         private Color GetRegionColor(SaveData saveData, AdventureRegion region) // 지역 원 색 (잠김 회색 · 마을 금색 · 던전은 침식도 색)

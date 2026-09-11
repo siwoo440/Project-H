@@ -14,13 +14,15 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         {
             HashSet<int> counts = new HashSet<int>(); // 적 수 집합 생성
 
-            foreach (string dungeonId in DungeonSelectionRuntimeState.SupportedDungeonIds) // 지원 던전 순회
+            string[] legacyDungeonIds = { "DG001", "DG002", "DG003", "DG004" }; // 폴백 편성을 가진 초기 4던전 (Day65 신규 던전은 웨이브 데이터만 사용)
+
+            foreach (string dungeonId in legacyDungeonIds) // 초기 던전 순회
             {
                 DungeonBattleFormationProfile profile = DungeonBattleFormationProfile.Get(dungeonId); // 현재 던전 편성 조회
                 counts.Add(profile.EnemyCount); // 현재 던전 적 수 저장
             }
 
-            Assert.That(counts.Count, Is.EqualTo(DungeonSelectionRuntimeState.SupportedDungeonIds.Count)); // 네 던전 적 수 차등 검증
+            Assert.That(counts.Count, Is.EqualTo(legacyDungeonIds.Length)); // 네 던전 적 수 차등 검증
             Assert.That(DungeonBattleFormationProfile.Get("DG001").EnemyCount, Is.EqualTo(1)); // DG001 한 개체 편성 검증
             Assert.That(DungeonBattleFormationProfile.Get("DG002").EnemyCount, Is.EqualTo(2)); // DG002 두 개체 편성 검증
             Assert.That(DungeonBattleFormationProfile.Get("DG003").EnemyCount, Is.EqualTo(3)); // DG003 세 개체 편성 검증

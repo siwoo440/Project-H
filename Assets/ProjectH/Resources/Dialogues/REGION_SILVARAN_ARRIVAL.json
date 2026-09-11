@@ -1,0 +1,73 @@
+{
+  "id": "REGION_SILVARAN_ARRIVAL",
+  "title": "울음이 들리는 숲",
+  "characterId": "CH_EVE",
+  "background": "SILVARAN",
+  "location": "실바란 숲",
+  "nodes": [
+    {
+      "id": "s1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "하늘을 가릴 만큼 거대한 나무들. 햇살이 잎 사이로 부서져 내리는 실바란 숲의 입구."
+    },
+    {
+      "id": "s2",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "…돌아왔어. 백 년 넘게 살았던 숲."
+    },
+    {
+      "id": "s3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "아름다운 곳이네. 그런데… 어디선가 울음소리가 들려."
+    },
+    {
+      "id": "s4",
+      "speaker": "CH_EVE",
+      "expression": "진지",
+      "text": "정령들이야. 침식이 뿌리까지 스며들어서, 아파서 울고 있어. 원래는 길 잃은 사람에게 길을 알려 주던 아이들인데."
+    },
+    {
+      "id": "s5",
+      "speaker": "CH_EVE",
+      "expression": "생각",
+      "text": "숲이 정령을 계속 치유해 줘. 그래서 쓰러뜨려도 금방 다시 일어나. 약하게 만들어 두면… 치유가 느려져.",
+      "choices": [
+        {
+          "text": "알았어. 약화부터 걸고 가자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "s6a"
+        },
+        {
+          "text": "이브, 괜찮아? 고향이잖아.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "s6b"
+        }
+      ]
+    },
+    {
+      "id": "s6a",
+      "speaker": "CH_EVE",
+      "expression": "미소",
+      "text": "…응. 당신은 말을 잘 들어서 좋아. 숲 사람보다 낫네.",
+      "next": "s7"
+    },
+    {
+      "id": "s6b",
+      "speaker": "CH_EVE",
+      "expression": "부끄러움",
+      "text": "…괜찮지 않아. 그래도 당신이 같이 와 줘서, 조금은 괜찮아.",
+      "next": "s7"
+    },
+    {
+      "id": "s7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "이브가 활시위를 당긴 채 숲 안으로 걸음을 옮긴다. 나뭇잎이 바람에 흔들리며, 마치 그녀를 반기는 듯했다."
+    }
+  ]
+}

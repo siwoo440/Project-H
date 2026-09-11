@@ -141,6 +141,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new BackgroundPalette(new Color(0.30f, 0.34f, 0.44f), new Color(0.78f, 0.72f, 0.60f), new Color(0.36f, 0.32f, 0.30f), false); // 석조 길드 홀
                 case "INN_NIGHT": // 여관 밤 (Day62 추가)
                     return new BackgroundPalette(new Color(0.03f, 0.04f, 0.10f), new Color(0.24f, 0.16f, 0.22f), new Color(0.10f, 0.07f, 0.08f), true); // 달빛 비치는 방
+                case "NOIR": // 노아르 마법도시 (Day65 추가)
+                    return new BackgroundPalette(new Color(0.06f, 0.08f, 0.22f), new Color(0.32f, 0.46f, 0.86f), new Color(0.14f, 0.16f, 0.30f), true); // 푸른 마법등 밤거리
+                case "SILVARAN": // 실바란 숲 (Day65 추가)
+                    return new BackgroundPalette(new Color(0.20f, 0.42f, 0.30f), new Color(0.74f, 0.92f, 0.62f), new Color(0.14f, 0.30f, 0.16f), false); // 햇살 드는 원시림
                 case "NIGHT": // 밤 일상
                     return new BackgroundPalette(new Color(0.03f, 0.05f, 0.14f), new Color(0.16f, 0.20f, 0.38f), new Color(0.08f, 0.09f, 0.16f), true); // 밤하늘
                 default: // 기본 처리

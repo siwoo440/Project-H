@@ -10,13 +10,13 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 {
     public sealed class AdventureMapTests // Day63 모험 지도 : 지역 · 던전 연결 테스트
     {
-        [Test] // 목업 6지역 구성
+        [Test] // 목업 6지역 + Day65 노아르 · 실바란 구성
         public void Regions_MatchMockupNamesAndKinds() // 구성 테스트
         {
             List<string> names = new List<string>(); // 이름 목록
             foreach (AdventureRegion region in AdventureRegionCatalog.All) names.Add(region.Name); // 이름 수집
 
-            Assert.That(names, Is.EquivalentTo(new[] { "숲", "늪지대", "마왕성", "마을", "사막", "바다" })); // 목업 10번 지역
+            Assert.That(names, Is.EquivalentTo(new[] { "숲", "늪지대", "마왕성", "마을", "사막", "바다", "노아르", "실바란" })); // 목업 10번 지역 + 65일차 지역 확장
             Assert.That(AdventureRegionCatalog.Get(AdventureRegionCatalog.VillageRegionId).Kind, Is.EqualTo(AdventureRegionKind.Village)); // 마을 연결
             Assert.That(AdventureRegionCatalog.FindByDungeon("DG003").Name, Is.EqualTo("늪지대")); // 던전 → 지역
         }

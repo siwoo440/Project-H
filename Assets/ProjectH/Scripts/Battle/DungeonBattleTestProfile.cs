@@ -8,6 +8,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private static readonly DungeonBattleTestProfile Dg002 = new DungeonBattleTestProfile("DG002", 1.50f, 1.25f, 1.20f, 1.10f); // DG002 중간 테스트 배율
         private static readonly DungeonBattleTestProfile Dg003 = new DungeonBattleTestProfile("DG003", 2.25f, 1.60f, 1.50f, 1.35f); // DG003 상급 테스트 배율
         private static readonly DungeonBattleTestProfile Dg004 = new DungeonBattleTestProfile("DG004", 3.50f, 2.10f, 1.90f, 1.70f); // DG004 고난도 테스트 배율
+        private static readonly DungeonBattleTestProfile Dg005 = new DungeonBattleTestProfile("DG005", 2.60f, 1.80f, 1.65f, 1.50f); // DG005 노아르 (Day65 — 늪지대와 마왕성 사이)
+        private static readonly DungeonBattleTestProfile Dg006 = new DungeonBattleTestProfile("DG006", 2.90f, 1.90f, 1.75f, 1.55f); // DG006 실바란 (Day65)
 
         public string DungeonId { get; } // 프로필 던전 ID 반환
         public float HealthMultiplier { get; } // 적 체력 배율 반환
@@ -40,6 +42,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 return Dg004; // DG004 프로필 반환
             }
+
+            if (string.Equals(dungeonId, Dg005.DungeonId, StringComparison.Ordinal)) return Dg005; // DG005 프로필 반환 (Day65)
+            if (string.Equals(dungeonId, Dg006.DungeonId, StringComparison.Ordinal)) return Dg006; // DG006 프로필 반환 (Day65)
 
             return Dg001; // DG001 및 직접 전투 기본 프로필 반환
         }

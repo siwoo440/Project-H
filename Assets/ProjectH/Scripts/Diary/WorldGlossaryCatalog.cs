@@ -41,8 +41,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역
             new GlossaryEntry("제1차 마왕전쟁", GlossaryCategory.World, "네메시스가 마족과 침식된 생명체를 이끌고 대륙 전역을 공격한 옛 전쟁. 여신이 인간·엘프·수인·정령과 함께 맞서 마왕을 대륙 깊은 곳에 봉인하며 끝났다."), // 전쟁
             new GlossaryEntry("봉인의 진실", GlossaryCategory.World, "아스타르 사막의 고대 장치와 여신이 숨겨 온 과거. 마왕의 봉인이 왜 약해졌는지에 대한 답이 여기에 있다.", SealTruthFlag), // 스토리 진행 후 해금
             new GlossaryEntry("레티시아 왕국", GlossaryCategory.Region, "대륙 중앙의 인간 국가. 리리아스 신앙과 기사도로 발전했으며, 주인공이 처음 소환된 성역이 있다. 최근 국경에서 마물이 늘고 성역 근처에서도 침식이 발견되고 있다."), // 레티시아
-            new GlossaryEntry("노아르 마법도시", GlossaryCategory.Region, "대륙 서부, 마법사 의회가 다스리는 독립 도시. 혈통보다 지식이 중요하며 밤이면 마법등이 도시를 푸르게 밝힌다. 지하에는 금지된 실험의 흔적이 숨어 있다."), // 노아르
-            new GlossaryEntry("실바란 숲", GlossaryCategory.Region, "대륙 동부의 거대한 원시림이자 마나 흐름이 모이는 신성한 장소. 엘프와 정령이 살지만, 침식이 번지며 온화하던 정령들까지 사나워지고 있다."), // 실바란
+            new GlossaryEntry("노아르 마법도시", GlossaryCategory.Region, "대륙 서부, 마법사 의회가 다스리는 독립 도시. 혈통보다 지식이 중요하며 밤이면 마법등이 도시를 푸르게 밝힌다. 지하에는 금지된 실험의 흔적이 숨어 있다.", ProjectH.Dungeon.RegionVisitService.NoirVisitFlag), // 노아르 (Day65 — 첫 방문 시 열림)
+            new GlossaryEntry("실바란 숲", GlossaryCategory.Region, "대륙 동부의 거대한 원시림이자 마나 흐름이 모이는 신성한 장소. 엘프와 정령이 살지만, 침식이 번지며 온화하던 정령들까지 사나워지고 있다.", ProjectH.Dungeon.RegionVisitService.SilvaranVisitFlag), // 실바란 (Day65 — 첫 방문 시 열림)
             new GlossaryEntry("카르니안 제국", GlossaryCategory.Region, "대륙 북부의 군사 국가. 혹독한 기후 속에서 강한 군대와 계급 체계로 성장했다. 마왕과 싸운다는 명분으로 주변까지 통제하려 한다."), // 카르니안
             new GlossaryEntry("아스타르 사막", GlossaryCategory.Region, "대륙 남부, 멸망한 고대 문명의 신전과 지하 도시가 잠든 사막. 마왕을 봉인하던 고대 장치의 잔해가 남아 있다."), // 아스타르
             new GlossaryEntry("검은 균열지대", GlossaryCategory.Region, "대륙 외곽의 금지된 땅. 마왕전쟁 때 네메시스의 힘이 가장 크게 폭주한 곳으로, 하늘은 붉고 검으며 땅에서는 검은 안개가 피어오른다."), // 균열지대

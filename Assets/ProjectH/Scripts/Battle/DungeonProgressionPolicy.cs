@@ -78,6 +78,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case "DG003": // 세 번째 던전 처리
                     return "DG002"; // 두 번째 던전 반환
                 case "DG004": // 네 번째 던전 처리
+                case "DG005": // 노아르 금지된 지하 서고 (Day65 — 늪지대 클리어 후 마왕성 전에 도는 중반 지역)
+                case "DG006": // 실바란 울부짖는 정령의 숲 (Day65)
                     return "DG003"; // 세 번째 던전 반환
                 default: // 첫 던전 또는 미지원 처리
                     return string.Empty; // 이전 던전 없음 반환

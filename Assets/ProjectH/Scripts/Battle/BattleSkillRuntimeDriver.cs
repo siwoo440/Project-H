@@ -11,6 +11,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private bool affinityGaugeApplied; // 호감도 시작 게이지 적용 완료 여부 (Day56 추가)
         private bool bondSynergyApplied; // 결속 조합 시너지 적용 완료 여부 (Day59 추가)
         private readonly BattleUltimateGaugeTickAccumulator ultimateGaugeAccumulator = new BattleUltimateGaugeTickAccumulator(); // 궁극기 게이지 시간 누적기
+        private readonly BattleRegionTraitTicker regionTraits = new BattleRegionTraitTicker(); // 지역 특징 발동기 (Day65 추가 — 전투마다 새로 생성)
 
         private void Awake() // Runtime Driver 초기화
         {
@@ -25,6 +26,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             BattleSkillRuntimeState.TickPeriodicEffects(Time.time); // 현재 전투 시간 기준 주기 피해 Tick 처리
             BattleRuneEffects.Tick(registry, Time.deltaTime); // 광기·재생·보호막의 룬 주기 처리 (Day60 추가)
             TickUltimateGauge(Time.deltaTime); // 전투 경과 시간 기준 궁극기 게이지 충전 처리
+            regionTraits.Tick(registry, BattleRegionTraitCatalog.GetKind(BattleContextRuntimeState.CurrentDungeonId), Time.deltaTime); // 마나 폭주 · 정령의 가호 (Day65 추가)
         }
 
         private void TryApplyAffinityStartGauge() // 수령한 유대 보상의 궁극기 시작 게이지 적용 (Day56 추가, 게이지 초기화 이후 생성되는 Driver에서 1회)

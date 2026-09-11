@@ -6,7 +6,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 {
     public static class DungeonSelectionRuntimeState // 던전 선택 런타임 상태
     {
-        private static readonly string[] DungeonIds = { "DG001", "DG002", "DG003", "DG004" }; // 지원 던전 ID 목록
+        private static readonly string[] DungeonIds = { "DG001", "DG002", "DG003", "DG004", "DG005", "DG006" }; // 지원 던전 ID 목록 (Day65 노아르 DG005 · 실바란 DG006 추가)
         private static string selectedDungeonId = string.Empty; // 현재 선택 던전 ID
         private static Func<string, bool> unlockEvaluator; // 현재 던전 해금 검사 함수
 

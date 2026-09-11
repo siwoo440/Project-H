@@ -1,5 +1,6 @@
 using System.Collections.Generic; // 목록 자료형
 using ProjectH.Dialogue; // 대화 파일 기능
+using ProjectH.Dungeon; // 지역 첫 방문 이야기 기능
 using ProjectH.SaveSystem; // 개인 이벤트·결속 목록 기능
 using ProjectH.Village; // 마을 대사 ID 기능
 
@@ -11,7 +12,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
         Bond = 1, // 결속 대사
         Village = 2, // 마을 이벤트
         InnNight = 3, // 여관 특별한 밤
-        Recruit = 4 // 동료 합류 (Day64 추가)
+        Recruit = 4, // 동료 합류 (Day64 추가)
+        Region = 5 // 지역 첫 방문 (Day65 추가)
     }
 
     public sealed class DiaryScenarioEntry // 다시 볼 수 있는 이야기 한 편
@@ -72,6 +74,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 case DiaryScenarioCategory.Bond: return "결속"; // 결속
                 case DiaryScenarioCategory.Village: return "마을"; // 마을
                 case DiaryScenarioCategory.Recruit: return "동료 합류"; // 합류 (Day64)
+                case DiaryScenarioCategory.Region: return "지역"; // 첫 방문 (Day65)
                 default: return "특별한 밤"; // 여관
             }
         }
@@ -83,6 +86,11 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
             foreach (CharacterEventDefinition definition in CharacterEventCatalog.All) // 개인 이벤트
             {
                 result.Add(new DiaryScenarioEntry(definition.ScriptId, definition.CharacterId, DiaryScenarioCategory.Personal)); // 추가
+            }
+
+            foreach (RegionArrivalDefinition definition in RegionVisitService.All) // 지역 첫 방문 2편 (Day65)
+            {
+                result.Add(new DiaryScenarioEntry(definition.ScriptId, definition.CharacterId, DiaryScenarioCategory.Region)); // 추가
             }
 
             foreach (RecruitDefinition definition in RecruitService.All) // 동료 합류 8편 (Day64)

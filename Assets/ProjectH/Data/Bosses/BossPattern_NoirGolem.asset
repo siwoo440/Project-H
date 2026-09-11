@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_NoirGolem
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "\uB9C8\uB825 \uACFC\uBD80\uD558"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "\uD3ED\uC8FC"
+    enterHealthRatio: 0.5
+    forceAfterSeconds: 150
+    attackBonus: 0.25
+    attackSpeedBonus: 0.2
+  patterns:
+  - displayName: "\uB9C8\uB825 \uBC29\uCD9C"
+    kind: 0
+    damageType: 1
+    powerRatio: 1.3
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.5
+    cooldownSeconds: 11
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uB8EC \uC7A5\uAC11"
+    kind: 2
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.35
+    effectDuration: 8
+    windupSeconds: 1.5
+    cooldownSeconds: 18
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uB9C8\uB3C4 \uC8FC\uBA39"
+    kind: 1
+    damageType: 0
+    powerRatio: 2.8
+    effectValue: 0
+    effectDuration: 1.5
+    windupSeconds: 3
+    cooldownSeconds: 15
+    minPhase: 2
+    interruptible: 1
+  - displayName: "\uACFC\uBD80\uD558 \uD3ED\uBC1C"
+    kind: 0
+    damageType: 1
+    powerRatio: 2.4
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 4
+    cooldownSeconds: 24
+    minPhase: 2
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

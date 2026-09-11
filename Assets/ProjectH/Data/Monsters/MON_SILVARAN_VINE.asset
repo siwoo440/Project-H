@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_SILVARAN_VINE
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_SILVARAN_VINE
+  displayName: "\uAC00\uC2DC \uB369\uAD74"
+  description: "\uB9C8\uB098\uB97C \uB108\uBB34 \uB9CE\uC774 \uBE68\uC544\uB4E4\uC5EC \uAD34\uBB3C\uCC98\uB7FC \uC790\uB780 \uB369\uAD74. \uC81C\uC790\uB9AC\uC5D0\uC11C \uAC00\uC2DC\uB97C \uC3D8\uC544 \uB300\uBA70 \uC27D\uAC8C \uC4F0\uB7EC\uC9C0\uC9C0 \uC54A\uB294\uB2E4."
+  aiType: 2
+  element: 3
+  bossPattern: {fileID: 0}
+  maxHp: 2900
+  attack: 9
+  defense: 40
+  resistance: 40
+  attackSpeed: 0.7
+  attackRange: 3.2
+  moveSpeed: 0.4

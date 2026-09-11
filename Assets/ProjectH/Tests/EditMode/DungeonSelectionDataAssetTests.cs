@@ -12,6 +12,8 @@ namespace ProjectH.Tests // 프로젝트 테스트 영역
         [TestCase("DG002")] // 두 번째 던전 검증 지정
         [TestCase("DG003")] // 세 번째 던전 검증 지정
         [TestCase("DG004")] // 네 번째 던전 검증 지정
+        [TestCase("DG005")] // 노아르 던전 검증 지정 (Day65)
+        [TestCase("DG006")] // 실바란 던전 검증 지정 (Day65)
         public void DungeonAsset_ExistsWithMatchingId(string dungeonId) // 던전 에셋 ID 일치 검증
         {
             string path = $"Assets/ProjectH/Data/Dungeons/{dungeonId}.asset"; // 던전 에셋 경로 생성

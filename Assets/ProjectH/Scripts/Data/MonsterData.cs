@@ -21,6 +21,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         [SerializeField] private string displayName; // 몬스터 표시 이름
         [SerializeField] private EnemyAIType aiType = EnemyAIType.Normal; // 몬스터 AI 유형
         [SerializeField] private ElementType element = ElementType.None; // 몬스터 전투 속성 (Day52 추가)
+        [SerializeField] private BossPatternData bossPattern; // 보스 페이즈·특수 패턴 데이터 (Day54 추가, 비어 있으면 일반 적)
         [SerializeField, Min(1)] private int maxHp = 100; // 최대 체력
         [SerializeField, Min(0)] private int attack = 10; // 공격력
         [SerializeField, Min(0)] private int defense = 5; // 방어력
@@ -32,6 +33,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
         public string DisplayName => displayName; // 표시 이름 반환
         public EnemyAIType AIType => aiType; // 적군 AI 유형 반환
         public ElementType Element => element; // 전투 속성 반환 (Day52 추가)
+        public BossPatternData BossPattern => bossPattern; // 보스 패턴 데이터 반환 (Day54 추가)
         public int MaxHp => maxHp; // 최대 체력 반환
         public int Attack => attack; // 공격력 반환
         public int Defense => defense; // 방어력 반환

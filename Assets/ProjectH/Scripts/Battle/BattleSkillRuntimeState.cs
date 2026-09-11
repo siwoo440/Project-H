@@ -14,7 +14,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         Stun = 6, // 행동 불가 기절
         Silence = 7, // 스킬 사용 불가 침묵 (Day51 추가)
         AttackSpeedReductionPercent = 8, // 공격 속도 비율 감소 둔화 (Day51 추가)
-        AttackPercent = 9 // 공격력 비율 증가 (Day51 추가)
+        AttackPercent = 9, // 공격력 비율 증가 (Day51 추가)
+        AttackSpeedPercent = 10, // 공격 속도 비율 증가 가속 (Day54 추가)
+        Invulnerable = 11 // 모든 피해 무시 무적 (Day54 추가)
     }
 
     public static class BattleSkillRuntimeState // 스킬 기반 전투 Runtime 상태 저장소
@@ -182,6 +184,16 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public static float GetAttackSpeedReduction(string runtimeId, float nowSeconds = -1f) // 공격 속도 감소율 조회 (Day51 추가)
         {
             return Mathf.Clamp(GetModifierTotal(runtimeId, BattleRuntimeModifierKind.AttackSpeedReductionPercent, nowSeconds), 0f, MaxAttackSpeedReduction); // 상한 보정 공격 속도 감소율 반환
+        }
+
+        public static float GetAttackSpeedMultiplier(string runtimeId, float nowSeconds = -1f) // 공격 속도 증가 배율 조회 (Day54 추가)
+        {
+            return 1f + GetModifierTotal(runtimeId, BattleRuntimeModifierKind.AttackSpeedPercent, nowSeconds); // 가속 반영 배율 반환
+        }
+
+        public static bool IsInvulnerable(string runtimeId, float nowSeconds = -1f) // 현재 무적 상태 확인 (Day54 추가)
+        {
+            return GetModifierTotal(runtimeId, BattleRuntimeModifierKind.Invulnerable, nowSeconds) > 0f; // 무적 Modifier 존재 여부 반환
         }
 
         public static float GetAttackMultiplier(string runtimeId, float nowSeconds = -1f) // 공격력 증가 배율 조회 (Day51 추가)

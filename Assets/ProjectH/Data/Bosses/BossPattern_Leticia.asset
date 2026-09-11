@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_Leticia
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "침식의 수호"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "분노"
+    enterHealthRatio: 0.6
+    forceAfterSeconds: 0
+    attackBonus: 0.2
+    attackSpeedBonus: 0.15
+  - displayName: "광폭"
+    enterHealthRatio: 0.25
+    forceAfterSeconds: 180
+    attackBonus: 0.35
+    attackSpeedBonus: 0.35
+  patterns:
+  - displayName: "침식 파동"
+    kind: 0
+    damageType: 1
+    powerRatio: 1.4
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.5
+    cooldownSeconds: 12
+    minPhase: 1
+    interruptible: 1
+  - displayName: "침식 갑주"
+    kind: 2
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.4
+    effectDuration: 8
+    windupSeconds: 1.5
+    cooldownSeconds: 20
+    minPhase: 1
+    interruptible: 1
+  - displayName: "파수꾼의 강타"
+    kind: 1
+    damageType: 0
+    powerRatio: 3
+    effectValue: 0
+    effectDuration: 2
+    windupSeconds: 3
+    cooldownSeconds: 16
+    minPhase: 2
+    interruptible: 1
+  - displayName: "재정비"
+    kind: 3
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.5
+    effectDuration: 0
+    windupSeconds: 2
+    cooldownSeconds: 18
+    minPhase: 2
+    interruptible: 1
+  - displayName: "종말의 침식"
+    kind: 0
+    damageType: 1
+    powerRatio: 2.6
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 4
+    cooldownSeconds: 25
+    minPhase: 3
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

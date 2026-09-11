@@ -14,6 +14,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private Text introText; // 보스 등장 안내 텍스트
         private GameObject healthBarRoot; // 상단 보스 체력바 루트
         private BattleDisarrayGaugeView bossDisarrayGauge; // 보스 체력바 아래 흐트러짐 게이지 (Day53 추가)
+        private readonly System.Collections.Generic.List<GameObject> phaseMarkers = new System.Collections.Generic.List<GameObject>(); // 보스 체력바 페이즈 눈금 목록 (Day54 추가)
         private Text bossNameText; // 보스 체력바 이름 텍스트
         private Image bossHpFillImage; // 보스 체력바 채움 이미지
         private Text bossHpText; // 보스 체력바 수치 텍스트
@@ -147,9 +148,59 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
+        public void AnnouncePhase(int phaseNumber, string phaseName) // 보스 페이즈 전환 중앙 연출 실행 (Day54 추가, 등장 연출 재사용)
+        {
+            string title = string.IsNullOrWhiteSpace(phaseName) ? $"{phaseNumber}페이즈" : $"{phaseNumber}페이즈 — {phaseName}"; // 페이즈 전환 문구 구성
+
+            if (introRoutine != null) // 기존 연출 진행 확인
+            {
+                StopCoroutine(introRoutine); // 기존 연출 중단
+            }
+
+            introRoutine = StartCoroutine(PlayAnnounceRoutine(title)); // 페이즈 전환 연출 시작
+        }
+
+        public void SetPhaseMarkers(System.Collections.Generic.IReadOnlyList<float> healthRatios) // 보스 체력바 페이즈 전환 눈금 표시 (Day54 추가)
+        {
+            for (int index = 0; index < phaseMarkers.Count; index++) // 기존 눈금 순회
+            {
+                if (phaseMarkers[index] != null) // 눈금 객체 존재 확인
+                {
+                    Destroy(phaseMarkers[index]); // 기존 눈금 제거
+                }
+            }
+
+            phaseMarkers.Clear(); // 눈금 목록 초기화
+            RectTransform hpBackRect = bossHpFillImage == null ? null : bossHpFillImage.rectTransform.parent as RectTransform; // 보스 체력 게이지 배경 조회
+
+            if (hpBackRect == null || healthRatios == null) // 게이지 배경 및 비율 목록 확인
+            {
+                return; // 눈금 표시 중단
+            }
+
+            for (int index = 0; index < healthRatios.Count; index++) // 페이즈 진입 비율 순회
+            {
+                Image marker = CreateImage(hpBackRect, $"PhaseMarker_{index}", new Color(1f, 0.92f, 0.70f, 0.95f)); // 세로 눈금 이미지 생성
+                marker.raycastTarget = false; // 눈금 클릭 차단 비활성화
+                RectTransform markerRect = marker.rectTransform; // 눈금 RectTransform 조회
+                float ratio = Mathf.Clamp01(healthRatios[index]); // 눈금 위치 비율 보정
+                markerRect.anchorMin = new Vector2(ratio, 0f); // 눈금 하단 앵커 설정
+                markerRect.anchorMax = new Vector2(ratio, 1f); // 눈금 상단 앵커 설정
+                markerRect.pivot = new Vector2(0.5f, 0.5f); // 눈금 중앙 피벗 설정
+                markerRect.sizeDelta = new Vector2(3f, 4f); // 눈금 두께 및 상하 돌출 설정
+                markerRect.anchoredPosition = Vector2.zero; // 눈금 위치 오프셋 초기화
+                phaseMarkers.Add(marker.gameObject); // 눈금 목록 등록
+            }
+        }
+
         private IEnumerator PlayIntroRoutine(string bossDisplayName) // 보스 등장 연출 코루틴 (붉은 번쩍임 + 중앙 문구)
         {
-            introText.text = string.IsNullOrWhiteSpace(bossDisplayName) ? "보스 등장!" : $"{bossDisplayName}\n보스 등장!"; // 보스 등장 문구 구성
+            yield return PlayAnnounceRoutine(string.IsNullOrWhiteSpace(bossDisplayName) ? "보스 등장!" : $"{bossDisplayName}\n보스 등장!"); // 공통 중앙 연출로 등장 문구 재생 (Day54 공통화)
+        }
+
+        private IEnumerator PlayAnnounceRoutine(string message) // 붉은 번쩍임 + 중앙 문구 공통 연출 코루틴 (Day54 공통화)
+        {
+            introText.text = message; // 중앙 연출 문구 적용
             yield return FadeGraphic(flashImage, 0f, 0.55f, 0.08f); // 붉은 화면 빠르게 번쩍임 시작
             yield return FadeGraphic(flashImage, 0.55f, 0.08f, 0.10f); // 붉은 화면 1차 감쇠
             yield return FadeGraphic(flashImage, 0.08f, 0.45f, 0.08f); // 붉은 화면 2차 번쩍임

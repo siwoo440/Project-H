@@ -25,6 +25,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private BattleTimeController pausedTimeController; // 챌린지 동안 일시정지시킨 전투 시간 컨트롤러 (Day50 추가)
         private bool ultimateChallengeActive; // 리듬 챌린지 진행 여부 (Day50 추가)
         private BattleStatusEffectStripView statusStrip; // 초상화 위 상태이상 표시 (Day51 추가)
+        private Text slotNumberText; // 초상화 좌상단 숫자키 슬롯 번호 텍스트 (Day54 추가)
         [SerializeField] private Outline portraitSelectionOutline; // 선택 캐릭터 초상화 윤곽 효과
         public BattleStats Stats { get; private set; } // 연결된 전투 스탯
         public float UltimateRatio => ultimateRatio; // 현재 궁극기 게이지 비율 반환
@@ -260,6 +261,61 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             portraitButton.onClick.RemoveListener(HandlePortraitClicked); // 기존 동일 초상화 클릭 이벤트 제거
             portraitButton.onClick.AddListener(HandlePortraitClicked); // 초상화 클릭 궁극기 실행 이벤트 연결
             EnsureStatusStrip(portraitRoot as RectTransform); // 초상화 위 상태이상 표시 준비 (Day51 추가)
+        }
+
+        public void SetSlotNumber(int slotNumber) // 초상화 좌상단 숫자키 슬롯 번호 표시 (Day54 추가)
+        {
+            RectTransform portraitRect = portraitText == null ? null : portraitText.transform.parent as RectTransform; // 초상화 배경 RectTransform 조회
+
+            if (portraitRect == null) // 초상화 배경 존재 확인
+            {
+                return; // 슬롯 번호 표시 중단
+            }
+
+            if (slotNumberText == null) // 슬롯 번호 텍스트 생성 여부 확인
+            {
+                slotNumberText = CreateSlotNumberBadge(portraitRect); // 슬롯 번호 배지 생성
+            }
+
+            bool visible = slotNumber > 0; // 유효 슬롯 번호 여부 판정
+            slotNumberText.transform.parent.gameObject.SetActive(visible); // 배지 표시 여부 적용
+            slotNumberText.text = visible ? slotNumber.ToString() : string.Empty; // 슬롯 번호 문구 적용
+        }
+
+        private static Text CreateSlotNumberBadge(RectTransform portraitRect) // 초상화 좌상단 슬롯 번호 배지 생성 (Day54 추가)
+        {
+            GameObject badgeObject = new GameObject("SlotNumberBadge", typeof(RectTransform), typeof(Image)); // 배지 배경 객체 생성
+            badgeObject.transform.SetParent(portraitRect, false); // 초상화 배경 자식으로 연결
+            RectTransform badgeRect = badgeObject.GetComponent<RectTransform>(); // 배지 RectTransform 조회
+            badgeRect.anchorMin = new Vector2(0f, 1f); // 초상화 좌상단 최소 앵커 설정
+            badgeRect.anchorMax = new Vector2(0f, 1f); // 초상화 좌상단 최대 앵커 설정
+            badgeRect.pivot = new Vector2(0f, 1f); // 좌상단 기준 피벗 설정
+            badgeRect.sizeDelta = new Vector2(24f, 24f); // 배지 크기 설정
+            badgeRect.anchoredPosition = new Vector2(5f, -5f); // 초상화 테두리 안쪽 여백 적용
+            Image badgeImage = badgeObject.GetComponent<Image>(); // 배지 배경 이미지 조회
+            badgeImage.color = new Color(0.10f, 0.15f, 0.26f, 0.88f); // 남색 배지 배경 색상 적용
+            badgeImage.raycastTarget = false; // 배지 클릭 차단 비활성화 (초상화 궁극기 버튼 입력 유지)
+
+            GameObject textObject = new GameObject("SlotNumberText", typeof(RectTransform), typeof(Text), typeof(Outline)); // 슬롯 번호 텍스트 객체 생성
+            textObject.transform.SetParent(badgeObject.transform, false); // 배지 자식으로 연결
+            RectTransform textRect = textObject.GetComponent<RectTransform>(); // 텍스트 RectTransform 조회
+            textRect.anchorMin = Vector2.zero; // 텍스트 최소 앵커 전체 설정
+            textRect.anchorMax = Vector2.one; // 텍스트 최대 앵커 전체 설정
+            textRect.offsetMin = Vector2.zero; // 텍스트 최소 오프셋 초기화
+            textRect.offsetMax = Vector2.zero; // 텍스트 최대 오프셋 초기화
+            Text text = textObject.GetComponent<Text>(); // 슬롯 번호 Text 조회
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            text.fontSize = 17; // 슬롯 번호 크기 적용
+            text.fontStyle = FontStyle.Bold; // 슬롯 번호 굵기 적용
+            text.color = Color.white; // 슬롯 번호 흰색 적용
+            text.alignment = TextAnchor.MiddleCenter; // 슬롯 번호 중앙 정렬
+            text.horizontalOverflow = HorizontalWrapMode.Overflow; // 좁은 영역에서도 숫자 유지
+            text.verticalOverflow = VerticalWrapMode.Overflow; // 세로 잘림 방지
+            text.raycastTarget = false; // 슬롯 번호 입력 비활성화 (초상화 궁극기 버튼 입력 유지)
+            Outline outline = textObject.GetComponent<Outline>(); // 슬롯 번호 외곽선 조회
+            outline.effectColor = new Color(0f, 0f, 0f, 0.6f); // 어두운 외곽선 색상 적용
+            outline.effectDistance = new Vector2(1f, -1f); // 외곽선 두께 적용
+            return text; // 생성 슬롯 번호 텍스트 반환
         }
 
         private void EnsureStatusStrip(RectTransform portraitRect) // 초상화 위 상태이상 표시 준비 (Day51 추가)

@@ -1,5 +1,6 @@
 using System; // 고유 결과 ID 생성 기능
 using System.Collections.Generic; // 목록 자료형
+using ProjectH.Battle.Boss; // 보스 페이즈·패턴 기능 (Day54)
 using ProjectH.Core; // 프로젝트 핵심 기능
 using ProjectH.Data; // 몬스터 데이터 기능
 using ProjectH.SaveSystem; // 저장 데이터 기능
@@ -320,6 +321,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 unit.gameObject.SetActive(true); // 아군 전투 유닛 표시
                 spawnedUnits.Add(unit); // 생성 유닛 목록 등록
                 hudCards[index].Bind(entry.Stats); // 하단 HUD 카드 연결
+                hudCards[index].SetSlotNumber(index + 1); // 숫자키 슬롯 번호 표시 (Day54 추가, 숫자키 1~4 선택 순서와 동일)
             }
 
             return true; // 아군 생성 성공
@@ -388,6 +390,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 deathHandler.Configure(enemy.Actor, combatRegistry, attackController, enemyBrain, null, enemy); // 적군 사망 처리 참조 연결
                 enemy.gameObject.SetActive(true); // 적군 전투 View 표시
                 spawnedEnemies.Add(enemy); // 생성 적군 목록 등록
+
+                if (monsterData.BossPattern != null) // 보스 패턴 데이터 보유 여부 확인 (Day54)
+                {
+                    BattleBossController bossController = enemy.gameObject.AddComponent<BattleBossController>(); // 보스 페이즈·패턴 컨트롤러 추가
+                    bossController.Configure(enemy, enemyBrain, combatRegistry, monsterData.BossPattern); // 보스 컨트롤러 참조 연결
+                }
 
                 if (monsterData.AIType == EnemyAIType.Boss && bossStats == null) // 보스형 적군 최초 등장 확인 (Day46)
                 {

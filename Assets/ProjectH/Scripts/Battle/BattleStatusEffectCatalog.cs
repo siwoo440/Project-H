@@ -17,7 +17,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         DamageShield = 10, // 받는 피해 감소
         HealUp = 11, // 받는 회복량 증가
         CounterUp = 12, // 반격 확률 증가
-        AttackUp = 13 // 공격력 증가
+        AttackUp = 13, // 공격력 증가
+        Haste = 14, // 공격 속도 증가 가속 (Day54 추가)
+        Invulnerable = 15 // 무적 (Day54 추가)
     }
 
     public readonly struct BattleStatusEffectSnapshot // 현재 활성 상태이상 표시 정보 (Day51 신규)
@@ -75,6 +77,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return "반격 증가"; // 반격 증가 문구 반환
                 case BattleStatusEffectId.AttackUp: // 공격 증가 처리
                     return "공격 증가"; // 공격 증가 문구 반환
+                case BattleStatusEffectId.Haste: // 가속 처리 (Day54 추가)
+                    return "가속"; // 가속 문구 반환
+                case BattleStatusEffectId.Invulnerable: // 무적 처리 (Day54 추가)
+                    return "무적"; // 무적 문구 반환
                 default: // 미분류 상태이상 처리
                     return "-"; // 미분류 표시 문구 반환
             }
@@ -110,6 +116,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return "반"; // 반격 증가 축약 문구 반환
                 case BattleStatusEffectId.AttackUp: // 공격 증가 처리
                     return "공"; // 공격 증가 축약 문구 반환
+                case BattleStatusEffectId.Haste: // 가속 처리 (Day54 추가)
+                    return "속"; // 가속 축약 문구 반환
+                case BattleStatusEffectId.Invulnerable: // 무적 처리 (Day54 추가)
+                    return "무"; // 무적 축약 문구 반환
                 default: // 미분류 상태이상 처리
                     return "?"; // 미분류 축약 문구 반환
             }
@@ -155,10 +165,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return DebuffColor; // 일반 디버프 색상 반환
                 case BattleStatusEffectId.DefenseUp: // 방어 증가 처리
                 case BattleStatusEffectId.DamageShield: // 피해 감소 처리
+                case BattleStatusEffectId.Invulnerable: // 무적 처리 (Day54 추가)
                     return GuardColor; // 방어 계열 버프 색상 반환
                 case BattleStatusEffectId.HealUp: // 회복 증가 처리
                 case BattleStatusEffectId.CounterUp: // 반격 증가 처리
                 case BattleStatusEffectId.AttackUp: // 공격 증가 처리
+                case BattleStatusEffectId.Haste: // 가속 처리 (Day54 추가)
                     return BuffColor; // 일반 버프 색상 반환
                 default: // 미분류 상태이상 처리
                     return UnknownColor; // 미분류 색상 반환
@@ -189,6 +201,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     return BattleStatusEffectId.Slow; // 둔화 상태이상 반환
                 case BattleRuntimeModifierKind.AttackPercent: // 공격력 증가 처리
                     return BattleStatusEffectId.AttackUp; // 공격 증가 상태이상 반환
+                case BattleRuntimeModifierKind.AttackSpeedPercent: // 공격 속도 증가 처리 (Day54 추가)
+                    return BattleStatusEffectId.Haste; // 가속 상태이상 반환
+                case BattleRuntimeModifierKind.Invulnerable: // 무적 처리 (Day54 추가)
+                    return BattleStatusEffectId.Invulnerable; // 무적 상태이상 반환
                 default: // 미분류 Modifier 처리
                     return BattleStatusEffectId.None; // 상태이상 없음 반환
             }

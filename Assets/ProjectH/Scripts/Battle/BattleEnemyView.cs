@@ -133,6 +133,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             statusStrip.ShowElementChip(BattleElementRuntimeState.GetElement(Stats.RuntimeId)); // 등록 속성 기반 속성 칩 표시
         }
 
+        public RectTransform GetWorldAnchorRect() // 적군 월드 UI 기준 RectTransform 공개 조회 (Day54 추가, 보스 예고 표시 부착용)
+        {
+            return GetStatusAnchorRect(); // 상태이상 표시와 같은 기준 반환
+        }
+
         private RectTransform GetStatusAnchorRect() // 상태이상 표시 부착 기준 RectTransform 조회 (Day51 추가)
         {
             if (worldCanvas != null) // 적군 월드 Canvas 확인

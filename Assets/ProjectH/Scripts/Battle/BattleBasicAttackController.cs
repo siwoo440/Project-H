@@ -173,7 +173,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             state = BattleAttackState.Cooldown; // 현재 위치에서 공격 대기 상태 전환
-            stateTimer = BattleBasicAttackTiming.GetInterval(actor.Stats.AttackSpeed, BattleSkillRuntimeState.GetAttackSpeedReduction(actor.Stats.RuntimeId)); // 둔화 반영 공격속도 기반 다음 공격 시간 설정 (Day51 수정)
+            float hastedAttackSpeed = actor.Stats.AttackSpeed * BattleSkillRuntimeState.GetAttackSpeedMultiplier(actor.Stats.RuntimeId); // 가속 반영 공격속도 계산 (Day54 추가, 가속 없으면 1.0배)
+            stateTimer = BattleBasicAttackTiming.GetInterval(hastedAttackSpeed, BattleSkillRuntimeState.GetAttackSpeedReduction(actor.Stats.RuntimeId)); // 가속·둔화 반영 공격속도 기반 다음 공격 시간 설정 (Day51·54 수정)
         }
 
         private void UpdateCooldown() // 현재 전선 위치에서 다음 기본 공격 대기

@@ -183,6 +183,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return 0; // 체력 변경 불가 대상 차단
             }
 
+            if (BattleSkillRuntimeState.IsInvulnerable(Stats.RuntimeId)) // 무적 상태 확인 (Day54 추가, 보스 페이즈 전환 등)
+            {
+                FlashHitPreview(); // 피격 표시만 유지
+                return 0; // 무적 중 피해 무시
+            }
+
             int remainingDamage = BattlePassiveRuntimeState.AbsorbShield(Stats.RuntimeId, result.Damage, out int absorbedDamage); // 패시브 보호막 우선 피해 흡수
 
             if (absorbedDamage > 0) // 보호막 피해 흡수 확인

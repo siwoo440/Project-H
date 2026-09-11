@@ -154,6 +154,25 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             return true; // 신규 흐트러짐 발생 반환
         }
 
+        public static int RecoverDisarray(string runtimeId, float ratio, float nowSeconds = -1f) // 흐트러짐 누적 비율 회복 (Day54 추가, 보스 패턴용 — 실제 감소량 반환)
+        {
+            if (!TryGet(runtimeId, out DisarrayEntry entry) || ratio <= 0f) // 등록 상태 및 회복 비율 확인
+            {
+                return 0; // 회복 불가 반환
+            }
+
+            RefreshRecovery(entry, ResolveNow(nowSeconds)); // 흐트러짐 해제 시각 확인
+
+            if (entry.Disarrayed) // 흐트러짐 유지 중 확인
+            {
+                return 0; // 흐트러진 동안에는 회복 불가 반환
+            }
+
+            int reduced = Mathf.RoundToInt(entry.Current * Mathf.Clamp01(ratio)); // 현재 누적 대비 회복량 계산
+            entry.Current = Mathf.Max(0, entry.Current - reduced); // 누적 수치 감소 적용
+            return reduced; // 실제 감소량 반환
+        }
+
         public static float GetDamageMultiplier(string runtimeId, float nowSeconds = -1f) // 흐트러짐 상태 기반 받는 피해 배율 조회
         {
             return IsDisarrayed(runtimeId, nowSeconds) ? DisarrayedDamageMultiplier : 1f; // 흐트러짐 중 추가 피해 배율 반환

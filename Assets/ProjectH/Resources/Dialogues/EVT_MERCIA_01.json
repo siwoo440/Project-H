@@ -1,0 +1,140 @@
+{
+  "id": "EVT_MERCIA_01",
+  "title": "염주 한 알",
+  "characterId": "CH_MERCIA",
+  "background": "TEMPLE_EAST",
+  "location": "마을 · 아침 사원",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "새벽 예불이 끝난 뜰. 마른 소리와 함께 메르시아의 염주 줄이 끊어졌다."
+    },
+    {
+      "id": "n2",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "알이 돌바닥 위로 흩어졌고, 메르시아는 하나씩 무릎으로 주우러 다녔다."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "도와줄게."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_MERCIA",
+      "expression": "당황",
+      "text": "…아, 괜찮습니다. 순서가 있어서요."
+    },
+    {
+      "id": "n5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "순서?"
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "알마다 이름이 있습니다. 순례길에서 만났으나, 제가 구하지 못한 분들의 이름입니다."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "백여덟 알 중 예순두 알이 찼습니다. 이걸 채우는 게 수행이라 여겼습니다.",
+      "choices": [
+        {
+          "text": "남은 알에는 산 사람 이름을 넣자고 한다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "함께 세어 주겠다고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "남은 알에는 살아 있는 사람 이름을 넣으면 안 돼?"
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_MERCIA",
+      "expression": "놀람",
+      "text": "…살아 있는 사람의 이름을요."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_MERCIA",
+      "expression": "부끄러움",
+      "text": "생각해 본 적 없습니다. 이 염주를 슬픔으로만 채워 왔으니까요.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "같이 세자. 예순둘까지."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_MERCIA",
+      "expression": "놀람",
+      "text": "…함께요. 이 일은 나눌 수 없다고 믿었습니다만."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "나누니 가볍군요. 무게가 줄지 않았는데도 말입니다.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "마지막 알을 주웠을 때, 메르시아는 줄을 다시 꿰는 대신 곤봉의 손잡이에 감기 시작했다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "스승께서 말씀하셨습니다. 무기를 든 승려는 셈을 멈춰야 한다고."
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "저는 그 말을 거꾸로 새겼습니다. 셈을 잊지 않으려고 무기에 감는 것입니다."
+    },
+    {
+      "id": "m4",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "무겁겠다."
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "무겁습니다. 하지만 오늘부터는 예순세 번째 알이 산 사람의 이름이니, 조금 다를 겁니다."
+    },
+    {
+      "id": "m6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "아침 햇살이 염주를 감은 곤을 지나 뜰 끝까지 길게 뻗었다.",
+      "next": "END"
+    }
+  ]
+}

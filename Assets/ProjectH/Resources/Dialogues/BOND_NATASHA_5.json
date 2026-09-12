@@ -1,0 +1,27 @@
+{
+  "id": "BOND_NATASHA_5",
+  "title": "결속 5단계",
+  "characterId": "CH_NATASHA",
+  "background": "BACK_ALLEY",
+  "location": "뒷골목 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "복수의 값을 다시 계산했어. 내 목숨 하나로는 모자라더라."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그럼 어떻게 할 건데?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "살아서 갚기로 했어. 네 옆에서. …도망가도 소용없어."
+    }
+  ]
+}

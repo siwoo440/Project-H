@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_CLAIRE",
+  "title": "재료 값",
+  "characterId": "CH_CLAIRE",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어가 약재 노점 앞에서 마른 뿌리 하나를 햇빛에 비춰 보고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "이거 진품이에요. 잘린 면을 보면 알거든요."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "값이 좀 센데… 살까요, 말까요?",
+      "choices": [
+        {
+          "text": "사 준다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "직접 캐러 가자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "…나중에 꼭 갚을게요. 영수증 써 드려요?",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "같이요? 좋아요, 그게 더 신선하죠!",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어는 뿌리를 조심스레 천에 싸서 품에 넣었다."
+    }
+  ]
+}

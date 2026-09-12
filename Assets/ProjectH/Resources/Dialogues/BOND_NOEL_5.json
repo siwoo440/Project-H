@@ -1,0 +1,27 @@
+{
+  "id": "BOND_NOEL_5",
+  "title": "결속 5단계",
+  "characterId": "CH_NOEL",
+  "background": "RUINS_CAMP",
+  "location": "유적 야영지 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "지도에 마지막 표시를 했어요. 여기, 당신이 서 있는 자리요."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "이름은?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_NOEL",
+      "expression": "부끄러움",
+      "text": "'돌아올 곳'. 이번엔 지우지 않을 거예요."
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "id": "EVT_LUCIA_01",
+  "title": "계산이 맞지 않는 일",
+  "characterId": "CH_LUCIA",
+  "background": "GUILD_HALL",
+  "location": "길드 · 접수대",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 구석 자리. 루시아가 장부를 세 번째로 처음부터 다시 세고 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "…또 안 맞아. 이번 달만 세 번째야."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "액수가 커?"
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "크진 않아. 매번 딱 한 몫. 그게 더 이상하지."
+    },
+    {
+      "id": "n5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아가 장부를 덮었다가, 다시 펴서 한 줄을 손가락으로 짚었다."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_LUCIA",
+      "expression": "당황",
+      "text": "…아니다. 알아. 왜 안 맞는지."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "보수를 나눌 때 아직도 한 명 몫을 떼어 놓고 있었어. 삼 년째."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_LUCIA",
+      "expression": "당황",
+      "text": "죽은 사람 몫을 계속 세는 용병이 어디 있어. 웃기지, 이거.",
+      "choices": [
+        {
+          "text": "웃기지 않다고 말한다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "그 사람 이름을 묻는다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "하나도 안 웃겨. 나라면 못 셌을 거야."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_LUCIA",
+      "expression": "놀람",
+      "text": "…그래? 나는 안 세는 게 더 어려웠는데."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "세는 동안은 아직 계약이 안 끝난 거니까. 그런 걸로 쳤어.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "이름이 뭐였어?"
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_LUCIA",
+      "expression": "놀람",
+      "text": "…삼 년 만에 처음 묻네, 그 질문."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "카일. 나보다 계산은 훨씬 못했는데, 사람은 훨씬 나았어.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아는 장부를 접고, 오래 만지작거리던 낡은 장총을 탁자 위에 올려놓았다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "카일이 쓰던 거야. 총열에 규칙을 새겨 놨더라고. '먼저 쏘지 않는다.'"
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "나는 그 규칙 안 지켜. 그래서 안 들고 다녔어."
+    },
+    {
+      "id": "m4",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "지금은?"
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "요즘은 먼저 쏠 일이 줄었어. …네가 자꾸 말로 끝내려고 드니까."
+    },
+    {
+      "id": "m6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아는 장총을 내 쪽으로 밀었다가, 다시 자기 앞으로 당겨 어깨에 걸었다."
+    },
+    {
+      "id": "m7",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "장부는 이제 맞을 거야. 대신 한 몫은 네 이름으로 떼어 둘게. 산 사람 걸로.",
+      "next": "END"
+    }
+  ]
+}

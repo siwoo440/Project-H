@@ -1,0 +1,27 @@
+{
+  "id": "BOND_NATASHA_1",
+  "title": "결속 1단계",
+  "characterId": "CH_NATASHA",
+  "background": "BACK_ALLEY",
+  "location": "뒷골목 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "그렇게 대놓고 쳐다보면 내 잠입 실력이 다 들통나는데."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "미안."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_NATASHA",
+      "expression": "흥미",
+      "text": "사과는 됐고. 계속 봐도 돼, 오늘만."
+    }
+  ]
+}

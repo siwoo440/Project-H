@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_LUCIA",
+  "title": "계약서 읽기",
+  "characterId": "CH_LUCIA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 접수대에서 루시아가 계약서를 줄마다 손가락으로 짚어 가며 읽고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "여기 이 줄. '사망 시 보상 없음'. 이런 건 꼭 작게 써 놔."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "너도 읽어. 네 이름이 들어갈 문서야.",
+      "choices": [
+        {
+          "text": "끝까지 같이 읽는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "네가 봤으면 됐다고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "좋아. 이걸 읽는 사람이랑은 같이 안 죽어.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "…그 신뢰, 나중에 비싸게 받을 거야.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아는 맨 아래에 이름을 쓰고, 펜을 내게 넘겼다."
+    }
+  ]
+}

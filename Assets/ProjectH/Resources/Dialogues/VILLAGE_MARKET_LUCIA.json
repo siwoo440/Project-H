@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_LUCIA",
+  "title": "값 흥정",
+  "characterId": "CH_LUCIA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "상인과 루시아가 서로 팔짱을 낀 채 눈싸움 중이다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "이 가격에 이 상태? 나 용병 십 년이야."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "거들어 줄래? 편들어 주면 반값에 끝나.",
+      "choices": [
+        {
+          "text": "루시아 편을 든다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "상인 편을 든다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "봤지? 둘이면 값이 반으로 줄어.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "…배신자. 재밌네, 아주.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "값은 결국 중간에서 정해졌고, 루시아는 덤으로 받은 사과를 내게 던져 줬다."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_NOEL",
+  "title": "고물 나침반",
+  "characterId": "CH_NOEL",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘이 고물 노점에서 부서진 나침반을 만지작거리고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "바늘이 계속 북쪽을 못 찾아요. 저 같네요."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "살까요? 쓸모는 없는데 말이죠.",
+      "choices": [
+        {
+          "text": "사 준다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "같이 고쳐 보자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "…쓸모없는 걸 사 주는 사람은 처음이에요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "고칠 수 있을까요? …해 볼래요.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘은 나침반을 주머니에 넣고, 가는 내내 몇 번이나 다시 꺼내 봤다."
+    }
+  ]
+}

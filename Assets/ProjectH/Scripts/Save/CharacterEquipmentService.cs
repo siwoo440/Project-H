@@ -45,6 +45,12 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 return false; // 장비 착용 실패
             }
 
+            if (!UniqueEquipmentService.CanCharacterEquip(character.CharacterId, equipmentInstance.EquipmentId)) // 전용 장비 주인 확인 (Day70 추가)
+            {
+                error = $"{equipmentData.DisplayName}은(는) 전용 장비라 주인만 착용할 수 있습니다."; // 전용 장비 오류 설정
+                return false; // 장비 착용 실패
+            }
+
             CharacterSaveData currentOwner = FindEquippedCharacter(saveData, instanceId); // 현재 장비 착용 캐릭터 조회
 
             if (currentOwner != null && !string.Equals(currentOwner.CharacterId, character.CharacterId, StringComparison.Ordinal)) // 다른 캐릭터 착용 여부 확인

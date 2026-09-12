@@ -81,7 +81,8 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역
             saveData.SetStoryFlag(BuildEventDoneFlag(definition.Id)); // 완료 기록
             List<AffinityTier> newTiers = AffinityService.CollectNewTiers(before, after); // 새 단계 계산
             string preferredText = runner.PreferredChoiceCount > 0 ? $" · 마음에 드는 대답 {runner.PreferredChoiceCount}회" : string.Empty; // 선호 선택 안내
-            string message = $"{definition.Episode}화 「{definition.Title}」 완료! 호감도 +{after - before} ({after}/{CharacterSaveData.MaxAffinity}){preferredText}" + AffinityService.BuildTierReachedNotice(newTiers); // 결과 문구
+            string uniqueText = definition.Episode == 1 && UniqueEquipmentService.TryGrant(saveData, definition.CharacterId, out _, out string grantMessage) ? $"\n{grantMessage}" : string.Empty; // 1화 보상 : 전용 장비 (Day70 추가)
+            string message = $"{definition.Episode}화 「{definition.Title}」 완료! 호감도 +{after - before} ({after}/{CharacterSaveData.MaxAffinity}){preferredText}" + AffinityService.BuildTierReachedNotice(newTiers) + uniqueText; // 결과 문구
             return new DialogueRewardResult(true, message, after - before, newTiers); // 반영 결과 반환
         }
 

@@ -1,0 +1,152 @@
+{
+  "id": "EVT_NOEL_01",
+  "title": "다 그리지 못한 지도",
+  "characterId": "CH_NOEL",
+  "background": "RUINS_CAMP",
+  "location": "아스타르 · 유적 야영지",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "모닥불 옆, 노엘이 낡은 지도 조각을 무릎에 펴 놓고 있었다. 절반쯤에서 선이 뚝 끊겨 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "이거, 제가 그린 게 아니에요. 마리가 그린 거예요."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "마리?"
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "제 마지막 동료요. 지도는 늘 제가 그렸는데, 그날만 자기가 그리겠다고 우겼어요."
+    },
+    {
+      "id": "n5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘의 손가락이 끊긴 선 끝에서 멈췄다."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "여기서 끊겼어요. 제가 '이쪽이 빠르다'고 표시한 길이었고요."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_NOEL",
+      "expression": "당황",
+      "text": "…그 뒤로는 지도에 지름길을 안 그려요. 못 그리겠어요."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_NOEL",
+      "expression": "당황",
+      "text": "이거, 이어서 그려야 할까요. 아니면 이대로 둬야 할까요.",
+      "choices": [
+        {
+          "text": "이어서 그리자고 한다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "이대로 두고 새 지도를 그리자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "이어서 그리자. 끊긴 데부터."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_NOEL",
+      "expression": "놀람",
+      "text": "…제가 또 틀리면요?"
+    },
+    {
+      "id": "a3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그럼 내가 옆에서 같이 틀릴게."
+    },
+    {
+      "id": "a4",
+      "speaker": "CH_NOEL",
+      "expression": "부끄러움",
+      "text": "…그건 반칙이에요. 그런 말 들으면 그릴 수밖에 없잖아요.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그건 마리 지도야. 그대로 두고, 새 지도를 그리자."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_NOEL",
+      "expression": "놀람",
+      "text": "…마리 지도, 그대로요."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "그러네요. 제가 덧그리면 마리 글씨가 없어지니까요. 몰랐어요, 그걸.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘은 배낭 바닥에서 놋쇠로 된 작은 기구를 꺼냈다. 눈금과 별자리가 촘촘히 새겨져 있었다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "측량기예요. 마리가 쓰던 거고, 오 년 동안 한 번도 안 꺼냈어요."
+    },
+    {
+      "id": "m3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "왜 지금 꺼냈어?"
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "혼자 쓰는 물건이 아니거든요. 한 사람이 별을 보고, 한 사람이 숫자를 적어야 해요."
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "…그러니까 이건 부탁이에요. 숫자 쪽, 맡아 주실래요?"
+    },
+    {
+      "id": "m6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "그날 밤 야영지에서는 오랜만에 두 사람 몫의 숫자가 불려 나갔다.",
+      "next": "END"
+    }
+  ]
+}

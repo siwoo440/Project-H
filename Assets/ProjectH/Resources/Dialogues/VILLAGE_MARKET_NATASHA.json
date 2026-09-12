@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_NATASHA",
+  "title": "향신료",
+  "characterId": "CH_NATASHA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤가 향신료 노점에서 작은 병을 코끝에 대 보고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "모르가스에선 이 냄새가 나면 도망쳐야 했어. 여기선 그냥 요리 재료네."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "하나 살까. …쓸 데도 없는데.",
+      "choices": [
+        {
+          "text": "사 주겠다고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "이걸로 요리를 해 보자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "…선물? 어색해. 근데 버리진 않을게.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "네가 만든다고? 그건 좀 위험한데.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤는 병을 품 안쪽 주머니에, 아주 깊숙이 넣었다."
+    }
+  ]
+}

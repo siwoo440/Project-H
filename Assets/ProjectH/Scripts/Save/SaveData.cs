@@ -36,6 +36,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private GuildQuestBoardSaveData questBoard = new GuildQuestBoardSaveData(); // 오늘의 길드 의뢰 (Day67 추가)
         [SerializeField] private string heroName = string.Empty; // 주인공 이름 (Day68 추가, 빈 값이면 아직 정하지 않음)
         [SerializeField] private ChapterProgressSaveData chapterProgress = new ChapterProgressSaveData(); // 메인 스토리 진행 (Day68 추가)
+        [SerializeField] private MinigameBoardSaveData minigameBoard = new MinigameBoardSaveData(); // 시장 놀이판 상태 (Day70 추가 — 하루 3회·기록)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -60,6 +61,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public GuildQuestBoardSaveData QuestBoard => questBoard; // 길드 의뢰 게시판 반환 (Day67 추가)
         public string HeroName => heroName ?? string.Empty; // 주인공 이름 반환 (Day68 추가)
         public ChapterProgressSaveData ChapterProgress => chapterProgress; // 메인 스토리 진행 반환 (Day68 추가)
+        public MinigameBoardSaveData MinigameBoard => minigameBoard; // 시장 놀이판 상태 반환 (Day70 추가)
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -173,6 +175,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             if (questBoard == null) questBoard = new GuildQuestBoardSaveData(); // 의뢰 게시판 복원 (Day67 추가)
             riftState.EnsureDefaults(); // 균열 상태 보정
             questBoard.EnsureDefaults(); // 의뢰 게시판 보정
+            if (minigameBoard == null) minigameBoard = new MinigameBoardSaveData(); // 놀이판 상태 복원 (Day70 추가, 기존 세이브는 빈 상태)
+            minigameBoard.EnsureDefaults(); // 놀이판 상태 보정
             if (seenDialogueIds == null) seenDialogueIds = new List<string>(); // 본 대화 목록 복원 (Day63 추가, 기존 세이브는 빈 목록)
             if (seenMonsterIds == null) seenMonsterIds = new List<string>(); // 만난 몬스터 목록 복원 (Day63 추가)
             seenDialogueIds.RemoveAll(string.IsNullOrWhiteSpace); // 빈 ID 제거

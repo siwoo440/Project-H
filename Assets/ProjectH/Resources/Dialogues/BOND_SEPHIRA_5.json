@@ -1,0 +1,27 @@
+{
+  "id": "BOND_SEPHIRA_5",
+  "title": "결속 5단계",
+  "characterId": "CH_SEPHIRA",
+  "background": "CATHEDRAL_DUSK",
+  "location": "사원 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "신의 명령과 당신의 부탁이 맞선다면, 저는 망설이지 않겠습니다."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "어느 쪽인데?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "부끄러움",
+      "text": "묻지 마세요. 대답하면 저는 사도가 아니게 되니까요. …이미 늦었지만."
+    }
+  ]
+}

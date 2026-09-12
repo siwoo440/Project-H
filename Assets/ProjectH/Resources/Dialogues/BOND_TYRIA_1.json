@@ -1,0 +1,27 @@
+{
+  "id": "BOND_TYRIA_1",
+  "title": "결속 1단계",
+  "characterId": "CH_TYRIA",
+  "background": "SOUTH_GATE",
+  "location": "제국 남부 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "제 뒤에 서세요. 그게 제일 안전한 자리입니다."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "너는?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "저는 서 있는 것이 일입니다."
+    }
+  ]
+}

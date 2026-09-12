@@ -1,0 +1,146 @@
+{
+  "id": "EVT_TYRIA_01",
+  "title": "안뜰의 맹세",
+  "characterId": "CH_TYRIA",
+  "background": "SOUTH_GATE",
+  "location": "제국 남부 · 성문 앞",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아가 허리춤의 작은 가죽 주머니를 풀어 손바닥에 쏟았다. 마른 흙이었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그건 뭐야?"
+    },
+    {
+      "id": "n3",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "제 마을 안뜰의 흙입니다. 떠날 때 한 줌 담아 왔습니다."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "무너진 담 안쪽에서, 저는 그날 아무도 지키지 못했습니다."
+    },
+    {
+      "id": "n5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아는 흙을 다시 주머니에 담으면서, 한참 손을 털지 않았다."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "맹세는 그 자리에서 했습니다. 약한 이를 지키겠다고."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_TYRIA",
+      "expression": "당황",
+      "text": "…그런데 요즘, 그 맹세가 제 발목을 잡는 것 같습니다."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "지켜야 할 사람이 늘수록 제가 작아집니다. 이건 맹세가 아니라 벌이 아닐까요.",
+      "choices": [
+        {
+          "text": "혼자 지는 맹세가 벌이라고 말한다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "그 흙을 이제 묻어 주자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "혼자 지면 벌이야. 나눠 지면 맹세고."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_TYRIA",
+      "expression": "놀람",
+      "text": "…나눈다는 말을, 열두 해 만에 듣습니다."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "그럼 절반만 가져가 주십시오. 무거운 쪽으로요.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그 흙, 이제 묻어 주자. 여기 성문 앞에."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_TYRIA",
+      "expression": "놀람",
+      "text": "…여기에요?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "그러면 제 마을이 여기까지 따라온 셈이 되는군요. 나쁘지 않습니다.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "성문 옆 돌 틈에 흙 한 줌을 털어 넣고, 티리아는 오래 그 자리를 눌렀다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "그날 안뜰에서 제가 들고 있던 건 이 방패창이었습니다. 창날이 부러진 채였지요."
+    },
+    {
+      "id": "m3",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아가 등에서 방패창을 내려 세우자, 새로 간 날이 아침빛을 받았다."
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "부러진 자리를 다시 붙였습니다. 이제 뒤를 만들 수 있습니다."
+    },
+    {
+      "id": "m5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "누구 뒤?"
+    },
+    {
+      "id": "m6",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "묻지 않으셔도 아실 텐데요. …그래도 말로 하라 하시면, 하겠습니다.",
+      "next": "END"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_PYRA",
+  "title": "무기 가게",
+  "characterId": "CH_PYRA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라가 무기 노점의 창을 하나하나 들었다가 내려놓고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "죄다 장식용이야. 이걸로 찌르면 자기 손이 먼저 부러져."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "네가 골라 봐. 눈은 있어 보이니까.",
+      "choices": [
+        {
+          "text": "제일 투박한 걸 고른다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "제일 비싼 걸 고른다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "…봐줄 만하네. 무기는 원래 안 예뻐.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "돈은 잘 쓰네. 싸움은 모르고.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라는 결국 아무것도 사지 않고, 제 창날만 한 번 더 갈았다."
+    }
+  ]
+}

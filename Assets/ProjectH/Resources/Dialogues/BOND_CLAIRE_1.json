@@ -1,0 +1,27 @@
+{
+  "id": "BOND_CLAIRE_1",
+  "title": "결속 1단계",
+  "characterId": "CH_CLAIRE",
+  "background": "ALCHEMY_LAB",
+  "location": "노아르 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_CLAIRE",
+      "expression": "흥미",
+      "text": "실험 조수 구했어요! 물론 무보수지만 경험은 어마어마하거든요?"
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "위험하진 않지?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_CLAIRE",
+      "expression": "당황",
+      "text": "…세 번째 질문부터는 대답 안 해 드릴래요."
+    }
+  ]
+}

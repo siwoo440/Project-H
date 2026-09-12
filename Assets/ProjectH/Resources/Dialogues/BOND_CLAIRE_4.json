@@ -1,0 +1,27 @@
+{
+  "id": "BOND_CLAIRE_4",
+  "title": "결속 4단계",
+  "characterId": "CH_CLAIRE",
+  "background": "ALCHEMY_LAB",
+  "location": "노아르 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "오늘은 플라스크를 안 들고 나왔어요. 손이 허전한데, 나쁘지 않네요."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "왜 안 들고 왔어?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_CLAIRE",
+      "expression": "부끄러움",
+      "text": "잡을 게 생겼으니까요. 아, 이건 기록하지 마세요."
+    }
+  ]
+}

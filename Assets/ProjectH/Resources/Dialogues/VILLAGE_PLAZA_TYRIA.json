@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_TYRIA",
+  "title": "광장 순찰",
+  "characterId": "CH_TYRIA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아가 광장 가장자리를 천천히 돌며 사람들 사이를 살피고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "사람이 많은 곳은 지키기 어렵습니다. 그래서 자주 옵니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "혹시, 함께 걸어 주시겠습니까?",
+      "choices": [
+        {
+          "text": "함께 걷는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "반대쪽을 맡겠다고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "…둘이 도니 반 바퀴로 줄었습니다. 좋군요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "현명한 배치입니다. 감사합니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "한 바퀴를 다 돌았을 때, 티리아의 걸음이 처음으로 느려졌다."
+    }
+  ]
+}

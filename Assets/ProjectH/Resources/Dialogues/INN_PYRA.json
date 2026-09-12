@@ -1,0 +1,61 @@
+{
+  "id": "INN_PYRA",
+  "title": "창을 세워 두고",
+  "characterId": "CH_PYRA",
+  "background": "INN_NIGHT",
+  "location": "마을 · 여관 · 밤",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "문 옆에 파이라의 창이 날을 벽으로 돌린 채 세워져 있다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "창은 저기 뒀어. 오늘은 안 써."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_PYRA",
+      "expression": "부끄러움",
+      "text": "…이런 건 익숙하지 않아. 웃지 마.",
+      "choices": [
+        {
+          "text": "웃지 않겠다고 답한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i4a"
+        },
+        {
+          "text": "익숙해지면 된다고 답한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "i4b"
+        }
+      ]
+    },
+    {
+      "id": "i4a",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "…좋아. 그럼 됐어.",
+      "next": "i5"
+    },
+    {
+      "id": "i4b",
+      "speaker": "CH_PYRA",
+      "expression": "부끄러움",
+      "text": "말은 쉽지. …그래도 해 볼게.",
+      "next": "i5"
+    },
+    {
+      "id": "i5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "등불이 꺼지고, 창밖의 달빛만이 조용히 방 안을 비췄다."
+    }
+  ]
+}

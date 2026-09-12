@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_NATASHA",
+  "title": "출구 세기",
+  "characterId": "CH_NATASHA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤가 길드 건물의 뒷문과 창문 위치를 하나씩 세고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "출구는 셋. 하나는 막혔고. 습관이야, 신경 쓰지 마."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "너도 세어 둬. 언젠가 쓸 일이 있을지도.",
+      "choices": [
+        {
+          "text": "같이 세어 본다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "그럴 일 없게 하겠다고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "…빨리 배우네. 나쁘지 않아.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "…그런 말은 반칙이야.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤는 그래도 출구 세 개를 다시 확인하고 나서야 자리에 앉았다."
+    }
+  ]
+}

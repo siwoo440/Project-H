@@ -1,0 +1,27 @@
+{
+  "id": "BOND_PYRA_2",
+  "title": "결속 2단계",
+  "characterId": "CH_PYRA",
+  "background": "FORTRESS_YARD",
+  "location": "카르니안 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "네 뒤통수 걱정은 접어. 내가 서 있는 한."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "왜 나야?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "명령 없이 누굴 지키는 건 처음이라서. 궁금해서 해 보는 거야."
+    }
+  ]
+}

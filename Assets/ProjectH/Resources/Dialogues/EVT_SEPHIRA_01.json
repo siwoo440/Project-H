@@ -1,0 +1,146 @@
+{
+  "id": "EVT_SEPHIRA_01",
+  "title": "처음으로 의심한 날",
+  "characterId": "CH_SEPHIRA",
+  "background": "CATHEDRAL_DUSK",
+  "location": "사원 · 해 질 녘",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "저녁 사원. 세피라가 오래된 명령서 묶음을 무릎에 올려 둔 채 앉아 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "사도단 시절의 집행 기록입니다. 제 서명이 들어간 것만 스물아홉 장이지요."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "왜 지금 읽어?"
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "읽지 않으면 없던 일이 되니까요. 그건 더 나쁜 일입니다."
+    },
+    {
+      "id": "n5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라가 한 장에서 멈췄다. 손끝이 종이 아래쪽 작은 글씨를 눌렀다."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_SEPHIRA",
+      "expression": "당황",
+      "text": "…이 줄에 이름이 하나 있습니다. 여덟 살이라고 적혀 있군요."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "그날 저는 명령이라 여겼습니다. 의심하지 않았고요."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_SEPHIRA",
+      "expression": "당황",
+      "text": "저는 이 기록을 어떻게 해야 합니까. 태울 자격조차 없는 것 같습니다.",
+      "choices": [
+        {
+          "text": "이름을 기억하라고 말한다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "혼자 읽지 말라고 말한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "태우지 마. 이름을 외워. 그게 네가 할 수 있는 거야."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "놀람",
+      "text": "…외우라고 하시는군요. 용서가 아니라."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "그 편이 정직합니다. 스물아홉 장, 전부 외우겠습니다.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "혼자 읽지 마. 옆에서 같이 읽을게."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "놀람",
+      "text": "…이런 것을 함께 읽자 하시다니."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "부끄러움",
+      "text": "당신은 제 죄까지 나누려 하시는군요. 그건 신의 몫인데요.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라가 제단 옆에 세워 둔 심판봉을 가져와 무릎 위에 뉘었다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "사도단의 심판봉입니다. 무게가 곧 권위라 하여, 안에 납을 채웁니다."
+    },
+    {
+      "id": "m3",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라는 손잡이 끝의 마개를 돌려 열었다. 안이 비어 있었다."
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "그날 밤 전부 덜어 냈습니다. 십 년째 빈 채로 들고 다녔지요."
+    },
+    {
+      "id": "m5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "가벼워졌어?"
+    },
+    {
+      "id": "m6",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "아니요. 더 무거워졌습니다. …그런데 이제는 그 무게를 들 수 있을 것 같습니다.",
+      "next": "END"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_PYRA",
+  "title": "흉터",
+  "characterId": "CH_PYRA",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "김 너머로 파이라의 등에 난 오래된 흉터가 잠깐 보였다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "쳐다봐도 돼. 숨길 거였으면 안 들어왔어."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "물어볼래? 어떻게 생긴 건지.",
+      "choices": [
+        {
+          "text": "아무것도 묻지 않는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "어쩌다 생겼는지 묻는다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "…고맙다. 오늘은 그게 제일 낫네.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "명령이 남긴 자국이야. 그게 전부.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라는 물속으로 어깨를 깊이 담그고, 한참 숨을 내쉬었다."
+    }
+  ]
+}

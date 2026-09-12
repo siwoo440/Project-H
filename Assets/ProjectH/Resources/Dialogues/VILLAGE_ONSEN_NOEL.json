@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_NOEL",
+  "title": "젖은 지도",
+  "characterId": "CH_NOEL",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘이 물가에 앉아 지도를 말리고 있다. 모서리가 젖어 번져 있었다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "아까 미끄러져서요. 괜찮아요, 여긴 다 외웠으니까."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "…그런데 이 부분은 안 외워졌어요.",
+      "choices": [
+        {
+          "text": "같이 다시 그려 주겠다고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "외운 데까지만 써도 된다고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "정말요? 그럼… 이번엔 둘이 그린 지도네요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "그것도 맞네요. 빈칸은 나중에 채우죠.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "젖은 자리는 마르면서 조금 울었지만, 노엘은 그 위에 새 선을 그었다."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_SEPHIRA",
+  "title": "닿지 않는 말",
+  "characterId": "CH_SEPHIRA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "광장 계단 위에서 세피라가 사람들에게 축복을 내리고 있다. 목소리가 평소보다 낮다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "…오늘은 말이 잘 나오지 않는군요. 익숙한 문장인데도요."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "제 말이 아직 사람들에게 닿을 자격이 있을까요?",
+      "choices": [
+        {
+          "text": "닿고 있다고 말해 준다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "천천히 해도 된다고 말한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "…당신은 참 쉽게 무거운 말을 하시는군요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "…그렇군요. 서두른 쪽은 저였습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "마지막 축복은 짧았지만, 사람들은 오래 자리를 뜨지 않았다."
+    }
+  ]
+}

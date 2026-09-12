@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_TYRIA",
+  "title": "후배들",
+  "characterId": "CH_TYRIA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 한쪽에서 티리아가 신참 모험가들에게 방패 잡는 법을 가르치고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "방패는 막는 물건이 아닙니다. 뒤를 만드는 물건입니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "당신 뒤에는 누가 서느냐고, 아이들이 묻더군요.",
+      "choices": [
+        {
+          "text": "내가 서겠다고 답한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "아직 아무도 없다고 답한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "…그 대답을 아이들 앞에서 하시다니. 반칙입니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "정직하시군요. 그럼 그 자리는 비워 두겠습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "신참들이 흩어진 뒤에도 티리아는 방패를 내려놓지 않았다."
+    }
+  ]
+}

@@ -70,7 +70,7 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역 (Day68 신규)
                 new ChapterStep(ChapterStepKind.Dialogue, "CH3_03", "동방에서 온 순례자와 이야기하기", "CH_MERCIA"), // 메르시아 합류
                 new ChapterStep(ChapterStepKind.ClearDungeon, "DG010", "의회 금단 실험실 클리어"), // 실험실
                 new ChapterStep(ChapterStepKind.Dialogue, "CH3_04", "실험 기록 읽기"), // 배신자의 흔적
-                new ChapterStep(ChapterStepKind.Dialogue, "CH3_05", "사라진 서명 추적하기")), // 챕터 3 마무리
+                new ChapterStep(ChapterStepKind.Dialogue, "CH3_05", "사라진 서명 추적하기", "", ProjectH.Minigame.MinigameCatalog.MarketGameFlag)), // 챕터 3 마무리 (Day70 — 뒷골목 놀이판 해금)
             new ChapterDefinition("CHAPTER_04", "챕터 4 · 숲과 제국",
                 new ChapterStep(ChapterStepKind.Dialogue, "CH4_01", "실바란 숲의 부탁 듣기"), // 실바란
                 new ChapterStep(ChapterStepKind.ClearDungeon, "DG006", "울부짖는 정령의 숲 클리어"), // 숲

@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_SEPHIRA",
+  "title": "값을 치르다",
+  "characterId": "CH_SEPHIRA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라가 노점 주인에게 값을 두 배로 건네고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "사도단은 값을 치르지 않고 가져가는 일이 많았습니다. 그 빚을 갚는 중입니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "어리석어 보입니까?",
+      "choices": [
+        {
+          "text": "훌륭한 일이라고 말한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "혼자 갚을 일은 아니라고 말한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "…칭찬은 사양하겠습니다. 아직 한참 모자라니까요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "…함께 갚아 주시겠다는 뜻입니까. 무서운 말씀입니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노점 주인은 영문을 모른 채, 거스름돈을 세다 말고 고개를 숙였다."
+    }
+  ]
+}

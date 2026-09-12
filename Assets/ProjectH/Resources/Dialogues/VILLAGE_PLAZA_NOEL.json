@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_NOEL",
+  "title": "분필 지도",
+  "characterId": "CH_NOEL",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘이 광장 한가운데 쪼그려 앉아 바닥에 분필로 지도를 그리고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "이 동네 길이 이상해요. 제 지도랑 두 칸이나 달라요!"
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "같이 걸어 보실래요? 발로 재는 게 제일 정확하거든요.",
+      "choices": [
+        {
+          "text": "같이 걷는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "지도를 고쳐 그리라고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "좋아요! 걸음 수는 제가 셀게요. 놓치면 안 돼요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "…맞아요. 제 지도가 틀렸을 수도 있죠.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "분필 지도는 저녁 바람에 지워졌지만, 노엘은 개의치 않았다."
+    }
+  ]
+}

@@ -11,7 +11,7 @@ namespace ProjectH.Village // 프로젝트 마을 영역
         public const int OnsenVitality = 30; // 온천 활력 회복량
         public const int InnEventBondLevel = 3; // 여관 특별한 밤 결속 단계 조건
         public const int InnEventBondCost = 1; // 여관 특별한 밤 결속 자원 소모
-        public const string ScriptNotReadyReason = "이 동료와의 이야기는 준비 중이에요 (70일차 개인 스토리에서 추가)."; // 대사 파일이 아직 없는 동료 안내 (Day64 추가)
+        public const string ScriptNotReadyReason = "이 동료와의 이야기는 아직 준비 중이에요."; // 대사 파일이 아직 없는 동료 안내 (Day64 추가, Day70 — 12인 전원 대사가 들어와 평소에는 뜨지 않는다)
 
         public static string GetZoneEventScriptId(string characterId, VillageZone zone) => $"VILLAGE_{zone.ToString().ToUpperInvariant()}_{ShortId(characterId)}"; // 구역 이벤트 대사 파일 ID (예: VILLAGE_PLAZA_SERENA)
 

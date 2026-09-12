@@ -5,6 +5,7 @@ using ProjectH.Data; // 캐릭터·던전 데이터 기능
 using ProjectH.Dialogue; // 대화 파일 기능
 using ProjectH.SaveSystem; // 저장·시간·활력 기능
 using ProjectH.Dungeon; // 검은 균열 기능 (Day67 추가)
+using ProjectH.Minigame; // 시장 놀이판 기능 (Day70 추가)
 using ProjectH.Village; // 마을 구역·배치·행동·길드 의뢰 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.EventSystems; // Unity UI 입력 기능
@@ -24,6 +25,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static readonly Color SubColor = new Color(0.26f, 0.28f, 0.34f, 1f); // 보조 버튼 회색
         private static readonly Color HintColor = new Color(0.82f, 0.84f, 0.88f, 1f); // 안내 글자
         private static readonly Color RecruitColor = new Color(0.36f, 0.62f, 0.40f, 1f); // 새 동료 소식 초록 (Day64 추가)
+        private static readonly Color MinigameColor = new Color(0.62f, 0.42f, 0.26f, 1f); // 야시장 놀이판 갈색 (Day70 추가)
         private const float PanelViewHeight = 700f; // 행동 패널 기준 높이 (기존 비율 배치를 픽셀로 바꾸는 기준, Day67 추가)
 
         private readonly Dictionary<VillageZone, Button> zoneCards = new Dictionary<VillageZone, Button>(); // 지도 구역 카드
@@ -345,9 +347,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             switch (zone) // 구역 분기
             {
-                case VillageZone.Market: // 시장 : 상점 · 대장간 바로가기
+                case VillageZone.Market: // 시장 : 상점 · 대장간 · 야시장 놀이판
                     y = AddButton("상점 가기", SubColor, y, 0.055f, true, () => LoadScene(GameScenes.Shop)); // 상점
-                    return AddButton("대장간 가기", SubColor, y, 0.055f, true, () => LoadScene(GameScenes.Blacksmith)); // 대장간
+                    y = AddButton("대장간 가기", SubColor, y, 0.055f, true, () => LoadScene(GameScenes.Blacksmith)); // 대장간
+                    return AddButton($"야시장 놀이판  ({MinigameService.GetRemainingText(saveData)})", MinigameColor, y, 0.06f, MinigameService.GetRemainingPlays(saveData) > 0, OpenMinigame); // 놀이판 (Day70 추가)
                 case VillageZone.Onsen: // 온천 : 목욕
                     return AddButton($"온천에 몸 담그기  (시간 1칸 · 활력 +{VillageActionService.OnsenVitality})", TimeColor, y, 0.06f, true, Bathe); // 목욕
                 case VillageZone.Inn: // 여관 : 잠자기
@@ -465,6 +468,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 DialogueRewardResult result = DialogueService.CompleteTalk(GetSave(), characterId, runner); // 호감도 반영
                 Finish(result.Applied, result.Message); // 저장·안내
             });
+        }
+
+        private void OpenMinigame() // 야시장 놀이판 열기 (Day70 추가 — 닫을 때 결과를 저장하고 화면 갱신)
+        {
+            if (busy) return; // 진행 중 입력 무시
+            busy = true; // 입력 막기
+            MinigameView.Open(GetSave(), GetData(), message => { busy = false; Finish(true, message); }); // 놀이판
         }
 
         private void OpenGift() // 선물 패널 열기 (Day57 재사용)

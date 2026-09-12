@@ -1,0 +1,61 @@
+{
+  "id": "INN_NATASHA",
+  "title": "그림자 없이",
+  "characterId": "CH_NATASHA",
+  "background": "INN_NIGHT",
+  "location": "마을 · 여관 · 밤",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "여관 방의 등불이 켜져 있다. 나타샤의 방에서는 드문 일이다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "등불은 켜 둘게. 오늘은 그림자 속에 있기 싫어."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_NATASHA",
+      "expression": "부끄러움",
+      "text": "…이유는 묻지 말고. 아니, 물어도 돼.",
+      "choices": [
+        {
+          "text": "이유를 묻는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i4a"
+        },
+        {
+          "text": "묻지 않겠다고 답한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "i4b"
+        }
+      ]
+    },
+    {
+      "id": "i4a",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "네가 보이는 쪽이 좋아서. 됐지?",
+      "next": "i5"
+    },
+    {
+      "id": "i4b",
+      "speaker": "CH_NATASHA",
+      "expression": "부끄러움",
+      "text": "…역시. 그래서 네가 편해.",
+      "next": "i5"
+    },
+    {
+      "id": "i5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "등불이 꺼지고, 창밖의 달빛만이 조용히 방 안을 비췄다."
+    }
+  ]
+}

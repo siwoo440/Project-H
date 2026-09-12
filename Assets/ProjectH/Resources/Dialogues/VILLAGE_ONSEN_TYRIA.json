@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_TYRIA",
+  "title": "굳은 어깨",
+  "characterId": "CH_TYRIA",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아가 탕 가장자리에 기대 어깨를 돌리자 둔탁한 소리가 났다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "십 년을 방패를 들면 어깨가 먼저 늙습니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "…이런 말씀은 처음 드리는군요.",
+      "choices": [
+        {
+          "text": "어깨를 풀어 주겠다고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "오늘은 더 오래 쉬라고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "괜찮습니다. …아니, 부탁드리겠습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "그러지요. 오늘은 명령을 따르겠습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "어깨에서 힘이 빠지자 티리아는 눈을 감은 채 한동안 말이 없었다."
+    }
+  ]
+}

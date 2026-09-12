@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_MERCIA",
+  "title": "광장의 종소리",
+  "characterId": "CH_MERCIA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "광장 시계탑이 울리자 메르시아가 걸음을 멈추고 손을 모았다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "동방에서는 종이 울릴 때 한 사람을 떠올립니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "누구를 떠올렸는지, 물으셔도 됩니다.",
+      "choices": [
+        {
+          "text": "누구를 떠올렸는지 묻는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "조용히 함께 기다린다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "…오늘은 앞에 계신 분입니다. 우연입니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "고맙습니다. 침묵을 함께해 주시는 분은 드뭅니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "종소리가 끝나고서도 메르시아는 한 박자 늦게 손을 내렸다."
+    }
+  ]
+}

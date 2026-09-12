@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_MERCIA",
+  "title": "물과 수행",
+  "characterId": "CH_MERCIA",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "메르시아가 온천 가장자리에 정좌하고 앉아 눈을 감고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "뜨거운 물도 수행입니다. 참는 것이 아니라, 받아들이는 것이지요."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "함께 앉으시겠습니까? 오래 걸리지는 않습니다.",
+      "choices": [
+        {
+          "text": "함께 앉는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "옆에서 지켜본다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "…호흡이 맞는군요. 놀랍습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "보는 것도 수행입니다. 편히 계세요.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "김이 걷혔을 때, 메르시아의 어깨에서는 힘이 풀려 있었다."
+    }
+  ]
+}

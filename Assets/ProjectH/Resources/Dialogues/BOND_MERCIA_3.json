@@ -1,0 +1,27 @@
+{
+  "id": "BOND_MERCIA_3",
+  "title": "결속 3단계",
+  "characterId": "CH_MERCIA",
+  "background": "TEMPLE_EAST",
+  "location": "동방 사원 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "저는 신의 부름을 들었다고 했지요. …실은 아무 소리도 듣지 못했습니다."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그럼 왜 떠났어?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_MERCIA",
+      "expression": "부끄러움",
+      "text": "듣고 싶어서요. 그런데 요즘은, 당신 목소리가 더 잘 들립니다."
+    }
+  ]
+}

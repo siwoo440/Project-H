@@ -1,0 +1,27 @@
+{
+  "id": "BOND_TYRIA_5",
+  "title": "결속 5단계",
+  "characterId": "CH_TYRIA",
+  "background": "SOUTH_GATE",
+  "location": "제국 남부 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "새 맹세를 씁니다. '약한 이를 지킨다' 아래에 한 줄."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "뭐라고 쓸 건데?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_TYRIA",
+      "expression": "부끄러움",
+      "text": "'그리고 당신 곁에 선다.' …지워 달라 하셔도 안 지웁니다."
+    }
+  ]
+}

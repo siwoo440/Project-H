@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_SEPHIRA",
+  "title": "이름을 적다",
+  "characterId": "CH_SEPHIRA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 명부 앞에서 세피라가 펜을 든 채 멈춰 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "사도단의 직함을 쓸지, 이름만 쓸지 정하지 못하겠습니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "당신이라면 무엇이라 쓰시겠습니까?",
+      "choices": [
+        {
+          "text": "이름만 쓰라고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "둘 다 쓰라고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "…이름만. 그렇군요. 그게 더 무겁습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "둘 다… 도망치지 말라는 뜻이군요. 알겠습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "명부에 남은 글씨는, 평소 세피라의 글씨보다 조금 느렸다."
+    }
+  ]
+}

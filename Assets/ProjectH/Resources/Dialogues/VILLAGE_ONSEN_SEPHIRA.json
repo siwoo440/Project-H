@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_SEPHIRA",
+  "title": "씻기지 않는 것",
+  "characterId": "CH_SEPHIRA",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라가 물에 손을 담근 채 한참을 문지르고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "물로 씻기는 것과 아닌 것이 있다고, 사원에서 배웠습니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "저는 아직 그 구분을 못 하겠습니다.",
+      "choices": [
+        {
+          "text": "손을 잡아 멈춰 준다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "천천히 배우면 된다고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_SEPHIRA",
+      "expression": "미소",
+      "text": "…아. 제가 너무 오래 문질렀군요. 몰랐습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_SEPHIRA",
+      "expression": "기본",
+      "text": "…시간이 약이라는 말은 믿지 않았습니다만.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라는 손을 물 밖으로 꺼내, 처음으로 가만히 두었다."
+    }
+  ]
+}

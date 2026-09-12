@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_LUCIA",
+  "title": "게시판 앞",
+  "characterId": "CH_LUCIA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아가 광장 게시판의 현상금 전단을 한 장씩 뜯어 순서대로 정리하고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "이 동네 현상금은 참 짜. 그래도 안 붙는 것보단 낫지."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "너라면 어느 걸 고르겠어? 딱 하나만.",
+      "choices": [
+        {
+          "text": "제일 값이 센 걸 고른다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "제일 오래 붙어 있던 걸 고른다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "역시. 돈 냄새는 잘 맡네.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "…아무도 안 하는 일을 고른다고? 너답네.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아는 전단 두 장을 챙기고, 그중 한 장을 내 손에 쥐여 줬다."
+    }
+  ]
+}

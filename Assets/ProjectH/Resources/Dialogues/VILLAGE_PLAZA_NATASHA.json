@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_NATASHA",
+  "title": "손버릇",
+  "characterId": "CH_NATASHA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "광장 인파 속에서 나타샤가 한 소년의 손목을 소리 없이 붙잡았다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "손버릇이 나쁘네. 나보다 못해."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "어떻게 할까. 넘길까, 놔줄까.",
+      "choices": [
+        {
+          "text": "밥을 사 주고 보내자고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "경비대에 넘기자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "…너 참 이상해. 그게 더 무서운데.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "냉정하네. 그것도 답이지.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "소년이 사라진 방향을 나타샤는 꽤 오래 바라보고 있었다."
+    }
+  ]
+}

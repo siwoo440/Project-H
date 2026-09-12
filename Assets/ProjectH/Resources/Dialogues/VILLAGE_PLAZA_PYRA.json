@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_PYRA",
+  "title": "광장 대련",
+  "characterId": "CH_PYRA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "광장 한복판에서 파이라가 창을 세워 든 채 사람들을 물러서게 하고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "몸이 굳으면 죽어. 한 판 붙자. 겁먹지 말고."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "그래서, 할 거야 말 거야.",
+      "choices": [
+        {
+          "text": "받아 준다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "구경만 하겠다고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "좋아. 이래야 옆에 둘 맛이 나지.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "…재미없는 놈. 그래도 보고는 있어라.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "창끝이 멈춘 자리는 내 목에서 손가락 두 개 거리였다."
+    }
+  ]
+}

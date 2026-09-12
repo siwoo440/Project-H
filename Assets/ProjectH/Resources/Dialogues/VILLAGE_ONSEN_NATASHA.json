@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_NATASHA",
+  "title": "무기 없는 시간",
+  "characterId": "CH_NATASHA",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "탕 옆에 단검 두 자루가 수건에 싸여 놓여 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "무기 내려놓고 물에 들어가는 거, 십 년 만이야."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "누가 봐 줘야 들어갈 수 있는데. …해 줄래?",
+      "choices": [
+        {
+          "text": "지켜보겠다고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "단검을 손 닿는 곳에 두라고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "…고마워. 이런 부탁, 앞으로 더 할지도 몰라.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "역시 너도 알잖아. 그래서 편해.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "물속에서 나타샤는 처음으로 눈을 완전히 감았다."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "BOND_NATASHA_3",
+  "title": "결속 3단계",
+  "characterId": "CH_NATASHA",
+  "background": "BACK_ALLEY",
+  "location": "뒷골목 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "가족을 잃던 날, 나는 숨어 있었어. 그래서 살았고."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "…"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "위로는 하지 마. 그냥 말하고 싶었어. 처음으로."
+    }
+  ]
+}

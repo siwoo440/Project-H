@@ -1,0 +1,27 @@
+{
+  "id": "BOND_CLAIRE_3",
+  "title": "결속 3단계",
+  "characterId": "CH_CLAIRE",
+  "background": "ALCHEMY_LAB",
+  "location": "노아르 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "사실 제 연구는 전부 한 사람을 되살리려고 시작한 거예요."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "지금도?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_CLAIRE",
+      "expression": "부끄러움",
+      "text": "…요즘은 산 사람 쪽을 더 오래 봐요. 이상하죠."
+    }
+  ]
+}

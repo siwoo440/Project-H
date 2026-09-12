@@ -25,7 +25,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 
         private static RuneLoadout EquipRunes(params (RuneKind kind, int grade)[] runes) // 세레나에게 룬 최대 3개 장착 후 합계 반환 (레벨 10·결속 3으로 1~3번 슬롯 확보)
         {
-            Assert.That(runes.Length, Is.LessThanOrEqualTo(3)); // 4·5번 슬롯은 장비 조건 (Day61 — 5번이 ★2 초월 장비로 바뀜)
+            Assert.That(runes.Length, Is.LessThanOrEqualTo(3)); // 4·5번 슬롯은 장비 조건 (Day70 — 5번은 전용 장비 ★2 초월)
             SaveData saveData = SaveData.CreateNewGame(new[] { Serena }); // 새 게임
             saveData.FindCharacter(Serena).SetLevel(10); // 2번 슬롯
             saveData.FindCharacter(Serena).SetBondLevel(3); // 3번 슬롯

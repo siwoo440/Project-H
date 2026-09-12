@@ -63,7 +63,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 case 1: return character.Level >= 10; // 레벨 10
                 case 2: return character.BondLevel >= 3; // 결속 3단계 (Day59)
                 case 3: return HasHighGradeEquipment(saveData, dataManager, character); // 고급 이상 장비 착용
-                default: return HasTranscendedEquipment(saveData, character, 2); // ★2 이상 초월 장비 착용 (Day61 — 임시 결속 5단계 조건 교체, 전용 장비는 Day70)
+                default: return UniqueEquipmentService.HasTranscendedUnique(saveData, character, UniqueEquipmentCatalog.RuneSlotTranscendStage); // 전용 장비 ★2 초월 착용 (Day70 — 기획서 8.12 원래 조건으로 교체, 일반 장비로는 열리지 않는다)
             }
         }
 
@@ -80,18 +80,6 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 EquipmentInstanceSaveData instance = string.IsNullOrWhiteSpace(instanceId) ? null : saveData.FindEquipmentInstance(instanceId); // 인스턴스 조회
                 ItemData item = instance == null ? null : dataManager.GetItem(instance.EquipmentId); // 원본 아이템 조회
                 if (item != null && item.Grade >= ItemGrade.Uncommon) return true; // 고급 이상 확인
-            }
-
-            return false; // 없음
-        }
-
-        private static bool HasTranscendedEquipment(SaveData saveData, CharacterSaveData character, int stage) // 지정 초월 단계 이상 장비 착용 여부 (Day61 추가)
-        {
-            foreach (EquipmentSlot slot in EquipmentSlotInfo.All) // 장비 5칸 순회
-            {
-                string instanceId = character.Equipment.GetInstanceId(slot); // 장착 장비 인스턴스
-                EquipmentInstanceSaveData instance = string.IsNullOrWhiteSpace(instanceId) ? null : saveData.FindEquipmentInstance(instanceId); // 인스턴스 조회
-                if (instance != null && instance.TranscendStage >= stage) return true; // 초월 단계 확인
             }
 
             return false; // 없음

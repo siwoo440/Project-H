@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_MERCIA",
+  "title": "노점 국수",
+  "characterId": "CH_MERCIA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "메르시아가 국수 노점 앞에서 그릇을 두 손으로 받쳐 들고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "동방의 면과는 다르군요. 이쪽이 더… 씩씩합니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "한 젓가락 드셔 보시겠습니까?",
+      "choices": [
+        {
+          "text": "받아먹는다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "사양하고 한 그릇을 더 시킨다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "맛있지요? 나눠 먹으면 더 그렇습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "…역시 씩씩한 분이십니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "두 그릇이 비는 동안 둘 다 말이 없었다."
+    }
+  ]
+}

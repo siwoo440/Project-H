@@ -93,6 +93,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 return false; // 실패
             }
 
+            if (UniqueEquipmentCatalog.IsUnique(instance.EquipmentId)) // 전용 장비는 같은 장비를 구할 수 없어 결속 단계로 초월한다 (Day70 추가)
+            {
+                return UniqueEquipmentService.TryTranscend(saveData, instance, out message); // 전용 장비 초월
+            }
+
             if (instance.TranscendStage >= EquipmentUpgradeCatalog.MaxTranscendStage) // 최대 초월 확인
             {
                 message = "이미 최고 초월(★3)입니다."; // 안내

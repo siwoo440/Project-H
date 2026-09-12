@@ -1,0 +1,27 @@
+{
+  "id": "BOND_NOEL_1",
+  "title": "결속 1단계",
+  "characterId": "CH_NOEL",
+  "background": "RUINS_CAMP",
+  "location": "유적 야영지 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_NOEL",
+      "expression": "흥미",
+      "text": "지도에 당신 이름을 적어 뒀어요. 새 지형을 발견했을 때 쓰는 칸에."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "내가 지형이야?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "복잡하고 길이 많잖아요. 딱이에요."
+    }
+  ]
+}

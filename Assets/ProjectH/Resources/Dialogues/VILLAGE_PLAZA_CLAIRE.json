@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_PLAZA_CLAIRE",
+  "title": "광장 실험",
+  "characterId": "CH_CLAIRE",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "광장 한구석에서 클레어가 작은 연기 기둥을 피워 올리자 아이들이 몰려들었다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "자, 잘 보세요! 색이 바뀝니다… 어? 안 바뀌네요?"
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "실패했어요. 그런데 아이들이 더 좋아하는데요?",
+      "choices": [
+        {
+          "text": "실패도 훌륭했다고 말해 준다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "다시 해 보자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "…그 말, 스승님도 해 주신 적 없어요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "좋아요! 두 번째는 성공률이 올라가거든요!",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "두 번째 연기는 보라색이었고, 광장이 잠깐 웃음으로 찼다."
+    }
+  ]
+}

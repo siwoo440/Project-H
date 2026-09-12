@@ -1,0 +1,27 @@
+{
+  "id": "BOND_CLAIRE_5",
+  "title": "결속 5단계",
+  "characterId": "CH_CLAIRE",
+  "background": "ALCHEMY_LAB",
+  "location": "노아르 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "제 마지막 논문 제목을 정했어요. 「되살릴 수 없는 것과 살릴 수 있는 것」."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "결론은?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "당신이 결론이에요. …이 부분은 꼭 인용해 주세요."
+    }
+  ]
+}

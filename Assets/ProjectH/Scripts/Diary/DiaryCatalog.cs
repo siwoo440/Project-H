@@ -57,7 +57,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
 
     public static class DiaryCatalog // 일기장 목록 (Day63 신규 — 시나리오 · CG · 궁극기 컷인)
     {
-        public static readonly string[] Starters = { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE" }; // 초기 4인 (결속·마을·여관 대사 보유, 합류 8인은 70일차에 추가)
+        public static readonly string[] Starters = { "CH_SERENA", "CH_ELLEN", "CH_LILIA", "CH_EVE" }; // 초기 4인 (CG가 준비된 캐릭터, Day70부터 결속·마을·여관 대사는 12인 전원이 보유)
         private static List<string> allCharacters; // 12인 목록 캐시
 
         public static IReadOnlyList<string> AllCharacters => allCharacters ?? (allCharacters = BuildAllCharacters()); // 초기 4인 + 합류 8인 (Day64 추가 — 궁극기 컷신)
@@ -108,12 +108,12 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 result.Add(new DiaryScenarioEntry(definition.ScriptId, definition.CharacterId, DiaryScenarioCategory.Recruit)); // 추가
             }
 
-            foreach (string characterId in Starters) // 결속 대사 1~5단계
+            foreach (string characterId in AllCharacters) // 결속 대사 1~5단계 (Day70 — 12인 전원)
             {
                 for (int level = 1; level <= BondCatalog.MaxLevel; level++) result.Add(new DiaryScenarioEntry(BondCatalog.GetBondScriptId(characterId, level), characterId, DiaryScenarioCategory.Bond)); // 추가
             }
 
-            foreach (string characterId in Starters) // 마을 구역 이벤트
+            foreach (string characterId in AllCharacters) // 마을 구역 이벤트 (Day70 — 12인 전원)
             {
                 foreach (VillageZoneInfo info in VillageZoneCatalog.All) // 구역 순회
                 {
@@ -121,7 +121,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 }
             }
 
-            foreach (string characterId in Starters) // 특별한 밤
+            foreach (string characterId in AllCharacters) // 특별한 밤 (Day70 — 12인 전원)
             {
                 result.Add(new DiaryScenarioEntry(VillageActionService.GetInnEventScriptId(characterId), characterId, DiaryScenarioCategory.InnNight)); // 추가
             }

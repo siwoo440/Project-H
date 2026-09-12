@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_PYRA",
+  "title": "의뢰 거절",
+  "characterId": "CH_PYRA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라가 길드 접수대에 의뢰서 한 장을 내던졌다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "이건 안 받아. 마을을 비우고 도망치라는 의뢰잖아."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "말려도 소용없어. …말릴 거야?",
+      "choices": [
+        {
+          "text": "그 결정을 지지한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "보수는 받고 따로 가자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "…너, 가끔 사람 말을 제대로 하네.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "교활하네. 나쁘지 않아.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "접수원이 눈치를 보는 사이, 파이라는 벌써 문 밖을 보고 있었다."
+    }
+  ]
+}

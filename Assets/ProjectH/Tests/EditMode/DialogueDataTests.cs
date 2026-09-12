@@ -37,7 +37,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
                 checkedCount++; // 검사 수 증가
             }
 
-            Assert.That(checkedCount, Is.EqualTo(4)); // 초기 4인 1화 검증
+            Assert.That(checkedCount, Is.EqualTo(12)); // 12인 1화 검증 (Day70 — 합류 8인 추가)
         }
 
         [Test] // 모든 선택 경로가 끝까지 도달하는지 검증

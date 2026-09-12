@@ -1,0 +1,61 @@
+{
+  "id": "INN_TYRIA",
+  "title": "방패를 내려놓고",
+  "characterId": "CH_TYRIA",
+  "background": "INN_NIGHT",
+  "location": "마을 · 여관 · 밤",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "방 밖 복도에 티리아의 커다란 방패가 벽에 기대어 놓여 있다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "방패는 문 밖에 두고 왔습니다. 오래 고민했습니다."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_TYRIA",
+      "expression": "부끄러움",
+      "text": "그러니 오늘은… 당신이 지켜 주셔야 합니다.",
+      "choices": [
+        {
+          "text": "지키겠다고 답한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i4a"
+        },
+        {
+          "text": "둘이 함께 지키자고 답한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "i4b"
+        }
+      ]
+    },
+    {
+      "id": "i4a",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "…그 대답을 들으려고 기다렸습니다.",
+      "next": "i5"
+    },
+    {
+      "id": "i4b",
+      "speaker": "CH_TYRIA",
+      "expression": "부끄러움",
+      "text": "…그건 제가 생각 못 한 답이군요. 더 좋습니다.",
+      "next": "i5"
+    },
+    {
+      "id": "i5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "등불이 꺼지고, 창밖의 달빛만이 조용히 방 안을 비췄다."
+    }
+  ]
+}

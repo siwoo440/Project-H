@@ -1,0 +1,27 @@
+{
+  "id": "BOND_SEPHIRA_4",
+  "title": "결속 4단계",
+  "characterId": "CH_SEPHIRA",
+  "background": "CATHEDRAL_DUSK",
+  "location": "사원 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_SEPHIRA",
+      "expression": "부끄러움",
+      "text": "심판봉이 가벼워졌습니다. 무게를 덜어 낸 건 제가 아니라 당신입니다."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "무거우면 들어 줄게."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "놀람",
+      "text": "…그 말을, 십 년 전에 듣고 싶었습니다."
+    }
+  ]
+}

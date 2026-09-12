@@ -398,10 +398,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private void RefreshTranscend(SaveData saveData, DataManager dataManager, EquipmentData equipment, EquipmentInstanceSaveData instance) // 초월 화면 갱신
         {
-            EquipmentInstanceSaveData material = EquipmentUpgradeService.FindTranscendMaterial(saveData, instance); // 재료 장비
-            int candidates = CountMaterials(saveData, instance); // 재료 후보 수
+            bool unique = UniqueEquipmentCatalog.IsUnique(instance.EquipmentId); // 전용 장비 여부 (Day70 — 같은 장비 대신 결속 단계로 초월)
+            EquipmentInstanceSaveData material = unique ? instance : EquipmentUpgradeService.FindTranscendMaterial(saveData, instance); // 재료 장비 (전용 장비는 재료가 필요 없음)
+            int candidates = unique ? 0 : CountMaterials(saveData, instance); // 재료 후보 수
             ItemIconView.Apply(materialIcon, candidates > 0 ? dataManager.GetItem(equipment.Id) : null, dataManager); // 재료 칸
-            materialText.text = $"같은 장비 (미장착)  ×{candidates}"; // 재료 수량
+            int bondLevel = unique ? BondService.GetLevel(saveData, UniqueEquipmentCatalog.GetOwnerId(instance.EquipmentId)) : 0; // 주인의 결속 단계
+            int requiredBond = UniqueEquipmentCatalog.GetRequiredBondLevel(instance.TranscendStage); // 필요한 결속 단계
+            materialText.text = unique ? $"전용 장비 · 결속 {requiredBond}단계 (현재 {bondLevel}단계)" : $"같은 장비 (미장착)  ×{candidates}"; // 재료 표시
             int stage = instance.TranscendStage; // 현재 초월
 
             if (stage >= EquipmentUpgradeCatalog.MaxTranscendStage) // 최대 초월
@@ -421,8 +424,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             effectText.text = $"기본 능력치 ×{EquipmentUpgradeCatalog.GetTranscendMultiplier(stage):0.0} → ×{EquipmentUpgradeCatalog.GetTranscendMultiplier(stage + 1):0.0}\n{BuildStatChange(equipment, current, next)}{warning}"; // 능력치 변화
             chanceText.text = "성공 확률  <color=#FFB347>100%</color>"; // 초월은 확정
             int gold = EquipmentUpgradeCatalog.GetTranscendGold(stage); // 비용
-            costText.text = $"● {gold:N0} G  ·  같은 장비 1개"; // 비용 표시
-            SetAction(instance.EnhanceLevel >= EquipmentUpgradeCatalog.MaxEnhanceLevel && material != null && GoldCurrencyService.GetGold(saveData) >= gold, "초월하기"); // 조건 충족 시 활성
+            costText.text = unique ? $"● {gold:N0} G  ·  결속 {requiredBond}단계" : $"● {gold:N0} G  ·  같은 장비 1개"; // 비용 표시
+            bool materialReady = unique ? bondLevel >= requiredBond : material != null; // 재료 충족 여부
+            SetAction(instance.EnhanceLevel >= EquipmentUpgradeCatalog.MaxEnhanceLevel && materialReady && GoldCurrencyService.GetGold(saveData) >= gold, "초월하기"); // 조건 충족 시 활성
         }
 
         private void RefreshOwner(SaveData saveData, DataManager dataManager, EquipmentInstanceSaveData instance) // 장착자 초상 갱신

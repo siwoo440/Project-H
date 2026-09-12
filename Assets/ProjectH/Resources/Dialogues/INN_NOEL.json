@@ -1,0 +1,61 @@
+{
+  "id": "INN_NOEL",
+  "title": "지도를 접고",
+  "characterId": "CH_NOEL",
+  "background": "INN_NIGHT",
+  "location": "마을 · 여관 · 밤",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "침대 머리맡에 노엘의 지도가 처음으로 반듯하게 접혀 놓여 있다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "오늘은 지도를 접었어요. 어디로 갈지 안 정할래요."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_NOEL",
+      "expression": "부끄러움",
+      "text": "정하지 않으면, 여기 있어도 되는 거죠?",
+      "choices": [
+        {
+          "text": "여기 있어도 된다고 답한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i4a"
+        },
+        {
+          "text": "내일 같이 정하자고 답한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "i4b"
+        }
+      ]
+    },
+    {
+      "id": "i4a",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "…그 말 들으려고 오늘 하루가 길었어요.",
+      "next": "i5"
+    },
+    {
+      "id": "i4b",
+      "speaker": "CH_NOEL",
+      "expression": "부끄러움",
+      "text": "내일이요? …그럼 오늘 밤은 길어도 되겠네요.",
+      "next": "i5"
+    },
+    {
+      "id": "i5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "등불이 꺼지고, 창밖의 달빛만이 조용히 방 안을 비췄다."
+    }
+  ]
+}

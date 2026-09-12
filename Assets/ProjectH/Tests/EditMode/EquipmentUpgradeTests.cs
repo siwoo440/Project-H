@@ -193,8 +193,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(BattleEquipmentStatCalculator.TryCalculate(serena, saveData, dataManager, out BattleEquipmentStatBonus plusFive, out _), Is.True); // +5 계산
             Assert.That(plusFive.Attack, Is.EqualTo(52.5f).Within(0.001f)); // 35 × 1.5
             Assert.That(EquipmentUpgradeService.TryTranscend(saveData, dataManager, weapon.InstanceId, out string message), Is.True, message); // ★2
-            Assert.That(RuneService.IsSlotUnlocked(saveData, dataManager, Serena, 4), Is.True); // ★2 장비 착용 → 5번 해금
-            Assert.That(RuneCatalog.GetSlotRequirement(4), Does.Contain("★2")); // 조건 문구
+            Assert.That(RuneService.IsSlotUnlocked(saveData, dataManager, Serena, 4), Is.False); // 일반 장비 ★2로는 안 열림 (Day70 — 전용 장비 전용 조건)
+            Assert.That(RuneCatalog.GetSlotRequirement(4), Does.Contain("전용 장비 ★2")); // 조건 문구 (Day70 교체)
         }
 
         [Test] // 이전 세이브 장비는 +0 ★1로 불러옴

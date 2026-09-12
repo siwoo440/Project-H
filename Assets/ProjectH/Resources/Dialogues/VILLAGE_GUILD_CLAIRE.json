@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_CLAIRE",
+  "title": "의뢰 고르기",
+  "characterId": "CH_CLAIRE",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어가 길드 게시판 앞에서 의뢰서를 종류별로 나눠 붙이고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "이건 채집, 이건 호위, 이건… 설명이 너무 부실하네요."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "저는 설명이 부실한 쪽이 제일 궁금한데요.",
+      "choices": [
+        {
+          "text": "같이 가 보자고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "안전한 걸 고르자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "역시! 모르는 쪽이 자료가 되니까요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "…맞는 말이에요. 요즘 제가 좀 들떴네요.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어는 의뢰서 두 장을 손에 쥔 채 한참을 망설였다."
+    }
+  ]
+}

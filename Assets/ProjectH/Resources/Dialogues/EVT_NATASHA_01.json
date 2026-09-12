@@ -1,0 +1,146 @@
+{
+  "id": "EVT_NATASHA_01",
+  "title": "복수의 값",
+  "characterId": "CH_NATASHA",
+  "background": "BACK_ALLEY",
+  "location": "마을 · 뒷골목 · 밤",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "골목 끝 등불 아래. 나타샤가 손바닥만 한 종이를 펴고 있었다. 이름이 일곱 줄 적혀 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "명단이야. 우리 가족 일에 이름 올린 것들."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "몇 명 남았어?"
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "…오늘 아침까지 둘이었는데, 지금은 하나야."
+    },
+    {
+      "id": "n5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤가 여섯 번째 줄에 선을 그었다. 칼끝이 아니라 손톱으로."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_NATASHA",
+      "expression": "당황",
+      "text": "내가 한 게 아니야. 술병에 취해서 계단에서 굴렀대. 그렇게 죽었대."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "칠 년을 쫓았는데, 값도 못 받고 끝났어."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_NATASHA",
+      "expression": "당황",
+      "text": "이상하지. 시원할 줄 알았는데 아무것도 안 남았어. …이게 맞아?",
+      "choices": [
+        {
+          "text": "마지막 한 줄은 네가 정하라고 한다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "값은 이미 치렀다고 말해 준다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "마지막 한 줄. 그건 네가 정해. 쫓을지 말지."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_NATASHA",
+      "expression": "놀람",
+      "text": "…내가 정해도 되는 거였나."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "칠 년 동안 한 번도 그 생각을 안 했어. 정해진 일인 줄 알았어.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "값은 이미 치렀어. 네 칠 년으로."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_NATASHA",
+      "expression": "놀람",
+      "text": "…그 계산법은 어디서 배운 건데."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_NATASHA",
+      "expression": "부끄러움",
+      "text": "말도 안 되는데, 왜 반박이 안 되지.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤는 명단을 등불에 가져다 댔다. 종이가 파랗게 말려 올라갔다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "이 단검 두 자루, 그날 훔친 거야. 도망치려고."
+    },
+    {
+      "id": "m3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "훔친 거였어?"
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "응. 칠 년 내내 남을 찌르는 데 썼고. …이제 용도를 바꿔 볼까 해."
+    },
+    {
+      "id": "m5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "어떻게?"
+    },
+    {
+      "id": "m6",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "누굴 지키는 쪽. 어울리진 않지만, 어차피 훔친 거라 내 맘대로 해도 되잖아.",
+      "next": "END"
+    }
+  ]
+}

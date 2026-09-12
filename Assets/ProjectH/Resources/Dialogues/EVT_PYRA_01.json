@@ -1,0 +1,146 @@
+{
+  "id": "EVT_PYRA_01",
+  "title": "두 번은 없다",
+  "characterId": "CH_PYRA",
+  "background": "FORTRESS_YARD",
+  "location": "카르니안 · 병영 뒤뜰",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "병영 뒤뜰의 작은 화톳불 앞. 파이라가 오래된 문서 뭉치를 손에 쥐고 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "제3기병대 철수 명령서. 내가 받았던 거야."
+    },
+    {
+      "id": "n3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "그 마을을 버리라는?"
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "그래. 서명은 세 개고, 그중 하나는 내 거야."
+    },
+    {
+      "id": "n5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라가 문서를 불 위로 들었다. 그런데 손이 내려오지 않았다."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_PYRA",
+      "expression": "당황",
+      "text": "오늘 편지가 왔어. 그 마을 사람한테서."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "살아남은 사람이 있었대. 열둘. 내가 없는 동안 열둘이 살아 있었어."
+    },
+    {
+      "id": "c1",
+      "speaker": "CH_PYRA",
+      "expression": "당황",
+      "text": "웃기지. 태우려고 왔는데, 이제 못 태우겠어. 어떻게 해야 해?",
+      "choices": [
+        {
+          "text": "태우지 말고 갖고 다니라고 한다",
+          "affinity": 3,
+          "preferred": true,
+          "next": "a1"
+        },
+        {
+          "text": "열두 명을 만나러 가자고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b1"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "태우지 마. 갖고 다녀. 무거우라고."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_PYRA",
+      "expression": "놀람",
+      "text": "…너 진짜 못됐다."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "근데 맞는 말이야. 가벼워지면 또 같은 서명을 하겠지.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "열두 명 만나러 가자. 네 발로."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_PYRA",
+      "expression": "놀람",
+      "text": "…얼굴 보고 뭐라고 해. 미안하다고?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "…그래도 가야겠지. 도망친 건 한 번이면 충분하니까.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라는 명령서를 접어 가슴 안쪽에 넣고, 벽에 세워 둔 창을 들었다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "이 창, 이름이 없었어. 부르기 귀찮아서."
+    },
+    {
+      "id": "m3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "이제 붙일 거야?"
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "붉은 서약. 창대에 새길 거야. '명령으로 마을을 버리는 건 한 번으로 충분하다.'"
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "길어서 새기다 손 아프겠네. 네가 절반 새겨."
+    },
+    {
+      "id": "m6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "화톳불이 사그라질 때까지, 창날을 가는 소리가 뒤뜰에 길게 이어졌다.",
+      "next": "END"
+    }
+  ]
+}

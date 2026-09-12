@@ -1,0 +1,27 @@
+{
+  "id": "BOND_PYRA_1",
+  "title": "결속 1단계",
+  "characterId": "CH_PYRA",
+  "background": "FORTRESS_YARD",
+  "location": "카르니안 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "따라오려면 말은 줄여. 창은 내가 든다."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "알았어."
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_PYRA",
+      "expression": "당황",
+      "text": "…말 잘 듣네. 그게 더 마음에 안 들어."
+    }
+  ]
+}

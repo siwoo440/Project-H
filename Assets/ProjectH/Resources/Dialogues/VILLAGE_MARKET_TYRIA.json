@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_MARKET_TYRIA",
+  "title": "장바구니",
+  "characterId": "CH_TYRIA",
+  "background": "VILLAGE_MARKET",
+  "location": "마을 · 시장",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아가 커다란 장바구니 두 개를 한 손에 들고 서 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "고아원에 보낼 것들입니다. 남부에서 온 아이들이 있어서요."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "무겁지 않습니다. 정말입니다.",
+      "choices": [
+        {
+          "text": "하나를 받아 든다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "그 말을 믿어 준다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "…거짓말인 걸 아셨군요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "고맙습니다. 가끔은 믿어 주시는 편이 도움이 됩니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "골목 끝에서 아이들이 달려 나오자 티리아의 표정이 잠깐 풀렸다."
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "id": "INN_MERCIA",
+  "title": "염주를 풀다",
+  "characterId": "CH_MERCIA",
+  "background": "INN_NIGHT",
+  "location": "마을 · 여관 · 밤",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "방 안 탁자 위에 메르시아의 염주가 한 줄로 길게 풀려 놓여 있다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "오늘 밤은 세지 않겠습니다. 세지 않는 밤도 있어야지요."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_MERCIA",
+      "expression": "부끄러움",
+      "text": "…이런 밤을 뭐라 부르는지, 저는 배운 적이 없습니다.",
+      "choices": [
+        {
+          "text": "이름은 없어도 된다고 답한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i4a"
+        },
+        {
+          "text": "함께 이름을 붙이자고 답한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "i4b"
+        }
+      ]
+    },
+    {
+      "id": "i4a",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "…그렇군요. 이름이 없으니 잃을 것도 없겠습니다.",
+      "next": "i5"
+    },
+    {
+      "id": "i4b",
+      "speaker": "CH_MERCIA",
+      "expression": "부끄러움",
+      "text": "그럼 천천히 지어 주세요. 밤은 깁니다.",
+      "next": "i5"
+    },
+    {
+      "id": "i5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "등불이 꺼지고, 창밖의 달빛만이 조용히 방 안을 비췄다."
+    }
+  ]
+}

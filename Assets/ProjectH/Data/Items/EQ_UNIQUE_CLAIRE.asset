@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26497adc4db00064a9edc7dab84e7854, type: 3}
+  m_Name: EQ_UNIQUE_CLAIRE
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.ItemData
+  id: EQ_UNIQUE_CLAIRE
+  displayName: "생명 순환 플라스크"
+  itemType: 2
+  grade: 4
+  maxStack: 1
+  description: "죽은 이를 되살리려던 연구가 산 사람을 살리는 쪽으로 바뀐 증거."

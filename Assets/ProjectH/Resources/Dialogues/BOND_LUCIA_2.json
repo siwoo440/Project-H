@@ -1,0 +1,27 @@
+{
+  "id": "BOND_LUCIA_2",
+  "title": "결속 2단계",
+  "characterId": "CH_LUCIA",
+  "background": "GUILD_HALL",
+  "location": "길드 · 결속",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "네 뒤는 내가 본다. 계약서엔 없지만."
+    },
+    {
+      "id": "b2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "왜 나야?"
+    },
+    {
+      "id": "b3",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "뒤를 봐 줄 사람이 없는 기분을 아니까."
+    }
+  ]
+}

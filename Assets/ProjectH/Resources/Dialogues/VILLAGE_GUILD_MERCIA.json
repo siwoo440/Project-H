@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_GUILD_MERCIA",
+  "title": "순례자의 기록",
+  "characterId": "CH_MERCIA",
+  "background": "VILLAGE_GUILD",
+  "location": "마을 · 길드",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "메르시아가 길드 서기에게 자신이 지나온 순례 경로를 적어 주고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "지나온 곳을 남기는 일은, 다음 사람을 위한 것입니다."
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "이 기록에 당신 이름도 적어도 되겠습니까?",
+      "choices": [
+        {
+          "text": "그러라고 한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "네 이름만 적으라고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "…그럼 우리는 같은 길로 남겠군요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "겸손하시군요. 그래도 한 줄은 적겠습니다.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "서기가 장부를 덮었고, 메르시아는 오래 그 표지를 바라봤다."
+    }
+  ]
+}

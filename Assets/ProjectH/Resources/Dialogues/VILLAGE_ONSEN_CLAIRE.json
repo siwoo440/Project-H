@@ -1,0 +1,61 @@
+{
+  "id": "VILLAGE_ONSEN_CLAIRE",
+  "title": "온천 성분",
+  "characterId": "CH_CLAIRE",
+  "background": "VILLAGE_ONSEN",
+  "location": "마을 · 온천",
+  "nodes": [
+    {
+      "id": "v1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어가 온천물을 작은 병에 담아 빛에 비춰 흔들고 있다."
+    },
+    {
+      "id": "v2",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "철분에 유황… 이 배합, 회복약으로 쓸 수 있겠는데요?"
+    },
+    {
+      "id": "v3",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "실험 대상이 필요한데… 자원하실래요?",
+      "choices": [
+        {
+          "text": "자원한다",
+          "affinity": 2,
+          "preferred": true,
+          "next": "v4a"
+        },
+        {
+          "text": "먼저 네가 해 보라고 한다",
+          "affinity": 1,
+          "preferred": false,
+          "next": "v4b"
+        }
+      ]
+    },
+    {
+      "id": "v4a",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "좋아요! 아, 부작용은 아마 없을 거예요. 아마도요.",
+      "next": "v5"
+    },
+    {
+      "id": "v4b",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "…연구자를 못 믿으시는군요. 현명한 판단이에요.",
+      "next": "v5"
+    },
+    {
+      "id": "v5",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "결국 둘 다 물에 몸을 담갔고, 클레어는 병을 내려놓았다."
+    }
+  ]
+}

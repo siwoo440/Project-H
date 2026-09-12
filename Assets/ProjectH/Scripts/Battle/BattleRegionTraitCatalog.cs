@@ -10,7 +10,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         ManaSurge = 1, // 노아르 : 마나 폭주
         SpiritBlessing = 2, // 실바란 : 정령의 가호
         FrostMarch = 3, // 카르니안 : 혹한 (Day66 추가 — 아군 약화형)
-        Sandstorm = 4 // 아스타르 : 모래폭풍 (Day66 추가 — 아군 약화형)
+        Sandstorm = 4, // 아스타르 : 모래폭풍 (Day66 추가 — 아군 약화형)
+        RiftErosion = 5 // 바다 검은 균열 : 균열 침식 (Day67 추가 — 시간이 갈수록 아군 체력이 깎임)
     }
 
     public static class BattleRegionTraitCatalog // 지역 특징 수치표 (Day65 신규 — 수치는 67일차 1차 밸런스에서 조정)
@@ -32,6 +33,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public const float SandstormDuration = 6f; // 모래폭풍 지속 (초)
         public const string FrostSourceKey = "REGION_FROST"; // 혹한 출처 (정화 가능)
         public const string SandstormSourceKey = "REGION_SANDSTORM"; // 모래폭풍 출처 (정화 가능)
+        public const float RiftErosionInterval = 7f; // 균열 침식 간격 (초)
+        public const float RiftErosionHpRatio = 0.02f; // 아군 최대 체력 2% 고정 피해 (방어 무시 · 정화 불가)
 
         public static BattleRegionTraitKind GetKind(string dungeonId) // 던전의 지역 특징 (같은 지역 던전은 같은 특징)
         {
@@ -49,6 +52,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case "DG008": // 아스타르 잠든 봉인 신전 (Day66)
                 case "DG014": // 아스타르 지하 고대 도시 (Day66)
                     return BattleRegionTraitKind.Sandstorm; // 모래폭풍
+                case "DG015": // 바다 검은 균열 해안 (Day67)
+                case "DG016": // 바다 균열 심층 (Day67)
+                    return BattleRegionTraitKind.RiftErosion; // 균열 침식
                 default: // 숲 · 늪지대 · 마왕성
                     return BattleRegionTraitKind.None; // 특징 없음
             }
@@ -61,6 +67,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case BattleRegionTraitKind.ManaSurge: return ManaSurgeInterval; // 10초
                 case BattleRegionTraitKind.FrostMarch: return FrostInterval; // 8초
                 case BattleRegionTraitKind.Sandstorm: return SandstormInterval; // 12초
+                case BattleRegionTraitKind.RiftErosion: return RiftErosionInterval; // 7초
                 default: return SpiritBlessingInterval; // 5초
             }
         }
@@ -73,6 +80,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case BattleRegionTraitKind.SpiritBlessing: return "정령의 가호"; // 실바란
                 case BattleRegionTraitKind.FrostMarch: return "혹한"; // 카르니안 (Day66)
                 case BattleRegionTraitKind.Sandstorm: return "모래폭풍"; // 아스타르 (Day66)
+                case BattleRegionTraitKind.RiftErosion: return "균열 침식"; // 바다 (Day67)
                 default: return string.Empty; // 없음
             }
         }
@@ -85,6 +93,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case BattleRegionTraitKind.SpiritBlessing: return $"{SpiritBlessingInterval:0}초마다 적이 최대 체력 {SpiritBlessingHealRatio * 100f:0}% 회복. 약화(방어·공격 감소, 독·화상 등)가 걸린 적은 절반만 회복해요."; // 실바란
                 case BattleRegionTraitKind.FrostMarch: return $"{FrostInterval:0}초마다 아군 공격 속도 -{FrostStep * 100f:0}% (최대 {FrostMaxStacks}중첩). 정화하면 처음부터 다시 쌓여요."; // 카르니안 (Day66)
                 case BattleRegionTraitKind.Sandstorm: return $"{SandstormInterval:0}초마다 {SandstormDuration:0}초간 아군 명중률 -{SandstormAccuracyReduction * 100f:0}%. 폭풍이 없는 틈에 몰아치거나 정화하세요."; // 아스타르 (Day66)
+                case BattleRegionTraitKind.RiftErosion: return $"{RiftErosionInterval:0}초마다 아군 전원이 최대 체력 {RiftErosionHpRatio * 100f:0}% 피해를 입어요 (방어 무시 · 정화 불가). 회복 담당과 빠른 처리가 필요해요."; // 바다 (Day67)
                 default: return string.Empty; // 없음
             }
         }
@@ -139,6 +148,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 종료
             }
 
+            if (kind == BattleRegionTraitKind.RiftErosion) // 균열 침식 (Day67)
+            {
+                int eroded = ApplyRiftErosion(registry); // 적용
+                Debug.Log($"[Project H][REGION] 균열 침식 · 아군 {eroded}명"); // 로그
+                return; // 종료
+            }
+
             int healed = ApplySpiritBlessing(registry, statusBuffer); // 정령의 가호
             Debug.Log($"[Project H][REGION] 정령의 가호 · 적 {healed}명 회복"); // 로그
         }
@@ -156,6 +172,22 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 int stacks = Mathf.Min(BattleRegionTraitCatalog.FrostMaxStacks, Mathf.RoundToInt(current / BattleRegionTraitCatalog.FrostStep) + 1); // 1중첩 추가
                 BattleSkillRuntimeState.AddModifier(id, BattleRuntimeModifierKind.AttackSpeedReductionPercent, BattleRegionTraitCatalog.FrostStep * stacks, BattleRegionTraitCatalog.FrostDuration, BattleRegionTraitCatalog.FrostSourceKey); // 공격 속도 감소
                 BattleSkillRuntimeState.RegisterRemovableDebuff(id, BattleRegionTraitCatalog.FrostSourceKey); // 정화 가능
+                count++; // 적용 수 증가
+            }
+
+            return count; // 적용 수 반환
+        }
+
+        public static int ApplyRiftErosion(BattleCombatRegistry registry) // 살아 있는 아군에게 최대 체력 비율 고정 피해 (Day67 추가 — 방어 무시 · 정화 불가)
+        {
+            int count = 0; // 적용 수
+            if (registry == null) return 0; // 입력 확인
+
+            foreach (BattleActor actor in registry.Actors) // 전투 객체 순회
+            {
+                if (actor == null || actor.Team != BattleTeam.Ally || !actor.IsCombatReady || !actor.Stats.IsAlive) continue; // 살아 있는 아군만
+                int damage = Mathf.Max(1, Mathf.RoundToInt(actor.Stats.MaxHp * BattleRegionTraitCatalog.RiftErosionHpRatio)); // 피해량
+                actor.ApplyDamage(new BattleDamageResult(BattleDamageType.True, "REGION_RIFT", actor.Stats.RuntimeId, damage, 0, damage, BattleElement.None, BattleElementAffinity.Neutral)); // 고정 피해
                 count++; // 적용 수 증가
             }
 

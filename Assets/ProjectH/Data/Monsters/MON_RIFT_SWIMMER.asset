@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_RIFT_SWIMMER
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_RIFT_SWIMMER
+  displayName: "\uC2EC\uC5F0 \uC720\uC601\uCCB4"
+  description: "\uBC14\uB2F7\uBB3C\uC5D0 \uC11E\uC778 \uCE68\uC2DD\uC774 \uBB3C\uACE0\uAE30 \uB5BC\uCC98\uB7FC \uBB49\uCE5C \uAC83. \uBE60\uB974\uAC8C \uD5E4\uC5C4\uCCD0 \uB4B7\uC904\uBD80\uD130 \uB36E\uCE5C\uB2E4."
+  aiType: 1
+  element: 2
+  bossPattern: {fileID: 0}
+  maxHp: 13400
+  attack: 185
+  defense: 30
+  resistance: 40
+  attackSpeed: 1.25
+  attackRange: 1.3
+  moveSpeed: 3.0

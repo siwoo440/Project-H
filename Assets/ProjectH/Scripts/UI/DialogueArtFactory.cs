@@ -149,6 +149,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new BackgroundPalette(new Color(0.58f, 0.66f, 0.78f), new Color(0.92f, 0.95f, 0.98f), new Color(0.78f, 0.82f, 0.88f), false); // 눈보라 치는 설원 요새
                 case "DESERT": // 아스타르 사막 (Day66 추가)
                     return new BackgroundPalette(new Color(0.96f, 0.70f, 0.40f), new Color(1f, 0.90f, 0.66f), new Color(0.82f, 0.62f, 0.36f), false); // 달궈진 모래 언덕
+                case "SEA_RIFT": // 서쪽 해안 검은 균열 (Day67 추가)
+                    return new BackgroundPalette(new Color(0.10f, 0.08f, 0.24f), new Color(0.52f, 0.28f, 0.78f), new Color(0.14f, 0.20f, 0.34f), true); // 보랏빛 균열이 뜬 바다
                 case "NIGHT": // 밤 일상
                     return new BackgroundPalette(new Color(0.03f, 0.05f, 0.14f), new Color(0.16f, 0.20f, 0.38f), new Color(0.08f, 0.09f, 0.16f), true); // 밤하늘
                 default: // 기본 처리

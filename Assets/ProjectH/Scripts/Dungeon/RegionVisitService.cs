@@ -28,13 +28,15 @@ namespace ProjectH.Dungeon // 프로젝트 던전 탐험 영역
         public const string SilvaranVisitFlag = "REGION_VISITED_SILVARAN"; // 실바란 방문 플래그
         public const string KarnianVisitFlag = "REGION_VISITED_KARNIAN"; // 카르니안 방문 플래그 (Day66)
         public const string AstarVisitFlag = "REGION_VISITED_ASTAR"; // 아스타르 방문 플래그 (Day66)
+        public const string SeaVisitFlag = "REGION_VISITED_SEA"; // 서쪽 해안 방문 플래그 (Day67)
 
         private static readonly RegionArrivalDefinition[] Definitions = // 지역별 첫 방문 이야기
         {
             new RegionArrivalDefinition("REGION_NOIR", "REGION_NOIR_ARRIVAL", "CH_LILIA", NoirVisitFlag), // 노아르 : 릴리아의 고향
             new RegionArrivalDefinition("REGION_SILVARAN", "REGION_SILVARAN_ARRIVAL", "CH_EVE", SilvaranVisitFlag), // 실바란 : 이브의 고향
             new RegionArrivalDefinition("REGION_KARNIAN", "REGION_KARNIAN_ARRIVAL", "CH_ELLEN", KarnianVisitFlag), // 카르니안 : 엘렌의 조국 (Day66)
-            new RegionArrivalDefinition("REGION_DESERT", "REGION_DESERT_ARRIVAL", "CH_SERENA", AstarVisitFlag) // 아스타르 : 세레나와 봉인 장치 (Day66)
+            new RegionArrivalDefinition("REGION_DESERT", "REGION_DESERT_ARRIVAL", "CH_SERENA", AstarVisitFlag), // 아스타르 : 세레나와 봉인 장치 (Day66)
+            new RegionArrivalDefinition("REGION_SEA", "REGION_SEA_ARRIVAL", "CH_LILIA", SeaVisitFlag) // 서쪽 해안 : 릴리아의 균열 분석 (Day67)
         };
 
         public static IReadOnlyList<RegionArrivalDefinition> All => Definitions; // 전체 정의

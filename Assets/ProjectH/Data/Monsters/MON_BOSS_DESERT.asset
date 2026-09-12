@@ -18,8 +18,8 @@ MonoBehaviour:
   aiType: 7
   element: 4
   bossPattern: {fileID: 11400000, guid: a7a445ffc9bb416aafe3c66a00c0df4d, type: 2}
-  maxHp: 18000
-  attack: 32
+  maxHp: 139700
+  attack: 250
   defense: 80
   resistance: 100
   attackSpeed: 0.75

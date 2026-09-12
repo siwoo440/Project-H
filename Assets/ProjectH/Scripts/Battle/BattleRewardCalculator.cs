@@ -28,7 +28,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
                 if (dungeon != null) // 전투 컨텍스트 던전 데이터 존재 확인
                 {
-                    return new BattleReward(dungeon.RewardGold, dungeon.RewardExp); // 전투 컨텍스트 실제 보상 반환
+                    return new BattleReward(ProjectH.Dungeon.RiftService.ApplyRewardBonus(dungeon.RewardGold), dungeon.RewardExp); // 전투 컨텍스트 실제 보상 반환 (Day67 — 긴급 균열이면 골드 1.5배)
                 }
             }
 

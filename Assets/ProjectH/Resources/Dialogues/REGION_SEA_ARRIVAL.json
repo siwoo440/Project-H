@@ -1,0 +1,73 @@
+{
+  "id": "REGION_SEA_ARRIVAL",
+  "title": "수면 위의 균열",
+  "characterId": "CH_LILIA",
+  "background": "SEA_RIFT",
+  "location": "서쪽 해안",
+  "nodes": [
+    {
+      "id": "w1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파도 소리 대신 낮은 울림이 들린다. 수평선 한가운데, 하늘과 바다가 찢어진 자리에서 검은 빛이 새어 나오고 있었다."
+    },
+    {
+      "id": "w2",
+      "speaker": "CH_LILIA",
+      "expression": "놀람",
+      "text": "…말도 안 돼. 균열이 바다 위에 떠 있어. 지면 마력선도 없는데 어떻게 유지되는 거지?"
+    },
+    {
+      "id": "w3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "저 안에서 뭔가가 계속 나오고 있어. 해안까지 밀려오고 있고."
+    },
+    {
+      "id": "w4",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "측정값이 이상해. 균열은 시간이 지날수록 커지는 게 아니라… 주변의 생명을 먹으면서 커지고 있어. 우리가 안에 있으면 우리도 조금씩 깎여."
+    },
+    {
+      "id": "w5",
+      "speaker": "CH_LILIA",
+      "expression": "생각",
+      "text": "그러니까 오래 버티는 싸움은 최악이야. 회복 담당을 꼭 넣고, 짧게 끝내자.",
+      "choices": [
+        {
+          "text": "알았어. 회복 담당 챙기고 속전속결로.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "w6a"
+        },
+        {
+          "text": "릴리아, 이건 네 연구 주제잖아.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "w6b"
+        }
+      ]
+    },
+    {
+      "id": "w6a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "좋아. 이런 건 네가 말을 잘 들어서 편해.",
+      "next": "w7"
+    },
+    {
+      "id": "w6b",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "…그렇긴 한데, 지금은 연구보다 네가 안 깎이는 게 먼저야. 그, 그런 뜻이야.",
+      "next": "w7"
+    },
+    {
+      "id": "w7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아가 측정 기구를 접고 해안으로 걸음을 옮긴다. 검은 균열은 숨을 쉬듯 천천히 벌어졌다 오므라들고 있었다."
+    }
+  ]
+}

@@ -26,6 +26,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private const float MapRight = 0.655f; // 지도 영역 오른쪽 끝
         private const float MapTop = 0.915f; // 지도 영역 위쪽 끝
         private const float AlertHeight = 50f; // 지역 원 위 안내 아이콘 높이 (Day66 추가)
+        private const float PanelViewHeight = 660f; // 오른쪽 패널 기준 높이 (비율 배치를 픽셀로 바꾸는 기준, Day67 추가)
 
         private sealed class RegionMarker // 지도 위 지역 표시
         {
@@ -34,16 +35,21 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             public Outline Ring; // 선택 테두리
             public Text Label; // 이름
             public RectTransform Alert; // 새 던전 "!" 안내 (Day66 추가)
+            public RectTransform Rift; // 검은 균열 표시 (Day67 추가)
         }
 
         private readonly List<RegionMarker> markers = new List<RegionMarker>(); // 지역 표시 목록
         private readonly List<GameObject> panelItems = new List<GameObject>(); // 오른쪽 패널 동적 요소
         private AdventureRegion selectedRegion; // 선택 지역
         private Text timeText; // 일차·활력
-        private RectTransform panelContent; // 오른쪽 패널 내용
+        private RectTransform panelContent; // 오른쪽 패널 내용 (스크롤 내용물)
+        private ScrollRect panelScroll; // 오른쪽 패널 스크롤 (Day67 추가 — 지역 설명·긴급 균열·던전 카드가 많아지면 내려서 봄)
+        private float panelCursor; // 다음 줄이 들어갈 위치 (픽셀)
+        private string lastPanelRegionId = string.Empty; // 마지막으로 그린 지역 (스크롤 위치 유지용)
         private Text statusText; // 안내
         private Button actionButton; // 탐험 시작 · 마을로 가기
         private Text actionLabel; // 실행 버튼 글자
+        private string riftMessage = string.Empty; // 이번에 열린·놓친 균열 안내 (Day67 추가)
 
         public string SelectedDungeonId => DungeonSelectionRuntimeState.SelectedDungeonId; // 현재 선택 던전 ID 반환
         public string SelectedRegionId => selectedRegion == null ? string.Empty : selectedRegion.Id; // 현재 선택 지역 ID 반환 (Day63 추가)
@@ -65,9 +71,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             DungeonSelectionRuntimeState.SetUnlockEvaluator(IsDungeonUnlocked); // 순차 해금 규칙 연결 (Day63 — 이전 진행 UI 패치 통합)
             DungeonSelectionRuntimeState.SelectionChanged += HandleSelectionChanged; // 선택 변경 이벤트 구독
             EnsureRegionErosionInitialized(); // 지역별 침식도 랜덤 초기화 (Day44)
+            riftMessage = RefreshRift(); // 검은 균열 기한·발생 처리 (Day67 추가)
             BuildUi(); // 지도 화면 생성
-            AdventureRegion start = AdventureRegionCatalog.FindByDungeon(DungeonSelectionRuntimeState.SelectedDungeonId) ?? AdventureRegionCatalog.All[0]; // 전투에서 돌아오면 그 지역, 아니면 숲
+            AdventureRegion start = RiftRegion() ?? AdventureRegionCatalog.FindByDungeon(DungeonSelectionRuntimeState.SelectedDungeonId) ?? AdventureRegionCatalog.All[0]; // 균열이 열렸으면 그 지역, 전투에서 돌아오면 그 지역, 아니면 숲
             SelectRegion(start); // 첫 지역 선택
+            if (!string.IsNullOrEmpty(riftMessage)) statusText.text = riftMessage; // 균열 소식 안내 (Day67)
         }
 
         private void OnDestroy() // 런타임 화면 해제
@@ -138,11 +146,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 labelRect.anchoredPosition = new Vector2(0f, -50f); // 원 아래
                 labelRect.sizeDelta = new Vector2(200f, 32f); // 크기
                 button.onClick.AddListener(() => SelectRegion(captured)); // 지역 선택
+                RectTransform rift = CreateRiftBadge(root, "Rift_" + region.Id); // 균열 표시 (Day67 추가)
+                rift.anchorMin = anchor; // 기준점
+                rift.anchorMax = anchor; // 기준점
+                rift.anchoredPosition = Vector2.zero; // 지역 원 위에 겹침
                 RectTransform alert = CreateAlertBadge(root, "Alert_" + region.Id, 30f); // 원 위 "!" (Day66 추가)
                 alert.anchorMin = anchor; // 기준점
                 alert.anchorMax = anchor; // 기준점
                 alert.anchoredPosition = new Vector2(0f, AlertHeight); // 원 위
-                markers.Add(new RegionMarker { Region = region, Disc = disc, Ring = ring, Label = label, Alert = alert }); // 목록 등록
+                markers.Add(new RegionMarker { Region = region, Disc = disc, Ring = ring, Label = label, Alert = alert, Rift = rift }); // 목록 등록
             }
         }
 
@@ -150,10 +162,27 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             Image panel = CreateImage(root, "RegionPanel", PanelColor); // 패널
             SetRect(panel.rectTransform, new Vector2(MapRight + 0.01f, 0.015f), new Vector2(0.99f, MapTop - 0.012f)); // 오른쪽
+            GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D)); // 보이는 영역 (밖으로 나간 카드는 잘림)
+            viewportObject.transform.SetParent(panel.transform, false); // 패널 하위
+            RectTransform viewport = (RectTransform)viewportObject.transform; // 영역 저장
+            SetRect(viewport, new Vector2(0.05f, 0.24f), new Vector2(0.95f, 0.98f)); // 위쪽 영역
             GameObject content = new GameObject("Content", typeof(RectTransform)); // 동적 내용
-            content.transform.SetParent(panel.transform, false); // 패널 하위
+            content.transform.SetParent(viewport, false); // 보이는 영역 하위
             panelContent = (RectTransform)content.transform; // 저장
-            SetRect(panelContent, new Vector2(0.05f, 0.24f), new Vector2(0.95f, 0.98f)); // 위쪽 영역
+            panelContent.anchorMin = new Vector2(0f, 1f); // 위쪽 기준
+            panelContent.anchorMax = new Vector2(1f, 1f); // 위쪽 기준
+            panelContent.pivot = new Vector2(0.5f, 1f); // 위쪽 고정
+            panelContent.offsetMin = new Vector2(0f, panelContent.offsetMin.y); // 좌우 여백 없음
+            panelContent.offsetMax = new Vector2(0f, panelContent.offsetMax.y); // 좌우 여백 없음
+            panelContent.sizeDelta = new Vector2(0f, PanelViewHeight); // 기본 높이
+            panelScroll = panel.gameObject.AddComponent<ScrollRect>(); // 세로 스크롤
+            panelScroll.content = panelContent; // 내용 연결
+            panelScroll.viewport = viewport; // 보이는 영역 연결
+            panelScroll.horizontal = false; // 가로 스크롤 없음
+            panelScroll.vertical = true; // 세로 스크롤 사용
+            panelScroll.movementType = ScrollRect.MovementType.Clamped; // 끝에서 멈춤
+            panelScroll.scrollSensitivity = 40f; // 휠 감도
+            panelScroll.inertia = false; // 관성 없이 바로 멈춤
             statusText = CreateText(panel.transform, "Status", string.Empty, 16, HintColor, FontStyle.Normal, TextAnchor.MiddleLeft).Wrap(); // 안내
             SetRect(statusText.rectTransform, new Vector2(0.05f, 0.135f), new Vector2(0.95f, 0.225f)); // 버튼 위
             actionButton = CreateButton(panel.transform, "EnterButton", "탐험 시작", ActionColor); // 실행 버튼
@@ -210,15 +239,27 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 marker.Disc.rectTransform.localScale = Vector3.one * (selected ? 1.18f : 1f); // 선택 확대
                 marker.Label.color = selected ? GoldColor : Color.white; // 이름 강조
                 marker.Alert.gameObject.SetActive(DungeonGuideService.HasNewDungeon(saveData, marker.Region)); // 새 던전이 있는 지역에 "!" (Day66 추가)
+                marker.Rift.gameObject.SetActive(RiftService.IsRiftRegion(saveData, marker.Region)); // 균열이 열린 지역 표시 (Day67 추가)
             }
 
             if (selectedRegion != null) RefreshPanel(saveData); // 패널
         }
 
-        private void RefreshPanel(SaveData saveData) // 오른쪽 패널 다시 그리기
+        private void RefreshPanel(SaveData saveData) // 오른쪽 패널 다시 그리기 (내용 높이에 맞춰 스크롤 범위 갱신, Day67 추가)
+        {
+            bool keepScroll = lastPanelRegionId == SelectedRegionId; // 같은 지역이면 보던 위치 유지
+            float previous = panelScroll == null ? 1f : panelScroll.verticalNormalizedPosition; // 이전 스크롤 위치
+            BuildPanelRows(saveData); // 줄 채우기
+            panelContent.sizeDelta = new Vector2(0f, Mathf.Max(PanelViewHeight, panelCursor + 12f)); // 내용 높이 (넘치면 스크롤)
+            if (panelScroll != null) panelScroll.verticalNormalizedPosition = keepScroll ? previous : 1f; // 지역이 바뀌면 맨 위부터
+            lastPanelRegionId = SelectedRegionId; // 마지막으로 그린 지역 기록
+        }
+
+        private void BuildPanelRows(SaveData saveData) // 지역 설명 · 긴급 균열 · 던전 카드 줄 채우기
         {
             foreach (GameObject item in panelItems) Destroy(item); // 이전 요소 제거
             panelItems.Clear(); // 목록 비움
+            panelCursor = 0f; // 위에서부터 다시
             AdventureRegion region = selectedRegion; // 선택 지역
             float y = 1f; // 위에서부터
             y = AddLabel(region.Name, 32, Color.white, FontStyle.Bold, y, 0.075f); // 지역 이름
@@ -246,6 +287,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 if (first != null) y = AddLabel(BuildErosionLine(saveData, first.RegionId), 16, new Color(1f, 0.66f, 0.46f, 1f), FontStyle.Bold, y, 0.045f); // 침식도
             }
 
+            if (RiftService.IsRiftRegion(saveData, region)) // 검은 균열이 열린 지역 (Day67)
+            {
+                DungeonData riftDungeon = GetDungeon(saveData.RiftState.DungeonId); // 긴급 던전
+                y = AddLabel($"긴급 · 검은 균열 (남은 {RiftService.GetRemainingDays(saveData)}일)", 20, new Color(0.86f, 0.52f, 1f, 1f), FontStyle.Bold, y, 0.05f); // 긴급 안내
+                y = AddLabel($"{(riftDungeon == null ? saveData.RiftState.DungeonId : riftDungeon.DisplayName)} 깊은 곳에서 균열이 번지고 있어요. 막으면 침식도 -{RiftService.ClearErosionRelief} · 골드 {RiftService.RewardMultiplier:0.0}배, 놓치면 침식도 +{RiftService.MissErosionPenalty}", 15, HintColor, FontStyle.Normal, y, 0.075f); // 설명
+                Button riftButton = CreateButton(panelContent, "RiftEnter", $"검은 균열 막기  (활력 {(riftDungeon == null ? 0 : riftDungeon.VitalityCost)})", new Color(0.46f, 0.24f, 0.62f, 1f)); // 긴급 입장
+                PlaceRow((RectTransform)riftButton.transform, y, 0.06f, 0.015f); // 배치 (위에서부터 쌓기)
+                riftButton.onClick.AddListener(EnterRift); // 균열 입장
+                panelItems.Add(riftButton.gameObject); // 목록 등록
+                y -= 0.075f; // 다음 위치
+            }
+
             BattleRegionTraitKind trait = region.DungeonIds.Count > 0 ? BattleRegionTraitCatalog.GetKind(region.DungeonIds[0]) : BattleRegionTraitKind.None; // 지역 특징 (Day65)
             if (trait != BattleRegionTraitKind.None) y = AddLabel($"지역 특징 · {BattleRegionTraitCatalog.GetName(trait)} — {BattleRegionTraitCatalog.GetDescription(trait)}", 15, new Color(0.62f, 0.82f, 1f, 1f), FontStyle.Normal, y, 0.075f); // 특징 안내
 
@@ -269,7 +322,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             bool selected = DungeonSelectionRuntimeState.SelectedDungeonId == dungeonId; // 선택 여부
             bool locked = dungeon == null || saveData == null || state == DungeonProgressState.Locked; // 잠김
             Button card = CreateButton(panelContent, "DungeonCard_" + dungeonId, string.Empty, locked ? LockedCardColor : selected ? SelectedCardColor : CardColor); // 카드
-            SetRect(card.GetComponent<RectTransform>(), new Vector2(0f, top - 0.17f), new Vector2(1f, top)); // 배치
+            PlaceRow((RectTransform)card.transform, top, 0.17f, 0.015f); // 배치 (위에서부터 쌓기)
             if (selected) card.gameObject.AddComponent<Outline>().effectColor = GoldColor; // 선택 금테
             bool isNew = !locked && DungeonGuideService.IsNewDungeon(saveData, dungeonId); // 아직 클리어하지 않은 새 던전 (Day66 추가)
             float textLeft = isNew ? 0.13f : 0.04f; // "!" 자리만큼 글자를 오른쪽으로
@@ -305,6 +358,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
         }
 
+        private static RectTransform CreateRiftBadge(Transform parent, string name) // 검은 균열 표시 아이콘 (Day67 추가 — 글자 없이 소용돌이 그림)
+        {
+            Image badge = CreateImage(parent, name, Color.white); // 아이콘 이미지
+            badge.sprite = RiftMarkArt.Get(); // 정식 아이콘 우선, 없으면 코드로 그린 임시 아이콘
+            badge.preserveAspect = true; // 비율 유지
+            badge.raycastTarget = false; // 입력 통과 (지역 선택 방해 없음)
+            RectTransform rect = badge.rectTransform; // 영역
+            rect.sizeDelta = new Vector2(74f, 74f); // 지역 원보다 조금 크게
+            return rect; // 영역 반환
+        }
+
         private static RectTransform CreateAlertBadge(Transform parent, string name, float size) // 새 던전 안내 아이콘 (Day66 추가 — 글자 대신 그림 : 노란 원 + 느낌표 모양)
         {
             Image badge = CreateImage(parent, name, Color.white); // 아이콘 이미지
@@ -328,9 +392,24 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private float AddLabel(string text, int size, Color color, FontStyle style, float top, float height) // 패널 글자 한 줄
         {
             Text label = CreateText(panelContent, "Label", text, size, color, style, TextAnchor.UpperLeft).Wrap(); // 글자
-            SetRect(label.rectTransform, new Vector2(0f, top - height), new Vector2(1f, top)); // 배치
+            PlaceRow(label.rectTransform, top, height, 0.01f); // 배치 (위에서부터 쌓기)
             panelItems.Add(label.gameObject); // 목록 등록
             return top - height - 0.01f; // 다음 위치
+        }
+
+        private void PlaceRow(RectTransform rect, float top, float height, float gap) // 비율로 받은 줄을 위에서부터 쌓아 배치 (Day67 — 스크롤 가능하도록 픽셀 배치)
+        {
+            float rowHeight = height * PanelViewHeight; // 줄 높이 (픽셀)
+            float offset = Mathf.Max(0f, (1f - top) * PanelViewHeight); // 호출부가 비운 간격
+            float y = Mathf.Max(panelCursor, offset); // 겹치지 않게 아래로
+            rect.anchorMin = new Vector2(0f, 1f); // 위쪽 기준
+            rect.anchorMax = new Vector2(1f, 1f); // 위쪽 기준
+            rect.pivot = new Vector2(0.5f, 1f); // 위쪽 고정
+            rect.offsetMin = new Vector2(0f, rect.offsetMin.y); // 좌우 여백 없음
+            rect.offsetMax = new Vector2(0f, rect.offsetMax.y); // 좌우 여백 없음
+            rect.sizeDelta = new Vector2(0f, rowHeight); // 줄 높이
+            rect.anchoredPosition = new Vector2(0f, -y); // 위에서부터 내려오며 배치
+            panelCursor = y + rowHeight + (gap * PanelViewHeight); // 다음 줄 위치
         }
 
         private void SetAction(bool interactable, string label) // 실행 버튼 상태
@@ -349,7 +428,37 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 종료
             }
 
+            RiftRunState.End(); // 일반 탐험은 균열 표시 해제 (Day67)
             EnterDungeon(); // 탐험 시작
+        }
+
+        private string RefreshRift() // 균열 기한 만료·새 균열 처리 후 안내 문구 (Day67 추가)
+        {
+            SaveData saveData = GetSave(); // 현재 저장
+            string message = RiftService.Refresh(saveData); // 균열 갱신
+            if (!string.IsNullOrEmpty(message) && GameManager.Instance != null && GameManager.Instance.Save != null) GameManager.Instance.Save.SaveCurrent(); // 변경 저장
+            return message; // 안내 반환
+        }
+
+        private AdventureRegion RiftRegion() // 균열이 열린 지역 (Day67 추가)
+        {
+            SaveData saveData = GetSave(); // 현재 저장
+            return RiftService.IsOpen(saveData) ? AdventureRegionCatalog.Get(saveData.RiftState.RegionId) : null; // 지역 반환
+        }
+
+        private void EnterRift() // 긴급 균열 입장 (Day67 추가 — 그 지역에서 열린 가장 어려운 던전으로)
+        {
+            SaveData saveData = GetSave(); // 현재 저장
+            if (!RiftService.IsOpen(saveData)) return; // 균열 없음
+
+            if (!DungeonSelectionRuntimeState.TrySelect(saveData.RiftState.DungeonId, HasDungeonData)) // 긴급 던전 선택
+            {
+                statusText.text = "긴급 던전을 선택할 수 없습니다."; // 안내
+                return; // 중단
+            }
+
+            RiftService.BeginRun(saveData); // 균열 탐험 표시 (보상 1.5배 · 클리어 시 침식도 감소)
+            EnterDungeon(); // 입장
         }
 
         private void EnterDungeon() // 선택 던전 탐험 시작 (활력 소비 → 노드형 탐험 지도)

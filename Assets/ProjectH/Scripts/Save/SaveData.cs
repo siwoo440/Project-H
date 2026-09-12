@@ -32,6 +32,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private List<ShopStateSaveData> shopStates = new List<ShopStateSaveData>(); // 상점별 하루 상태 (Day61 추가 — 오늘의 상품·재고·리롤)
         [SerializeField] private List<string> seenDialogueIds = new List<string>(); // 끝까지 본 대화 ID (Day63 추가 — 일기장 다시 보기)
         [SerializeField] private List<string> seenMonsterIds = new List<string>(); // 전투에서 만난 몬스터 ID (Day63 추가 — 일기장 몬스터 정보)
+        [SerializeField] private RiftStateSaveData riftState = new RiftStateSaveData(); // 검은 균열(긴급 던전) 상태 (Day67 추가)
+        [SerializeField] private GuildQuestBoardSaveData questBoard = new GuildQuestBoardSaveData(); // 오늘의 길드 의뢰 (Day67 추가)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -52,6 +54,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public IReadOnlyList<ShopStateSaveData> ShopStates => shopStates; // 상점 상태 목록 반환 (Day61 추가)
         public IReadOnlyList<string> SeenDialogueIds => seenDialogueIds; // 본 대화 목록 반환 (Day63 추가)
         public IReadOnlyList<string> SeenMonsterIds => seenMonsterIds; // 만난 몬스터 목록 반환 (Day63 추가)
+        public RiftStateSaveData RiftState => riftState; // 검은 균열 상태 반환 (Day67 추가)
+        public GuildQuestBoardSaveData QuestBoard => questBoard; // 길드 의뢰 게시판 반환 (Day67 추가)
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -158,6 +162,10 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 shopStates[index].EnsureDefaults(); // 상태 기본값 보정
             }
 
+            if (riftState == null) riftState = new RiftStateSaveData(); // 균열 상태 복원 (Day67 추가, 기존 세이브는 빈 상태)
+            if (questBoard == null) questBoard = new GuildQuestBoardSaveData(); // 의뢰 게시판 복원 (Day67 추가)
+            riftState.EnsureDefaults(); // 균열 상태 보정
+            questBoard.EnsureDefaults(); // 의뢰 게시판 보정
             if (seenDialogueIds == null) seenDialogueIds = new List<string>(); // 본 대화 목록 복원 (Day63 추가, 기존 세이브는 빈 목록)
             if (seenMonsterIds == null) seenMonsterIds = new List<string>(); // 만난 몬스터 목록 복원 (Day63 추가)
             seenDialogueIds.RemoveAll(string.IsNullOrWhiteSpace); // 빈 ID 제거

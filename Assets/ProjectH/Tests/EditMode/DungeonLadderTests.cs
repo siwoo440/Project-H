@@ -52,8 +52,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
                 Assert.That(LoadDungeon(region.DungeonIds[1]).RecommendedLevel, Is.GreaterThan(LoadDungeon(region.DungeonIds[0]).RecommendedLevel), region.Id); // 두 번째가 더 어려움
             }
 
-            Assert.That(regions, Is.EqualTo(7)); // 숲 · 늪지대 · 마왕성 · 노아르 · 실바란 · 카르니안 · 사막
-            Assert.That(DungeonSelectionRuntimeState.SupportedDungeonIds.Count, Is.EqualTo(14)); // 14던전
+            Assert.That(regions, Is.EqualTo(8)); // 숲 · 늪지대 · 마왕성 · 노아르 · 실바란 · 카르니안 · 사막 · 바다
+            Assert.That(DungeonSelectionRuntimeState.SupportedDungeonIds.Count, Is.EqualTo(16)); // 16던전 (Day67 바다 2개 추가)
             Assert.That(AdventureRegionCatalog.Get("REGION_DESERT").Kind, Is.EqualTo(AdventureRegionKind.Dungeon)); // 사막 열림
             Assert.That(AdventureRegionCatalog.FindByDungeon("DG007").Id, Is.EqualTo("REGION_KARNIAN")); // 카르니안 연결
         }

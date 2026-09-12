@@ -17,8 +17,8 @@ MonoBehaviour:
   description: "\uCE68\uC2DD\uC5D0 \uC815\uC2E0\uC744 \uBE7C\uC557\uAE34 \uBCD1\uC0AC. \uB179\uC2A8 \uAC11\uC637 \uC548\uC5D0\uC11C \uBD88\uAF43 \uAC19\uC740 \uC6D0\uD55C\uC774 \uD0C0\uC624\uB978\uB2E4. \uD55C\uB54C \uAD6D\uACBD\uC744 \uC9C0\uD0A4\uB358 \uB808\uD2F0\uC2DC\uC544\uC758 \uC218\uBE44\uBCD1\uC774\uC5C8\uB2E4\uACE0 \uD55C\uB2E4."
   aiType: 0
   element: 1
-  maxHp: 3250
-  attack: 11
+  maxHp: 16600
+  attack: 205
   defense: 55
   resistance: 35
   attackSpeed: 0.9

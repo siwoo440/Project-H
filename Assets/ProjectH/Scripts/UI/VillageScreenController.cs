@@ -1,11 +1,11 @@
 using System.Collections; // 코루틴 기능
 using System.Collections.Generic; // 목록 자료형
-using System.Text; // 문자열 조립 기능
 using ProjectH.Core; // 게임 관리자·씬 이름·개발 기능 표시
 using ProjectH.Data; // 캐릭터·던전 데이터 기능
 using ProjectH.Dialogue; // 대화 파일 기능
 using ProjectH.SaveSystem; // 저장·시간·활력 기능
-using ProjectH.Village; // 마을 구역·배치·행동 기능
+using ProjectH.Dungeon; // 검은 균열 기능 (Day67 추가)
+using ProjectH.Village; // 마을 구역·배치·행동·길드 의뢰 기능
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.EventSystems; // Unity UI 입력 기능
 using UnityEngine.InputSystem.UI; // 신규 Input System UI 입력 기능
@@ -24,12 +24,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static readonly Color SubColor = new Color(0.26f, 0.28f, 0.34f, 1f); // 보조 버튼 회색
         private static readonly Color HintColor = new Color(0.82f, 0.84f, 0.88f, 1f); // 안내 글자
         private static readonly Color RecruitColor = new Color(0.36f, 0.62f, 0.40f, 1f); // 새 동료 소식 초록 (Day64 추가)
+        private const float PanelViewHeight = 700f; // 행동 패널 기준 높이 (기존 비율 배치를 픽셀로 바꾸는 기준, Day67 추가)
 
         private readonly Dictionary<VillageZone, Button> zoneCards = new Dictionary<VillageZone, Button>(); // 지도 구역 카드
         private readonly Dictionary<VillageZone, Text> zoneCardPeople = new Dictionary<VillageZone, Text>(); // 카드 속 캐릭터 이름
         private readonly List<GameObject> zoneStandings = new List<GameObject>(); // 구역 화면 스탠딩
         private readonly List<GameObject> panelItems = new List<GameObject>(); // 행동 패널 동적 요소
         private VillageZone? currentZone; // 현재 구역 (null = 지도)
+        private VillageZone? lastPanelZone; // 마지막으로 그린 구역 (스크롤 위치 유지용, Day67 추가)
         private string selectedCharacterId; // 선택 캐릭터
         private Transform canvasRoot; // 캔버스 루트
         private Image background; // 배경
@@ -39,7 +41,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private GameObject mapRoot; // 지도 화면
         private GameObject zoneRoot; // 구역 화면
         private RectTransform standingArea; // 스탠딩 영역
-        private RectTransform panelContent; // 행동 패널 내용
+        private RectTransform panelContent; // 행동 패널 내용 (스크롤 내용물)
+        private ScrollRect panelScroll; // 행동 패널 스크롤 (Day67 추가 — 버튼이 많아지면 아래로 내려서 봄)
+        private float panelCursor; // 다음 줄이 들어갈 위치 (픽셀, 위에서부터)
         private Text statusText; // 결과 안내
         private Image fade; // 암전
         private CharacterGiftPanel giftPanel; // 선물 패널 (Day57 재사용)
@@ -49,7 +53,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             EnsureEventSystem(); // UI 입력 시스템 보장
             BuildUi(); // UI 생성
-            SetStatus("구역을 눌러 들어가 보세요. 시간대마다 캐릭터들이 다른 곳에 있어요."); // 첫 안내
+            string rift = RiftService.Refresh(GetSave()); // 검은 균열 기한·발생 처리 (Day67 추가)
+            if (!string.IsNullOrEmpty(rift)) Save(); // 균열 변화 저장
+            SetStatus(string.IsNullOrEmpty(rift) ? "구역을 눌러 들어가 보세요. 시간대마다 캐릭터들이 다른 곳에 있어요." : rift); // 첫 안내 (균열 소식 우선)
             ShowMap(); // 지도부터
         }
 
@@ -162,10 +168,27 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = CreateImage(zoneRoot.transform, "ActionPanel", PanelColor); // 행동 패널
             SetRect(panel.rectTransform, new Vector2(0.69f, 0.015f), new Vector2(0.99f, 0.90f)); // 오른쪽
             AddOutline(panel.gameObject, new Color(1f, 1f, 1f, 0.25f)); // 테두리
+            GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D)); // 보이는 영역 (밖으로 나간 버튼은 잘림)
+            viewportObject.transform.SetParent(panel.transform, false); // 패널 하위
+            RectTransform viewport = (RectTransform)viewportObject.transform; // 영역 저장
+            Stretch(viewport, 14f); // 여백
             GameObject content = new GameObject("Content", typeof(RectTransform)); // 동적 내용 루트
-            content.transform.SetParent(panel.transform, false); // 패널 하위
+            content.transform.SetParent(viewport, false); // 보이는 영역 하위
             panelContent = (RectTransform)content.transform; // 내용 저장
-            Stretch(panelContent, 14f); // 여백
+            panelContent.anchorMin = new Vector2(0f, 1f); // 위쪽 기준
+            panelContent.anchorMax = new Vector2(1f, 1f); // 위쪽 기준
+            panelContent.pivot = new Vector2(0.5f, 1f); // 위쪽 고정
+            panelContent.offsetMin = new Vector2(0f, panelContent.offsetMin.y); // 좌우 여백 없음
+            panelContent.offsetMax = new Vector2(0f, panelContent.offsetMax.y); // 좌우 여백 없음
+            panelContent.sizeDelta = new Vector2(0f, PanelViewHeight); // 기본 높이
+            panelScroll = panel.gameObject.AddComponent<ScrollRect>(); // 세로 스크롤
+            panelScroll.content = panelContent; // 내용 연결
+            panelScroll.viewport = viewport; // 보이는 영역 연결
+            panelScroll.horizontal = false; // 가로 스크롤 없음
+            panelScroll.vertical = true; // 세로 스크롤 사용
+            panelScroll.movementType = ScrollRect.MovementType.Clamped; // 끝에서 멈춤
+            panelScroll.scrollSensitivity = 40f; // 휠 감도
+            panelScroll.inertia = false; // 관성 없이 바로 멈춤
         }
 
         private void ShowMap() // 지도 화면 표시
@@ -265,10 +288,21 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
         }
 
-        private void RefreshPanel(SaveData saveData) // 행동 패널 다시 그리기 (구역 행동 · 여기 있는 사람 · 선택 캐릭터 행동)
+        private void RefreshPanel(SaveData saveData) // 행동 패널 다시 그리기 (내용 높이에 맞춰 스크롤 범위 갱신, Day67 추가)
+        {
+            bool keepScroll = lastPanelZone == currentZone; // 같은 구역이면 보던 위치 유지
+            float previous = panelScroll == null ? 1f : panelScroll.verticalNormalizedPosition; // 이전 스크롤 위치
+            BuildPanelRows(saveData); // 줄 채우기
+            panelContent.sizeDelta = new Vector2(0f, Mathf.Max(PanelViewHeight, panelCursor + 12f)); // 내용 높이 (넘치면 스크롤)
+            if (panelScroll != null) panelScroll.verticalNormalizedPosition = keepScroll ? previous : 1f; // 구역이 바뀌면 맨 위부터
+            lastPanelZone = currentZone; // 마지막으로 그린 구역 기록
+        }
+
+        private void BuildPanelRows(SaveData saveData) // 구역 행동 · 여기 있는 사람 · 선택 캐릭터 행동 줄 채우기
         {
             foreach (GameObject item in panelItems) Destroy(item); // 이전 요소 제거
             panelItems.Clear(); // 목록 비움
+            panelCursor = 0f; // 위에서부터 다시
             VillageZone zone = currentZone.Value; // 현재 구역
             VillageZoneInfo info = VillageZoneCatalog.Get(zone); // 구역 정보
             float y = 1f; // 위에서부터 채움
@@ -321,7 +355,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return AddButton(canSleep ? "방 잡고 잠자기  (다음 날 아침 · 활력 전체 회복)" : "방 잡고 잠자기  (저녁부터)", TimeColor, y, 0.06f, canSleep, Sleep); // 잠자기
                 case VillageZone.Guild: // 길드 : 새 동료 소식 · 게시판 · 모험
                     y = AddRecruitActions(saveData, y); // 새 동료 합류 (Day64)
-                    y = AddButton("의뢰 게시판", SubColor, y, 0.055f, true, ShowGuildBoard); // 게시판
+                    y = AddQuestActions(saveData, y); // 오늘의 길드 의뢰 (Day67)
                     return AddButton("모험 떠나기  (던전 선택)", SubColor, y, 0.055f, true, () => LoadScene(GameScenes.DungeonSelect)); // 던전
                 default: // 광장
                     return y; // 구역 행동 없음
@@ -376,7 +410,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private float AddLabel(string text, int size, Color color, FontStyle style, float top, float height) // 패널 글자 한 줄 추가 후 다음 위치 반환
         {
             Text label = CreateText(panelContent, "Label", text, size, color, style, TextAnchor.MiddleLeft).Wrap(); // 글자
-            SetRect(label.rectTransform, new Vector2(0f, top - height), new Vector2(1f, top)); // 배치
+            PlaceRow(label.rectTransform, top, height, 0.008f); // 배치 (위에서부터 쌓기)
             panelItems.Add(label.gameObject); // 목록 등록
             return top - height - 0.008f; // 다음 위치
         }
@@ -384,11 +418,26 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private float AddButton(string text, Color color, float top, float height, bool interactable, UnityEngine.Events.UnityAction action) // 패널 버튼 한 줄 추가 후 다음 위치 반환
         {
             Button button = CreateButton(panelContent, "Action", text, color); // 버튼
-            SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, top - height), new Vector2(1f, top)); // 배치
+            PlaceRow((RectTransform)button.transform, top, height, 0.012f); // 배치 (위에서부터 쌓기)
             button.interactable = interactable; // 가능 여부
             button.onClick.AddListener(action); // 기능 연결
             panelItems.Add(button.gameObject); // 목록 등록
             return top - height - 0.012f; // 다음 위치
+        }
+
+        private void PlaceRow(RectTransform rect, float top, float height, float gap) // 비율로 받은 줄을 위에서부터 쌓아 배치 (Day67 — 스크롤 가능하도록 픽셀 배치)
+        {
+            float rowHeight = height * PanelViewHeight; // 줄 높이 (픽셀)
+            float offset = Mathf.Max(0f, (1f - top) * PanelViewHeight); // 호출부가 비운 간격 (예: y - 0.015f)
+            float y = Mathf.Max(panelCursor, offset); // 겹치지 않게 아래로
+            rect.anchorMin = new Vector2(0f, 1f); // 위쪽 기준
+            rect.anchorMax = new Vector2(1f, 1f); // 위쪽 기준
+            rect.pivot = new Vector2(0.5f, 1f); // 위쪽 고정
+            rect.offsetMin = new Vector2(0f, rect.offsetMin.y); // 좌우 여백 없음
+            rect.offsetMax = new Vector2(0f, rect.offsetMax.y); // 좌우 여백 없음
+            rect.sizeDelta = new Vector2(0f, rowHeight); // 줄 높이
+            rect.anchoredPosition = new Vector2(0f, -y); // 위에서부터 내려오며 배치
+            panelCursor = y + rowHeight + (gap * PanelViewHeight); // 다음 줄 위치
         }
 
         private void SelectCharacter(string characterId) // 캐릭터 선택
@@ -525,18 +574,34 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             yield return FadeTo(0f, 0.9f); // 밝아짐
         }
 
-        private void ShowGuildBoard() // 길드 의뢰 게시판 (67일차 길드 의뢰 전까지 던전 정보)
+        private float AddQuestActions(SaveData saveData, float y) // 오늘의 길드 의뢰 (Day67 신규 — 하루 3개 · 완료하면 보상 받기)
         {
-            DataManager data = GetData(); // 데이터 관리자
-            StringBuilder builder = new StringBuilder("의뢰는 준비 중입니다(67일차 길드 의뢰). 오늘의 던전 정보 :"); // 안내
+            List<GuildQuestProgress> quests = GuildQuestService.GetToday(saveData); // 오늘의 의뢰
+            if (quests.Count == 0) return y; // 의뢰 없음
+            y = AddLabel($"오늘의 의뢰 ({GameTimeService.GetCurrentDay(saveData)}일차)", 17, TimeColor, FontStyle.Bold, y - 0.01f, 0.045f); // 소제목
 
-            foreach (string id in DungeonSelectionRuntimeState.SupportedDungeonIds) // 던전 순회
+            foreach (GuildQuestProgress quest in quests) // 의뢰 순회
             {
-                DungeonData dungeon = data == null ? null : data.GetDungeon(id); // 던전
-                if (dungeon != null && ProjectH.Battle.DungeonProgressionPolicy.IsUnlocked(GetSave(), id)) builder.Append($"  {dungeon.DisplayName}(활력 {dungeon.VitalityCost} · {dungeon.RewardGold}G)"); // 열린 던전만 (Day66 — 던전 14개로 늘어 안내가 넘치지 않게)
+                string questId = quest.Definition.Id; // 클릭용 복사
+                DungeonData dungeon = quest.Definition.Kind == GuildQuestKind.ClearDungeon && GetData() != null ? GetData().GetDungeon(quest.Definition.Target) : null; // 의뢰 던전
+                string title = GuildQuestCatalog.GetTitle(quest.Definition, dungeon == null ? string.Empty : dungeon.DisplayName); // 제목
+                string state = quest.Claimed ? "보상 받음" : quest.CanClaim ? "보상 받기" : $"{quest.Progress}/{quest.Definition.Required}"; // 상태
+                y = AddButton($"{title}  ·  {state}", quest.CanClaim ? TimeColor : SubColor, y, 0.055f, quest.CanClaim, () => ClaimQuest(questId)); // 의뢰 줄
+                y = AddLabel($"보상 {quest.Definition.RewardText}", 13, HintColor, FontStyle.Normal, y + 0.004f, 0.03f); // 보상 안내
             }
 
-            SetStatus(builder.ToString()); // 안내
+            bool bonus = GuildQuestService.CanClaimBonus(saveData); // 보너스 수령 가능
+            return AddButton(bonus ? $"전부 완료 보너스 받기  ({GuildQuestCatalog.BonusGold}G · 결속 자원 {GuildQuestCatalog.BonusBondResource})" : saveData != null && saveData.QuestBoard.BonusClaimed ? "전부 완료 보너스 받음" : "전부 완료 보너스  (의뢰 3개 완료 시)", bonus ? ActionColor : SubColor, y, 0.05f, bonus, ClaimQuestBonus); // 보너스 줄
+        }
+
+        private void ClaimQuest(string questId) // 의뢰 보상 받기
+        {
+            Finish(true, GuildQuestService.TryClaim(GetSave(), GetData(), questId)); // 보상 · 저장 · 갱신
+        }
+
+        private void ClaimQuestBonus() // 전부 완료 보너스 받기
+        {
+            Finish(true, GuildQuestService.TryClaimBonus(GetSave())); // 보상 · 저장 · 갱신
         }
 
         private void OpenDialogue(string scriptId, System.Action<DialogueRunner> finished) // 대화 열기 (파일 없으면 안내)

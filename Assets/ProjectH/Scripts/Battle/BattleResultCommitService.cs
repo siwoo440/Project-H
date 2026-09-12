@@ -37,10 +37,28 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     DungeonProgressSaveAdapter.TrySetBestStars(saveData, result.DungeonId, result.StarCount); // 승리 던전 최고 별점 영구 반영 (Day47)
                 }
                 DungeonDropGrantService.GrantAll(saveData, dataManager, result.Drops); // 승리 던전 드롭 영구 반영
+                ApplyRiftAndQuests(saveData, dataManager, result); // 긴급 균열 클리어·길드 의뢰 진행 반영 (Day67 추가)
             }
 
             BattleProgressSaveAdapter.MarkBattleResultCommitted(saveData, result.ResultId); // 전투 결과 반영 완료 기록
             return true; // 결과 반영 성공 반환
+        }
+
+        private static void ApplyRiftAndQuests(SaveData saveData, DataManager dataManager, BattleResultData result) // 긴급 균열·길드 의뢰 반영 (Day67 추가)
+        {
+            string riftMessage = result.CountsAsDungeonClear ? ProjectH.Dungeon.RiftService.CompleteRun(saveData, result.DungeonId) : string.Empty; // 보스를 잡아 던전을 클리어했을 때만 균열 봉쇄
+            List<string> partyCharacterIds = new List<string>(); // 참가 캐릭터
+
+            if (result.Members != null) // 파티 확인
+            {
+                foreach (BattleResultPartyMember member in result.Members) // 파티원 순회
+                {
+                    if (member != null && !string.IsNullOrWhiteSpace(member.CharacterId)) partyCharacterIds.Add(member.CharacterId); // 등록
+                }
+            }
+
+            ProjectH.Village.GuildQuestService.RecordVictory(saveData, result.DungeonId, result.CountsAsDungeonClear, partyCharacterIds, ProjectH.Data.CharacterElementTable.Get, !string.IsNullOrEmpty(riftMessage)); // 오늘의 의뢰 진행
+            if (!string.IsNullOrEmpty(riftMessage)) UnityEngine.Debug.Log($"[Project H][RIFT] {riftMessage}"); // 균열 결과 로그
         }
 
         private static void ApplyExperience(SaveData saveData, BattleResultData result) // 참가 캐릭터 경험치 및 레벨 반영

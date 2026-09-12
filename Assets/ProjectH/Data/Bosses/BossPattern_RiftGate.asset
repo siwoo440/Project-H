@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_RiftGate
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "\uADE0\uC5F4 \uAC1C\uBC29"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "\uADE0\uC5F4 \uD655\uC7A5"
+    enterHealthRatio: 0.5
+    forceAfterSeconds: 150
+    attackBonus: 0.25
+    attackSpeedBonus: 0.2
+  patterns:
+  - displayName: "\uC2EC\uC5F0 \uD30C\uB3D9"
+    kind: 0
+    damageType: 1
+    powerRatio: 1.4
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.5
+    cooldownSeconds: 11
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uADE0\uC5F4 \uC7A5\uB9C9"
+    kind: 2
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.4
+    effectDuration: 8
+    windupSeconds: 1.5
+    cooldownSeconds: 18
+    minPhase: 1
+    interruptible: 1
+  - displayName: "\uBB38\uC9C0\uAE30\uC758 \uC190\uC544\uADC0"
+    kind: 1
+    damageType: 0
+    powerRatio: 3.0
+    effectValue: 0
+    effectDuration: 2
+    windupSeconds: 3
+    cooldownSeconds: 15
+    minPhase: 2
+    interruptible: 1
+  - displayName: "\uCC28\uC6D0 \uBD95\uAD34"
+    kind: 0
+    damageType: 1
+    powerRatio: 2.8
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 4
+    cooldownSeconds: 24
+    minPhase: 2
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 4
+  phaseTransitionInvulnerableSeconds: 1.5

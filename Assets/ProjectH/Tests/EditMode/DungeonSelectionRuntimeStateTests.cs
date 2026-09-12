@@ -15,7 +15,7 @@ namespace ProjectH.Tests // 프로젝트 테스트 영역
         [Test] // 던전 ID 목록 검증
         public void SupportedDungeonIds_AreDay26FourDungeons() // 4개 던전 ID 검증
         {
-            CollectionAssert.AreEqual(new[] { "DG001", "DG002", "DG003", "DG004", "DG005", "DG006", "DG007", "DG008", "DG009", "DG010", "DG011", "DG012", "DG013", "DG014" }, DungeonSelectionRuntimeState.SupportedDungeonIds); // 지원 던전 ID 순서 검증 (Day65~66 지역 확장)
+            CollectionAssert.AreEqual(new[] { "DG001", "DG002", "DG003", "DG004", "DG005", "DG006", "DG007", "DG008", "DG009", "DG010", "DG011", "DG012", "DG013", "DG014", "DG015", "DG016" }, DungeonSelectionRuntimeState.SupportedDungeonIds); // 지원 던전 ID 순서 검증 (Day65~67 지역 확장)
         }
 
         [Test] // 초기 선택 상태 검증

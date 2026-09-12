@@ -6,7 +6,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         public const int MinLevel = 1; // 최소 성장 적용 레벨
         public const int MaxLevel = CharacterLevelProgression.MaxLevel; // 최대 성장 적용 레벨
-        public const float GrowthPerLevel = 0.05f; // 레벨당 성장 비율
+        public const float GrowthPerLevel = 0.08f; // 레벨당 성장 비율 (Day67 1차 밸런스 — 후반 던전 적 성장에 맞춰 5% → 8%)
 
         public static int NormalizeLevel(int level) // 성장 적용 레벨 범위 보정
         {

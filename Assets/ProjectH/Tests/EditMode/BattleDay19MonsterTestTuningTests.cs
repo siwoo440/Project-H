@@ -4,11 +4,11 @@ using UnityEditor; // Unity 에디터 에셋 기능
 
 namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 {
-    public sealed class BattleDay19MonsterTestTuningTests // 19일차 스킬 테스트용 몬스터 수치 테스트
+    public sealed class BattleDay19MonsterTestTuningTests // 19일차 스킬 테스트용 몬스터 수치 테스트 (Day67 1차 밸런스 수치로 갱신)
     {
-        [TestCase("MON_CORRUPTED_SOLDIER", 3250, 11)] // 침식 병사 테스트 수치
-        [TestCase("MON_CORRUPTED_WOLF", 2100, 10)] // 침식 늑대 테스트 수치
-        [TestCase("MON_POLLUTED_PLANT", 2600, 8)] // 오염 식물 테스트 수치
+        [TestCase("MON_CORRUPTED_SOLDIER", 16600, 205)] // 침식 병사 수치 (Day67 1차 밸런스에서 재조정)
+        [TestCase("MON_CORRUPTED_WOLF", 20500, 215)] // 침식 늑대 수치 (Day67 1차 밸런스에서 재조정)
+        [TestCase("MON_POLLUTED_PLANT", 15600, 195)] // 오염 식물 수치 (Day67 1차 밸런스에서 재조정)
         public void MonsterData_UsesDay19LongBattleTestValues(string monsterId, int expectedHp, int expectedAttack) // 스킬 테스트용 HP 및 공격력 검증
         {
             MonsterData monster = AssetDatabase.LoadAssetAtPath<MonsterData>($"Assets/ProjectH/Data/Monsters/{monsterId}.asset"); // 몬스터 데이터 에셋 로드

@@ -47,6 +47,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private static void ApplyRiftAndQuests(SaveData saveData, DataManager dataManager, BattleResultData result) // 긴급 균열·길드 의뢰 반영 (Day67 추가)
         {
             string riftMessage = result.CountsAsDungeonClear ? ProjectH.Dungeon.RiftService.CompleteRun(saveData, result.DungeonId) : string.Empty; // 보스를 잡아 던전을 클리어했을 때만 균열 봉쇄
+            if (result.CountsAsDungeonClear) ProjectH.Story.ChapterService.NotifyDungeonCleared(saveData, result.DungeonId); // 메인 스토리 단계 진행 (Day68 추가)
             List<string> partyCharacterIds = new List<string>(); // 참가 캐릭터
 
             if (result.Members != null) // 파티 확인

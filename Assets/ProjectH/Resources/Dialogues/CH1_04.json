@@ -1,0 +1,73 @@
+{
+  "id": "CH1_04",
+  "title": "남겨진 흔적",
+  "characterId": "CH_ELLEN",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "성역 외곽 폐허",
+  "nodes": [
+    {
+      "id": "c1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "폐허를 정리하고 나자, 무너진 제단 위에 이상한 자국이 드러났다."
+    },
+    {
+      "id": "c2",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…이건 짐승의 흔적이 아니다. 누군가 여기서 의식을 치렀다."
+    },
+    {
+      "id": "c3",
+      "speaker": "CH_SERENA",
+      "expression": "놀람",
+      "text": "제단에 새겨진 문양… 성역의 것이 아니에요. 이런 건 본 적이 없어요."
+    },
+    {
+      "id": "c4",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "누가 일부러 침식을 퍼뜨리고 있다는 뜻인가?"
+    },
+    {
+      "id": "c5",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "그렇다면 짐승을 아무리 베어도 소용없다. 근원을 찾아야 한다.",
+      "choices": [
+        {
+          "text": "이 문양을 아는 사람을 찾자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "c6a"
+        },
+        {
+          "text": "일단 마을 사람들부터 안전하게 하자.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "c6b"
+        }
+      ]
+    },
+    {
+      "id": "c6a",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "마법도시 노아르라면… 이런 문양을 읽을 수 있는 사람이 있을 거예요.",
+      "next": "c7"
+    },
+    {
+      "id": "c6b",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "…좋은 판단이다. 지킬 사람부터 지키는 게 순서지.",
+      "next": "c7"
+    },
+    {
+      "id": "c7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "그날 밤, 마을 여관으로 한 통의 편지가 도착했다. 발신인은 노아르 마법도시의 마법사였다."
+    }
+  ]
+}

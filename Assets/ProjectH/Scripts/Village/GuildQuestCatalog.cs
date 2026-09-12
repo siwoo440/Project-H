@@ -33,6 +33,7 @@ namespace ProjectH.Village // 프로젝트 마을 영역
             RewardItemId = rewardItemId ?? string.Empty; // 아이템 저장
             RewardItemCount = rewardItemCount < 0 ? 0 : rewardItemCount; // 수량 저장
             RewardBondResource = rewardBondResource < 0 ? 0 : rewardBondResource; // 결속 자원 저장
+            Element = element; // 대상 속성 저장 (Day68 수정 — 저장하지 않아 속성 의뢰가 진행되지 않았음)
         }
 
         public string RewardText // 보상 문구

@@ -1,0 +1,85 @@
+{
+  "id": "CH2_02",
+  "title": "숲의 화살",
+  "characterId": "CH_EVE",
+  "background": "GARDEN_POND",
+  "location": "국경 습지 입구",
+  "nodes": [
+    {
+      "id": "e1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "습지 입구. 앞으로 나서려는 순간, 발밑 한 뼘 앞에 화살이 꽂혔다."
+    },
+    {
+      "id": "e2",
+      "speaker": "CH_EVE",
+      "expression": "진지",
+      "text": "…거기까지. 인간은 이 안으로 못 들어가."
+    },
+    {
+      "id": "e3",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나무 위에서 은발의 엘프가 활을 겨눈 채 내려다보고 있었다."
+    },
+    {
+      "id": "e4",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "…실바란의 궁수인가. 우리는 침식을 막으러 왔다."
+    },
+    {
+      "id": "e5",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "인간은 늘 그렇게 말하고, 늘 숲을 태웠어. 백 년 전에도."
+    },
+    {
+      "id": "e6",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "…믿지 못하시는 것도 당연해요. 그래도 지금은 물이 썩어 가고 있어요. 당신의 숲도요."
+    },
+    {
+      "id": "e7",
+      "speaker": "CH_EVE",
+      "expression": "생각",
+      "text": "…알아. 정령들이 울고 있어. 그래서 여기까지 온 거야.",
+      "choices": [
+        {
+          "text": "같이 가자. 증명은 그다음에.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "e8a"
+        },
+        {
+          "text": "네 숲을 지키고 싶은 거지? 나도 같아.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "e8b"
+        }
+      ]
+    },
+    {
+      "id": "e8a",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "…한 번만. 거짓말이면, 다음 화살은 발밑이 아니야.",
+      "next": "e9"
+    },
+    {
+      "id": "e8b",
+      "speaker": "CH_EVE",
+      "expression": "놀람",
+      "text": "…너, 이상한 기운이 나. 평화의 냄새 같은 거. 싫지 않아.",
+      "next": "e9"
+    },
+    {
+      "id": "e9",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "이브가 동료가 되었다. 네 사람은 침식이 고인 회랑으로 걸음을 옮겼다."
+    }
+  ]
+}

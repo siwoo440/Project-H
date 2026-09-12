@@ -71,9 +71,9 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 
             Assert.That(created, Is.True, error); // 전투 파티 생성 성공 검증
             Assert.That(party[0].Level, Is.EqualTo(5)); // 성장 적용 레벨 검증
-            Assert.That(party[0].MaxHp, Is.EqualTo(2760)); // 성장 및 장비 체력 합산 검증
-            Assert.That(party[0].Attack, Is.EqualTo(236)); // 성장 및 장비 공격력 합산 검증
-            Assert.That(party[0].Defense, Is.EqualTo(159)); // 성장 및 장비 방어력 합산 검증
+            Assert.That(party[0].MaxHp, Is.EqualTo(3024)); // 성장 및 장비 체력 합산 검증 (Day67 1차 밸런스 8% : 2904 + 장비 120)
+            Assert.That(party[0].Attack, Is.EqualTo(258)); // 성장 및 장비 공격력 합산 검증 (238 + 장비 20)
+            Assert.That(party[0].Defense, Is.EqualTo(173)); // 성장 및 장비 방어력 합산 검증 (158 + 장비 15)
         }
 
         [Test] // 테스트 표시

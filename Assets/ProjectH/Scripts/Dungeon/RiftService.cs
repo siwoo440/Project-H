@@ -64,6 +64,7 @@ namespace ProjectH.Dungeon // 프로젝트 던전 탐험 영역
                 }
 
                 state.Close(); // 균열 닫기
+                if (!string.IsNullOrEmpty(message)) return message; // 실패 안내를 먼저 보여 주고, 새 균열은 다음에 열림 (Day68 수정)
             }
 
             if (!state.IsOpen && day - state.LastSpawnDay >= CycleDays) // 주기 도달

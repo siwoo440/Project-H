@@ -97,7 +97,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             int beforeMiss = RegionErosionService.GetOrInitializeErosion(missed, missedRegion.ErosionRegionId); // 이전 침식도
             missed.SetCurrentDay(missed.RiftState.EndDay + 1); // 기한 초과
             Assert.That(RiftService.Refresh(missed), Does.Contain("막지 못했습니다")); // 실패 안내
-            Assert.That(RegionErosionService.GetErosion(missed, missedRegion.ErosionRegionId), Is.EqualTo(beforeMiss + RiftService.MissErosionPenalty)); // 침식도 증가
+            Assert.That(RegionErosionService.GetErosion(missed, missedRegion.ErosionRegionId), Is.EqualTo(System.Math.Min(RegionErosionSaveData.MaxErosion, beforeMiss + RiftService.MissErosionPenalty))); // 침식도 증가 (최대 100까지)
             Assert.That(missed.RiftState.IsOpen, Is.False); // 균열 닫힘
         }
 

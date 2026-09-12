@@ -36,10 +36,10 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 
             BattleStats stats = BattleStatsFactory.CreateCharacter(character, saveData, "ALLY_0"); // 런타임 스탯 생성
 
-            Assert.That(BattleGrowthFormula.GetLevelMultiplier(5), Is.EqualTo(1.20f).Within(0.0001f)); // 성장 배율 검증
-            Assert.That(stats.MaxHp, Is.EqualTo(2640)); // 성장 체력 검증
-            Assert.That(stats.Attack, Is.EqualTo(216)); // 성장 공격력 검증
-            Assert.That(stats.Defense, Is.EqualTo(144)); // 성장 방어력 검증
+            Assert.That(BattleGrowthFormula.GetLevelMultiplier(5), Is.EqualTo(1.32f).Within(0.0001f)); // 성장 배율 검증 (Day67 1차 밸런스 8%)
+            Assert.That(stats.MaxHp, Is.EqualTo(2904)); // 성장 체력 검증
+            Assert.That(stats.Attack, Is.EqualTo(238)); // 성장 공격력 검증
+            Assert.That(stats.Defense, Is.EqualTo(158)); // 성장 방어력 검증
         }
 
         [Test] // 테스트 표시
@@ -52,9 +52,9 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             BattleStats stats = BattleStatsFactory.CreateCharacter(character, saveData, "ALLY_0"); // 런타임 스탯 생성
 
             Assert.That(stats.Level, Is.EqualTo(CharacterLevelProgression.MaxLevel)); // 런타임 최대 레벨 검증
-            Assert.That(stats.MaxHp, Is.EqualTo(4290)); // 최대 레벨 체력 검증
-            Assert.That(stats.Attack, Is.EqualTo(351)); // 최대 레벨 공격력 검증
-            Assert.That(stats.Defense, Is.EqualTo(234)); // 최대 레벨 방어력 검증
+            Assert.That(stats.MaxHp, Is.EqualTo(5544)); // 최대 레벨 체력 검증 (Day67 1차 밸런스 8%)
+            Assert.That(stats.Attack, Is.EqualTo(454)); // 최대 레벨 공격력 검증
+            Assert.That(stats.Defense, Is.EqualTo(302)); // 최대 레벨 방어력 검증
         }
 
         [Test] // 테스트 표시

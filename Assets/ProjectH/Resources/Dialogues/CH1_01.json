@@ -1,0 +1,73 @@
+{
+  "id": "CH1_01",
+  "title": "길드의 의뢰",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_GUILD",
+  "location": "모험가의 마을 · 길드",
+  "nodes": [
+    {
+      "id": "a1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "마을 길드 게시판 앞. 사람들이 웅성거리며 같은 의뢰서를 바라보고 있었다."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "숲의 짐승들이 미쳐 날뛰고 있대요. 나무꾼 셋이 돌아오지 못했다고…"
+    },
+    {
+      "id": "a3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "침식 때문이야?"
+    },
+    {
+      "id": "a4",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "아마도요. 성역과 가장 가까운 숲이 먼저 물들었다는 건… 좋은 징조가 아니에요."
+    },
+    {
+      "id": "a5",
+      "speaker": "CH_SERENA",
+      "expression": "각오",
+      "text": "{HERO}님, 첫 의뢰예요. 무너진 성역의 숲으로 가요.",
+      "choices": [
+        {
+          "text": "가자. 사람부터 찾자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "a6a"
+        },
+        {
+          "text": "준비를 더 하고 가는 게 낫지 않을까?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "a6b"
+        }
+      ]
+    },
+    {
+      "id": "a6a",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "네! 길은 제가 알고 있어요.",
+      "next": "a7"
+    },
+    {
+      "id": "a6b",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "…시간이 없어요. 대신 제가 회복을 아끼지 않을게요.",
+      "next": "a7"
+    },
+    {
+      "id": "a7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "모험 지도에서 숲을 선택해 무너진 성역의 숲으로 떠나자."
+    }
+  ]
+}

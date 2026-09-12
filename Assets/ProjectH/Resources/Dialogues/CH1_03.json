@@ -1,0 +1,85 @@
+{
+  "id": "CH1_03",
+  "title": "은빛 기사",
+  "characterId": "CH_ELLEN",
+  "background": "SANCTUARY_PRACTICE",
+  "location": "무너진 성역의 숲",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "짐승들을 물리치고 숲 안쪽으로 들어가자, 검을 든 여인이 홀로 열 마리가 넘는 짐승과 맞서고 있었다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "…뒤로 물러서라! 이건 평범한 짐승이 아니다!"
+    },
+    {
+      "id": "b3",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "은빛 갑옷이 검은 피로 얼룩져 있었다. 그럼에도 그녀의 검은 한 치도 흔들리지 않았다."
+    },
+    {
+      "id": "b4",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…도와줘서 고맙다. 카르니안 제국의 엘렌이다. 지금은… 아무 소속도 아니지만."
+    },
+    {
+      "id": "b5",
+      "speaker": "CH_SERENA",
+      "expression": "놀람",
+      "text": "제국의 영웅 기사님이… 왜 이런 숲에?"
+    },
+    {
+      "id": "b6",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "지킬 것을 지키지 못한 자가 있을 곳은 전선뿐이다. 그뿐이야."
+    },
+    {
+      "id": "b7",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "너희는 침식을 쫓고 있다고 했나. …동행을 허락해 주겠나?",
+      "choices": [
+        {
+          "text": "환영해. 앞은 네가 맡아 줘.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "b8a"
+        },
+        {
+          "text": "왜 혼자 싸우고 있었는지 물어도 될까?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b8b"
+        }
+      ]
+    },
+    {
+      "id": "b8a",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "…고맙다. 뒤는 걱정하지 마라. 내가 벽이 되겠다.",
+      "next": "b9"
+    },
+    {
+      "id": "b8b",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…언젠가 말하지. 지금은 앞의 숲이 먼저다.",
+      "next": "b9"
+    },
+    {
+      "id": "b9",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "엘렌이 동료가 되었다. 숲 더 깊은 곳, 폐허 쪽에서 검은 안개가 더 짙게 피어오르고 있었다."
+    }
+  ]
+}

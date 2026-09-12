@@ -1,0 +1,85 @@
+{
+  "id": "CH2_01",
+  "title": "노아르에서 온 편지",
+  "characterId": "CH_LILIA",
+  "background": "VILLAGE_INN",
+  "location": "모험가의 마을 · 여관",
+  "nodes": [
+    {
+      "id": "d1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "여관 문이 열리고, 두꺼운 책과 측정 기구를 잔뜩 안은 소녀가 들어왔다."
+    },
+    {
+      "id": "d2",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "네가 폐허에서 문양을 봤다는 사람? 좋아, 바로 본론. 그 자국, 스케치는?"
+    },
+    {
+      "id": "d3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "…인사부터 하는 게 순서 아닐까."
+    },
+    {
+      "id": "d4",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "…릴리아. 노아르 마법사 의회 소속. 됐지? 그래서 스케치는?"
+    },
+    {
+      "id": "d5",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "후후, 제가 그려 두었어요. 여기요."
+    },
+    {
+      "id": "d6",
+      "speaker": "CH_LILIA",
+      "expression": "놀람",
+      "text": "……이건. 침식을 흩뿌리는 게 아니라 한곳으로 모으는 진이야. 누가 이런 걸 숲 한가운데에."
+    },
+    {
+      "id": "d7",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "직접 봐야겠어. 다음 현장까지 같이 가겠어. 거절은 안 받아.",
+      "choices": [
+        {
+          "text": "좋아. 네 머리가 필요해.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "d8a"
+        },
+        {
+          "text": "위험한 곳이야. 괜찮겠어?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "d8b"
+        }
+      ]
+    },
+    {
+      "id": "d8a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "당연하지. 나 없이 이 문양을 읽을 수 있을 것 같아?",
+      "next": "d9"
+    },
+    {
+      "id": "d8b",
+      "speaker": "CH_LILIA",
+      "expression": "부끄러움",
+      "text": "…걱정은 됐다는 걸로 기록해 둘게. 아무튼 간다고.",
+      "next": "d9"
+    },
+    {
+      "id": "d9",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아가 동료가 되었다. 다음 목적지는 국경의 습지, 침식이 고여 있다는 회랑이다."
+    }
+  ]
+}

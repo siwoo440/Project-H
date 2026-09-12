@@ -6,7 +6,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
     {
         private static readonly DungeonBattleTestProfile[] Profiles = // 권장 레벨 순서 (체력 ≈ 1 + 0.16×(Lv-1), 공격 ≈ 1 + 0.10×(Lv-1), 방어·저항은 더 완만)
         {
-            new DungeonBattleTestProfile("DG001", 1.00f, 1.00f, 1.00f, 1.00f), // Lv.1 무너진 성역의 숲
+            new DungeonBattleTestProfile("DG001", 0.75f, 0.70f, 1.00f, 1.00f), // Lv.1 무너진 성역의 숲 (Day68 — 세레나 + 루시아 2인 파티 기준 튜토리얼 난이도)
             new DungeonBattleTestProfile("DG002", 1.34f, 1.22f, 1.20f, 1.18f), // Lv.3 성역 외곽 폐허
             new DungeonBattleTestProfile("DG003", 1.68f, 1.44f, 1.40f, 1.36f), // Lv.5 침식된 회랑
             new DungeonBattleTestProfile("DG005", 1.80f, 1.50f, 1.45f, 1.40f), // Lv.6 노아르 금지된 지하 서고

@@ -63,9 +63,9 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(firstParty[0].Level, Is.EqualTo(1)); // 첫 런타임 레벨 검증
             Assert.That(firstParty[0].MaxHp, Is.EqualTo(2200)); // 첫 런타임 체력 검증
             Assert.That(secondParty[0].Level, Is.EqualTo(5)); // 재생성 런타임 레벨 검증
-            Assert.That(secondParty[0].MaxHp, Is.EqualTo(2640)); // 재계산 런타임 체력 검증
-            Assert.That(secondParty[0].Attack, Is.EqualTo(216)); // 재계산 런타임 공격력 검증
-            Assert.That(secondParty[0].Defense, Is.EqualTo(144)); // 재계산 런타임 방어력 검증
+            Assert.That(secondParty[0].MaxHp, Is.EqualTo(2904)); // 재계산 런타임 체력 검증 (Day67 1차 밸런스 8%)
+            Assert.That(secondParty[0].Attack, Is.EqualTo(238)); // 재계산 런타임 공격력 검증
+            Assert.That(secondParty[0].Defense, Is.EqualTo(158)); // 재계산 런타임 방어력 검증
         }
 
         [Test] // 테스트 표시

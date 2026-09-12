@@ -39,7 +39,6 @@ namespace ProjectH.Village // 프로젝트 마을 영역
             new RecruitDefinition("CH_PYRA", RecruitConditionKind.DungeonCleared, "DG003", "늪지대(침식된 회랑)를 클리어하면"), // 챕터 4 창기사
             new RecruitDefinition("CH_TYRIA", RecruitConditionKind.DungeonCleared, "DG003", "늪지대(침식된 회랑)를 클리어하면"), // 챕터 4 방패병
             new RecruitDefinition("CH_NOEL", RecruitConditionKind.DungeonEntered, "DG004", "마왕성(심연의 관문)에 도전하면"), // 챕터 5 탐험가
-            new RecruitDefinition("CH_LUCIA", RecruitConditionKind.DungeonEntered, "DG004", "마왕성(심연의 관문)에 도전하면"), // 챕터 5 총사수
             new RecruitDefinition("CH_NATASHA", RecruitConditionKind.DungeonEntered, "DG004", "마왕성(심연의 관문)에 도전하면"), // 챕터 5 잠입자
             new RecruitDefinition("CH_SEPHIRA", RecruitConditionKind.DungeonEntered, "DG004", "마왕성(심연의 관문)에 도전하면") // 챕터 5 순례자
         };

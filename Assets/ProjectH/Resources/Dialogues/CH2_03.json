@@ -1,0 +1,79 @@
+{
+  "id": "CH2_03",
+  "title": "흘려보내는 자",
+  "characterId": "CH_LILIA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "침식된 회랑 안쪽",
+  "nodes": [
+    {
+      "id": "f1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "회랑 끝. 무너진 벽 안쪽에서 릴리아의 측정 기구가 비명처럼 울렸다."
+    },
+    {
+      "id": "f2",
+      "speaker": "CH_LILIA",
+      "expression": "놀람",
+      "text": "…수치가 안 맞아. 침식은 퍼질수록 옅어져야 하는데, 여긴 오히려 짙어지고 있어."
+    },
+    {
+      "id": "f3",
+      "speaker": "CH_EVE",
+      "expression": "진지",
+      "text": "물이 위에서 아래로 흐르듯… 누가 계속 부어 넣고 있다는 소리네."
+    },
+    {
+      "id": "f4",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "제국도, 의회도 아니다. 그럼 남은 건 하나뿐이지."
+    },
+    {
+      "id": "f5",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "…마왕군. 그런데 왜 이렇게 조용히, 오래 걸리는 방법을 쓰는 걸까요."
+    },
+    {
+      "id": "f6",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "목적이 파괴가 아니라는 뜻이야. 무언가를 되살리거나… 깨우려는 거지.",
+      "choices": [
+        {
+          "text": "근원을 찾아 더 깊이 들어가자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "f7a"
+        },
+        {
+          "text": "동료를 더 모아야 할 것 같아.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "f7b"
+        }
+      ]
+    },
+    {
+      "id": "f7a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "좋아. 다음 조사 지점은 내가 정할게. 기대해도 좋아.",
+      "next": "f8"
+    },
+    {
+      "id": "f7b",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…옳은 판단이다. 이 싸움은 넷으로는 부족하다.",
+      "next": "f8"
+    },
+    {
+      "id": "f8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "회랑 깊은 곳에서, 검은 안개가 잠시 사람의 형상을 이루었다가 흩어졌다. 누군가 이쪽을 보고 있었다."
+    }
+  ]
+}

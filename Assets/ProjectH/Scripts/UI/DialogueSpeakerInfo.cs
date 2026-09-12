@@ -9,7 +9,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public static string ResolveName(string speaker) // 화자 이름
         {
             if (speaker == DialogueSpeakers.Narration || string.IsNullOrEmpty(speaker)) return string.Empty; // 나레이션 이름 없음
-            if (speaker == DialogueSpeakers.Hero) return DialogueSpeakers.HeroLabel; // 주인공 이름
+            if (speaker == DialogueSpeakers.Hero) return ProjectH.SaveSystem.HeroNameService.Get(GameManager.Instance == null || GameManager.Instance.Save == null ? null : GameManager.Instance.Save.CurrentSave); // 주인공 이름 (Day68 — 입력한 이름)
             NpcProfile npc = NpcLineCatalog.Find(speaker); // NPC 프로필
 
             if (npc != null) // NPC 확인

@@ -1,0 +1,79 @@
+{
+  "id": "PROLOGUE_01",
+  "title": "낯선 천장",
+  "characterId": "CH_SERENA",
+  "background": "SANCTUARY_PRACTICE",
+  "location": "레티시아 성역",
+  "nodes": [
+    {
+      "id": "p1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "눈을 뜨자 보인 것은 낯선 천장이었다. 높은 돌기둥 사이로 흰 빛이 쏟아지고, 공기에서는 한 번도 맡아 본 적 없는 향이 났다."
+    },
+    {
+      "id": "p2",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "조금 전까지 나는 분명 평범한 하루를 보내고 있었다. 그런데 지금, 바닥에 그려진 거대한 마법진 한가운데에 누워 있다."
+    },
+    {
+      "id": "p3",
+      "speaker": "CH_SERENA",
+      "expression": "놀람",
+      "text": "…깨어나셨군요! 다행이에요, 정말 다행이에요."
+    },
+    {
+      "id": "p4",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "여긴… 어디지? 당신은 누구야?"
+    },
+    {
+      "id": "p5",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "저는 세레나. 레티시아 성역의 성녀입니다. 그리고 당신은… 우리가 부른 분이에요.",
+      "choices": [
+        {
+          "text": "불렀다고? 나를?",
+          "affinity": 1,
+          "preferred": true,
+          "next": "p6a"
+        },
+        {
+          "text": "돌아갈 방법부터 알려 줘.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "p6b"
+        }
+      ]
+    },
+    {
+      "id": "p6a",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "네. 세상을 좀먹는 침식을 멈출 수 있는 분을 여신께 청했습니다. 그 부름에 답해 오신 분이 당신이에요.",
+      "next": "p7"
+    },
+    {
+      "id": "p6b",
+      "speaker": "CH_SERENA",
+      "expression": "당황",
+      "text": "…죄송해요. 돌아가는 방법은 아직 아무도 몰라요. 다만 침식을 멈추면 실마리를 찾을 수 있다고 믿고 있어요.",
+      "next": "p7"
+    },
+    {
+      "id": "p7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "성녀는 무릎을 꿇고 두 손을 모았다. 그 손끝이 아주 조금 떨리고 있었다."
+    },
+    {
+      "id": "p8",
+      "speaker": "CH_SERENA",
+      "expression": "각오",
+      "text": "무례한 부탁인 걸 압니다. 그래도… 이 세계를 도와주시겠어요, {HERO}님?"
+    }
+  ]
+}

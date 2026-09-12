@@ -405,11 +405,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RefreshStandings(node.Speaker); // 말하는 쪽 강조 (Day62)
             RefreshNamePlate(node.Speaker, speakerView); // 이름·소속·위치 (Day62)
             bodyText.fontStyle = node.Speaker == DialogueSpeakers.Narration ? FontStyle.Italic : FontStyle.Normal; // 나레이션은 기울임
-            fullText = node.Text; // 대사 저장
+            fullText = ResolveHeroName(node.Text); // 대사 저장 ({HERO}를 주인공 이름으로, Day68)
             visibleChars = 0f; // 타자 효과 시작
             bodyText.text = string.Empty; // 대사 비움
             isTyping = true; // 타자 효과 진행
             continueMark.gameObject.SetActive(false); // ▼ 숨김
+        }
+
+        private static string ResolveHeroName(string text) // 대사 속 {HERO}를 입력한 주인공 이름으로 교체 (Day68 추가)
+        {
+            ProjectH.SaveSystem.SaveData saveData = GameManager.Instance == null || GameManager.Instance.Save == null ? null : GameManager.Instance.Save.CurrentSave; // 현재 저장
+            return ProjectH.SaveSystem.HeroNameService.Apply(text, saveData); // 교체 결과 반환
         }
 
         private void CompleteTyping() // 대사 전체 표시 후 선택지·▼ 표시
@@ -491,7 +497,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 float y = top - (index * (height + gap)); // 버튼 위치
                 RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(0f, y - height), new Vector2(1f, y)); // 버튼 배치
                 button.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 회청색 외곽선
-                Text text = RuntimeUiKit.CreateText(button.transform, "Label", choices[index].Text, 24, BodyColor).BestFit(16); // 선택지 문구
+                Text text = RuntimeUiKit.CreateText(button.transform, "Label", ResolveHeroName(choices[index].Text), 24, BodyColor).BestFit(16); // 선택지 문구 (Day68 — 이름 반영)
                 RuntimeUiKit.Stretch(text.rectTransform, 10f); // 여백 확장
                 button.onClick.AddListener(() => Choose(captured)); // 선택 연결
                 choiceButtons.Add(button); // 목록 등록
@@ -564,13 +570,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
                 if (entry.IsChoice) // 선택지 기록 확인
                 {
-                    builder.Append($"<color=#FFD27A>▶ {entry.Text}</color>\n\n"); // 선택지 금색
+                    builder.Append($"<color=#FFD27A>▶ {ResolveHeroName(entry.Text)}</color>\n\n"); // 선택지 금색
                     continue; // 다음 줄
                 }
 
                 string name = DialogueSpeakerInfo.ResolveName(entry.Speaker); // 화자 이름
                 if (!string.IsNullOrEmpty(name)) builder.Append($"<color=#C8CDD8><b>{name}</b></color>\n"); // 이름 연회색
-                builder.Append($"{entry.Text}\n\n"); // 대사
+                builder.Append($"{ResolveHeroName(entry.Text)}\n\n"); // 대사
             }
 
             logText.text = builder.ToString(); // 로그 적용

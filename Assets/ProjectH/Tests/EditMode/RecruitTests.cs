@@ -41,7 +41,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [Test] // 8인 정의 · 새 게임에는 소식 없음
         public void Definitions_CoverEightRecruits_NoneAtStart() // 정의 테스트
         {
-            Assert.That(RecruitService.All.Count, Is.EqualTo(8)); // 8인
+            Assert.That(RecruitService.All.Count, Is.EqualTo(7)); // 7인 (Day68 — 루시아는 챕터 1 길드 고용으로 이동)
             Assert.That(RecruitService.GetPending(CreateSave()), Is.Empty); // 새 게임은 소식 없음
         }
 
@@ -55,7 +55,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(PendingIds(saveData), Has.Member("CH_PYRA").And.Member("CH_TYRIA")); // 2명 추가
             Assert.That(PendingIds(saveData), Has.No.Member("CH_NOEL")); // 마왕성 전
             saveData.SetStoryFlag(DungeonEntryService.BuildEnteredFlag("DG004")); // 마왕성 도전
-            Assert.That(PendingIds(saveData).Count, Is.EqualTo(8)); // 전원 소식
+            Assert.That(PendingIds(saveData).Count, Is.EqualTo(7)); // 전원 소식
         }
 
         [Test] // 던전 입장에 성공하면 도전 기록이 남음
@@ -90,11 +90,11 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         public void RecruitAll_PersistsThroughSave() // 저장 테스트
         {
             SaveData saveData = CreateSave(); // 새 게임
-            Assert.That(RecruitService.RecruitAllForDebug(saveData), Is.EqualTo(8)); // 8명 합류
+            Assert.That(RecruitService.RecruitAllForDebug(saveData), Is.EqualTo(7)); // 7명 합류
             Assert.That(RecruitService.RecruitAllForDebug(saveData), Is.EqualTo(0)); // 중복 없음
             SaveData loaded = JsonUtility.FromJson<SaveData>(JsonUtility.ToJson(saveData)); // 저장 → 불러오기
             Assert.That(loaded.HasCharacter("CH_SEPHIRA"), Is.True); // 유지
-            Assert.That(loaded.Characters.Count, Is.EqualTo(12)); // 12인
+            Assert.That(loaded.Characters.Count, Is.EqualTo(11)); // 초기 4인 + 길드 합류 7인 (루시아는 스토리 합류)
             Assert.That(RecruitService.GetPending(loaded), Is.Empty); // 소식 없음
         }
     }

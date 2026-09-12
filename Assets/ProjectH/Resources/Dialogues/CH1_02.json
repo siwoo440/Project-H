@@ -1,0 +1,97 @@
+{
+  "id": "CH1_02",
+  "title": "길드의 용병",
+  "characterId": "CH_LUCIA",
+  "background": "VILLAGE_GUILD",
+  "location": "모험가의 마을 · 길드",
+  "nodes": [
+    {
+      "id": "m1",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "…{HERO}님. 솔직히 말씀드릴게요. 저와 둘이서 저 숲에 들어가는 건 무리예요."
+    },
+    {
+      "id": "m2",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "사람을 더 구해야 한다는 거지?"
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "네. 길드에 의뢰를 받아 주는 용병이 있다고 들었어요. …보수가 비싸다는 소문도 함께요."
+    },
+    {
+      "id": "m4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "길드 안쪽 구석 자리. 장총을 세워 둔 여인이 계약서를 넘기다 고개를 들었다."
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "성역의 성녀와… 처음 보는 얼굴이군. 의뢰라면 앉아서 말해."
+    },
+    {
+      "id": "m6",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "저, 저희는 숲의 침식을 막으려고 해요. 다만 보수를 많이 드릴 형편은…"
+    },
+    {
+      "id": "m7",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "루시아. 길드연합 용병이다. 선불은 됐어. 대신 조건이 둘 있다.",
+      "choices": [
+        {
+          "text": "말해 봐. 지킬 수 있는 조건이면 지킬게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "m8a"
+        },
+        {
+          "text": "돈이 아니면 뭘 원하는데?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "m8b"
+        }
+      ]
+    },
+    {
+      "id": "m8a",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "하나, 보상은 공평하게 나눈다. 둘, 누구도 버리고 오지 않는다. …이건 값을 매길 수 없는 조건이지.",
+      "next": "m9"
+    },
+    {
+      "id": "m8b",
+      "speaker": "CH_LUCIA",
+      "expression": "생각",
+      "text": "살아 돌아오는 거다. 돈은 죽은 뒤에 쓸 수 없으니까. 그리고 공평한 분배.",
+      "next": "m9"
+    },
+    {
+      "id": "m9",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "그 두 가지라면… 저희도 같은 마음이에요."
+    },
+    {
+      "id": "m10",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "계약 성립. 앞은 성녀가 보고, 뒤는 내가 맡지. {HERO}, 머리 숙이는 타이밍만 잘 맞춰라."
+    },
+    {
+      "id": "m11",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "루시아가 동료가 되었다. 회복을 맡는 세레나와 화력을 맡는 루시아. 이제 숲으로 갈 수 있다."
+    }
+  ]
+}

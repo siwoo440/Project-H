@@ -12,12 +12,9 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
     {
         private const string SaveFileName = "save_001.json"; // 저장 파일 이름
 
-        private static readonly string[] InitialCharacterIds = // 초기 캐릭터 ID 목록
+        private static readonly string[] InitialCharacterIds = // 초기 캐릭터 ID 목록 (Day68 — 나머지 동료는 챕터를 진행하며 합류)
         {
-            "CH_SERENA", // 세레나 ID
-            "CH_ELLEN", // 엘렌 ID
-            "CH_LILIA", // 릴리아 ID
-            "CH_EVE" // 이브 ID
+            "CH_SERENA" // 세레나 ID (프롤로그에서 처음 만나는 성녀)
         }; // 초기 캐릭터 목록 종료
 
         private DataManager dataManager; // 데이터 관리자 참조

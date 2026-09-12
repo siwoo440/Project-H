@@ -1,0 +1,67 @@
+{
+  "id": "PROLOGUE_03",
+  "title": "첫 싸움",
+  "characterId": "CH_SERENA",
+  "background": "CORRIDOR_MORNING",
+  "location": "레티시아 성역 · 훈련장",
+  "nodes": [
+    {
+      "id": "r1",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "싸움은 박자예요. 공격이 들어가는 순간에 맞춰 리듬을 맞추면 더 큰 피해를 줄 수 있어요."
+    },
+    {
+      "id": "r2",
+      "speaker": "CH_SERENA",
+      "expression": "기본",
+      "text": "스킬은 쿨타임이 돌면 자동으로 준비돼요. 궁극기는 게이지가 가득 찼을 때 직접 눌러 주세요."
+    },
+    {
+      "id": "r3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "체력이 위험해지면?"
+    },
+    {
+      "id": "r4",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "제가 회복할게요. 대신 너무 앞서 나가진 마세요. 약속이에요.",
+      "choices": [
+        {
+          "text": "알았어. 뒤를 믿을게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "r5a"
+        },
+        {
+          "text": "무리하면 네가 먼저 쓰러질 것 같은데.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "r5b"
+        }
+      ]
+    },
+    {
+      "id": "r5a",
+      "speaker": "CH_SERENA",
+      "expression": "각오",
+      "text": "네! 그럼… 첫걸음을 떼어 볼까요.",
+      "next": "r6"
+    },
+    {
+      "id": "r5b",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "…그, 그건 제가 할 말인데요. 아무튼 조심하기로 해요.",
+      "next": "r6"
+    },
+    {
+      "id": "r6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "성역 문이 열리자, 멀리 숲 쪽에서 검은 안개가 피어오르는 것이 보였다."
+    }
+  ]
+}

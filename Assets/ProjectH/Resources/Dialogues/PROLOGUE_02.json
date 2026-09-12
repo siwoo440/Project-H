@@ -1,0 +1,73 @@
+{
+  "id": "PROLOGUE_02",
+  "title": "성녀의 부탁",
+  "characterId": "CH_SERENA",
+  "background": "GARDEN_POND",
+  "location": "레티시아 성역 · 정원",
+  "nodes": [
+    {
+      "id": "q1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "성역 정원. 연못 위로 흰 꽃잎이 떠다니지만, 물가의 풀은 검게 시들어 있었다."
+    },
+    {
+      "id": "q2",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "이게 침식이에요. 땅과 생물, 마음까지 조금씩 물들이죠. 숲 바깥에서는 이미 마을이 몇 곳 사라졌어요."
+    },
+    {
+      "id": "q3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "마왕 때문이야?"
+    },
+    {
+      "id": "q4",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "…옛 기록은 그렇게 말해요. 하지만 요즘 침식은 기록과 달라요. 퍼지는 속도도, 방향도."
+    },
+    {
+      "id": "q5",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "그래서 함께 가 주셨으면 해요. 저는 치유와 정화를 맡을게요. {HERO}님은 앞을 봐 주세요.",
+      "choices": [
+        {
+          "text": "같이 가자. 혼자 두진 않을게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "q6a"
+        },
+        {
+          "text": "싸우는 법부터 배워야겠는데.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "q6b"
+        }
+      ]
+    },
+    {
+      "id": "q6a",
+      "speaker": "CH_SERENA",
+      "expression": "부끄러움",
+      "text": "…감사합니다. 그 한마디에 이렇게 마음이 놓일 줄 몰랐어요.",
+      "next": "q7"
+    },
+    {
+      "id": "q6b",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "걱정 마세요. 성역 훈련장에서 기초부터 함께 익히면 돼요.",
+      "next": "q7"
+    },
+    {
+      "id": "q7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "연못에 비친 두 사람의 그림자가 나란히 흔들렸다. 세계의 끝을 향한 여정이 이렇게 시작되었다."
+    }
+  ]
+}

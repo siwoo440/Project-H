@@ -34,6 +34,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private List<string> seenMonsterIds = new List<string>(); // 전투에서 만난 몬스터 ID (Day63 추가 — 일기장 몬스터 정보)
         [SerializeField] private RiftStateSaveData riftState = new RiftStateSaveData(); // 검은 균열(긴급 던전) 상태 (Day67 추가)
         [SerializeField] private GuildQuestBoardSaveData questBoard = new GuildQuestBoardSaveData(); // 오늘의 길드 의뢰 (Day67 추가)
+        [SerializeField] private string heroName = string.Empty; // 주인공 이름 (Day68 추가, 빈 값이면 아직 정하지 않음)
+        [SerializeField] private ChapterProgressSaveData chapterProgress = new ChapterProgressSaveData(); // 메인 스토리 진행 (Day68 추가)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -56,6 +58,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public IReadOnlyList<string> SeenMonsterIds => seenMonsterIds; // 만난 몬스터 목록 반환 (Day63 추가)
         public RiftStateSaveData RiftState => riftState; // 검은 균열 상태 반환 (Day67 추가)
         public GuildQuestBoardSaveData QuestBoard => questBoard; // 길드 의뢰 게시판 반환 (Day67 추가)
+        public string HeroName => heroName ?? string.Empty; // 주인공 이름 반환 (Day68 추가)
+        public ChapterProgressSaveData ChapterProgress => chapterProgress; // 메인 스토리 진행 반환 (Day68 추가)
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {
@@ -162,6 +166,9 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 shopStates[index].EnsureDefaults(); // 상태 기본값 보정
             }
 
+            if (heroName == null) heroName = string.Empty; // 주인공 이름 복원 (Day68 추가)
+            if (chapterProgress == null) chapterProgress = new ChapterProgressSaveData(); // 스토리 진행 복원 (Day68 추가)
+            chapterProgress.EnsureDefaults(); // 스토리 진행 보정
             if (riftState == null) riftState = new RiftStateSaveData(); // 균열 상태 복원 (Day67 추가, 기존 세이브는 빈 상태)
             if (questBoard == null) questBoard = new GuildQuestBoardSaveData(); // 의뢰 게시판 복원 (Day67 추가)
             riftState.EnsureDefaults(); // 균열 상태 보정
@@ -645,6 +652,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         {
             bondResource = Mathf.Max(0, resource); // 자원 저장
             lastBondRefillDay = Mathf.Max(0, refillDay); // 회복 일차 저장
+        }
+
+        public void SetHeroName(string value) // 주인공 이름 변경 (Day68 추가)
+        {
+            heroName = value ?? string.Empty; // null 문자열 방지
         }
 
         public void SetCurrentChapter(string value) // 현재 챕터 변경

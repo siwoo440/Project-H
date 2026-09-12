@@ -1,6 +1,7 @@
 using System.Collections.Generic; // 목록 자료형
 using ProjectH.Dialogue; // 대화 파일 기능
 using ProjectH.Dungeon; // 지역 첫 방문 이야기 기능
+using ProjectH.Story; // 메인 스토리 대사 목록 기능 (Day68 추가)
 using ProjectH.SaveSystem; // 개인 이벤트·결속 목록 기능
 using ProjectH.Village; // 마을 대사 ID 기능
 
@@ -13,7 +14,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
         Village = 2, // 마을 이벤트
         InnNight = 3, // 여관 특별한 밤
         Recruit = 4, // 동료 합류 (Day64 추가)
-        Region = 5 // 지역 첫 방문 (Day65 추가)
+        Region = 5, // 지역 첫 방문 (Day65 추가)
+        Main = 6 // 메인 스토리 (Day68 추가)
     }
 
     public sealed class DiaryScenarioEntry // 다시 볼 수 있는 이야기 한 편
@@ -75,6 +77,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 case DiaryScenarioCategory.Village: return "마을"; // 마을
                 case DiaryScenarioCategory.Recruit: return "동료 합류"; // 합류 (Day64)
                 case DiaryScenarioCategory.Region: return "지역"; // 첫 방문 (Day65)
+                case DiaryScenarioCategory.Main: return "메인 스토리"; // 프롤로그·챕터 (Day68)
                 default: return "특별한 밤"; // 여관
             }
         }
@@ -87,6 +90,12 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
             {
                 if (DialogueLibrary.Load(definition.ScriptId) == null) continue; // 대사 파일이 있는 화만 (2화 이후는 70일차 개인 스토리에서 추가되면 자동으로 들어옴)
                 result.Add(new DiaryScenarioEntry(definition.ScriptId, definition.CharacterId, DiaryScenarioCategory.Personal)); // 추가
+            }
+
+            foreach (string scriptId in ChapterCatalog.GetDialogueScriptIds()) // 메인 스토리 (Day68 — 프롤로그 · 챕터 1 · 2)
+            {
+                DialogueScript script = DialogueLibrary.Load(scriptId); // 대사 파일 (화자 캐릭터 표시용)
+                result.Add(new DiaryScenarioEntry(scriptId, script == null ? string.Empty : script.CharacterId, DiaryScenarioCategory.Main)); // 추가
             }
 
             foreach (RegionArrivalDefinition definition in RegionVisitService.All) // 지역 첫 방문 2편 (Day65)
@@ -123,7 +132,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
         private static List<string> BuildAllCharacters() // 12인 목록 구성
         {
             List<string> result = new List<string>(Starters); // 초기 4인
-            foreach (RecruitDefinition definition in RecruitService.All) result.Add(definition.CharacterId); // 합류 8인
+            result.Add("CH_LUCIA"); // 챕터 1에서 길드 용병으로 고용 (Day68 — 길드 합류 목록에는 없음)
+            foreach (RecruitDefinition definition in RecruitService.All) result.Add(definition.CharacterId); // 길드 합류 7인
             return result; // 결과 반환
         }
 

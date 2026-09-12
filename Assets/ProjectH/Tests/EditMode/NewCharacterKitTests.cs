@@ -97,7 +97,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 
             foreach (string id in Recruits) // 8인 순회
             {
-                List<string> scriptIds = new List<string> { RecruitService.Find(id).ScriptId }; // 합류 이야기
+                RecruitDefinition recruit = RecruitService.Find(id); // 길드 합류 정의 (루시아는 챕터 1 고용이라 없음)
+                List<string> scriptIds = new List<string> { recruit == null ? "CH1_02" : recruit.ScriptId }; // 합류 이야기
                 foreach (SaveTimeOfDay phase in phases) scriptIds.Add(DialogueService.GetTalkScriptId(id, phase)); // 일상 대화 4편
 
                 foreach (string scriptId in scriptIds) // 파일 순회

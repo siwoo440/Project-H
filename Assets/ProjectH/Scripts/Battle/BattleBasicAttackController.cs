@@ -1,4 +1,5 @@
 using UnityEngine; // Unity 기본 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
 {
@@ -164,13 +165,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 if (isCritical) // 치명타 발생 확인
                 {
                     BattlePassiveSystem.HandleBasicAttackCritical(actor, currentTarget); // 치명타 결속 스킬 처리 (Day59 이브 정령의 화살)
-                    Debug.Log($"[Project H][CRIT] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Chance={criticalChance:0.00}, Damage={appliedDamage}"); // 기본 공격 치명타 로그
+                    GameLog.Info($"[Project H][CRIT] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Chance={criticalChance:0.00}, Damage={appliedDamage}"); // 기본 공격 치명타 로그
                 }
             }
             else // 기본 공격 빗나감 처리
             {
                 BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateBasicAttackMiss(actor, currentTarget)); // 기본 공격 빗나감 패시브 Trigger 처리
-                Debug.Log($"[Project H][MISS] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Accuracy={hitChance:0.00}"); // 명중 감소 기반 빗나감 디버그 로그
+                GameLog.Info($"[Project H][MISS] {actor.Stats.RuntimeId} -> {currentTarget.Stats.RuntimeId}, Accuracy={hitChance:0.00}"); // 명중 감소 기반 빗나감 디버그 로그
             }
 
             state = BattleAttackState.Cooldown; // 현재 위치에서 공격 대기 상태 전환

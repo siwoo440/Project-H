@@ -59,7 +59,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             ProjectH.Village.GuildQuestService.RecordVictory(saveData, result.DungeonId, result.CountsAsDungeonClear, partyCharacterIds, ProjectH.Data.CharacterElementTable.Get, !string.IsNullOrEmpty(riftMessage)); // 오늘의 의뢰 진행
-            if (!string.IsNullOrEmpty(riftMessage)) UnityEngine.Debug.Log($"[Project H][RIFT] {riftMessage}"); // 균열 결과 로그
+            if (!string.IsNullOrEmpty(riftMessage)) GameLog.Info($"[Project H][RIFT] {riftMessage}"); // 균열 결과 로그
         }
 
         private static void ApplyExperience(SaveData saveData, BattleResultData result) // 참가 캐릭터 경험치 및 레벨 반영

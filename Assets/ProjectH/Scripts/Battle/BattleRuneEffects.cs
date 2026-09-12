@@ -1,4 +1,5 @@
 using ProjectH.SaveSystem; // 룬 종류 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using UnityEngine; // Unity 수학·난수·로그 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -70,7 +71,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return false; // 명중
             }
 
-            Debug.Log($"[Project H][RUNE] 민첩 회피 -> {target.Stats.RuntimeId}"); // 회피 로그
+            GameLog.Info($"[Project H][RUNE] 민첩 회피 -> {target.Stats.RuntimeId}"); // 회피 로그
             return true; // 회피
         }
 
@@ -132,7 +133,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             bool revived = handler.TryRevive(Mathf.Max(1, Mathf.RoundToInt(target.Stats.MaxHp * ratio))); // 세레나 궁극기와 같은 부활 경로
-            Debug.Log($"[Project H][RUNE] 부활의 룬 -> {target.Stats.RuntimeId}, Revived={revived}"); // 부활 로그
+            GameLog.Info($"[Project H][RUNE] 부활의 룬 -> {target.Stats.RuntimeId}, Revived={revived}"); // 부활 로그
         }
     }
 }

@@ -93,7 +93,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 중복 입력 중단
             }
 
-            Debug.Log("[Project H][UI] Quit requested from Title."); // 종료 요청 로그
+            GameLog.Info("[Project H][UI] Quit requested from Title."); // 종료 요청 로그
             Application.Quit(); // 애플리케이션 종료
         }
 

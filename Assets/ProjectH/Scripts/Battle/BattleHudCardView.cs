@@ -1,4 +1,5 @@
 using ProjectH.Battle.Rhythm; // 궁극기 리듬 챌린지 기능 (Day49)
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.UI; // Unity UI 기능
 
@@ -210,7 +211,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 float powerMultiplier = RhythmPowerScaler.Evaluate(result, BattleBondRuntimeState.GetPerfectBonusPerHit(pendingUltimate.CharacterId)); // 리듬 성적·결속 Perfect 보너스 기반 궁극기 위력 배율 계산 (Day59 수정)
                 BattleUltimateExecutionResult execution = BattleUltimateExecutor.ExecuteUltimateEffect(pendingUltimate, powerMultiplier); // 계산 배율로 궁극기 효과 실행
-                Debug.Log($"[Project H][RHYTHM] {Stats?.CharacterId}, {result}, Accuracy={result.Accuracy:P0}, MaxCombo={result.MaxCombo}, FullCombo={result.IsFullCombo}, Power=x{powerMultiplier:0.00}"); // 리듬 챌린지 결과와 적용 배율 로그 출력
+                GameLog.Info($"[Project H][RHYTHM] {Stats?.CharacterId}, {result}, Accuracy={result.Accuracy:P0}, MaxCombo={result.MaxCombo}, FullCombo={result.IsFullCombo}, Power=x{powerMultiplier:0.00}"); // 리듬 챌린지 결과와 적용 배율 로그 출력
 
                 if (!execution.Succeeded) // 궁극기 효과 실행 실패 여부 확인
                 {

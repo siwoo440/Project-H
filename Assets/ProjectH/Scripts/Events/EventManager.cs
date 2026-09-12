@@ -1,4 +1,5 @@
 using System; // 문자열 비교 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using System.Collections.Generic; // 사전 자료형
 using ProjectH.SaveSystem; // 저장 기능
 using UnityEngine; // Unity 기본 기능
@@ -47,7 +48,7 @@ namespace ProjectH.Events // 프로젝트 이벤트 영역
             }
 
             IsInitialized = true; // 초기화 완료 기록
-            Debug.Log($"[Project H][EVENT] EventManager initialized. Definitions={DefinitionCount}"); // 초기화 완료 로그
+            GameLog.Info($"[Project H][EVENT] EventManager initialized. Definitions={DefinitionCount}"); // 초기화 완료 로그
         }
 
         public bool HasStoryFlag(string flagId) // 스토리 플래그 확인
@@ -73,7 +74,7 @@ namespace ProjectH.Events // 프로젝트 이벤트 영역
                 return false; // 중복 변경 중단
             }
 
-            Debug.Log($"[Project H][FLAG] {flagId} = True"); // 플래그 변경 로그
+            GameLog.Info($"[Project H][FLAG] {flagId} = True"); // 플래그 변경 로그
             ProjectHEventBus.Publish(new StoryFlagChangedEvent(flagId, true)); // 플래그 변경 이벤트 발행
             return true; // 플래그 변경 성공
         }
@@ -95,7 +96,7 @@ namespace ProjectH.Events // 프로젝트 이벤트 영역
                 return false; // 변경 없음 반환
             }
 
-            Debug.Log($"[Project H][FLAG] {flagId} = False"); // 플래그 변경 로그
+            GameLog.Info($"[Project H][FLAG] {flagId} = False"); // 플래그 변경 로그
             ProjectHEventBus.Publish(new StoryFlagChangedEvent(flagId, false)); // 플래그 변경 이벤트 발행
             return true; // 플래그 변경 성공
         }

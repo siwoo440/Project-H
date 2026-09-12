@@ -86,7 +86,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             }
 
             IsInitialized = true; // 초기화 완료 기록
-            Debug.Log("[Project H] GameManager initialized."); // 초기화 완료 로그
+            GameLog.Info("[Project H] GameManager initialized."); // 초기화 완료 로그
         }
 
         private void OnDestroy() // 관리자 해제 처리

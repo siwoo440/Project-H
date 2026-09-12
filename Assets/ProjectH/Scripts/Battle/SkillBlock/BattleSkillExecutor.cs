@@ -1,4 +1,5 @@
 using System; // 이벤트 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using UnityEngine; // Unity 컴포넌트 기능
 
 namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
@@ -49,7 +50,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateSkillUsed(owner, request)); // 스킬 사용 완료 패시브 Trigger 처리
             ApplyUltimateGaugeGain(request); // 성공한 스킬 사용 1회 기준 궁극기 게이지 충전
             SkillRequested?.Invoke(request); // 성공한 스킬 사용 완료 이벤트 발생
-            Debug.Log($"[Project H][SKILL] Character={request.CharacterId}, Skill={request.SkillId}, Slot={request.SkillSlot}, Enhancement={request.EnhancementLevel}, Blocks={request.BlockCount}, Effects={effectResult.AppliedEffectCount}, Targets={effectResult.AffectedTargetCount}"); // 스킬 사용 및 효과 적용 로그
+            GameLog.Info($"[Project H][SKILL] Character={request.CharacterId}, Skill={request.SkillId}, Slot={request.SkillSlot}, Enhancement={request.EnhancementLevel}, Blocks={request.BlockCount}, Effects={effectResult.AppliedEffectCount}, Targets={effectResult.AffectedTargetCount}"); // 스킬 사용 및 효과 적용 로그
             return true; // 스킬 사용 요청 성공 반환
         }
 

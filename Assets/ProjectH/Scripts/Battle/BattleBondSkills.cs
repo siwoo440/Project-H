@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 목록 자료형
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using UnityEngine; // Unity 수학·로그 기능
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
@@ -30,7 +31,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             int shield = Mathf.Max(1, Mathf.RoundToInt(damagedAlly.Stats.MaxHp * SerenaShieldRatio)); // 최대 체력 20% 보호막
             BattlePassiveRuntimeState.GrantShield(damagedAlly.Stats.RuntimeId, shield); // 보호막 부여
-            Debug.Log($"[Project H][BOND] 수호의 기도 -> {damagedAlly.Stats.RuntimeId}, Shield={shield}"); // 발동 로그
+            GameLog.Info($"[Project H][BOND] 수호의 기도 -> {damagedAlly.Stats.RuntimeId}, Shield={shield}"); // 발동 로그
             return true; // 발동 반환
         }
 
@@ -48,7 +49,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     BattleSkillRuntimeState.AddModifier(ally.Stats.RuntimeId, BattleRuntimeModifierKind.DamageReductionPercent, EllenDamageReduction, EllenDuration, "BOND_ELLEN_OATH"); // 파티 피해 감소 추가
                 }
 
-                Debug.Log("[Project H][BOND] 철벽의 맹세 발동"); // 발동 로그
+                GameLog.Info("[Project H][BOND] 철벽의 맹세 발동"); // 발동 로그
             }
             else if (characterId == LiliaId) // 릴리아 마력 공명
             {
@@ -57,7 +58,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                     BattleUltimateEffectExecutor.ApplyDamage(owner, enemy, LiliaBurstRatio, BattleDamageType.Magic); // 마력 폭발 추가 피해
                 }
 
-                Debug.Log("[Project H][BOND] 마력 공명 발동"); // 발동 로그
+                GameLog.Info("[Project H][BOND] 마력 공명 발동"); // 발동 로그
             }
         }
 
@@ -79,7 +80,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             BattlePassiveRuntimeState.StartCooldown(cooldownKey, EveArrowCooldown); // 쿨타임 시작
             bool hit = BattleUltimateEffectExecutor.ApplyDamage(eve, target, EveArrowRatio, BattleDamageType.Physical); // 관통 화살 추가 피해
-            Debug.Log($"[Project H][BOND] 정령의 화살 -> {target.Stats.RuntimeId}, Hit={hit}"); // 발동 로그
+            GameLog.Info($"[Project H][BOND] 정령의 화살 -> {target.Stats.RuntimeId}, Hit={hit}"); // 발동 로그
             return hit; // 적중 여부 반환
         }
 

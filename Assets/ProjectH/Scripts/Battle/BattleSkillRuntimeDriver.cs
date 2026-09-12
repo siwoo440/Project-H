@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 목록 자료형 (Day59 추가)
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using ProjectH.SaveSystem; // 결속 시너지 판정 기능 (Day59 추가)
 using UnityEngine; // Unity 컴포넌트 기능
 
@@ -117,7 +118,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 }
             }
 
-            Debug.Log($"[Project H][BOND] 시너지 · 균형 파티={synergy.BalancedParty}, 결속의 원탁={synergy.RoundTable}"); // 시너지 로그
+            GameLog.Info($"[Project H][BOND] 시너지 · 균형 파티={synergy.BalancedParty}, 결속의 원탁={synergy.RoundTable}"); // 시너지 로그
         }
 
         private void TryApplyDungeonRunModifiers() // 함정·휴식·이벤트가 쌓은 다음 전투 효과를 아군 전원에게 적용 (Day55 추가)
@@ -156,7 +157,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 }
             }
 
-            Debug.Log($"[Project H][DUNGEON RUN] 다음 전투 효과 {modifiers.Count}개 적용"); // 효과 적용 로그
+            GameLog.Info($"[Project H][DUNGEON RUN] 다음 전투 효과 {modifiers.Count}개 적용"); // 효과 적용 로그
         }
 
         public void TickUltimateGauge(float deltaTime) // 생존 아군 초 단위 궁극기 게이지 충전

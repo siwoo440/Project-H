@@ -1,4 +1,5 @@
 using System; // 예외 자료형
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using System.Collections.Generic; // 집합 자료형
 using System.IO; // 파일 입출력
 using ProjectH.Data; // 데이터 기능
@@ -41,7 +42,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             SavePath = Path.Combine(Application.persistentDataPath, SaveFileName); // 저장 경로 생성
             HasSaveData = File.Exists(SavePath); // 기존 저장 확인
             IsInitialized = true; // 초기화 완료 기록
-            Debug.Log($"[Project H] SaveManager initialized. HasSaveData={HasSaveData}"); // 저장 초기화 로그
+            GameLog.Info($"[Project H] SaveManager initialized. HasSaveData={HasSaveData}"); // 저장 초기화 로그
         }
 
         public bool CreateNewGame() // 새 게임 생성
@@ -58,7 +59,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             CurrentSave = SaveData.CreateNewGame(InitialCharacterIds); // 초기 저장 데이터 생성
             ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.NewGameCreated)); // 새 게임 이벤트 발행
-            Debug.Log("[Project H] New game save data created."); // 새 게임 생성 로그
+            GameLog.Info("[Project H] New game save data created."); // 새 게임 생성 로그
             return SaveCurrent(); // 초기 데이터 저장
         }
 
@@ -83,7 +84,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 File.WriteAllText(SavePath, json); // JSON 파일 저장
                 HasSaveData = true; // 저장 존재 상태 갱신
                 ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Saved)); // 저장 완료 이벤트 발행
-                Debug.Log($"[Project H] Save complete. Path={SavePath}"); // 저장 완료 로그
+                GameLog.Info($"[Project H] Save complete. Path={SavePath}"); // 저장 완료 로그
                 return true; // 저장 성공
             }
             catch (Exception exception) // 저장 예외 처리
@@ -125,7 +126,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 CurrentSave = loadedSave; // 현재 저장 데이터 교체
                 HasSaveData = true; // 저장 존재 상태 갱신
                 ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Loaded)); // 불러오기 완료 이벤트 발행
-                Debug.Log($"[Project H] Load complete. Day={CurrentSave.CurrentDay}, Characters={CurrentSave.Characters.Count}, Flags={CurrentSave.StoryFlags.Count}"); // 불러오기 완료 로그
+                GameLog.Info($"[Project H] Load complete. Day={CurrentSave.CurrentDay}, Characters={CurrentSave.Characters.Count}, Flags={CurrentSave.StoryFlags.Count}"); // 불러오기 완료 로그
                 return true; // 불러오기 성공
             }
             catch (Exception exception) // 불러오기 예외 처리
@@ -152,7 +153,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 CurrentSave = null; // 현재 저장 데이터 제거
                 HasSaveData = false; // 저장 없음 상태 갱신
                 ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Deleted)); // 저장 삭제 이벤트 발행
-                Debug.Log("[Project H] Save deleted."); // 삭제 완료 로그
+                GameLog.Info("[Project H] Save deleted."); // 삭제 완료 로그
                 return true; // 삭제 성공
             }
             catch (Exception exception) // 삭제 예외 처리
@@ -342,7 +343,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             CurrentSave.SetCurrentDay(7); // 테스트 일차 적용
             serena.SetLevel(5); // 테스트 레벨 적용
             serena.SetExperience(350); // 테스트 경험치 적용
-            Debug.Log("[Project H] Debug progress applied. Day=7, CH_SERENA Lv=5, Exp=350"); // 테스트 변경 로그
+            GameLog.Info("[Project H] Debug progress applied. Day=7, CH_SERENA Lv=5, Exp=350"); // 테스트 변경 로그
             return true; // 변경 성공
         }
 
@@ -350,13 +351,13 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         {
             if (CurrentSave == null) // 현재 저장 데이터 확인
             {
-                Debug.Log("[Project H] Current save data is empty."); // 저장 없음 로그
+                GameLog.Info("[Project H] Current save data is empty."); // 저장 없음 로그
                 return; // 출력 중단
             }
 
             CharacterSaveData serena = CurrentSave.FindCharacter("CH_SERENA"); // 세레나 진행 조회
             string serenaState = serena == null ? "Missing" : $"Lv={serena.Level}, Exp={serena.Experience}"; // 세레나 상태 생성
-            Debug.Log($"[Project H] Save State: Day={CurrentSave.CurrentDay}, Time={CurrentSave.CurrentTime}, Serena={serenaState}, Flags={CurrentSave.StoryFlags.Count}"); // 현재 진행 로그
+            GameLog.Info($"[Project H] Save State: Day={CurrentSave.CurrentDay}, Time={CurrentSave.CurrentTime}, Serena={serenaState}, Flags={CurrentSave.StoryFlags.Count}"); // 현재 진행 로그
         }
 
         private bool EnsureInitialized() // 초기화 상태 검증

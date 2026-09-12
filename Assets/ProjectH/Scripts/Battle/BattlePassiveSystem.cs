@@ -1,4 +1,5 @@
 using ProjectH.Battle.SkillBlock; // 스킬 요청 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using ProjectH.Data; // 스킬 대상 데이터 기능
 using UnityEngine; // Unity 수학 및 로그 기능
 
@@ -162,7 +163,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             int shieldAmount = Mathf.Max(1, Mathf.RoundToInt(damagedAlly.Stats.MaxHp * shieldRatio)); // 대상 최대 체력 비율 보호막 계산
             BattlePassiveRuntimeState.GrantShield(damagedAlly.Stats.RuntimeId, shieldAmount); // 저체력 아군 보호막 부여
             BattlePassiveRuntimeState.StartCooldown(cooldownKey, 12f); // 세레나 패시브 12초 쿨다운 시작
-            Debug.Log($"[Project H][PASSIVE] Serena shield -> {damagedAlly.Stats.RuntimeId}, Shield={shieldAmount}"); // 세레나 패시브 로그
+            GameLog.Info($"[Project H][PASSIVE] Serena shield -> {damagedAlly.Stats.RuntimeId}, Shield={shieldAmount}"); // 세레나 패시브 로그
         }
 
         private static void TryEllenDefense(BattleActor damagedActor) // 엘렌 저체력 방어 증가 처리
@@ -182,7 +183,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             float defenseBonus = BattleBondRuntimeState.HasPassiveBoost(EllenCharacterId) ? 0.25f : 0.20f; // 결속 4단계 방어력 증가 20% → 25% (Day59 추가)
             BattleSkillRuntimeState.AddModifier(damagedActor.Stats.RuntimeId, BattleRuntimeModifierKind.DefensePercent, defenseBonus, 10f, "PASSIVE_ELLEN_DEFENSE"); // 엘렌 방어력 증가 적용
             BattlePassiveRuntimeState.StartCooldown(cooldownKey, 20f); // 엘렌 패시브 20초 쿨다운 시작
-            Debug.Log($"[Project H][PASSIVE] Ellen defense -> {damagedActor.Stats.RuntimeId}"); // 엘렌 패시브 로그
+            GameLog.Info($"[Project H][PASSIVE] Ellen defense -> {damagedActor.Stats.RuntimeId}"); // 엘렌 패시브 로그
         }
 
         private static void HandleSkillUsed(BattleActor owner, BattleSkillRequest request) // 스킬 사용 기반 패시브 처리
@@ -204,7 +205,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 BattlePassiveRuntimeState.SetDefenseReduction(target.Stats.RuntimeId, BattleBondRuntimeState.HasPassiveBoost(LiliaCharacterId) ? 0.10f : 0.05f, 6f); // 적군 방어력 감소 6초 적용 (결속 4단계 5% → 10%, Day59 추가)
             }
 
-            Debug.Log($"[Project H][PASSIVE] Lilia area defense reduction -> Skill={request.SkillId}"); // 릴리아 패시브 로그
+            GameLog.Info($"[Project H][PASSIVE] Lilia area defense reduction -> Skill={request.SkillId}"); // 릴리아 패시브 로그
         }
 
         private static void HandleBasicAttackHit(BattleActor attacker) // 기본 공격 적중 기반 패시브 처리
@@ -223,7 +224,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             BattlePassiveRuntimeState.ResetCounter(attacker.Stats.RuntimeId, EveHitCounterKey); // 이브 연속 적중 카운터 초기화
             BattlePassiveRuntimeState.SetCriticalChanceBonus(attacker.Stats.RuntimeId, BattleBondRuntimeState.HasPassiveBoost(EveCharacterId) ? 0.09f : 0.04f, 10f); // 이브 치명타율 증가 10초 적용 (결속 4단계 +4% → +9%, Day59 추가)
-            Debug.Log($"[Project H][PASSIVE] Eve critical chance +4% -> {attacker.Stats.RuntimeId}"); // 이브 패시브 로그
+            GameLog.Info($"[Project H][PASSIVE] Eve critical chance +4% -> {attacker.Stats.RuntimeId}"); // 이브 패시브 로그
         }
 
         private static void HandleBasicAttackMiss(BattleActor attacker) // 기본 공격 빗나감 기반 패시브 처리

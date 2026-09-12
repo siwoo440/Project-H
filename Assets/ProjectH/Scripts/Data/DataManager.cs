@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 목록 자료형
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using UnityEngine; // Unity 기본 기능
 
 namespace ProjectH.Data // 프로젝트 데이터 영역
@@ -61,7 +62,7 @@ namespace ProjectH.Data // 프로젝트 데이터 영역
             }
 
             IsInitialized = true; // 초기화 완료 기록
-            Debug.Log($"[Project H] Data initialized. Characters={CharacterCount}, Monsters={MonsterCount}, Dungeons={DungeonCount}, Items={ItemCount}, Equipments={EquipmentCount}"); // 데이터 완료 로그
+            GameLog.Info($"[Project H] Data initialized. Characters={CharacterCount}, Monsters={MonsterCount}, Dungeons={DungeonCount}, Items={ItemCount}, Equipments={EquipmentCount}"); // 데이터 완료 로그
         }
 
         public CharacterData GetCharacter(string id) // 캐릭터 데이터 조회

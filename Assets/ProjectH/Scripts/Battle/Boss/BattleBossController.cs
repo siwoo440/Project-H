@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 목록 자료형
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using ProjectH.Data; // 보스 패턴 데이터 기능
 using UnityEngine; // Unity 기본 기능
 
@@ -81,7 +82,7 @@ namespace ProjectH.Battle.Boss // 프로젝트 전투 보스 영역 (Day54)
             if (scheduler.TryBeginNext(CurrentPhase, now)) // 다음 패턴 예고 시작 시도
             {
                 BossPatternDefinition pattern = scheduler.ActivePattern; // 시작 패턴 조회
-                Debug.Log($"[Project H][BOSS] {actor.Stats.RuntimeId}, Windup={pattern.DisplayName}, Phase={CurrentPhase}, Seconds={pattern.WindupSeconds:0.0}"); // 패턴 예고 시작 로그
+                GameLog.Info($"[Project H][BOSS] {actor.Stats.RuntimeId}, Windup={pattern.DisplayName}, Phase={CurrentPhase}, Seconds={pattern.WindupSeconds:0.0}"); // 패턴 예고 시작 로그
             }
         }
 
@@ -114,7 +115,7 @@ namespace ProjectH.Battle.Boss // 프로젝트 전투 보스 영역 (Day54)
             scheduler.Postpone(now, guardSeconds + patternData.PatternIntervalSeconds); // 전환 직후 패턴 즉시 사용 방지
             string phaseName = phase == null ? string.Empty : phase.DisplayName; // 페이즈 표시 이름 조회
             BattleBossPresentationController.EnsureRuntime().AnnouncePhase(CurrentPhase, phaseName); // 페이즈 전환 중앙 연출 실행
-            Debug.Log($"[Project H][BOSS] {actor.Stats.RuntimeId}, Phase={CurrentPhase} ({phaseName}), Hp={GetHealthRatio():P0}"); // 페이즈 전환 로그
+            GameLog.Info($"[Project H][BOSS] {actor.Stats.RuntimeId}, Phase={CurrentPhase} ({phaseName}), Hp={GetHealthRatio():P0}"); // 페이즈 전환 로그
         }
 
         private void ApplyPhaseModifiers(int phaseNumber) // 페이즈별 공격력·공격 속도 보정 적용
@@ -145,7 +146,7 @@ namespace ProjectH.Battle.Boss // 프로젝트 전투 보스 영역 (Day54)
             {
                 scheduler.CancelActive(now); // 예고 패턴 취소 (쿨다운은 동일 소모)
                 telegraph?.ShowInterrupted(pattern.DisplayName); // 저지 성공 표시
-                Debug.Log($"[Project H][BOSS] {actor.Stats.RuntimeId}, Interrupted={pattern.DisplayName}"); // 패턴 저지 로그
+                GameLog.Info($"[Project H][BOSS] {actor.Stats.RuntimeId}, Interrupted={pattern.DisplayName}"); // 패턴 저지 로그
                 return; // 예고 처리 종료
             }
 
@@ -188,7 +189,7 @@ namespace ProjectH.Battle.Boss // 프로젝트 전투 보스 영역 (Day54)
                     break; // 흐트러짐 회복 분기 종료
             }
 
-            Debug.Log($"[Project H][BOSS] {actor.Stats.RuntimeId}, Execute={pattern.DisplayName}, Kind={pattern.Kind}, Affected={affected}"); // 패턴 발동 로그
+            GameLog.Info($"[Project H][BOSS] {actor.Stats.RuntimeId}, Execute={pattern.DisplayName}, Kind={pattern.Kind}, Affected={affected}"); // 패턴 발동 로그
         }
 
         private int ExecuteAreaStrike(BossPatternDefinition pattern) // 아군 전체 공격 실행

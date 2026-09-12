@@ -1,4 +1,5 @@
 using System; // 문자열 비교 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using System.Collections.Generic; // 목록 자료형
 using UnityEngine; // 수학 기능
 
@@ -130,33 +131,33 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 manaStacks = Mathf.Min(BattleRegionTraitCatalog.ManaSurgeMaxStacks, manaStacks + 1); // 중첩 증가
                 int count = ApplyManaSurge(registry, manaStacks); // 적용
-                Debug.Log($"[Project H][REGION] 마나 폭주 {manaStacks}중첩 · 적 {count}명"); // 로그
+                GameLog.Info($"[Project H][REGION] 마나 폭주 {manaStacks}중첩 · 적 {count}명"); // 로그
                 return; // 종료
             }
 
             if (kind == BattleRegionTraitKind.FrostMarch) // 혹한 (Day66)
             {
                 int frozen = ApplyFrostMarch(registry); // 적용
-                Debug.Log($"[Project H][REGION] 혹한 · 아군 {frozen}명"); // 로그
+                GameLog.Info($"[Project H][REGION] 혹한 · 아군 {frozen}명"); // 로그
                 return; // 종료
             }
 
             if (kind == BattleRegionTraitKind.Sandstorm) // 모래폭풍 (Day66)
             {
                 int blinded = ApplySandstorm(registry); // 적용
-                Debug.Log($"[Project H][REGION] 모래폭풍 · 아군 {blinded}명"); // 로그
+                GameLog.Info($"[Project H][REGION] 모래폭풍 · 아군 {blinded}명"); // 로그
                 return; // 종료
             }
 
             if (kind == BattleRegionTraitKind.RiftErosion) // 균열 침식 (Day67)
             {
                 int eroded = ApplyRiftErosion(registry); // 적용
-                Debug.Log($"[Project H][REGION] 균열 침식 · 아군 {eroded}명"); // 로그
+                GameLog.Info($"[Project H][REGION] 균열 침식 · 아군 {eroded}명"); // 로그
                 return; // 종료
             }
 
             int healed = ApplySpiritBlessing(registry, statusBuffer); // 정령의 가호
-            Debug.Log($"[Project H][REGION] 정령의 가호 · 적 {healed}명 회복"); // 로그
+            GameLog.Info($"[Project H][REGION] 정령의 가호 · 적 {healed}명 회복"); // 로그
         }
 
         public static int ApplyFrostMarch(BattleCombatRegistry registry) // 살아 있는 아군마다 혹한 1중첩 추가 (정화된 아군은 1중첩부터)

@@ -33,7 +33,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             DungeonBattleFormationProfile profile = DungeonBattleFormationProfile.Get(dungeonId); // 확정 던전 적 편성 조회
             controller.ConfigureDefaultEnemies(profile.CreateEnemyIds()); // 기존 적군 생성 입력에 던전 편성 주입 (레거시 단일 웨이브 폴백, 공개 설정 함수 사용)
-            Debug.Log($"[Project H][DAY28] {profile.DungeonId} 적 편성 {profile.EnemyCount}명 적용"); // 던전 편성 적용 로그 출력
+            GameLog.Info($"[Project H][DAY28] {profile.DungeonId} 적 편성 {profile.EnemyCount}명 적용"); // 던전 편성 적용 로그 출력
             ApplyEncounterWaves(controller, dungeonId, profile); // 던전 인카운터 웨이브 편성 적용 (Day45)
         }
 
@@ -57,7 +57,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             waves = ProjectH.Dungeon.DungeonRunState.ResolveBattleWaves(waves); // 노드형 탐험 중이면 노드 종류별 웨이브로 교체 (Day55 추가, 탐험 외 전투는 원본 유지)
             controller.ConfigureEncounterWaves(waves); // 전투 화면에 웨이브 편성 주입
             RecordMonsters(waves); // 등장 몬스터를 일기장에 기록 (Day63)
-            Debug.Log($"[Project H][DAY45] {dungeonId} 인카운터 웨이브 {waves.Count}개 적용"); // 웨이브 편성 적용 로그 출력
+            GameLog.Info($"[Project H][DAY45] {dungeonId} 인카운터 웨이브 {waves.Count}개 적용"); // 웨이브 편성 적용 로그 출력
         }
     }
 }

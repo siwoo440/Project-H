@@ -1,4 +1,5 @@
 using UnityEngine; // Unity 객체 조회와 로그 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 
 namespace ProjectH.Battle // 프로젝트 전투 영역
 {
@@ -144,7 +145,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             owner.ShowAction(BattleActionKind.Ultimate); // 궁극기 전용 행동 표시 실행
             BattleUltimateEffectExecutionResult effectResult = BattleUltimateEffectExecutor.Execute(begin.CharacterId, owner, begin.Registry, safeMultiplier); // 캐릭터 고유 궁극기 효과 1회 실행
             BattleBondSkills.OnUltimateExecuted(begin.CharacterId, owner, begin.Registry); // 결속 5단계 결속 스킬 (엘렌 철벽의 맹세·릴리아 마력 공명, Day59 추가)
-            Debug.Log($"[Project H][ULTIMATE] {owner.Stats.RuntimeId}, Character={begin.CharacterId}, Name={begin.UltimateName}, Power={safeMultiplier:0.00}, Effects={effectResult.AppliedEffectCount}, Targets={effectResult.AffectedTargetCount}"); // 궁극기 실행 로그 출력
+            GameLog.Info($"[Project H][ULTIMATE] {owner.Stats.RuntimeId}, Character={begin.CharacterId}, Name={begin.UltimateName}, Power={safeMultiplier:0.00}, Effects={effectResult.AppliedEffectCount}, Targets={effectResult.AffectedTargetCount}"); // 궁극기 실행 로그 출력
             return new BattleUltimateExecutionResult(true, begin.CharacterId, begin.UltimateName, effectResult.AppliedEffectCount, effectResult.AffectedTargetCount, begin.UltimateName + " 발동"); // 궁극기 실행 성공 결과 반환
         }
 

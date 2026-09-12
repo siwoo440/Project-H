@@ -1,4 +1,5 @@
 using System.Collections; // 코루틴 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using UnityEngine; // Unity 기본 기능
 using UnityEngine.UI; // Unity UI 기능
 
@@ -199,7 +200,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (absorbedDamage > 0) // 보호막 피해 흡수 확인
             {
                 FlashHitPreview(); // 보호막 피격 표시
-                Debug.Log($"[Project H][SHIELD] {Stats.RuntimeId}, Absorbed={absorbedDamage}, Remaining={remainingDamage}"); // 보호막 흡수 로그
+                GameLog.Info($"[Project H][SHIELD] {Stats.RuntimeId}, Absorbed={absorbedDamage}, Remaining={remainingDamage}"); // 보호막 흡수 로그
             }
 
             if (remainingDamage <= 0) // 보호막 완전 흡수 확인
@@ -247,7 +248,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             BattleSkillRuntimeState.AddModifier(Stats.RuntimeId, BattleRuntimeModifierKind.Stun, 1f, BattleDisarrayRuntimeState.DisarrayedSeconds, BattleDisarrayRuntimeState.DisarraySourceKey); // 기존 기절 게이트를 재사용한 경직 적용
             BattleDisarrayPresentation.Announce(this); // 흐트러짐 발생 연출 실행
-            Debug.Log($"[Project H][DISARRAY] {Stats.RuntimeId}, Count={BattleDisarrayRuntimeState.GetDisarrayCount(Stats.RuntimeId)}, NextMax={BattleDisarrayRuntimeState.GetMaxGauge(Stats.RuntimeId)}"); // 흐트러짐 발생 로그 출력
+            GameLog.Info($"[Project H][DISARRAY] {Stats.RuntimeId}, Count={BattleDisarrayRuntimeState.GetDisarrayCount(Stats.RuntimeId)}, NextMax={BattleDisarrayRuntimeState.GetMaxGauge(Stats.RuntimeId)}"); // 흐트러짐 발생 로그 출력
         }
 
         public int ApplyHealing(BattleHealingResult result) // 계산 완료 회복 적용

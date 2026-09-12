@@ -1,4 +1,5 @@
 using UnityEngine; // Unity 기본 기능
+using ProjectH.Core; // 조건부 로그 기능 (Day74 추가)
 using UnityEngine.EventSystems; // UI 포인터 판정 기능
 using UnityEngine.InputSystem; // 신규 입력 시스템 기능
 
@@ -92,7 +93,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             selectedSlotIndex = index; // 현재 선택 슬롯 저장
             BattleSelectionRuntimeState.SetSelected(actor.Stats.RuntimeId); // 선택 캐릭터 Runtime 상태 및 윤곽 갱신
-            Debug.Log($"[Project H][MANUAL MOVE] SELECT {slotNumber} · {actor.Stats.RuntimeId}"); // 파티 선택 로그 출력
+            GameLog.Info($"[Project H][MANUAL MOVE] SELECT {slotNumber} · {actor.Stats.RuntimeId}"); // 파티 선택 로그 출력
             return true; // 파티 슬롯 선택 성공 반환
         }
 
@@ -121,7 +122,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             movingSlots[selectedSlotIndex] = true; // 현재 슬롯 수동 이동 활성화
             attackControllers[selectedSlotIndex]?.BeginManualMove(); // 현재 슬롯 자동 전투 일시 중지
             ShowDestinationMarker(selectedSlotIndex, worldPosition); // 우클릭 목적지 화살표 표시
-            Debug.Log($"[Project H][MANUAL MOVE] MOVE {selectedSlotIndex + 1} · {actor.Stats.RuntimeId} → ({worldPosition.x:0.00}, {worldPosition.y:0.00})"); // 이동 명령 로그 출력
+            GameLog.Info($"[Project H][MANUAL MOVE] MOVE {selectedSlotIndex + 1} · {actor.Stats.RuntimeId} → ({worldPosition.x:0.00}, {worldPosition.y:0.00})"); // 이동 명령 로그 출력
             return true; // 수동 이동 명령 성공 반환
         }
 

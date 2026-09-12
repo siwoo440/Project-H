@@ -152,7 +152,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         public void QuitGame() // 게임 종료
         {
-            Debug.Log("[Project H] Quit requested."); // 종료 요청 로그
+            GameLog.Info("[Project H] Quit requested."); // 종료 요청 로그
             Application.Quit(); // 애플리케이션 종료
         }
 

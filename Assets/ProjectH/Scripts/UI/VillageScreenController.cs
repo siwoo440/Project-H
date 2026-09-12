@@ -29,7 +29,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private const float PanelViewHeight = 700f; // 행동 패널 기준 높이 (기존 비율 배치를 픽셀로 바꾸는 기준, Day67 추가)
 
         private readonly Dictionary<VillageZone, Button> zoneCards = new Dictionary<VillageZone, Button>(); // 지도 구역 카드
-        private readonly Dictionary<VillageZone, Text> zoneCardPeople = new Dictionary<VillageZone, Text>(); // 카드 속 캐릭터 이름
+        private readonly Dictionary<VillageZone, Text> zoneCardPeople = new Dictionary<VillageZone, Text>(); // 카드 속 상태 글자 (닫힘 · 없음 · 새 동료 소식)
+        private readonly Dictionary<VillageZone, RectTransform> zoneCardFaces = new Dictionary<VillageZone, RectTransform>(); // 카드 속 초상화 줄 (Day73 추가)
+        private readonly Dictionary<VillageZone, ScrollRect> zoneCardScrolls = new Dictionary<VillageZone, ScrollRect>(); // 초상화 가로 스크롤 (Day73 추가)
+        private readonly List<GameObject> zoneCardPortraits = new List<GameObject>(); // 만들어 둔 초상화 (갱신 때 제거)
         private readonly List<GameObject> zoneStandings = new List<GameObject>(); // 구역 화면 스탠딩
         private readonly List<GameObject> panelItems = new List<GameObject>(); // 행동 패널 동적 요소
         private VillageZone? currentZone; // 현재 구역 (null = 지도)
@@ -150,12 +153,71 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 SetRect(name.rectTransform, new Vector2(0.06f, 0.62f), new Vector2(0.94f, 0.95f)); // 위
                 Text desc = CreateText(card.transform, "Desc", info.Description, 15, HintColor, FontStyle.Normal, TextAnchor.UpperLeft).Wrap(); // 설명
                 SetRect(desc.rectTransform, new Vector2(0.06f, 0.32f), new Vector2(0.94f, 0.64f)); // 가운데
-                Text people = CreateText(card.transform, "People", string.Empty, 17, TimeColor, FontStyle.Bold, TextAnchor.LowerLeft).BestFit(11); // 있는 사람
-                SetRect(people.rectTransform, new Vector2(0.06f, 0.05f), new Vector2(0.94f, 0.30f)); // 아래
+                Text people = CreateText(card.transform, "People", string.Empty, 15, TimeColor, FontStyle.Bold, TextAnchor.LowerLeft).BestFit(10); // 상태 글자
+                SetRect(people.rectTransform, new Vector2(0.06f, 0.04f), new Vector2(0.94f, 0.16f)); // 맨 아래
+                BuildCardFaceStrip(card.transform, zone); // 초상화 줄 (Day73 — 이름 대신 얼굴, 넘치면 가로 스크롤)
                 card.onClick.AddListener(() => EnterZone(zone)); // 구역 들어가기
                 zoneCards[zone] = card; // 카드 저장
                 zoneCardPeople[zone] = people; // 글자 저장
             }
+        }
+
+        private void BuildCardFaceStrip(Transform card, VillageZone zone) // 카드 안에 정사각 초상화가 가로로 늘어서는 줄 (넘치면 스크롤)
+        {
+            Image panel = CreateImage(card, "Faces", new Color(0f, 0f, 0f, 0f)); // 스크롤 바탕 (투명)
+            SetRect(panel.rectTransform, new Vector2(0.05f, 0.17f), new Vector2(0.95f, 0.44f)); // 설명 아래 · 상태 글자 위
+            GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D)); // 보이는 영역 (넘친 초상화는 잘림)
+            viewportObject.transform.SetParent(panel.transform, false); // 바탕 하위
+            RectTransform viewport = (RectTransform)viewportObject.transform; // 영역 저장
+            Stretch(viewport); // 바탕 전체
+            GameObject contentObject = new GameObject("Content", typeof(RectTransform)); // 초상화가 쌓이는 루트
+            contentObject.transform.SetParent(viewport, false); // 보이는 영역 하위
+            RectTransform content = (RectTransform)contentObject.transform; // 루트 저장
+            content.anchorMin = new Vector2(0f, 0f); // 왼쪽 기준
+            content.anchorMax = new Vector2(0f, 1f); // 왼쪽 기준
+            content.pivot = new Vector2(0f, 0.5f); // 왼쪽 고정
+            content.offsetMin = new Vector2(0f, 0f); // 위아래 여백 없음
+            content.offsetMax = new Vector2(0f, 0f); // 위아래 여백 없음
+            ScrollRect scroll = panel.gameObject.AddComponent<ScrollRect>(); // 가로 스크롤
+            scroll.content = content; // 내용 연결
+            scroll.viewport = viewport; // 보이는 영역 연결
+            scroll.horizontal = true; // 가로만
+            scroll.vertical = false; // 세로 없음
+            scroll.movementType = ScrollRect.MovementType.Clamped; // 끝에서 멈춤
+            scroll.scrollSensitivity = 30f; // 휠 감도
+            scroll.inertia = false; // 관성 없이 바로 멈춤
+            zoneCardFaces[zone] = content; // 저장
+            zoneCardScrolls[zone] = scroll; // 저장
+        }
+
+        private void RefreshCardFaces(VillageZone zone, List<string> present, bool open) // 카드 초상화 줄 채우기 (Day73 추가)
+        {
+            RectTransform content = zoneCardFaces[zone]; // 초상화 루트
+            float size = ((RectTransform)content.parent).rect.height; // 한 변 = 줄 높이 (정사각)
+            if (size <= 1f) size = 64f; // 첫 프레임 보호
+            float step = size + 6f; // 초상화 간격
+            int count = open ? present.Count : 0; // 표시 수
+
+            for (int index = 0; index < count; index++) // 있는 사람 순회
+            {
+                string characterId = present[index]; // 캐릭터
+                Image face = CreateImage(content, "Face_" + characterId, Color.white); // 초상화 칸
+                face.sprite = CharacterPortraitArt.Get(characterId, out bool placeholder); // 초상화
+                face.color = placeholder ? CharacterPortraitArt.GetPlaceholderTint(characterId) : Color.white; // 임시 그림은 캐릭터 색
+                face.preserveAspect = true; // 정사각 비율 유지
+                face.raycastTarget = false; // 카드 클릭이 먹히도록 입력 통과
+                RectTransform rect = face.rectTransform; // 영역
+                rect.anchorMin = new Vector2(0f, 0.5f); // 왼쪽 기준
+                rect.anchorMax = new Vector2(0f, 0.5f); // 왼쪽 기준
+                rect.pivot = new Vector2(0f, 0.5f); // 왼쪽 고정
+                rect.sizeDelta = new Vector2(size, size); // 정사각
+                rect.anchoredPosition = new Vector2(index * step, 0f); // 가로로 나란히
+                AddOutline(face.gameObject, new Color(1f, 1f, 1f, 0.55f)); // 흰 테두리
+                zoneCardPortraits.Add(face.gameObject); // 목록 등록
+            }
+
+            content.sizeDelta = new Vector2(Mathf.Max(0f, (count * step) - 6f), 0f); // 내용 너비 (넘치면 스크롤)
+            if (zoneCardScrolls[zone] != null) zoneCardScrolls[zone].horizontalNormalizedPosition = 0f; // 항상 왼쪽부터
         }
 
         private void BuildZone() // 구역 화면 : 스탠딩 영역 + 오른쪽 행동 패널
@@ -246,13 +308,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             timeText.text = $"DAY {GameTimeService.GetCurrentDay(saveData)}  ·  {VillageActionService.GetPhaseLabel(phase)}"; // 일차·시간대
             resourceText.text = $"활력 {VitalityService.GetVitality(saveData)}/{SaveData.MaxVitality}    결속 자원 {BondService.GetResource(saveData)}/{BondCatalog.MaxResource}    ● {GoldCurrencyService.GetGold(saveData):N0} G"; // 자원
 
+            foreach (GameObject portrait in zoneCardPortraits) Destroy(portrait); // 이전 초상화 제거 (Day73)
+            zoneCardPortraits.Clear(); // 목록 비움
+
             foreach (VillageZoneInfo info in VillageZoneCatalog.All) // 지도 카드 순회
             {
                 bool open = VillageZoneCatalog.IsOpen(info.Zone, phase); // 운영 여부
                 List<string> present = VillagePresenceService.GetCharactersIn(saveData, info.Zone); // 있는 사람
-                zoneCardPeople[info.Zone].text = !open ? "영업 종료 (밤)" : present.Count > 0 ? "● " + JoinNames(present) : "아무도 없음"; // 카드 글자
+                RefreshCardFaces(info.Zone, present, open); // 초상화 줄 (Day73 — 이름 대신 얼굴)
                 int recruits = info.Zone == VillageZone.Guild ? RecruitService.GetPending(saveData).Count : 0; // 길드 새 동료 소식 수 (Day64)
-                if (open && recruits > 0) zoneCardPeople[info.Zone].text = $"★ 새 동료 소식 {recruits}건\n" + zoneCardPeople[info.Zone].text; // 길드 카드 알림
+                string status = !open ? "영업 종료 (밤)" : present.Count > 0 ? $"{present.Count}명이 있습니다" : "아무도 없음"; // 상태 글자
+                zoneCardPeople[info.Zone].text = open && recruits > 0 ? $"★ 새 동료 소식 {recruits}건 · {status}" : status; // 카드 글자
                 zoneCards[info.Zone].GetComponent<Image>().color = open ? CardColor : new Color(0.05f, 0.05f, 0.06f, 0.65f); // 닫힌 구역 어둡게
             }
 

@@ -6,13 +6,19 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     public static class RuntimeUiKit // Runtime UI 생성 공용 헬퍼 (최적화 정리, 기존 각 컨트롤러 중복 구현 통합)
     {
         private const string BuiltinFontName = "LegacyRuntime.ttf"; // Unity 기본 폰트 이름
+        public const string GameFontResourcePath = "Fonts/GameFont"; // 정식 폰트 Resources 경로 (Day73 추가 — 여기에 폰트를 넣으면 전체 글자가 바뀐다)
         private static Font defaultFont; // 기본 폰트 캐시 (매 텍스트 생성마다 조회하지 않도록)
 
-        public static Font DefaultFont // 기본 폰트 반환
+        public static Font DefaultFont // 기본 폰트 반환 (정식 폰트 → Unity 기본 폰트)
         {
             get
             {
                 if (defaultFont == null) // 캐시 확인
+                {
+                    defaultFont = Resources.Load<Font>(GameFontResourcePath); // 정식 폰트 우선 (Day73 추가)
+                }
+
+                if (defaultFont == null) // 정식 폰트 없음
                 {
                     defaultFont = Resources.GetBuiltinResource<Font>(BuiltinFontName); // 기본 폰트 1회 조회
                 }
@@ -94,6 +100,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 button.targetGraphic = image; // 버튼 색 전환 대상 연결
             }
 
+            button.onClick.AddListener(() => ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxClick)); // 누를 때 소리 (Day73 추가 — 여기 한 곳에서 모든 런타임 버튼에 적용)
             return button; // 생성 UI 버튼 반환
         }
 

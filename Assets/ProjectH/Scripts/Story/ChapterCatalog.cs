@@ -87,7 +87,16 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역 (Day68 신규)
                 new ChapterStep(ChapterStepKind.Dialogue, "CH5_04", "사도의 선택 지켜보기", "CH_SEPHIRA"), // 세피라 합류
                 new ChapterStep(ChapterStepKind.ClearDungeon, "DG014", "지하 고대 도시 클리어"), // 고대 도시
                 new ChapterStep(ChapterStepKind.Dialogue, "CH5_05", "봉인의 진실 마주하기", "", ProjectH.Diary.WorldGlossaryCatalog.SealTruthFlag), // 봉인의 진실 해금
-                new ChapterStep(ChapterStepKind.Dialogue, "CH5_06", "이름 없는 그림자의 목소리 듣기", "", NemesisFlag)) // 네메시스 예고
+                new ChapterStep(ChapterStepKind.Dialogue, "CH5_06", "이름 없는 그림자의 목소리 듣기", "", NemesisFlag)), // 네메시스 예고
+            new ChapterDefinition("CHAPTER_06", "챕터 6 · 지워진 이름",
+                new ChapterStep(ChapterStepKind.Dialogue, "CH6_01", "봉인 장치의 설계도 읽기"), // 장치를 멈추는 방법
+                new ChapterStep(ChapterStepKind.ClearDungeon, "DG012", "마왕성 검은 성벽 돌파"), // 성벽
+                new ChapterStep(ChapterStepKind.Dialogue, "CH6_02", "떠나기 전 동료들과 이야기하기"), // 12인 한 마디씩
+                new ChapterStep(ChapterStepKind.Dialogue, "CH6_03", "지워진 이름의 정체 확인하기", "", FinaleCatalog.ArchaiFlag), // 아르카이 진명 해금
+                new ChapterStep(ChapterStepKind.ClearDungeon, "DG017", "무명의 옥좌 클리어"), // 최종 던전
+                new ChapterStep(ChapterStepKind.Dialogue, "CH6_04", "봉인 장치를 어떻게 할지 정하기"), // 선택 1 (선택지 플래그)
+                new ChapterStep(ChapterStepKind.Dialogue, "CH6_05", "아르카이에게 답하기"), // 선택 2 (선택지 플래그)
+                new ChapterStep(ChapterStepKind.Dialogue, "CH6_06", "최종장 마무리", "", FinaleCatalog.FinaleClearedFlag)) // 최종장 완료
         };
 
         public static IReadOnlyList<ChapterDefinition> All => Chapters; // 전체 챕터

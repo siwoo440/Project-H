@@ -41,15 +41,26 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
         {
             ChapterDefinition chapter = GetCurrentChapter(saveData); // 챕터
             ChapterStep step = GetCurrentStep(saveData); // 단계
-            if (chapter == null || step == null) return "메인 스토리 · 챕터 5까지 마쳤습니다. 이후 이야기는 71일차 최종장에서 이어집니다"; // 완료
+            if (chapter == null || step == null) return FinaleCatalog.IsFinaleCleared(saveData) ? $"메인 스토리 완결 · {FinaleCatalog.GetEndingSeedText(saveData)}" : "메인 스토리 · 준비된 이야기를 모두 마쳤습니다"; // 완료 (Day71 — 최종장 선택 표시)
             return $"{chapter.Title} · 다음: {step.Summary}"; // 진행 중
         }
 
-        public static string CompleteDialogue(SaveData saveData, string scriptId) // 이야기를 끝까지 본 뒤 진행 (합류 안내 반환)
+        public static string CompleteDialogue(SaveData saveData, string scriptId, ProjectH.Dialogue.DialogueRunner runner = null) // 이야기를 끝까지 본 뒤 진행 (합류 안내 반환)
         {
             ChapterStep step = GetCurrentStep(saveData); // 현재 단계
             if (step == null || step.Kind != ChapterStepKind.Dialogue || step.Target != scriptId) return string.Empty; // 현재 단계가 아님
+            ApplyChoiceFlags(saveData, runner); // 선택지가 남긴 플래그 기록 (Day71 추가 — 최종장 엔딩 선택)
             return Advance(saveData, step); // 다음 단계로
+        }
+
+        public static void ApplyChoiceFlags(SaveData saveData, ProjectH.Dialogue.DialogueRunner runner) // 선택지 플래그를 저장에 기록 (Day71 추가)
+        {
+            if (saveData == null || runner == null) return; // 입력 확인
+
+            foreach (string flag in runner.ChosenFlags) // 고른 선택지 플래그 순회
+            {
+                saveData.SetStoryFlag(flag); // 기록
+            }
         }
 
         public static string NotifyDungeonCleared(SaveData saveData, string dungeonId) // 던전 클리어 반영 (합류 안내 반환)
@@ -119,7 +130,7 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
             ChapterDefinition chapter = GetCurrentChapter(saveData); // 챕터
             ChapterStep step = GetCurrentStep(saveData); // 단계
             saveData.SetCurrentChapter(chapter == null ? "메인 스토리 완료" : chapter.Title); // 챕터 문구
-            saveData.SetCurrentMainQuest(step == null ? "자유롭게 던전·마을을 돌아보세요 (최종장은 71일차)" : step.Summary); // 목표 문구
+            saveData.SetCurrentMainQuest(step == null ? (FinaleCatalog.IsFinaleCleared(saveData) ? "최종장을 마쳤습니다. 엔딩 연출은 72일차에 이어집니다" : "자유롭게 던전·마을을 돌아보세요") : step.Summary); // 목표 문구 (Day71 갱신)
         }
     }
 }

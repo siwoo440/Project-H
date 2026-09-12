@@ -1,0 +1,94 @@
+{
+  "id": "CH6_02",
+  "title": "떠나기 전에",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마을 · 광장 · 새벽",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "출발은 새벽으로 정해졌다. 광장에는 열두 명이 먼저 나와 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "기도는 짧게 했어요. 길게 하면 붙잡고 싶어질 것 같아서요."
+    },
+    {
+      "id": "n3",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "제 뒤는 비워 두겠습니다. 이번에는 아무도 남겨 두지 않을 겁니다."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "가설은 세 개. 전부 틀려도 좋아. 이번엔 직접 볼 거니까."
+    },
+    {
+      "id": "n5",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "숲이 조용해. 이런 날엔 큰 게 움직인다고 배웠어."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_LUCIA",
+      "expression": "미소",
+      "text": "보수 얘기는 안 할게. …이번 한 번만이야."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_CLAIRE",
+      "expression": "흥미",
+      "text": "기록지 여섯 권 챙겼어요. 살아 돌아와서 정리할 몫이에요."
+    },
+    {
+      "id": "n8",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "염주를 곤에 감았습니다. 예순세 번째 알은 아직 비어 있습니다."
+    },
+    {
+      "id": "n9",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "창은 닦았어. 이번엔 명령 없이 찌른다."
+    },
+    {
+      "id": "n10",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "제 뒤에 서세요. 맨 앞은 제 자리입니다."
+    },
+    {
+      "id": "n11",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "지도에 길은 그렸어요. 돌아오는 길도요."
+    },
+    {
+      "id": "n12",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "출구는 세 개 세어 뒀어. 안 쓰길 바라지만."
+    },
+    {
+      "id": "n13",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "오늘은 신께 묻지 않겠습니다. 묻지 않고 가겠습니다."
+    },
+    {
+      "id": "n14",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "열두 사람이 같은 방향을 보고 섰다. 주인공의 이름이 한 번씩, 열두 번 불렸다.",
+      "next": "END"
+    }
+  ]
+}

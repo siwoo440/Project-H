@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 100fed20e9794671a72e60acc53e2034, type: 3}
+  m_Name: BossPattern_Archai
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.BossPatternData
+  phases:
+  - displayName: "이름을 더듬다"
+    enterHealthRatio: 1
+    forceAfterSeconds: 0
+    attackBonus: 0
+    attackSpeedBonus: 0
+  - displayName: "기억을 삼키다"
+    enterHealthRatio: 0.62
+    forceAfterSeconds: 0
+    attackBonus: 0.22
+    attackSpeedBonus: 0.18
+  - displayName: "이름을 되찾으려 하다"
+    enterHealthRatio: 0.28
+    forceAfterSeconds: 200
+    attackBonus: 0.45
+    attackSpeedBonus: 0.4
+  patterns:
+  - displayName: "지워진 한 획"
+    kind: 0
+    damageType: 0
+    powerRatio: 1.6
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 2.4
+    cooldownSeconds: 10
+    minPhase: 1
+    interruptible: 1
+  - displayName: "이름 부르기"
+    kind: 1
+    damageType: 1
+    powerRatio: 3.2
+    effectValue: 0
+    effectDuration: 2.2
+    windupSeconds: 2.8
+    cooldownSeconds: 15
+    minPhase: 1
+    interruptible: 1
+  - displayName: "관을 열다"
+    kind: 3
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.45
+    effectDuration: 0
+    windupSeconds: 2.2
+    cooldownSeconds: 20
+    minPhase: 2
+    interruptible: 1
+  - displayName: "무명의 파도"
+    kind: 0
+    damageType: 1
+    powerRatio: 3.0
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 3.6
+    cooldownSeconds: 18
+    minPhase: 2
+    interruptible: 1
+  - displayName: "스스로를 굳히다"
+    kind: 2
+    damageType: 0
+    powerRatio: 0
+    effectValue: 0.5
+    effectDuration: 12
+    windupSeconds: 2
+    cooldownSeconds: 24
+    minPhase: 2
+    interruptible: 1
+  - displayName: "아무도 아닌 자의 일격"
+    kind: 0
+    damageType: 1
+    powerRatio: 3.8
+    effectValue: 0
+    effectDuration: 0
+    windupSeconds: 4.8
+    cooldownSeconds: 28
+    minPhase: 3
+    interruptible: 0
+  initialDelaySeconds: 5
+  patternIntervalSeconds: 3.6
+  phaseTransitionInvulnerableSeconds: 1.5

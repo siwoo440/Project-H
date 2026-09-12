@@ -39,7 +39,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [Test] // 챕터 3~5 : 단계 구성과 던전 연결
         public void LateChapters_HaveStepsAndDungeons() // 챕터 구성 테스트
         {
-            Assert.That(ChapterCatalog.All.Count, Is.EqualTo(6)); // 프롤로그 + 챕터 1~5
+            Assert.That(ChapterCatalog.All.Count, Is.EqualTo(7)); // 프롤로그 + 챕터 1~6 (Day71 최종장)
             string[] lateChapters = { "CHAPTER_03", "CHAPTER_04", "CHAPTER_05" }; // 이번 챕터
 
             foreach (string chapterId in lateChapters) // 챕터 순회
@@ -63,7 +63,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             SaveData saveData = CreateStorySave(); // 새 게임
             PlayThroughChapters(saveData); // 끝까지 진행
             Assert.That(saveData.ChapterProgress.IsFinished, Is.True); // 준비된 이야기 끝
-            Assert.That(saveData.ChapterProgress.FinishedChapterId, Is.EqualTo("CHAPTER_05")); // 마지막 챕터 기록
+            Assert.That(saveData.ChapterProgress.FinishedChapterId, Is.EqualTo("CHAPTER_06")); // 마지막 챕터 기록 (Day71 최종장까지)
             Assert.That(saveData.Characters.Count, Is.EqualTo(12)); // 12인 완성
 
             foreach (string characterId in new[] { "CH_CLAIRE", "CH_MERCIA", "CH_PYRA", "CH_TYRIA", "CH_NOEL", "CH_NATASHA", "CH_SEPHIRA" }) // 챕터 3~5 합류
@@ -78,7 +78,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(seal.IsUnlocked(saveData), Is.True); // 열림
             Assert.That(nemesis.IsUnlocked(saveData), Is.True); // 열림
             Assert.That(nemesis.IsUnlocked(CreateStorySave()), Is.False); // 새 게임에서는 잠김
-            Assert.That(ChapterService.GetProgressText(saveData), Does.Contain("71일차")); // 이후 안내
+            Assert.That(ChapterService.GetProgressText(saveData), Does.Contain("완결")); // 최종장 완료 안내 (Day71)
         }
 
         [Test] // 챕터 5 마지막 이야기 전에는 네메시스가 잠겨 있다

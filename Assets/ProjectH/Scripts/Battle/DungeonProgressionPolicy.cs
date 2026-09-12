@@ -96,8 +96,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 case "DG012": // 마왕성 검은 성벽 (Day66 — 지하 고대 도시에서 길을 찾은 뒤)
                 case "DG015": // 바다 검은 균열 해안 (Day67 — 균열의 근원을 알게 된 뒤)
                     return "DG014"; // 아스타르 두 번째 던전
-                case "DG016": // 바다 균열 심층 (Day67 — 현재 가장 어려운 던전)
+                case "DG016": // 바다 균열 심층 (Day67)
                     return "DG015"; // 검은 균열 해안
+                case "DG017": // 마왕성 무명의 옥좌 (Day71 — 최종 던전, 가장 어렵다)
+                    return "DG016"; // 균열 심층
                 default: // 첫 던전 또는 미지원 처리
                     return string.Empty; // 이전 던전 없음 반환
             }

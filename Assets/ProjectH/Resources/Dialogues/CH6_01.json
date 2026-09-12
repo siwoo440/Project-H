@@ -1,0 +1,88 @@
+{
+  "id": "CH6_01",
+  "title": "관을 멈추는 법",
+  "characterId": "CH_SERENA",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "노아르 · 마법사 의회 지하",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "지하 고대 도시에서 베껴 온 설계도가 탁자 셋을 가득 덮었다. 사흘째 아무도 제대로 자지 못했다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "읽었어. 세 번. 결론은 같아."
+    },
+    {
+      "id": "n3",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "이건 봉인 장치가 아니야. 대륙 전체에서 침식을 걷어다 한 곳으로 나르는 관이야."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "그리고 관 끝에서 그걸 먹는 게 있어요. 먹는 동안은 잠들어 있고요."
+    },
+    {
+      "id": "n5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "관을 끊으면?"
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "굶어. 그리고 깬다는 게 기록의 마지막 줄이야."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "교단은 이것을 천 년간 '봉인'이라 가르쳐 왔습니다. 저도 그렇게 배웠고, 그렇게 전했습니다."
+    },
+    {
+      "id": "n8",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "가르친 이들도 몰랐을 수 있습니다. 관을 놓은 자와, 관을 지키라 들은 자는 다르니까요."
+    },
+    {
+      "id": "n9",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "관이 모이는 자리는 하나예요. 마왕성 가장 깊은 곳. 도면에는 이름이 안 적혀 있어요."
+    },
+    {
+      "id": "n10",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "정확히 말하면, 이름 칸이 통째로 긁혀 있어. 종이가 닳도록."
+    },
+    {
+      "id": "n11",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "그럼 가서 봅시다. 이름이 없다면, 눈으로 확인하는 수밖에 없습니다."
+    },
+    {
+      "id": "n12",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "리리아스 님께 여쭐 수 없다면… 우리가 직접 보고 정해야겠지요."
+    },
+    {
+      "id": "n13",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "검은 성벽 너머로 가는 길은 하나뿐이었다. 아무도 반대하지 않았다.",
+      "next": "END"
+    }
+  ]
+}

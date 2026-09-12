@@ -38,8 +38,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Object.DestroyImmediate(registryObject); // Registry 제거
         }
 
-        [Test] // 던전 지역 7곳은 모두 던전 2개 · 지역 안 두 던전은 같은 특징
-        public void EveryDungeonRegion_HasTwoDungeons_WithSameTrait() // 지역당 2던전 테스트
+        [Test] // 던전 지역 8곳은 던전 2개씩 (마왕성만 최종 던전 포함 3개) · 지역 안 던전은 같은 특징이며 뒤일수록 어렵다
+        public void EveryDungeonRegion_HasTwoDungeons_WithSameTrait() // 지역당 던전 구성 테스트
         {
             int regions = 0; // 던전 지역 수
 
@@ -47,13 +47,17 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             {
                 if (region.Kind != AdventureRegionKind.Dungeon) continue; // 던전 지역만
                 regions++; // 수 증가
-                Assert.That(region.DungeonIds.Count, Is.EqualTo(2), region.Id); // 2개
-                Assert.That(BattleRegionTraitCatalog.GetKind(region.DungeonIds[1]), Is.EqualTo(BattleRegionTraitCatalog.GetKind(region.DungeonIds[0])), region.Id); // 같은 특징
-                Assert.That(LoadDungeon(region.DungeonIds[1]).RecommendedLevel, Is.GreaterThan(LoadDungeon(region.DungeonIds[0]).RecommendedLevel), region.Id); // 두 번째가 더 어려움
+                Assert.That(region.DungeonIds.Count, Is.EqualTo(region.Id == "REGION_DEMON_CASTLE" ? 3 : 2), region.Id); // 마왕성은 최종 던전까지 3개 (Day71)
+
+                for (int index = 1; index < region.DungeonIds.Count; index++) // 지역 안 던전 순회
+                {
+                    Assert.That(BattleRegionTraitCatalog.GetKind(region.DungeonIds[index]), Is.EqualTo(BattleRegionTraitCatalog.GetKind(region.DungeonIds[0])), region.Id); // 같은 특징
+                    Assert.That(LoadDungeon(region.DungeonIds[index]).RecommendedLevel, Is.GreaterThan(LoadDungeon(region.DungeonIds[index - 1]).RecommendedLevel), region.Id); // 뒤일수록 어려움
+                }
             }
 
             Assert.That(regions, Is.EqualTo(8)); // 숲 · 늪지대 · 마왕성 · 노아르 · 실바란 · 카르니안 · 사막 · 바다
-            Assert.That(DungeonSelectionRuntimeState.SupportedDungeonIds.Count, Is.EqualTo(16)); // 16던전 (Day67 바다 2개 추가)
+            Assert.That(DungeonSelectionRuntimeState.SupportedDungeonIds.Count, Is.EqualTo(17)); // 17던전 (Day71 최종 던전 DG017 추가)
             Assert.That(AdventureRegionCatalog.Get("REGION_DESERT").Kind, Is.EqualTo(AdventureRegionKind.Dungeon)); // 사막 열림
             Assert.That(AdventureRegionCatalog.FindByDungeon("DG007").Id, Is.EqualTo("REGION_KARNIAN")); // 카르니안 연결
         }

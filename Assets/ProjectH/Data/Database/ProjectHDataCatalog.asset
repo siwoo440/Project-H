@@ -57,6 +57,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3cad447e7f1b4bffa3c0ad8fbcb20f6d, type: 2}
   - {fileID: 11400000, guid: 223d6953d69d4c3cbef4049a3211dd44, type: 2}
   - {fileID: 11400000, guid: 847d2faf90264066b23c2094f1d8a33a, type: 2}
+  - {fileID: 11400000, guid: 02fbb4fe140942528e9ae639f227a423, type: 2}
+  - {fileID: 11400000, guid: c7a30f7cd0fc410e8998a07a6bfff7d7, type: 2}
+  - {fileID: 11400000, guid: 03a9db2dd00d472194dcdef376433162, type: 2}
   dungeons:
   - {fileID: 11400000, guid: 24b33301a12dcdb4fa0a07208167cded, type: 2}
   - {fileID: 11400000, guid: 521e75e13f3b4ebfbf7b533b37384bfd, type: 2}
@@ -75,6 +78,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 57ea67d75786430d998cca80bf953cb0, type: 2}
   - {fileID: 11400000, guid: b5b610d488b342aa9d19302691e4339b, type: 2}
   - {fileID: 11400000, guid: 6817f304e2204fc4a7304cb28d81f6a6, type: 2}
+  - {fileID: 11400000, guid: de16e881570e4cb5a1beb7bc2da1e6fc, type: 2}
   items:
   - {fileID: 11400000, guid: 2f6003cce6372624aaf768320e5718a8, type: 2}
   - {fileID: 11400000, guid: 67e6d8747a459ba468c5a65a732583f0, type: 2}

@@ -21,7 +21,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             new DungeonBattleTestProfile("DG014", 2.76f, 2.10f, 1.99f, 1.88f), // Lv.12 아스타르 지하 고대 도시
             new DungeonBattleTestProfile("DG012", 2.94f, 2.22f, 2.10f, 1.98f), // Lv.13 마왕성 검은 성벽
             new DungeonBattleTestProfile("DG015", 2.96f, 2.24f, 2.12f, 2.00f), // Lv.13 바다 검은 균열 해안
-            new DungeonBattleTestProfile("DG016", 3.24f, 2.40f, 2.26f, 2.10f) // Lv.15 바다 균열 심층
+            new DungeonBattleTestProfile("DG016", 3.24f, 2.40f, 2.26f, 2.10f), // Lv.15 바다 균열 심층
+            new DungeonBattleTestProfile("DG017", 3.62f, 2.62f, 2.44f, 2.26f) // Lv.17 마왕성 무명의 옥좌 (Day71 최종 던전)
         };
 
         public string DungeonId { get; } // 프로필 던전 ID 반환

@@ -19,10 +19,12 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역 (Day58 신규)
         [SerializeField] private int affinity; // 선택 시 호감도 변화
         [SerializeField] private bool preferred; // 캐릭터 선호 성향 선택지 여부 (기획서 9.11)
         [SerializeField] private string next; // 선택 후 이동할 노드 ID (비우면 다음 노드)
+        [SerializeField] private string flag; // 선택 시 남길 스토리 플래그 (Day71 추가 — 엔딩 분기 선택 기록)
         public string Text => text ?? string.Empty; // 선택지 문구 반환
         public int Affinity => affinity; // 호감도 변화 반환
         public bool Preferred => preferred; // 선호 선택지 여부 반환
         public string Next => next ?? string.Empty; // 이동 노드 ID 반환
+        public string Flag => flag ?? string.Empty; // 스토리 플래그 반환 (Day71 추가)
     }
 
     [Serializable] // JSON 직렬화 허용

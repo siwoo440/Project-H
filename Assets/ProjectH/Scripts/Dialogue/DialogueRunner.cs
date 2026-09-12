@@ -6,6 +6,7 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역
     public sealed class DialogueRunner // 대화 진행기 (Day58 신규 — 화면과 분리된 순수 진행 로직)
     {
         private readonly List<DialogueLogEntry> log = new List<DialogueLogEntry>(); // 지나간 대사 기록
+        private readonly List<string> chosenFlags = new List<string>(); // 선택지가 남긴 스토리 플래그 (Day71 추가)
         private int currentIndex = -1; // 현재 노드 위치
 
         public DialogueScript Script { get; } // 진행 중인 대화
@@ -15,6 +16,7 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역
         public int AccumulatedAffinity { get; private set; } // 선택지로 쌓인 호감도 (종료 후 한 번에 반영)
         public int PreferredChoiceCount { get; private set; } // 고른 선호 선택지 수
         public IReadOnlyList<DialogueLogEntry> Log => log; // 대화 로그 반환
+        public IReadOnlyList<string> ChosenFlags => chosenFlags; // 선택지로 남긴 스토리 플래그 (Day71 추가 — 엔딩 분기)
 
         public DialogueRunner(DialogueScript script) // 진행기 생성
         {
@@ -43,6 +45,7 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역
             DialogueChoice choice = Current.Choices[choiceIndex]; // 선택지 조회
             AccumulatedAffinity += choice.Affinity; // 호감도 누적
             if (choice.Preferred) PreferredChoiceCount++; // 선호 선택지 수 증가
+            if (!string.IsNullOrEmpty(choice.Flag) && !chosenFlags.Contains(choice.Flag)) chosenFlags.Add(choice.Flag); // 선택 기록 플래그 누적 (Day71 추가)
             log.Add(new DialogueLogEntry(DialogueSpeakers.Hero, choice.Text, true)); // 선택 기록
             MoveTo(choice.Next, currentIndex + 1); // 선택지 목적지로 이동
             return true; // 선택 성공 반환

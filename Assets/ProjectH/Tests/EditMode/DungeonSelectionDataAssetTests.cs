@@ -24,6 +24,7 @@ namespace ProjectH.Tests // 프로젝트 테스트 영역
         [TestCase("DG014")] // 아스타르 지하 고대 도시 (Day66)
         [TestCase("DG015")] // 바다 검은 균열 해안 (Day67)
         [TestCase("DG016")] // 바다 균열 심층 (Day67)
+        [TestCase("DG017")] // 마왕성 무명의 옥좌 (Day71 최종 던전)
         public void DungeonAsset_ExistsWithMatchingId(string dungeonId) // 던전 에셋 ID 일치 검증
         {
             string path = $"Assets/ProjectH/Data/Dungeons/{dungeonId}.asset"; // 던전 에셋 경로 생성

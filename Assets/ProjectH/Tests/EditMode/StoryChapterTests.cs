@@ -125,7 +125,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         public void ChapterScripts_Validate() // 대사 테스트
         {
             List<string> scriptIds = ChapterCatalog.GetDialogueScriptIds(); // 대사 목록
-            Assert.That(scriptIds.Count, Is.EqualTo(26)); // 프롤로그 3 + 챕터 1 4 + 챕터 2 3 + 챕터 3~5 16편 (Day69)
+            Assert.That(scriptIds.Count, Is.EqualTo(32)); // 프롤로그 3 + 챕터 1~5 23편 + 챕터 6 6편 (Day71)
             bool usesHeroName = false; // {HERO} 사용 여부
 
             foreach (string scriptId in scriptIds) // 대사 순회
@@ -168,7 +168,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
                 if (entry.Category == DiaryScenarioCategory.Main) main++; // 세기
             }
 
-            Assert.That(main, Is.EqualTo(26)); // 26편 (Day69 챕터 3~5 포함)
+            Assert.That(main, Is.EqualTo(32)); // 32편 (Day71 최종장 포함)
             Assert.That(DiaryCatalog.GetCategoryLabel(DiaryScenarioCategory.Main), Is.EqualTo("메인 스토리")); // 분류 이름
         }
     }

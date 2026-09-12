@@ -47,6 +47,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역
             new GlossaryEntry("아스타르 사막", GlossaryCategory.Region, "대륙 남부, 멸망한 고대 문명의 신전과 지하 도시가 잠든 사막. 마왕을 봉인하던 고대 장치의 잔해가 남아 있다.", ProjectH.Dungeon.RegionVisitService.AstarVisitFlag), // 아스타르 (Day66 — 첫 방문 시 열림)
             new GlossaryEntry("검은 균열지대", GlossaryCategory.Region, "대륙 외곽의 금지된 땅. 마왕전쟁 때 네메시스의 힘이 가장 크게 폭주한 곳으로, 하늘은 붉고 검으며 땅에서는 검은 안개가 피어오른다."), // 균열지대
             new GlossaryEntry("네메시스", GlossaryCategory.World, "마왕전쟁의 진짜 이름. 기록에서 지워졌고, 여신조차 입에 담지 않는다. 침식은 그가 남긴 숨결이며, 봉인이 약해질수록 그 이름이 다시 불린다.", ProjectH.Story.ChapterCatalog.NemesisFlag), // 네메시스 (Day69 — 챕터 5 완료 시 열림)
+            new GlossaryEntry(ProjectH.Story.FinaleCatalog.ArchaiName, GlossaryCategory.World, "네메시스라 불려 온 존재의 지워진 진명. 최초 문명은 그를 죽일 수 없어 이름을 지워 가두었고, 여신의 장치는 침식을 먹여 그를 재워 왔다. 이름이 없는 동안 그는 죽지도 살지도 못한다.", ProjectH.Story.FinaleCatalog.ArchaiFlag), // 아르카이 (Day71 — 챕터 6에서 열림)
+            new GlossaryEntry("무명의 옥좌", GlossaryCategory.Region, "마왕성 가장 깊은 곳. 최초 문명이 이름을 지우는 의식을 치른 자리이며, 침식을 나르는 관이 모두 이곳으로 이어진다.", ProjectH.Story.FinaleCatalog.ArchaiFlag), // 최종 던전 (Day71 추가)
             new GlossaryEntry("검은 균열", GlossaryCategory.Concept, "대륙 곳곳에 갑자기 열리는 침식의 구멍. 주변의 생명을 먹으며 커지고, 며칠 안에 막지 못하면 그 지역의 침식도가 크게 오른다. 서쪽 바다 위에는 사라지지 않는 큰 균열이 떠 있다.", ProjectH.Dungeon.RegionVisitService.SeaVisitFlag), // 검은 균열 (Day67 — 해안 첫 방문 시 열림)
             new GlossaryEntry("리리아스 교단", GlossaryCategory.Faction, "여신을 섬기는 종교 조직. 사제·성녀·성기사가 사람들을 치유하고 지키며, 침식을 정화하는 신성력을 다룬다. 다만 일부 고위 성직자는 권위를 더 중시한다."), // 교단
             new GlossaryEntry("레티시아 왕실", GlossaryCategory.Faction, "왕국을 다스리는 정치 세력. 교단과 협력하지만 늘 뜻이 같지는 않다. 처음에는 주인공을 감시하고 시험하지만, 활약에 따라 협력자가 된다."), // 왕실

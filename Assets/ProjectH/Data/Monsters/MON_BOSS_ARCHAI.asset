@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a99796f635e6fd741a9792153887276d, type: 3}
+  m_Name: MON_BOSS_ARCHAI
+  m_EditorClassIdentifier: ProjectH.Runtime::ProjectH.Data.MonsterData
+  id: MON_BOSS_ARCHAI
+  displayName: "아르카이"
+  description: "네메시스라 불려 온 존재의 진짜 이름. 최초 문명이 이름을 지워 가두었고, 여신의 장치는 침식을 먹여 그를 재워 왔다."
+  aiType: 7
+  element: 5
+  bossPattern: {fileID: 11400000, guid: fad6a93ada26442e831b667b7a1329c5, type: 2}
+  maxHp: 130000
+  attack: 243
+  defense: 132
+  resistance: 140
+  attackSpeed: 0.95
+  attackRange: 2.8
+  moveSpeed: 1.5

@@ -1,0 +1,112 @@
+{
+  "id": "CH6_03",
+  "title": "지워진 이름",
+  "characterId": "CH_SERENA",
+  "background": "SEA_RIFT",
+  "location": "마왕성 최심부 · 무명의 옥좌",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "검은 성벽을 넘자 계단은 아래로만 이어졌다. 끝에는 관 수백 개가 모여드는 둥근 방이 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_NOEL",
+      "expression": "당황",
+      "text": "…여기가 지도 끝이에요. 더는 그릴 게 없어요."
+    },
+    {
+      "id": "n3",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "방 한가운데 옥좌가 있었다. 앉은 것은 형체가 흐릿했고, 관들이 그 등으로 이어져 있었다."
+    },
+    {
+      "id": "n4",
+      "speaker": "NPC_SHADOW",
+      "expression": "",
+      "text": "왔구나. 네 이름은 기억하고 있다."
+    },
+    {
+      "id": "n5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "…너는?"
+    },
+    {
+      "id": "n6",
+      "speaker": "NPC_SHADOW",
+      "expression": "",
+      "text": "그걸 내가 알면, 나는 여기 있지 않다."
+    },
+    {
+      "id": "n7",
+      "speaker": "CH_SEPHIRA",
+      "expression": "당황",
+      "text": "옥좌 바닥에 문자가 있습니다. 사원의 고어입니다. …읽을 수 있습니다."
+    },
+    {
+      "id": "n8",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "'죽일 수 없어 이름을 지운다. 이름 없는 것은 죽지도 살지도 못하므로.'"
+    },
+    {
+      "id": "n9",
+      "speaker": "CH_LILIA",
+      "expression": "놀람",
+      "text": "…최초 문명이야. 마왕을 봉인한 게 여신이 아니라, 이름을 지운 사람들이었어."
+    },
+    {
+      "id": "n10",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "그리고 관은 밥그릇이었던 거예요. 굶으면 깨니까, 계속 먹이면서 재운 거죠."
+    },
+    {
+      "id": "n11",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라가 문자의 마지막 줄을 손끝으로 쓸어 냈다. 긁힌 자리 아래 한 획이 남아 있었다."
+    },
+    {
+      "id": "n12",
+      "speaker": "CH_SEPHIRA",
+      "expression": "당황",
+      "text": "…한 글자가 덜 지워졌습니다. 이건, 이름입니다."
+    },
+    {
+      "id": "n13",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "아르카이. 이 존재의 이름은 아르카이입니다."
+    },
+    {
+      "id": "n14",
+      "speaker": "NPC_ARCHAI",
+      "expression": "",
+      "text": "…아."
+    },
+    {
+      "id": "n15",
+      "speaker": "NPC_ARCHAI",
+      "expression": "",
+      "text": "그 소리를 천 년 만에 듣는다. 한 번 더 불러라."
+    },
+    {
+      "id": "n16",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "물러서십시오. 저건 부탁이 아니라 굶주림입니다."
+    },
+    {
+      "id": "n17",
+      "speaker": "NPC_ARCHAI",
+      "expression": "",
+      "text": "그래. 굶주림이다. 그러니 와라. 관을 끊든, 나를 베든 — 오늘 둘 중 하나는 끝난다.",
+      "next": "END"
+    }
+  ]
+}

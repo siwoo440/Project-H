@@ -1,0 +1,118 @@
+{
+  "id": "CH6_04",
+  "title": "관을 끊을 것인가",
+  "characterId": "CH_SERENA",
+  "background": "SEA_RIFT",
+  "location": "마왕성 최심부 · 관이 모이는 방",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "아르카이는 옥좌에 다시 주저앉았다. 관 수백 개가 여전히 그의 등으로 침식을 흘려보내고 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "지금이라면 끊을 수 있어. 관은 하나로 모여 있고, 매듭은 눈앞이야."
+    },
+    {
+      "id": "n3",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "끊으면 대륙의 침식은 갈 곳을 잃습니다. 걷히는 것이 아니라, 있던 자리에 남습니다."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_CLAIRE",
+      "expression": "당황",
+      "text": "마을 쪽 수치가 올라가요. 지금까지 관이 걷어 가던 몫이 거기 그대로 남는 거예요."
+    },
+    {
+      "id": "n5",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "유지하면? 사람들은 계속 침식 속에서 살고, 저건 계속 처먹으면서 잔다는 거지."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "…어느 쪽도 아무도 안 다치는 길은 아니네요."
+    },
+    {
+      "id": "n7",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "내가 정한다."
+    },
+    {
+      "id": "n8",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "네. 저희는 어느 쪽이든 함께 갑니다.",
+      "choices": [
+        {
+          "text": "관을 끊는다 — 굶주림을 여기서 끝낸다",
+          "affinity": 0,
+          "preferred": false,
+          "next": "a1",
+          "flag": "ENDING_SEAL_STOPPED"
+        },
+        {
+          "text": "관을 유지한다 — 사람들을 먼저 지킨다",
+          "affinity": 0,
+          "preferred": false,
+          "next": "b1",
+          "flag": "ENDING_SEAL_KEPT"
+        }
+      ]
+    },
+    {
+      "id": "a1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "릴리아의 손짓에 맞춰 매듭이 끊겼다. 관이 차례로 식어 가며, 방 안이 처음으로 조용해졌다."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "끊었어. 이제 저건 아무것도 못 먹어."
+    },
+    {
+      "id": "a3",
+      "speaker": "NPC_ARCHAI",
+      "expression": "",
+      "text": "…고맙다고 해야 하나. 천 년 만에 배가 고프다.",
+      "next": "m1"
+    },
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "매듭에 손을 대려던 릴리아가 멈췄다. 관은 그대로 침식을 실어 나른다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "…알았어. 사람 쪽을 먼저 본다는 거지."
+    },
+    {
+      "id": "b3",
+      "speaker": "NPC_ARCHAI",
+      "expression": "",
+      "text": "계속 먹이겠다는 뜻이군. 자비인지 비겁인지는, 네가 정해라.",
+      "next": "m1"
+    },
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "아르카이가 천천히 일어섰다. 형체가 처음으로 또렷해졌다.",
+      "next": "END"
+    }
+  ]
+}

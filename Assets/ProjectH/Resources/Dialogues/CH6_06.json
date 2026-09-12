@@ -1,0 +1,58 @@
+{
+  "id": "CH6_06",
+  "title": "돌아오는 길",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_PLAZA",
+  "location": "마왕성 · 지상으로 오르는 계단",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "계단은 올라갈 때가 더 길었다. 아무도 뒤를 돌아보지 않았다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "지도에 마지막 칸을 채웠어요. 이름 칸은… 비워 둘게요."
+    },
+    {
+      "id": "n3",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "저는 이 기록을 사원에 남기겠습니다. 이번에는 아무것도 지우지 않고요."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "돌아가면 할 일이 많습니다. 침식이 남은 곳부터 차례로."
+    },
+    {
+      "id": "n5",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "…돌아갈 곳이 있다는 게, 오늘은 이상하게 큰일처럼 느껴져요."
+    },
+    {
+      "id": "n6",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "다 같이 가자."
+    },
+    {
+      "id": "n7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "문이 열리고 바깥 빛이 들어왔다. 오늘 내린 선택이 세상을 어디로 데려갈지는, 아직 아무도 모른다."
+    },
+    {
+      "id": "n8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "(최종장 완료 — 엔딩 연출과 분기는 72일차에 이어집니다.)",
+      "next": "END"
+    }
+  ]
+}

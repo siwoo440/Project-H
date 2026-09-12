@@ -57,7 +57,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             busy = true; // 진행 중
             DialogueOverlayView.Open(script, runner => // 이야기 재생
             {
-                if (runner != null && runner.IsFinished) ChapterService.CompleteDialogue(GetSave(), scriptId); // 끝까지 봤으면 다음 단계
+                if (runner != null && runner.IsFinished) ChapterService.CompleteDialogue(GetSave(), scriptId, runner); // 끝까지 봤으면 다음 단계 (선택지 플래그 포함, Day71)
                 Save(); // 진행 저장
                 busy = false; // 완료
                 RefreshLobby(); // 로비 표시 갱신

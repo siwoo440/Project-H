@@ -1,0 +1,85 @@
+{
+  "id": "CH5_04",
+  "title": "사도의 선택",
+  "characterId": "CH_SEPHIRA",
+  "background": "DESERT",
+  "location": "아스타르 · 신전 제단",
+  "nodes": [
+    {
+      "id": "n1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "제단 앞. 순백의 사제복을 입은 여인이 두 손을 모은 채 이쪽을 기다리고 있었다."
+    },
+    {
+      "id": "n2",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "신의 사도단, 세피라입니다. 명령은 하나예요. 봉인에 손대는 자를 막을 것."
+    },
+    {
+      "id": "n3",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "…그럼 우리를 막겠다는 건가."
+    },
+    {
+      "id": "n4",
+      "speaker": "CH_SEPHIRA",
+      "expression": "생각",
+      "text": "그래야 합니다. 그런데… 제 눈에는 당신들이 세상을 부수러 온 것처럼 보이지 않아요."
+    },
+    {
+      "id": "n5",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "저희는 진실을 보러 왔어요. 여신께서 왜 숨기셨는지 알고 싶어요."
+    },
+    {
+      "id": "n6",
+      "speaker": "CH_SEPHIRA",
+      "expression": "놀람",
+      "text": "…성녀께서 그런 말씀을. 사도단에서는 입에 담을 수 없는 말이에요.",
+      "choices": [
+        {
+          "text": "명령이 아니라 네 눈으로 판단해 줘.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "n7a"
+        },
+        {
+          "text": "우리를 막으면 더 많은 사람이 죽어.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "n7b"
+        }
+      ]
+    },
+    {
+      "id": "n7a",
+      "speaker": "CH_SEPHIRA",
+      "expression": "생각",
+      "text": "…제 뜻. 그런 걸 물어본 사람은 처음이에요.",
+      "next": "n8"
+    },
+    {
+      "id": "n7b",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "…알고 있습니다. 그래서 오늘 아침부터 기도가 끊겼어요.",
+      "next": "n8"
+    },
+    {
+      "id": "n8",
+      "speaker": "CH_SEPHIRA",
+      "expression": "각오",
+      "text": "…함께 가겠습니다. 막는 대신, 두 눈으로 확인하겠어요."
+    },
+    {
+      "id": "n9",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세피라가 동료가 되었다. 제단의 문양이 그녀의 발밑에서 조용히 꺼졌다."
+    }
+  ]
+}

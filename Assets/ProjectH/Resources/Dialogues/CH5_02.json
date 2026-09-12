@@ -1,0 +1,79 @@
+{
+  "id": "CH5_02",
+  "title": "지도를 그리는 아이",
+  "characterId": "CH_NOEL",
+  "background": "DESERT",
+  "location": "아스타르 사막 · 모래 언덕",
+  "nodes": [
+    {
+      "id": "l1",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "어이— 거기! 그쪽 길은 모래 구덩이야. 세 걸음만 더 가면 빠졌을걸?"
+    },
+    {
+      "id": "l2",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "낡은 지도를 두른 소녀가 언덕을 미끄러져 내려왔다."
+    },
+    {
+      "id": "l3",
+      "speaker": "CH_NOEL",
+      "expression": "기본",
+      "text": "노엘. 길드연합 모험가야. 이 사막 지도는 내가 제일 잘 그려."
+    },
+    {
+      "id": "l4",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "…길드연합? 그럼 계약 조건은 알겠군."
+    },
+    {
+      "id": "l5",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "보수는 됐어. 대신 신전 안을 같이 보게 해 줘. 유적 조사하다 동료를 잃은 뒤로, 혼자선 못 들어가겠더라고."
+    },
+    {
+      "id": "l6",
+      "speaker": "CH_NOEL",
+      "expression": "진지",
+      "text": "…이번엔 아무도 안 잃고 싶어.",
+      "choices": [
+        {
+          "text": "약속할게. 전원 돌아온다.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "l7a"
+        },
+        {
+          "text": "길 안내를 부탁해.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "l7b"
+        }
+      ]
+    },
+    {
+      "id": "l7a",
+      "speaker": "CH_NOEL",
+      "expression": "놀람",
+      "text": "…그 말, 기억해 둘게. 반칙이잖아 그건.",
+      "next": "l8"
+    },
+    {
+      "id": "l7b",
+      "speaker": "CH_NOEL",
+      "expression": "미소",
+      "text": "맡겨 둬! 함정 위치까지 다 표시해 줄게.",
+      "next": "l8"
+    },
+    {
+      "id": "l8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "노엘이 동료가 되었다. 그녀의 지도 귀퉁이에 새 이름들이 적혔다."
+    }
+  ]
+}

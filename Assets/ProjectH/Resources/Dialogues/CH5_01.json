@@ -1,0 +1,73 @@
+{
+  "id": "CH5_01",
+  "title": "모래의 초대",
+  "characterId": "CH_SERENA",
+  "background": "DESERT",
+  "location": "아스타르 사막",
+  "nodes": [
+    {
+      "id": "k1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "사막의 열기 속, 반쯤 묻힌 신전이 하얗게 빛나고 있었다."
+    },
+    {
+      "id": "k2",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "신탁에서 본 곳이에요. 이 아래에 봉인 장치가 있어요."
+    },
+    {
+      "id": "k3",
+      "speaker": "CH_LILIA",
+      "expression": "생각",
+      "text": "제국 승인서의 좌표와도 일치해. 여기가 회수한 침식이 모이는 종착점이야."
+    },
+    {
+      "id": "k4",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "……모래 아래에서, 무언가 숨 쉬는 소리가 난다."
+    },
+    {
+      "id": "k5",
+      "speaker": "CH_SERENA",
+      "expression": "각오",
+      "text": "가요. 여신께서 숨긴 것이 무엇이든, 이제는 봐야 해요.",
+      "choices": [
+        {
+          "text": "끝까지 같이 간다.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "k6a"
+        },
+        {
+          "text": "무리하지 마. 돌아갈 수도 있어.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "k6b"
+        }
+      ]
+    },
+    {
+      "id": "k6a",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "…네. {HERO}님과 함께라면.",
+      "next": "k7"
+    },
+    {
+      "id": "k6b",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "돌아갈 수 없어요. 저는 이걸 위해 당신을 불렀으니까요.",
+      "next": "k7"
+    },
+    {
+      "id": "k7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "신전으로 향하는 길, 모래 언덕 위에서 누군가 손을 흔들고 있었다."
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 using System; // 콜백 자료형
 using ProjectH.SaveSystem; // 이름 규칙 기능
 using UnityEngine; // Unity 기본 기능
+using UnityEngine.InputSystem; // 신규 Input System 키 입력 기능 (Day69 수정 — 구형 Input 클래스는 이 프로젝트에서 사용할 수 없음)
 using UnityEngine.UI; // Unity UI 기능
 
 namespace ProjectH.UI // 프로젝트 UI 영역
@@ -48,7 +49,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             field.placeholder = placeholder; // 안내 글자 연결
             field.characterLimit = HeroNameService.MaxLength; // 글자 수 제한
             field.lineType = InputField.LineType.SingleLine; // 한 줄
-            field.onEndEdit.AddListener(_ => { if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) Confirm(); }); // 엔터로 확인
+            field.onEndEdit.AddListener(_ => { if (IsSubmitPressed()) Confirm(); }); // 엔터로 확인 (칸 밖을 눌러 포커스가 풀린 경우에는 확인하지 않음)
             Button confirm = RuntimeUiKit.CreateButton(box.transform, "Confirm", new Color(0.78f, 0.50f, 0.18f, 1f)); // 확인 버튼
             RuntimeUiKit.SetRect(confirm.GetComponent<RectTransform>(), new Vector2(0.24f, 0.10f), new Vector2(0.76f, 0.28f)); // 아래
             Text confirmLabel = RuntimeUiKit.CreateText(confirm.transform, "Label", "이 이름으로 시작", 26, Color.white, FontStyle.Bold); // 버튼 글자
@@ -56,6 +57,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             confirm.onClick.AddListener(Confirm); // 확인 연결
             field.Select(); // 바로 입력 가능
             field.ActivateInputField(); // 커서 표시
+        }
+
+        private static bool IsSubmitPressed() // 엔터 키를 눌러 입력을 마쳤는지 (신규 Input System)
+        {
+            Keyboard keyboard = Keyboard.current; // 현재 키보드
+            return keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame); // 엔터 확인
         }
 
         private void Confirm() // 확인 : 이름 전달 후 닫기

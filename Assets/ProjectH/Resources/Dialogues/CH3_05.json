@@ -1,0 +1,79 @@
+{
+  "id": "CH3_05",
+  "title": "사라진 서명",
+  "characterId": "CH_LILIA",
+  "background": "NOIR",
+  "location": "노아르 · 릴리아의 옛 연구실",
+  "nodes": [
+    {
+      "id": "e1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어가 약품을 바르자, 지워졌던 서명이 천천히 떠올랐다."
+    },
+    {
+      "id": "e2",
+      "speaker": "CH_CLAIRE",
+      "expression": "놀람",
+      "text": "…이름이 아니라 직인이야. 의회 소속이 아니라… 제국 문장?"
+    },
+    {
+      "id": "e3",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "…카르니안. 내 조국의 문장이다."
+    },
+    {
+      "id": "e4",
+      "speaker": "CH_SERENA",
+      "expression": "놀람",
+      "text": "제국이 침식 연구를…?"
+    },
+    {
+      "id": "e5",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "의회 안에 제국과 통하는 자가 있었다는 뜻이야. 그리고 그 자가 각지에 회수 장치를 심었어."
+    },
+    {
+      "id": "e6",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…확인해야 한다. 내 손으로.",
+      "choices": [
+        {
+          "text": "같이 가자. 혼자 감당할 일이 아니야.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "e7a"
+        },
+        {
+          "text": "엘렌, 진실이 아프더라도 볼 각오는 있어?",
+          "affinity": 2,
+          "preferred": false,
+          "next": "e7b"
+        }
+      ]
+    },
+    {
+      "id": "e7a",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "…고맙다. 그 말이 큰 힘이 된다.",
+      "next": "e8"
+    },
+    {
+      "id": "e7b",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "…있다. 도망쳐서 잃은 것이 이미 너무 많으니까.",
+      "next": "e8"
+    },
+    {
+      "id": "e8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "다음 목적지가 정해졌다. 실바란 숲을 지나 북쪽, 얼어붙은 제국으로."
+    }
+  ]
+}

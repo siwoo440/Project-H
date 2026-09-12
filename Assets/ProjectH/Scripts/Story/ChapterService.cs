@@ -41,7 +41,7 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
         {
             ChapterDefinition chapter = GetCurrentChapter(saveData); // 챕터
             ChapterStep step = GetCurrentStep(saveData); // 단계
-            if (chapter == null || step == null) return "메인 스토리 · 준비된 이야기를 모두 보았습니다 (69일차 챕터 3~5 예정)"; // 완료
+            if (chapter == null || step == null) return "메인 스토리 · 챕터 5까지 마쳤습니다. 이후 이야기는 71일차 최종장에서 이어집니다"; // 완료
             return $"{chapter.Title} · 다음: {step.Summary}"; // 진행 중
         }
 
@@ -63,6 +63,7 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
         public static void Refresh(SaveData saveData) // 화면을 열 때 진행 상황 정리 (이미 깬 던전 단계는 자동 통과)
         {
             EnsureStarted(saveData); // 시작 보장
+            ContinueWithNewChapters(saveData); // 업데이트로 추가된 챕터 이어 붙이기 (Day69 추가)
             int guard = 0; // 무한 반복 방지
 
             while (guard++ < 32) // 연속 통과 처리
@@ -75,6 +76,15 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
             UpdateSummary(saveData); // 안내 갱신
         }
 
+        public static void ContinueWithNewChapters(SaveData saveData) // 이야기를 다 본 저장에 새 챕터가 추가되면 이어서 진행 (Day69 추가)
+        {
+            if (saveData == null || !saveData.ChapterProgress.IsFinished) return; // 진행 중이거나 시작 전
+            ChapterDefinition next = ChapterCatalog.GetNext(saveData.ChapterProgress.FinishedChapterId); // 다음 챕터
+            if (next == null) return; // 새 챕터 없음 (기존 세이브는 FinishedChapterId가 비어 있어 그대로)
+            saveData.ChapterProgress.MoveTo(next.Id, 0); // 새 챕터 시작
+            UpdateSummary(saveData); // 안내 갱신
+        }
+
         private static string Advance(SaveData saveData, ChapterStep step) // 단계 완료 처리 (동료 합류 · 다음 단계 · 안내 갱신)
         {
             string message = string.Empty; // 합류 안내
@@ -83,6 +93,8 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
             {
                 message = $"{step.GrantCharacterId} 합류"; // 안내 (표시용 이름은 화면에서 변환)
             }
+
+            if (!string.IsNullOrEmpty(step.GrantStoryFlag)) saveData.SetStoryFlag(step.GrantStoryFlag); // 스토리 플래그 (봉인의 진실·네메시스, Day69 추가)
 
             ChapterDefinition chapter = GetCurrentChapter(saveData); // 현재 챕터
             int nextIndex = saveData.ChapterProgress.StepIndex + 1; // 다음 단계
@@ -94,7 +106,7 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
             else // 챕터 종료
             {
                 ChapterDefinition next = chapter == null ? null : ChapterCatalog.GetNext(chapter.Id); // 다음 챕터
-                if (next == null) saveData.ChapterProgress.Finish(); // 준비된 이야기 끝
+                if (next == null) saveData.ChapterProgress.Finish(chapter == null ? string.Empty : chapter.Id); // 준비된 이야기 끝 (마지막 챕터 기록)
                 else saveData.ChapterProgress.MoveTo(next.Id, 0); // 다음 챕터 첫 단계
             }
 
@@ -107,7 +119,7 @@ namespace ProjectH.Story // 프로젝트 메인 스토리 영역
             ChapterDefinition chapter = GetCurrentChapter(saveData); // 챕터
             ChapterStep step = GetCurrentStep(saveData); // 단계
             saveData.SetCurrentChapter(chapter == null ? "메인 스토리 완료" : chapter.Title); // 챕터 문구
-            saveData.SetCurrentMainQuest(step == null ? "69일차 챕터 3~5에서 이어집니다" : step.Summary); // 목표 문구
+            saveData.SetCurrentMainQuest(step == null ? "자유롭게 던전·마을을 돌아보세요 (최종장은 71일차)" : step.Summary); // 목표 문구
         }
     }
 }

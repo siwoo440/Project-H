@@ -95,9 +95,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(saveData.Characters.Count, Is.EqualTo(5)); // 세레나 · 루시아 · 엘렌 · 릴리아 · 이브
             ChapterService.NotifyDungeonCleared(saveData, "DG003"); // 회랑 클리어
             PlayPendingDialogue(saveData); // CH2_03
-            Assert.That(saveData.ChapterProgress.IsFinished, Is.True); // 준비된 이야기 끝
-            Assert.That(ChapterService.GetProgressText(saveData), Does.Contain("모두")); // 완료 안내
-            Assert.That(ChapterService.GetPendingDialogueId(saveData), Is.Empty); // 자동 재생 없음
+            Assert.That(saveData.ChapterProgress.ChapterId, Is.EqualTo("CHAPTER_03")); // 챕터 3으로 이어짐 (Day69)
+            Assert.That(ChapterService.GetPendingDialogueId(saveData), Is.EqualTo("CH3_01")); // 다음 이야기
         }
 
         [Test] // 이미 깬 던전 단계는 화면을 열 때 자동으로 통과
@@ -126,7 +125,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         public void ChapterScripts_Validate() // 대사 테스트
         {
             List<string> scriptIds = ChapterCatalog.GetDialogueScriptIds(); // 대사 목록
-            Assert.That(scriptIds.Count, Is.EqualTo(10)); // 프롤로그 3 + 챕터 1 4 (용병 고용 포함) + 챕터 2 3
+            Assert.That(scriptIds.Count, Is.EqualTo(26)); // 프롤로그 3 + 챕터 1 4 + 챕터 2 3 + 챕터 3~5 16편 (Day69)
             bool usesHeroName = false; // {HERO} 사용 여부
 
             foreach (string scriptId in scriptIds) // 대사 순회
@@ -169,7 +168,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
                 if (entry.Category == DiaryScenarioCategory.Main) main++; // 세기
             }
 
-            Assert.That(main, Is.EqualTo(10)); // 10편
+            Assert.That(main, Is.EqualTo(26)); // 26편 (Day69 챕터 3~5 포함)
             Assert.That(DiaryCatalog.GetCategoryLabel(DiaryScenarioCategory.Main), Is.EqualTo("메인 스토리")); // 분류 이름
         }
     }

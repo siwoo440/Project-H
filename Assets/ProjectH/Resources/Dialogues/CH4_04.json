@@ -1,0 +1,79 @@
+{
+  "id": "CH4_04",
+  "title": "마지막 수호대",
+  "characterId": "CH_TYRIA",
+  "background": "KARNIAN",
+  "location": "카르니안 · 요새 안뜰",
+  "nodes": [
+    {
+      "id": "i1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "요새 안뜰. 피난민 수십 명이 모여 있었고, 그 앞을 커다란 방패 하나가 막고 있었다."
+    },
+    {
+      "id": "i2",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "……더는 못 지나간다. 여기서부터는, 내 뒤다."
+    },
+    {
+      "id": "i3",
+      "speaker": "CH_ELLEN",
+      "expression": "놀람",
+      "text": "…남부 수호대? 아직 남아 있었나."
+    },
+    {
+      "id": "i4",
+      "speaker": "CH_TYRIA",
+      "expression": "진지",
+      "text": "……나 하나. 마을은 사라졌고, 나는 늦었다. 그래서 이번에는 늦지 않으려 한다."
+    },
+    {
+      "id": "i5",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "저희도 같은 이유로 왔어요. 함께 지켜요."
+    },
+    {
+      "id": "i6",
+      "speaker": "CH_TYRIA",
+      "expression": "각오",
+      "text": "……너희 등도, 내가 지켜도 되나.",
+      "choices": [
+        {
+          "text": "부탁할게. 우리 등을 맡길게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "i7a"
+        },
+        {
+          "text": "혼자 다 짊어지지 마.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "i7b"
+        }
+      ]
+    },
+    {
+      "id": "i7a",
+      "speaker": "CH_TYRIA",
+      "expression": "미소",
+      "text": "……응. 무너지지 않는다.",
+      "next": "i8"
+    },
+    {
+      "id": "i7b",
+      "speaker": "CH_TYRIA",
+      "expression": "부끄러움",
+      "text": "……그런 말은, 처음 듣는다. 조금 따뜻하다.",
+      "next": "i8"
+    },
+    {
+      "id": "i8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "티리아가 동료가 되었다. 피난민들이 조용히 고개를 숙였다."
+    }
+  ]
+}

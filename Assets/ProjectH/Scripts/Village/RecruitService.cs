@@ -66,6 +66,7 @@ namespace ProjectH.Village // 프로젝트 마을 영역
         public static List<RecruitDefinition> GetPending(SaveData saveData) // 길드에 소식이 뜬 동료 (조건 충족 · 아직 합류 전)
         {
             List<RecruitDefinition> result = new List<RecruitDefinition>(); // 결과
+            if (saveData != null && saveData.ChapterProgress.Started && !saveData.ChapterProgress.IsFinished) return result; // 메인 스토리 진행 중에는 이야기로 합류 (Day69 추가)
 
             foreach (RecruitDefinition definition in Definitions) // 정의 순회
             {

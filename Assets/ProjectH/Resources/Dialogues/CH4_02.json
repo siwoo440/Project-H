@@ -1,0 +1,79 @@
+{
+  "id": "CH4_02",
+  "title": "붉은 창",
+  "characterId": "CH_PYRA",
+  "background": "SILVARAN",
+  "location": "실바란 숲 안쪽",
+  "nodes": [
+    {
+      "id": "g1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "장치를 부수고 나오자, 숲길 한가운데 붉은 갑옷의 창기사가 서 있었다."
+    },
+    {
+      "id": "g2",
+      "speaker": "CH_PYRA",
+      "expression": "기본",
+      "text": "역시 여기였군. 흔적을 따라온 보람이 있네."
+    },
+    {
+      "id": "g3",
+      "speaker": "CH_ELLEN",
+      "expression": "놀람",
+      "text": "…파이라?"
+    },
+    {
+      "id": "g4",
+      "speaker": "CH_PYRA",
+      "expression": "진지",
+      "text": "오랜만입니다, 대장. 아니, 이젠 아니지. 제국이 각지에 뭘 심고 있는지 쫓고 있었어."
+    },
+    {
+      "id": "g5",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "제국 기사가 제국을 조사한다고?"
+    },
+    {
+      "id": "g6",
+      "speaker": "CH_PYRA",
+      "expression": "각오",
+      "text": "명령대로 마을을 버리는 건 한 번으로 충분해. 이번엔 내 눈으로 확인하고, 내 창으로 끝낸다.",
+      "choices": [
+        {
+          "text": "목적이 같네. 같이 가자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "g7a"
+        },
+        {
+          "text": "엘렌과 먼저 이야기해야 하지 않아?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "g7b"
+        }
+      ]
+    },
+    {
+      "id": "g7a",
+      "speaker": "CH_PYRA",
+      "expression": "미소",
+      "text": "하, 시원시원해서 좋아. 앞은 내가 뚫지.",
+      "next": "g8"
+    },
+    {
+      "id": "g7b",
+      "speaker": "CH_PYRA",
+      "expression": "당황",
+      "text": "…나중에. 지금은 요새가 먼저야.",
+      "next": "g8"
+    },
+    {
+      "id": "g8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "파이라가 동료가 되었다. 두 기사는 끝내 서로를 보지 않았지만, 나란히 북쪽을 향했다."
+    }
+  ]
+}

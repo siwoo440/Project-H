@@ -1,0 +1,79 @@
+{
+  "id": "CH3_03",
+  "title": "동방에서 온 순례자",
+  "characterId": "CH_MERCIA",
+  "background": "NOIR",
+  "location": "노아르 · 의회 앞 광장",
+  "nodes": [
+    {
+      "id": "c1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "서고에서 나오자 광장 한가운데에서 흰 법복의 소녀가 정령을 달래고 있었다. 폭주한 마력에 정령들이 몸을 떨고 있었다."
+    },
+    {
+      "id": "c2",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "괜찮아요… 이제 괜찮아요. 조금만 더 참아 주세요."
+    },
+    {
+      "id": "c3",
+      "speaker": "CH_SERENA",
+      "expression": "놀람",
+      "text": "정령을 진정시키고 있어요. 저런 건 성역에서도 본 적이 없어요."
+    },
+    {
+      "id": "c4",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "동방 사원의 메르시아입니다. 신의 부름을 따라 순례 중이었는데… 이 도시의 마력이 너무 아파서요."
+    },
+    {
+      "id": "c5",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "부름이 이곳을 가리켰다는 거야?"
+    },
+    {
+      "id": "c6",
+      "speaker": "CH_MERCIA",
+      "expression": "생각",
+      "text": "정확히는… 당신 쪽이에요, {HERO}님. 서고에서 나온 순간 부름이 또렷해졌어요.",
+      "choices": [
+        {
+          "text": "그럼 같이 가자. 우리도 답을 찾는 중이야.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "c7a"
+        },
+        {
+          "text": "그 부름, 믿어도 되는 걸까?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "c7b"
+        }
+      ]
+    },
+    {
+      "id": "c7a",
+      "speaker": "CH_MERCIA",
+      "expression": "미소",
+      "text": "감사합니다. 수행하는 마음으로 함께 걸을게요.",
+      "next": "c8"
+    },
+    {
+      "id": "c7b",
+      "speaker": "CH_MERCIA",
+      "expression": "진지",
+      "text": "저도 몰라요. 그래서 확인하려는 거예요. 직접, 이 눈으로.",
+      "next": "c8"
+    },
+    {
+      "id": "c8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "메르시아가 동료가 되었다. 정령들이 그녀의 뒤를 따라 조용히 흩어졌다."
+    }
+  ]
+}

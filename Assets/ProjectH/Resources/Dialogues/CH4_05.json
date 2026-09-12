@@ -1,0 +1,79 @@
+{
+  "id": "CH4_05",
+  "title": "제국의 기록",
+  "characterId": "CH_ELLEN",
+  "background": "KARNIAN",
+  "location": "카르니안 · 요새 기록실",
+  "nodes": [
+    {
+      "id": "j1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "기록실. 얼어붙은 서류철 사이에서 승인서 한 장이 나왔다."
+    },
+    {
+      "id": "j2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "'침식 회수 계획' — 목적란에 이렇게 적혀 있어. **봉인 유지에 필요한 힘의 확보**."
+    },
+    {
+      "id": "j3",
+      "speaker": "CH_PYRA",
+      "expression": "놀람",
+      "text": "봉인? 마왕 봉인 말이야?"
+    },
+    {
+      "id": "j4",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…제국은 침식을 무기로 쓰려던 게 아니라, 무언가를 **계속 눌러 두기 위해** 모으고 있었다는 건가."
+    },
+    {
+      "id": "j5",
+      "speaker": "CH_MERCIA",
+      "expression": "생각",
+      "text": "그런데 그 방법이 세상을 병들게 하고 있어요. 수단이 목적을 잡아먹은 거예요."
+    },
+    {
+      "id": "j6",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "…여신께서 왜 이걸 보여 주지 않으셨을까요.",
+      "choices": [
+        {
+          "text": "직접 확인하자. 봉인이 있는 곳으로.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "j7a"
+        },
+        {
+          "text": "세레나, 여신을 의심해도 괜찮아?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "j7b"
+        }
+      ]
+    },
+    {
+      "id": "j7a",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "아스타르 사막. 고대 봉인 장치가 잠든 곳입니다.",
+      "next": "j8"
+    },
+    {
+      "id": "j7b",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "…무섭지만, 믿음은 눈을 감는 게 아니라고 배웠어요. 확인할게요.",
+      "next": "j8"
+    },
+    {
+      "id": "j8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "남쪽으로 향하는 길, 모래바람이 이미 지평선을 덮고 있었다."
+    }
+  ]
+}

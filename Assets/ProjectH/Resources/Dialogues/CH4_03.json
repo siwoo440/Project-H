@@ -1,0 +1,73 @@
+{
+  "id": "CH4_03",
+  "title": "얼어붙은 요새로",
+  "characterId": "CH_ELLEN",
+  "background": "KARNIAN",
+  "location": "카르니안 제국 · 요새 앞",
+  "nodes": [
+    {
+      "id": "h1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "눈보라 속에 검은 성벽이 모습을 드러냈다. 엘렌이 처음 검을 받은 곳이자, 마지막으로 명령을 따른 곳."
+    },
+    {
+      "id": "h2",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "…저 안에 기록실이 있습니다. 제국이 무엇을 승인했는지 거기 남아 있을 겁니다."
+    },
+    {
+      "id": "h3",
+      "speaker": "CH_PYRA",
+      "expression": "각오",
+      "text": "지금 저 요새를 지키는 건 침식된 옛 동료들이야. 각오해."
+    },
+    {
+      "id": "h4",
+      "speaker": "CH_SERENA",
+      "expression": "생각",
+      "text": "…괴로우시겠어요. 두 분 모두."
+    },
+    {
+      "id": "h5",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "괴롭습니다. 그래도 지나가야 합니다.",
+      "choices": [
+        {
+          "text": "네가 앞장서. 뒤는 우리가 볼게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "h6a"
+        },
+        {
+          "text": "힘들면 내가 앞에 설게.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "h6b"
+        }
+      ]
+    },
+    {
+      "id": "h6a",
+      "speaker": "CH_ELLEN",
+      "expression": "미소",
+      "text": "…네. 오늘은 명령이 아니라 제 뜻으로 검을 듭니다.",
+      "next": "h7"
+    },
+    {
+      "id": "h6b",
+      "speaker": "CH_ELLEN",
+      "expression": "부끄러움",
+      "text": "…{HERO}님이 그렇게 말씀하시면, 제가 부끄러워집니다.",
+      "next": "h7"
+    },
+    {
+      "id": "h7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "요새 문이 삐걱이며 열렸다. 안에서 낯익은 갑옷 소리가 들려왔다."
+    }
+  ]
+}

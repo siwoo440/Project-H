@@ -1,0 +1,73 @@
+{
+  "id": "CH3_04",
+  "title": "실험 기록",
+  "characterId": "CH_CLAIRE",
+  "background": "OBSERVATORY_NIGHT",
+  "location": "노아르 · 의회 금단 실험실",
+  "nodes": [
+    {
+      "id": "d1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "실험실 안쪽. 키메라가 쓰러진 자리에 두꺼운 기록부가 떨어져 있었다."
+    },
+    {
+      "id": "d2",
+      "speaker": "CH_CLAIRE",
+      "expression": "놀람",
+      "text": "…이거 합성 기록이야. 침식을 생물에 주입해서 견디는 개체를 만들려고 했어."
+    },
+    {
+      "id": "d3",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "의회 승인 번호가 찍혀 있어. 그런데 이 번호… 3년 전에 폐기된 계열이야."
+    },
+    {
+      "id": "d4",
+      "speaker": "CH_MERCIA",
+      "expression": "생각",
+      "text": "폐기된 연구를 누가 계속했다는 뜻이네요."
+    },
+    {
+      "id": "d5",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "마지막 장에 서명이 있는데… 잉크로 지워졌어. 그것도 아주 최근에.",
+      "choices": [
+        {
+          "text": "지운 흔적을 복원할 수 있어?",
+          "affinity": 2,
+          "preferred": true,
+          "next": "d6a"
+        },
+        {
+          "text": "의회에 이 기록을 넘기자.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "d6b"
+        }
+      ]
+    },
+    {
+      "id": "d6a",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "맡겨 둬. 지운 잉크를 되살리는 건 연금술의 기본이거든.",
+      "next": "d7"
+    },
+    {
+      "id": "d6b",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "…넘기면 사라질 거야. 우리가 먼저 읽는다.",
+      "next": "d7"
+    },
+    {
+      "id": "d7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "기록부 마지막 장에는 문양 하나가 남아 있었다. 회랑에서 본 것과 같은 문양이었다."
+    }
+  ]
+}

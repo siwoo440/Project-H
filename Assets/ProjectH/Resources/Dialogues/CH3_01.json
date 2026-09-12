@@ -1,0 +1,79 @@
+{
+  "id": "CH3_01",
+  "title": "푸른 등불 아래",
+  "characterId": "CH_LILIA",
+  "background": "NOIR",
+  "location": "노아르 마법도시",
+  "nodes": [
+    {
+      "id": "a1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "회랑에서 얻은 문양 사본을 들고 노아르에 도착했다. 마법등이 켜진 거리에는 사람 대신 경비 인형만 서 있었다."
+    },
+    {
+      "id": "a2",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "의회가 야간 통행을 막았어. 이 정도면 사고가 아니라 은폐야."
+    },
+    {
+      "id": "a3",
+      "speaker": "CH_ELLEN",
+      "expression": "각오",
+      "text": "…안에서 막고 있다는 뜻인가."
+    },
+    {
+      "id": "a4",
+      "speaker": "CH_LILIA",
+      "expression": "기본",
+      "text": "내 옛 연구실은 지하 서고 옆이었어. 거기 기록이 남아 있다면 문양의 주인을 찾을 수 있어."
+    },
+    {
+      "id": "a5",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "하지만 서고는 이미 폭주한 마력으로 가득하다고…"
+    },
+    {
+      "id": "a6",
+      "speaker": "CH_LILIA",
+      "expression": "생각",
+      "text": "그러니까 우리가 가는 거야. 오래 있을수록 위험해지니까, 짧게 끝내고 나온다.",
+      "choices": [
+        {
+          "text": "서고로 가자. 네 안내를 믿을게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "a7a"
+        },
+        {
+          "text": "의회에 먼저 허가를 받는 게 낫지 않을까?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "a7b"
+        }
+      ]
+    },
+    {
+      "id": "a7a",
+      "speaker": "CH_LILIA",
+      "expression": "미소",
+      "text": "좋아. 길은 눈 감고도 알아.",
+      "next": "a8"
+    },
+    {
+      "id": "a7b",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "허가를 내줄 사람이 범인이면? …몰래 들어가는 게 빨라.",
+      "next": "a8"
+    },
+    {
+      "id": "a8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "지하로 내려가는 계단에서, 푸른 등불이 한 번 크게 흔들렸다."
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "id": "CH5_03",
+  "title": "그림자의 거래",
+  "characterId": "CH_NATASHA",
+  "background": "DESERT",
+  "location": "아스타르 · 신전 회랑",
+  "nodes": [
+    {
+      "id": "m1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "신전 안, 봉인 수호체를 넘어선 자리. 기둥 그림자에서 목소리가 먼저 들렸다."
+    },
+    {
+      "id": "m2",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "쉿. 놀라지 마. 여기까지 온 사람들한테는 선물을 주려고 했거든."
+    },
+    {
+      "id": "m3",
+      "speaker": "CH_LUCIA",
+      "expression": "진지",
+      "text": "…언제부터 따라왔지."
+    },
+    {
+      "id": "m4",
+      "speaker": "CH_NATASHA",
+      "expression": "기본",
+      "text": "노아르에서부터. 나타샤야. 마왕군 쪽 정보를 파는 사람."
+    },
+    {
+      "id": "m5",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "제국이 모은 침식이 어디로 가는지 알아? 이 아래가 아니야. 더 깊은 곳, 고대 도시로 흐르고 있어."
+    },
+    {
+      "id": "m6",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "왜 그걸 우리한테 알려 주지?"
+    },
+    {
+      "id": "m7",
+      "speaker": "CH_NATASHA",
+      "expression": "생각",
+      "text": "…걔네한테 가족을 잃었거든. 갚을 기회를 찾고 있었어. 너희가 제일 그럴듯해 보여.",
+      "choices": [
+        {
+          "text": "같이 가자. 네 몫도 같이 갚자.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "m8a"
+        },
+        {
+          "text": "정보값은 얼마야?",
+          "affinity": 1,
+          "preferred": false,
+          "next": "m8b"
+        }
+      ]
+    },
+    {
+      "id": "m8a",
+      "speaker": "CH_NATASHA",
+      "expression": "놀람",
+      "text": "…이상한 사람들이네. 싫지 않아.",
+      "next": "m9"
+    },
+    {
+      "id": "m8b",
+      "speaker": "CH_NATASHA",
+      "expression": "미소",
+      "text": "선불은 사탕 하나. 나머지는 끝나고 받을게.",
+      "next": "m9"
+    },
+    {
+      "id": "m9",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "나타샤가 동료가 되었다. 그녀가 가리킨 바닥에는 지하로 내려가는 계단이 숨어 있었다."
+    }
+  ]
+}

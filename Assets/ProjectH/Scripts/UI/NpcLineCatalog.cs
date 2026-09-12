@@ -36,6 +36,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     {
         public static readonly NpcProfile Shopkeeper = new NpcProfile("NPC_SHOPKEEPER", "로웰", "잡화점 주인"); // 상점 주인 (임시 이름)
         public static readonly NpcProfile Blacksmith = new NpcProfile("NPC_BLACKSMITH", "브론", "대장장이"); // 대장장이 (임시 이름)
+        public static readonly NpcProfile Shadow = new NpcProfile("NPC_SHADOW", "???", "이름 없는 그림자"); // 챕터 5 네메시스 예고 (Day69 추가 — 정체는 71일차 최종장)
 
         private static readonly string[][] ShopLines = // 상점 주인 대사 (NpcLineKind 순서)
         {
@@ -78,6 +79,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         public static string FormatSpeaker(NpcProfile npc) => $"{npc.Name}  ·  {npc.Title}"; // 이름표 문구
 
-        public static NpcProfile Find(string id) => id == Shopkeeper.Id ? Shopkeeper : id == Blacksmith.Id ? Blacksmith : null; // ID로 NPC 조회 (Day62 추가 — 대화 이름표용, 없으면 null)
+        public static NpcProfile Find(string id) => id == Shopkeeper.Id ? Shopkeeper : id == Blacksmith.Id ? Blacksmith : id == Shadow.Id ? Shadow : null; // ID로 NPC 조회 (Day62 추가 — 대화 이름표용, 없으면 null)
     }
 }

@@ -1,0 +1,85 @@
+{
+  "id": "CH3_02",
+  "title": "연금술사의 실험실",
+  "characterId": "CH_CLAIRE",
+  "background": "NOIR",
+  "location": "금지된 지하 서고",
+  "nodes": [
+    {
+      "id": "b1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "서고 안쪽. 무너진 서가 사이에서 유리병이 잔뜩 든 가방이 굴러 나왔다. 그리고 그 아래에서 누군가 기침을 했다."
+    },
+    {
+      "id": "b2",
+      "speaker": "CH_CLAIRE",
+      "expression": "당황",
+      "text": "콜록! …사, 살았다. 저기, 그 골렘 다시 오기 전에 이것 좀 들어 줄래?"
+    },
+    {
+      "id": "b3",
+      "speaker": "HERO",
+      "expression": "",
+      "text": "이런 곳에서 뭘 하고 있었어?"
+    },
+    {
+      "id": "b4",
+      "speaker": "CH_CLAIRE",
+      "expression": "기본",
+      "text": "샘플 채취! 여기 마력은 살아 있는 것처럼 움직이거든. 생명연금술 연구에는 최고야."
+    },
+    {
+      "id": "b5",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "…메리디안의 클레어? 논문에서 본 이름이야. 여기 출입 허가는?"
+    },
+    {
+      "id": "b6",
+      "speaker": "CH_CLAIRE",
+      "expression": "부끄러움",
+      "text": "그, 그건… 나중에 받으면 되잖아? 대신 좋은 걸 알려 줄게. 이 서고, 누가 마력을 일부러 모으고 있어."
+    },
+    {
+      "id": "b7",
+      "speaker": "CH_CLAIRE",
+      "expression": "진지",
+      "text": "회수 장치가 설치돼 있었어. 최근에. 의회 규격으로.",
+      "choices": [
+        {
+          "text": "같이 가자. 네 지식이 필요해.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "b8a"
+        },
+        {
+          "text": "위험한 곳에 혼자 오지 마.",
+          "affinity": 1,
+          "preferred": false,
+          "next": "b8b"
+        }
+      ]
+    },
+    {
+      "id": "b8a",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "좋았어! 약이든 폭탄이든 만들어 줄게. …폭탄은 농담이고.",
+      "next": "b9"
+    },
+    {
+      "id": "b8b",
+      "speaker": "CH_CLAIRE",
+      "expression": "놀람",
+      "text": "…그런 말 들은 거 오랜만이네. 알았어, 같이 다닐게.",
+      "next": "b9"
+    },
+    {
+      "id": "b9",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "클레어가 동료가 되었다. 그녀가 챙긴 회수 장치 조각에는 의회 문장이 희미하게 찍혀 있었다."
+    }
+  ]
+}

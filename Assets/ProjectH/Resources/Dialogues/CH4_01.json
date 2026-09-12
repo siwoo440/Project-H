@@ -1,0 +1,67 @@
+{
+  "id": "CH4_01",
+  "title": "숲의 부탁",
+  "characterId": "CH_EVE",
+  "background": "SILVARAN",
+  "location": "실바란 숲 입구",
+  "nodes": [
+    {
+      "id": "f1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "북쪽으로 가는 길목, 실바란 숲의 정령들이 길을 막아섰다."
+    },
+    {
+      "id": "f2",
+      "speaker": "CH_EVE",
+      "expression": "진지",
+      "text": "…숲이 우리를 불렀어. 안쪽 정령들이 미쳐 가고 있대."
+    },
+    {
+      "id": "f3",
+      "speaker": "CH_CLAIRE",
+      "expression": "생각",
+      "text": "노아르에서 본 회수 장치랑 같은 파장이야. 여기에도 심어 놨나 봐."
+    },
+    {
+      "id": "f4",
+      "speaker": "CH_EVE",
+      "expression": "각오",
+      "text": "…내 숲에. 백 년을 살던 곳에.",
+      "choices": [
+        {
+          "text": "장치를 부수자. 숲을 되찾아 줄게.",
+          "affinity": 2,
+          "preferred": true,
+          "next": "f5a"
+        },
+        {
+          "text": "이브, 화가 나는 건 당연해.",
+          "affinity": 2,
+          "preferred": false,
+          "next": "f5b"
+        }
+      ]
+    },
+    {
+      "id": "f5a",
+      "speaker": "CH_EVE",
+      "expression": "기본",
+      "text": "…응. 같이 가 줘. 혼자면 다 태워 버릴 것 같아.",
+      "next": "f6"
+    },
+    {
+      "id": "f5b",
+      "speaker": "CH_EVE",
+      "expression": "부끄러움",
+      "text": "…고마워. 이상하네. 인간한테 이런 말을 듣는 게.",
+      "next": "f6"
+    },
+    {
+      "id": "f6",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "숲 깊은 곳에서 정령들의 울음이 점점 크게 들려왔다."
+    }
+  ]
+}

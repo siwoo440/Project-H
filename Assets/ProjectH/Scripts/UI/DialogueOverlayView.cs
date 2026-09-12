@@ -37,8 +37,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private readonly List<Button> choiceButtons = new List<Button>(); // 현재 선택지 버튼
         private readonly List<StandingView> standings = new List<StandingView>(); // 무대 위 캐릭터
-        private readonly Button[] textSpeedButtons = new Button[3]; // 글자 속도 버튼
-        private readonly Button[] autoSpeedButtons = new Button[3]; // 자동 속도 버튼
         private DialogueRunner runner; // 대화 진행기
         private Action<DialogueRunner> onFinished; // 종료 콜백
         private DialogueStageLayout layout; // 스탠딩 배치
@@ -58,7 +56,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text logText; // 로그 내용
         private ScrollRect logScroll; // 로그 스크롤
         private GameObject confirmPanel; // 건너뛰기 확인 창
-        private GameObject settingsPanel; // 설정 창
+        private bool settingsOpen; // 통합 설정 창 열림 여부 (Day72 — 대화 전용 설정 창을 대체)
         private string fullText = string.Empty; // 현재 대사 전체
         private float visibleChars; // 표시 중인 글자 수
         private bool isTyping; // 타자 효과 진행 여부
@@ -119,7 +117,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RuntimeUiKit.SetRect(choiceRoot, new Vector2(0.26f, 0.36f), new Vector2(0.74f, 0.86f)); // 화면 가운데 배치
             BuildLogPanel(); // 로그 창
             BuildConfirmPanel(); // 건너뛰기 확인 창
-            BuildSettingsPanel(); // 설정 창 (Day62)
         }
 
         private void AddStanding(string characterId, DialogueStageSlot slot) // 스탠딩 한 명 배치 (빈 ID면 생략)
@@ -160,12 +157,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image plate = RuntimeUiKit.CreateImage(uiRoot.transform, "NamePlate", NamePlateColor); // 이름표 생성
             plate.raycastTarget = false; // 입력 통과
             namePlate = plate.rectTransform; // 이름표 저장 (화자 쪽으로 이동)
-            nameText = RuntimeUiKit.CreateText(plate.transform, "Name", string.Empty, 24, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft).BestFit(14); // 이름
+            nameText = RuntimeUiKit.CreateText(plate.transform, "Name", string.Empty, ProjectH.Core.GameSettings.ScaleFontSize(24), Color.white, FontStyle.Bold, TextAnchor.MiddleLeft).BestFit(14); // 이름
             RuntimeUiKit.SetRect(nameText.rectTransform, new Vector2(0.07f, 0f), new Vector2(0.52f, 1f)); // 이름 왼쪽
-            affiliationText = RuntimeUiKit.CreateText(plate.transform, "Affiliation", string.Empty, 16, AffiliationColor, FontStyle.Normal, TextAnchor.MiddleRight).BestFit(10); // 소속
+            affiliationText = RuntimeUiKit.CreateText(plate.transform, "Affiliation", string.Empty, ProjectH.Core.GameSettings.ScaleFontSize(16), AffiliationColor, FontStyle.Normal, TextAnchor.MiddleRight).BestFit(10); // 소속
             RuntimeUiKit.SetRect(affiliationText.rectTransform, new Vector2(0.50f, 0f), new Vector2(0.94f, 1f)); // 소속 오른쪽
 
-            bodyText = RuntimeUiKit.CreateText(window.transform, "Body", string.Empty, 27, BodyColor, FontStyle.Normal, TextAnchor.UpperLeft).Wrap(); // 대사 생성 (밝은 창 위 진회색)
+            bodyText = RuntimeUiKit.CreateText(window.transform, "Body", string.Empty, ProjectH.Core.GameSettings.ScaleFontSize(27), BodyColor, FontStyle.Normal, TextAnchor.UpperLeft).Wrap(); // 대사 생성 (밝은 창 위 진회색)
             bodyText.lineSpacing = 1.15f; // 줄 간격
             RuntimeUiKit.SetRect(bodyText.rectTransform, new Vector2(0.035f, 0.10f), new Vector2(0.94f, 0.78f)); // 대사 배치
             continueMark = RuntimeUiKit.CreateText(window.transform, "ContinueMark", "▼", 22, WindowLineColor); // 넘김 표시 생성
@@ -178,7 +175,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             CreateIconButton("Skip", "▶▶", "건너뛰기", 1, ConfirmSkip); // 건너뛰기 (확인 창)
             CreateIconButton("Hide", "◎", "숨김", 2, HideUi); // UI 숨김 (기획서 'UI 비활성화')
             CreateIconButton("Log", "≡", "로그", 3, OpenLog); // 대화 로그
-            CreateIconButton("Settings", "⚙", "설정", 4, OpenSettings); // 글자·자동 속도 설정
+            CreateIconButton("Settings", "⚙", "설정", 4, OpenSettings); // 통합 설정 창 (대사 속도·자동 넘김·글자 크기, Day72)
         }
 
         private Text CreateIconButton(string name, string glyph, string caption, int index, UnityEngine.Events.UnityAction action) // 원형 아이콘 버튼 + 아래 설명
@@ -253,38 +250,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             confirmPanel.SetActive(false); // 초기 숨김
         }
 
-        private void BuildSettingsPanel() // 설정 창 : 글자 속도 · 자동 넘김 속도 (Day62 신규)
-        {
-            Image dim = RuntimeUiKit.CreateImage(transform, "Settings", new Color(0f, 0f, 0f, 0.55f)); // 뒤 화면 어둡게
-            RuntimeUiKit.Stretch(dim.rectTransform); // 전체 화면
-            Image box = RuntimeUiKit.CreateImage(dim.transform, "Box", PanelColor); // 설정 상자
-            RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.31f, 0.30f), new Vector2(0.69f, 0.70f)); // 가운데 배치
-            box.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 외곽선
-            Text title = RuntimeUiKit.CreateText(box.transform, "Title", "대화 설정", 24, BodyColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
-            RuntimeUiKit.SetRect(title.rectTransform, new Vector2(0.06f, 0.84f), new Vector2(0.70f, 0.96f)); // 제목 배치
-            BuildSpeedRow(box.transform, "글자 속도", 0.60f, textSpeedButtons, level => DialogueSettings.TextSpeed = level); // 글자 속도 줄
-            BuildSpeedRow(box.transform, "자동 넘김 속도", 0.34f, autoSpeedButtons, level => DialogueSettings.AutoSpeed = level); // 자동 속도 줄
-            CreatePanelButton(box.transform, "CloseSettings", "닫기", new Vector2(0.36f, 0.06f), new Vector2(0.64f, 0.19f), () => settingsPanel.SetActive(false)); // 닫기
-            settingsPanel = dim.gameObject; // 창 저장
-            settingsPanel.SetActive(false); // 초기 숨김
-        }
-
-        private void BuildSpeedRow(Transform parent, string label, float y, Button[] buttons, Action<int> apply) // 느림·보통·빠름 한 줄
-        {
-            Text text = RuntimeUiKit.CreateText(parent, "Label_" + label, label, 19, BodyColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 줄 이름
-            RuntimeUiKit.SetRect(text.rectTransform, new Vector2(0.06f, y), new Vector2(0.36f, y + 0.16f)); // 왼쪽
-
-            for (int index = 0; index < buttons.Length; index++) // 단계 버튼
-            {
-                int level = index; // 클릭용 단계 복사
-                buttons[index] = CreatePanelButton(parent, $"{label}_{index}", DialogueSettings.SpeedLabels[index], new Vector2(0.38f + (index * 0.19f), y), new Vector2(0.55f + (index * 0.19f), y + 0.16f), () => // 단계 버튼
-                {
-                    apply(level); // 저장
-                    RefreshSettingsButtons(); // 선택 표시
-                });
-            }
-        }
-
         private static Button CreatePanelButton(Transform parent, string name, string label, Vector2 min, Vector2 max, UnityEngine.Events.UnityAction action) // 창 버튼 생성
         {
             Button button = RuntimeUiKit.CreateButton(parent, "Button_" + name, ButtonColor); // 버튼 생성
@@ -306,7 +271,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (isTyping) // 타자 효과 진행 확인
             {
-                visibleChars += DialogueSettings.GetCharsPerSecond(DialogueSettings.TextSpeed) * delta; // 설정 속도로 글자 증가
+                visibleChars += DialogueSettings.GetCharsPerSecond() * delta; // 설정한 대사 속도로 글자 증가
                 int count = Mathf.Min(fullText.Length, Mathf.FloorToInt(visibleChars)); // 표시 글자 수
 
                 if (count >= fullText.Length) // 대사 끝 확인
@@ -320,13 +285,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             continueMark.color = new Color(WindowLineColor.r, WindowLineColor.g, WindowLineColor.b, 0.35f + (0.65f * Mathf.PingPong(Time.unscaledTime * 1.6f, 1f))); // ▼ 깜빡임
-            bool modalOpen = logPanel.activeSelf || confirmPanel.activeSelf || settingsPanel.activeSelf; // 창 열림 여부
+            bool modalOpen = logPanel.activeSelf || confirmPanel.activeSelf || settingsOpen; // 창 열림 여부 (설정은 별도 화면, Day72)
 
             if (autoMode && !isTyping && !modalOpen && !uiHidden && runner.Current != null && !runner.IsWaitingForChoice) // 자동 넘김 조건
             {
                 autoTimer += delta; // 대기 누적
 
-                if (autoTimer >= DialogueSettings.GetAutoDelay(DialogueSettings.AutoSpeed, fullText.Length)) // 설정 속도만큼 기다린 뒤
+                if (autoTimer >= DialogueSettings.GetAutoDelay(fullText.Length)) // 설정한 자동 넘김 대기만큼 기다린 뒤
                 {
                     Next(); // 다음 대사
                     return; // 이번 프레임 입력 처리 생략 (종료 직후 보호)
@@ -342,8 +307,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             else if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) // ESC 확인
             {
                 if (logPanel.activeSelf) CloseLog(); // 로그 닫기
-                confirmPanel.SetActive(false); // 확인 창 닫기
-                settingsPanel.SetActive(false); // 설정 창 닫기
+                confirmPanel.SetActive(false); // 확인 창 닫기 (설정 창은 자기 [닫기]로 닫는다)
             }
         }
 
@@ -497,7 +461,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 float y = top - (index * (height + gap)); // 버튼 위치
                 RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(0f, y - height), new Vector2(1f, y)); // 버튼 배치
                 button.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 회청색 외곽선
-                Text text = RuntimeUiKit.CreateText(button.transform, "Label", ResolveHeroName(choices[index].Text), 24, BodyColor).BestFit(16); // 선택지 문구 (Day68 — 이름 반영)
+                Text text = RuntimeUiKit.CreateText(button.transform, "Label", ResolveHeroName(choices[index].Text), ProjectH.Core.GameSettings.ScaleFontSize(24), BodyColor).BestFit(16); // 선택지 문구 (Day68 — 이름 반영)
                 RuntimeUiKit.Stretch(text.rectTransform, 10f); // 여백 확장
                 button.onClick.AddListener(() => Choose(captured)); // 선택 연결
                 choiceButtons.Add(button); // 목록 등록
@@ -591,20 +555,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             logPanel.SetActive(false); // 창 숨김
         }
 
-        private void OpenSettings() // 설정 창 열기
+        private void OpenSettings() // 통합 설정 창 열기 (Day72 — 대사 속도·자동 넘김을 여기서 바꾼다)
         {
-            RefreshSettingsButtons(); // 현재 단계 표시
-            settingsPanel.SetActive(true); // 창 표시
-            settingsPanel.transform.SetAsLastSibling(); // 최상단 표시
-        }
-
-        private void RefreshSettingsButtons() // 선택된 속도 단계 강조
-        {
-            for (int index = 0; index < textSpeedButtons.Length; index++) // 단계 순회
-            {
-                textSpeedButtons[index].GetComponent<Image>().color = index == DialogueSettings.TextSpeed ? SelectedColor : ButtonColor; // 글자 속도
-                autoSpeedButtons[index].GetComponent<Image>().color = index == DialogueSettings.AutoSpeed ? SelectedColor : ButtonColor; // 자동 속도
-            }
+            if (settingsOpen) return; // 이미 열림
+            settingsOpen = true; // 열림 표시 (자동 넘김·키 입력 정지)
+            SettingsView.Open(_ => settingsOpen = false); // 설정 화면
         }
 
         private void HideUi() // 숨김 : 대화창·메뉴 숨기기 (아무 곳이나 클릭하면 복귀)

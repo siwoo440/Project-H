@@ -1,0 +1,70 @@
+{
+  "id": "ENDING_01",
+  "title": "되돌아온 이름",
+  "characterId": "CH_SERENA",
+  "background": "VILLAGE_PLAZA",
+  "location": "엔딩 · 되돌아온 이름",
+  "nodes": [
+    {
+      "id": "e1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "관이 모두 식은 뒤, 아르카이는 제 이름을 한 번 더 발음해 보고는 옥좌에 앉았다."
+    },
+    {
+      "id": "e2",
+      "speaker": "NPC_ARCHAI",
+      "expression": "",
+      "text": "굶는 건 오랜만이라 조금 무섭군. 그래도 이번엔 부를 이름이 있으니 견딜 만하다."
+    },
+    {
+      "id": "e3",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "그는 잠들었다. 죽은 것도, 봉인된 것도 아니었다. 그저 이름을 가진 채 쉬는 중이었다."
+    },
+    {
+      "id": "e4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "대륙에 남은 침식은 사라지지 않았다. 관이 걷어 가던 몫이 그대로 땅에 남았다."
+    },
+    {
+      "id": "e5",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "수치는 정직해. 첫해엔 더 나빠질 거야. 그다음부터가 진짜지."
+    },
+    {
+      "id": "e6",
+      "speaker": "CH_TYRIA",
+      "expression": "기본",
+      "text": "그럼 그 첫해를 버티게 하면 됩니다. 그게 제 일입니다."
+    },
+    {
+      "id": "e7",
+      "speaker": "CH_CLAIRE",
+      "expression": "미소",
+      "text": "정화 방법을 찾을 거예요. 이번엔 되살리는 연구가 아니라, 살리는 연구로요."
+    },
+    {
+      "id": "e8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "사원 기록에는 지워진 자리가 다시 채워졌다. 「아르카이 — 잠들다」."
+    },
+    {
+      "id": "e9",
+      "speaker": "CH_SERENA",
+      "expression": "미소",
+      "text": "언젠가 그가 깨면, 그때는 우리가 먼저 이름을 부를 수 있겠네요."
+    },
+    {
+      "id": "e10",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "{HERO}와 열두 사람은 남은 침식이 있는 쪽으로 걸어갔다. 끝이 아니라, 오래 걸리는 시작이었다.",
+      "next": "END"
+    }
+  ]
+}

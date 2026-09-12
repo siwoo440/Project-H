@@ -37,6 +37,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         [SerializeField] private string heroName = string.Empty; // 주인공 이름 (Day68 추가, 빈 값이면 아직 정하지 않음)
         [SerializeField] private ChapterProgressSaveData chapterProgress = new ChapterProgressSaveData(); // 메인 스토리 진행 (Day68 추가)
         [SerializeField] private MinigameBoardSaveData minigameBoard = new MinigameBoardSaveData(); // 시장 놀이판 상태 (Day70 추가 — 하루 3회·기록)
+        [SerializeField] private long savedAtTicks; // 마지막으로 저장한 시각 (Day72 추가 — 슬롯 목록에 날짜·시간 표시)
         public int SaveVersion => saveVersion; // 저장 버전 반환
         public int CurrentDay => currentDay; // 현재 일차 반환
         public SaveTimeOfDay CurrentTime => currentTime; // 현재 시간대 반환
@@ -62,6 +63,12 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public string HeroName => heroName ?? string.Empty; // 주인공 이름 반환 (Day68 추가)
         public ChapterProgressSaveData ChapterProgress => chapterProgress; // 메인 스토리 진행 반환 (Day68 추가)
         public MinigameBoardSaveData MinigameBoard => minigameBoard; // 시장 놀이판 상태 반환 (Day70 추가)
+        public DateTime SavedAt => savedAtTicks <= 0L ? DateTime.MinValue : new DateTime(savedAtTicks, DateTimeKind.Local); // 마지막 저장 시각 반환 (Day72 추가, 0이면 기록 없음)
+
+        public void MarkSavedNow() // 저장 직전에 현재 시각 기록 (Day72 추가)
+        {
+            savedAtTicks = DateTime.Now.Ticks; // 현재 시각 저장
+        }
 
         public static SaveData CreateNewGame(IEnumerable<string> characterIds) // 새 게임 데이터 생성
         {

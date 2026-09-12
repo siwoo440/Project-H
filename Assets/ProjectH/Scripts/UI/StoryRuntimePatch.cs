@@ -44,6 +44,21 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             ChapterService.Refresh(saveData); // 진행 상황 정리 (이미 깬 던전 단계 통과)
+
+            if (EndingCatalog.IsReadyToPlay(saveData)) // 최종장을 마쳤고 아직 엔딩을 보지 않음 (Day72 추가)
+            {
+                busy = true; // 진행 중
+                EndingSequenceView.Play(EndingCatalog.Resolve(saveData), () => // 엔딩 연출
+                {
+                    EndingCatalog.MarkPlayed(GetSave()); // 같은 저장에서 다시 재생하지 않도록 기록
+                    Save(); // 진행 저장
+                    busy = false; // 완료
+                    if (GameManager.Instance != null && GameManager.Instance.Scenes != null) GameManager.Instance.Scenes.LoadScene(GameScenes.Title); // 타이틀로
+                });
+
+                return; // 엔딩 대기
+            }
+
             string scriptId = ChapterService.GetPendingDialogueId(saveData); // 자동 재생할 이야기
             if (string.IsNullOrEmpty(scriptId)) { Save(); return; } // 재생할 이야기 없음
             DialogueScript script = DialogueLibrary.Load(scriptId); // 대사 파일

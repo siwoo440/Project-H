@@ -1,0 +1,70 @@
+{
+  "id": "ENDING_04",
+  "title": "다시 지워진 이름",
+  "characterId": "CH_SERENA",
+  "background": "SEA_RIFT",
+  "location": "엔딩 · 다시 지워진 이름",
+  "nodes": [
+    {
+      "id": "e1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "관은 그대로 두었고, 이름은 끝내 부르지 않았다. 형체는 조용히 흩어졌다."
+    },
+    {
+      "id": "e2",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "그러나 관은 여전히 침식을 실어 나른다. 먹을 것이 있는 자리에는, 언젠가 먹을 것이 온다."
+    },
+    {
+      "id": "e3",
+      "speaker": "CH_LILIA",
+      "expression": "진지",
+      "text": "장치가 살아 있는 한 같은 일이 반복돼. 얼마나 걸릴지는 모르지만."
+    },
+    {
+      "id": "e4",
+      "speaker": "CH_CLAIRE",
+      "expression": "당황",
+      "text": "천 년이었죠. 최초 문명 때부터 지금까지. …다음은 더 짧을지도 몰라요."
+    },
+    {
+      "id": "e5",
+      "speaker": "CH_LUCIA",
+      "expression": "기본",
+      "text": "그럼 우리가 할 일은 하나야. 다음 사람이 읽을 수 있게 다 적어 두는 거."
+    },
+    {
+      "id": "e6",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "이번에는 한 글자도 지우지 않겠습니다. 지운 자리에서 이 모든 게 시작됐으니까요."
+    },
+    {
+      "id": "e7",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "기록실 벽에 새 문장이 새겨졌다. 「이름을 지우지 말 것. 지운 것은 반드시 돌아온다.」"
+    },
+    {
+      "id": "e8",
+      "speaker": "CH_ELLEN",
+      "expression": "진지",
+      "text": "우리가 못 끝낸 겁니다. 그건 분명히 해 둡시다."
+    },
+    {
+      "id": "e9",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "…네. 대신 다음 사람은 우리보다 덜 헤매도록 해요."
+    },
+    {
+      "id": "e10",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "{HERO} 일행은 마왕성을 나섰다. 등 뒤에서 관이 낮게 울리는 소리가, 오래 따라왔다.",
+      "next": "END"
+    }
+  ]
+}

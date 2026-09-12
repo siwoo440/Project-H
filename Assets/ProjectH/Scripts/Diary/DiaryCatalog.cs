@@ -15,7 +15,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
         InnNight = 3, // 여관 특별한 밤
         Recruit = 4, // 동료 합류 (Day64 추가)
         Region = 5, // 지역 첫 방문 (Day65 추가)
-        Main = 6 // 메인 스토리 (Day68 추가)
+        Main = 6, // 메인 스토리 (Day68 추가)
+        Ending = 7 // 엔딩 (Day72 추가)
     }
 
     public sealed class DiaryScenarioEntry // 다시 볼 수 있는 이야기 한 편
@@ -78,6 +79,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 case DiaryScenarioCategory.Recruit: return "동료 합류"; // 합류 (Day64)
                 case DiaryScenarioCategory.Region: return "지역"; // 첫 방문 (Day65)
                 case DiaryScenarioCategory.Main: return "메인 스토리"; // 프롤로그·챕터 (Day68)
+                case DiaryScenarioCategory.Ending: return "엔딩"; // 엔딩 4종 (Day72)
                 default: return "특별한 밤"; // 여관
             }
         }
@@ -96,6 +98,12 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
             {
                 DialogueScript script = DialogueLibrary.Load(scriptId); // 대사 파일 (화자 캐릭터 표시용)
                 result.Add(new DiaryScenarioEntry(scriptId, script == null ? string.Empty : script.CharacterId, DiaryScenarioCategory.Main)); // 추가
+            }
+
+            foreach (ProjectH.Story.EndingDefinition definition in ProjectH.Story.EndingCatalog.All) // 엔딩 4종 (Day72)
+            {
+                DialogueScript script = DialogueLibrary.Load(definition.ScriptId); // 대사 파일 (화자 캐릭터 표시용)
+                result.Add(new DiaryScenarioEntry(definition.ScriptId, script == null ? string.Empty : script.CharacterId, DiaryScenarioCategory.Ending)); // 추가
             }
 
             foreach (RegionArrivalDefinition definition in RegionVisitService.All) // 지역 첫 방문 2편 (Day65)

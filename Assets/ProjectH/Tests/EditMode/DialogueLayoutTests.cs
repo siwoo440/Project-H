@@ -66,14 +66,17 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(DialogueLibrary.IsValidSpeaker("BOB"), Is.False); // 잘못된 화자
         }
 
-        [Test] // 속도 설정 : 빠를수록 글자 속도 ↑ · 자동 대기 ↓ · 범위 보정
-        public void DialogueSettings_SpeedLevelsAreOrdered() // 설정 테스트
+        [Test] // 속도 설정 : 통합 설정(Day72)을 따라 빠를수록 글자 속도 ↑ · 자동 대기 ↓
+        public void DialogueSettings_FollowSpeedSetting() // 설정 테스트
         {
-            Assert.That(DialogueSettings.GetCharsPerSecond(0), Is.LessThan(DialogueSettings.GetCharsPerSecond(1))); // 느림 < 보통
-            Assert.That(DialogueSettings.GetCharsPerSecond(1), Is.LessThan(DialogueSettings.GetCharsPerSecond(2))); // 보통 < 빠름
-            Assert.That(DialogueSettings.GetAutoDelay(2, 20), Is.LessThan(DialogueSettings.GetAutoDelay(0, 20))); // 빠름이 덜 기다림
-            Assert.That(DialogueSettings.GetAutoDelay(1, 40), Is.GreaterThan(DialogueSettings.GetAutoDelay(1, 10))); // 긴 대사는 더 기다림
-            Assert.That(DialogueSettings.GetCharsPerSecond(9), Is.EqualTo(DialogueSettings.GetCharsPerSecond(2))); // 범위 보정
+            ProjectH.Core.GameSettings.SetDialogueSpeed(ProjectH.Core.GameSettings.MinDialogueSpeed); // 가장 느리게
+            float slowChars = DialogueSettings.GetCharsPerSecond(); // 초당 글자
+            float slowDelay = DialogueSettings.GetAutoDelay(20); // 자동 대기
+            ProjectH.Core.GameSettings.SetDialogueSpeed(ProjectH.Core.GameSettings.MaxDialogueSpeed); // 가장 빠르게
+            Assert.That(DialogueSettings.GetCharsPerSecond(), Is.GreaterThan(slowChars)); // 글자가 더 빨리 나옴
+            Assert.That(DialogueSettings.GetAutoDelay(20), Is.LessThan(slowDelay)); // 덜 기다림
+            Assert.That(DialogueSettings.GetAutoDelay(40), Is.GreaterThan(DialogueSettings.GetAutoDelay(10))); // 긴 대사는 더 기다림
+            ProjectH.Core.GameSettings.ResetToDefault(); // 기본값 복원
         }
     }
 }

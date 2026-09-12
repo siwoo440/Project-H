@@ -1,0 +1,70 @@
+{
+  "id": "ENDING_02",
+  "title": "마지막 침묵",
+  "characterId": "CH_SERENA",
+  "background": "SEA_RIFT",
+  "location": "엔딩 · 마지막 침묵",
+  "nodes": [
+    {
+      "id": "e1",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "형체가 흩어질 때 아무 소리도 나지 않았다. 이름이 없는 것은 비명도 남기지 못했다."
+    },
+    {
+      "id": "e2",
+      "speaker": "CH_NATASHA",
+      "expression": "진지",
+      "text": "…끝난 거 맞지? 끝났다고 말해 줘."
+    },
+    {
+      "id": "e3",
+      "speaker": "CH_ELLEN",
+      "expression": "기본",
+      "text": "끝났습니다. 다만 무엇이 끝났는지는, 우리도 부를 말이 없군요."
+    },
+    {
+      "id": "e4",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "관은 모두 끊겼다. 대륙의 침식은 갈 곳을 잃고 있던 자리에 그대로 가라앉았다."
+    },
+    {
+      "id": "e5",
+      "speaker": "CH_LILIA",
+      "expression": "당황",
+      "text": "기록에 뭐라고 쓰지. 이름을 모르는 걸 죽였다고 쓸 수는 없잖아."
+    },
+    {
+      "id": "e6",
+      "speaker": "CH_SEPHIRA",
+      "expression": "진지",
+      "text": "'무명(無名)을 베다.' 사원은 분명 그렇게 적을 겁니다. 천 년 전처럼."
+    },
+    {
+      "id": "e7",
+      "speaker": "CH_MERCIA",
+      "expression": "기본",
+      "text": "그렇다면 우리만이라도 다르게 적지요. 적어도 우리는, 그것이 이름을 원했다는 걸 압니다."
+    },
+    {
+      "id": "e8",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "옥좌는 부서지지 않았다. 다만 아무도 앉지 않은 채로 남았다."
+    },
+    {
+      "id": "e9",
+      "speaker": "CH_SERENA",
+      "expression": "진지",
+      "text": "…기도를 올렸어요. 누구에게 올린 건지는, 저도 잘 모르겠어요."
+    },
+    {
+      "id": "e10",
+      "speaker": "NARRATION",
+      "expression": "",
+      "text": "세상은 조용해졌다. 그 조용함이 평화인지 빈자리인지, {HERO}는 오래 생각했다.",
+      "next": "END"
+    }
+  ]
+}

@@ -77,6 +77,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Cache.Clear(); // 이전 플레이의 캐시 제거
         }
 
+        public static bool IsSkinSprite(Sprite sprite) // 이미 입힌 스킨 그림인지 (Day82 추가 — 이름이 같은 4일차 임시 그림과 구분한다)
+        {
+            return sprite != null && Cache.ContainsValue(sprite); // 캐시에 든 스킨 그림
+        }
+
         public static bool TryGetPart(string key, out UiSkinPart part) // 규격 조회 (없으면 false)
         {
             foreach (UiSkinPart candidate in Parts) // 조각 순회
@@ -103,13 +108,44 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return sprite; // 반환
         }
 
-        public static bool Apply(Image image, string key, float cornerScale = 1f) // 이미지에 스킨 입히기 (파일이 없으면 false — 색 상자를 그대로 둔다)
+        public static float GetCornerScale(string key) // 조각별 기본 모서리 배율 (Day82 추가 — 값이 클수록 모서리가 작게 그려진다. 화면에서 모서리가 두껍거나 얇으면 여기를 고친다)
+        {
+            switch (key) // 조각 분기
+            {
+                case PanelLight: // 밝은 창
+                case PanelDark: return 1.6f; // 큰 창은 모서리 장식이 보이게
+                case DialogueWindow: // 대화창
+                case BarTop: // 상단 바
+                case BarBottom: return 1.5f; // 넓은 띠
+                case ButtonRound: return 1f; // 늘이지 않는 그림
+                default: return 2f; // 버튼 · 카드 · 칸 · 게이지
+            }
+        }
+
+        public static bool IsDark(string key) // 바탕이 어두운 조각인지 (Day82 추가 — 그 위에는 밝은 글자를 올려야 한다)
+        {
+            switch (key) // 조각 분기
+            {
+                case PanelDark: // 어두운 창
+                case Slot: // 칸
+                case BarTop: // 상단 바
+                case BarBottom: // 하단 바
+                case NamePlate: // 이름표
+                case ButtonNav: // 내비 버튼
+                case ButtonRound: // 원형 버튼
+                case ButtonTabOff: // 꺼진 탭
+                case GaugeBack: return true; // 게이지 바탕
+                default: return false; // 밝은 조각
+            }
+        }
+
+        public static bool Apply(Image image, string key, float cornerScale = 0f) // 이미지에 스킨 입히기 (파일이 없으면 false — 색 상자를 그대로 둔다. cornerScale 0 = 조각별 기본값)
         {
             Sprite sprite = image == null ? null : Get(key); // 스킨
             if (sprite == null) return false; // 대상 · 그림 없음
             image.sprite = sprite; // 그림 적용
             image.type = sprite.border.sqrMagnitude > 0f ? Image.Type.Sliced : Image.Type.Simple; // 테두리가 있으면 9조각
-            image.pixelsPerUnitMultiplier = Mathf.Max(0.1f, cornerScale); // 값이 클수록 모서리가 작게 그려진다 (작은 칸용)
+            image.pixelsPerUnitMultiplier = cornerScale > 0f ? cornerScale : GetCornerScale(key); // 값이 클수록 모서리가 작게 그려진다
             return true; // 적용함
         }
     }

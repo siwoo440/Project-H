@@ -8,6 +8,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     public static class TitleScreenVisualPatch // 타이틀 화면 시각 요소 패치
     {
         private const string BackgroundResourcePath = "UI/TitleBackground"; // 타이틀 배경 리소스 경로
+        public const string LogoResourcePath = "UI/Logo"; // 타이틀 로고 리소스 경로 (Day82 추가 — 1024×512, 없으면 제목 글자 그대로)
+        private static readonly Vector2 LogoSize = new Vector2(670f, 335f); // 로고 표시 크기 (글자 띠가 예전 제목 글자와 비슷한 너비가 되게)
+        private static readonly Vector2 LogoOffset = new Vector2(-27f, 128f); // 제목 글자 영역의 왼쪽 위에서 로고까지 (그림 둘레의 투명 여백만큼 밖으로)
+        private const float SubtitleDropWithLogo = -252f; // 로고가 있을 때 부제 세로 위치 (로고 문양 아래로)
         private static Sprite backgroundSprite; // 런타임 배경 스프라이트
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)] // 첫 씬 로드 전 이벤트 구독 지정
@@ -142,6 +146,29 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 subtitleText.alignment = TextAnchor.MiddleLeft; // 부제 좌측 정렬 적용
             }
+
+            if (ApplyLogo(titleText) && subtitleRect != null) // 정식 로고 (Day82)
+            {
+                subtitleRect.anchoredPosition = new Vector2(subtitleRect.anchoredPosition.x, SubtitleDropWithLogo); // 부제를 로고 아래로
+            }
+        }
+
+        public static bool ApplyLogo(Text titleText) // 제목 글자 자리에 정식 로고 (Day82 추가 — 그림이 없으면 false, 글자 그대로)
+        {
+            Sprite logo = titleText == null ? null : RuntimeSpriteLoader.Load(LogoResourcePath); // 로고 그림
+            if (logo == null) return false; // 대상 · 그림 없음
+            Image image = RuntimeUiKit.CreateImage(titleText.transform, "Logo", Color.white); // 로고 (제목 글자의 자식 — 같은 자리 기준)
+            image.sprite = logo; // 그림 적용
+            image.raycastTarget = false; // 입력 통과
+            image.preserveAspect = true; // 비율 유지
+            RectTransform rect = image.rectTransform; // 로고 영역
+            rect.anchorMin = new Vector2(0f, 1f); // 제목 영역 왼쪽 위 기준
+            rect.anchorMax = new Vector2(0f, 1f); // 제목 영역 왼쪽 위 기준
+            rect.pivot = new Vector2(0f, 1f); // 왼쪽 위 고정
+            rect.anchoredPosition = LogoOffset; // 위치
+            rect.sizeDelta = LogoSize; // 크기
+            titleText.text = string.Empty; // 제목 글자 비움
+            return true; // 적용함
         }
 
         private static void MatchQuitButtonSize(Scene scene) // 종료 버튼 크기 통일

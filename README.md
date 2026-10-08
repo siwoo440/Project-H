@@ -8,7 +8,7 @@ Unity로 만드는 **리듬 전투 + 동료 육성 RPG**입니다.
 | --- | --- |
 | 엔진 | Unity (Input System 패키지 사용) |
 | 언어 | C# — 모든 기능 줄에 한국어 주석 |
-| 규모 | 런타임 스크립트 **332개** · 테스트 **151개** · 대사 **229편** |
+| 규모 | 런타임 스크립트 **333개** · 테스트 **152개** · 대사 **229편** |
 | 진행 | 1~74일차 완료 (일차별 기록은 [`Devlogs/`](Devlogs)) |
 
 ---
@@ -55,7 +55,7 @@ Assets/ProjectH/
 │  └─ Editor/      에디터 도구 (밸런스 표 · 리소스 점검 표)
 ├─ Data/           실제 데이터 에셋 (.asset)
 ├─ Resources/      런타임에 불러오는 그림 · 소리 · 대사
-└─ Tests/EditMode/ 테스트 151개
+└─ Tests/EditMode/ 테스트 152개
 ```
 
 ---
@@ -98,6 +98,7 @@ Assets/ProjectH/
 | 세계 지도 | `Resources/Map/WORLD.png` (1400×1100 · 지역 위치는 `AdventureRegionCatalog`의 좌표와 맞아야 한다 · 화면 비율이 달라도 늘이지 않는다) |
 | 아이템 · 장비 아이콘 | `Resources/Icons/Items/{아이템ID}.png` (없으면 색 원과 글자) |
 | UI 스킨 (창 · 버튼 · 게이지) | `Resources/UI/Skin/{이름}.png` (9조각으로 늘여 쓴다 · 이름과 크기 · 테두리는 `UiSkin.Parts` · 없으면 색 상자) |
+| 타이틀 로고 | `Resources/UI/Logo.png` (1024×512 · 없으면 제목 글자) |
 | UI 아이콘 (메뉴 · 내비 · 재화) | `Resources/UI/Icons/{이름}.png` (이름은 `UiIcon`의 목록 · 없으면 글자 기호) |
 | 룬 · 상태이상 · 속성 아이콘 | `Resources/Icons/Runes/{RuneKind}.png` · `Icons/Status/{BattleStatusEffectId}.png` · `Icons/Elements/{BattleElement}.png` |
 | 배경음 · 효과음 | `Resources/Audio/Bgm/{키}.wav` · `Resources/Audio/Sfx/{키}.wav` |
@@ -134,6 +135,8 @@ Assets/ProjectH/
 | 로비 배경을 어둡게 덮는 정도 | `LobbyBackdropCatalog.DimAlpha` |
 | 전투 유닛 움직임의 폭과 빠르기 | `BattleUnitMotionMath`의 상수 (대기 · 공격 · 피격 · 쓰러짐) |
 | 전용 컷인 그림의 표시 너비 | `UltimateCutInView.WideArtWidth` |
+| UI 스킨의 모서리 두께 | `UiSkin.GetCornerScale` (값이 클수록 모서리가 작게 그려진다) |
+| 씬에 놓인 임시 그림을 어떤 스킨으로 바꿀지 | `UiSkinScenePatch`의 대응표 |
 
 초상화와 컷인은 `StandingFaceCatalog`의 **얼굴 위치표**를 씁니다. 스탠딩을 새로 받아 얼굴 위치가 달라지면 이 표의 값을 다시 재야 합니다.
 
@@ -165,6 +168,7 @@ Assets/ProjectH/
 | 회차를 넘겨 남길 값은 **`PlayerProfile`** | `SaveData`는 한 회차 안에서만 유효 |
 | 설정 값은 **`GameSettings` 한 곳** | 화면과 기능이 따로 저장하면 어긋난다 |
 | 저장 파일은 **`SaveFileStore`** 로 쓰고 지울 것 | `File.WriteAllText`로 바로 덮어쓰면 쓰는 도중 꺼졌을 때 진행이 사라진다. 지울 때 백업을 남기면 지운 저장이 되살아난다 |
+| 창 · 버튼 그림은 **`UiSkin.Apply`** 로 입힐 것 | 9조각 테두리와 모서리 배율을 함께 맞춘다. 어두운 조각(`UiSkin.IsDark`) 위에는 밝은 글자를 올린다 |
 | 초상화 자리(이름 글자)에는 **`PortraitSlot.Apply`** | 글자와 같은 자리에 얼굴이나 상반신을 넣고, 그림이 없으면 글자를 그대로 둔다 |
 | 글자의 폰트는 **`RuntimeUiKit.DefaultFont`** | 기본 폰트를 직접 지정하면 정식 폰트를 넣어도 그 글자만 바뀌지 않는다 (테스트가 막는다) |
 | 회차를 넘겨 "본 이야기"를 물을 때는 **`DialogueSkipRules.IsSeen`** | 저장 파일의 기록은 새 게임에서 비워진다 |
@@ -202,7 +206,7 @@ Assets/ProjectH/
 | 로비 배경 · 대표 동료 | 시간대별 배경 4장 · 파티 첫 동료의 스탠딩 | 완료 |
 | 세계 지도 | **정식 지도 1장**(1400×1100) | 완료 |
 | 아이템 · 장비 아이콘 | **정식 아이콘 40개**(512×512 · 장비 22 · 그 밖 18) — 가방 · 상점 · 대장간 · 장비 칸 · 선물 | 완료 |
-| UI 스킨 · 아이콘 | 자리만 있음 — 씬에 놓인 화면은 4일차 임시 그림, 코드로 만든 화면은 색 상자와 글자 기호 | 스킨 18 · UI 아이콘 30 · 룬 15 · 상태이상 17 · 속성 5 · 로고 1 |
+| UI 스킨 · 아이콘 | **정식 그림 86장** (스킨 18 · UI 아이콘 30 · 룬 15 · 상태이상 17 · 속성 5 · 로고 1). 적용한 곳 : 씬에 놓인 화면(타이틀 · 로비 · 파티 · 전투 HUD) · 대화 화면 · 룬 · 상태이상 · 속성 · 타이틀 로고 | 코드로 만든 화면의 창 · 버튼(가방 · 캐릭터 · 상점 · 대장간 · 마을 · 일기장 · 모험 지도 · 설정 등) · 로비 내비 아이콘 · 재화 아이콘 · 게이지 |
 
 ---
 

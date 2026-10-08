@@ -28,6 +28,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             public GameObject Root; // 칩 루트 객체
             public Image Background; // 칩 배경 이미지
             public Text Label; // 칩 축약 문구 텍스트
+            public Image Icon; // 정식 아이콘 (Day82 추가 — 없으면 색 칩과 글자)
             public RectTransform TimerFill; // 잔여 시간 바 채움 RectTransform
         }
 
@@ -104,6 +105,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             elementChip.Background.color = BattleElementAffinityTable.GetColor(element); // 속성 색상 적용
             elementChip.Label.text = BattleElementAffinityTable.GetShortLabel(element); // 속성 축약 문구 적용
+            ApplyChipIcon(elementChip, UiIcon.GetElement(element), string.Empty); // 정식 속성 아이콘 (Day82)
             elementChip.TimerFill.anchorMax = new Vector2(1f, 1f); // 고정 표시 항목이므로 잔여 시간 바 가득 채움
             elementChip.Background.rectTransform.anchoredPosition = new Vector2(-ElementChipOffsetPixels, 0f); // 상태이상 칩 왼쪽 고정 위치 적용
         }
@@ -140,6 +142,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             backgroundRect.pivot = new Vector2(0f, 0.5f); // 칩 좌측 기준 피벗 설정 (가로 나열 계산 단순화)
             backgroundRect.sizeDelta = new Vector2(ChipSizePixels, ChipSizePixels); // 칩 크기 설정
 
+            Image icon = RuntimeUiKit.CreateImage(background.transform, "Icon", Color.white); // 정식 아이콘 자리 (Day82 추가)
+            icon.raycastTarget = false; // 입력 통과
+            icon.preserveAspect = true; // 비율 유지
+            icon.enabled = false; // 그림이 정해질 때까지 숨김
+            RuntimeUiKit.Stretch(icon.rectTransform); // 칩 전체
+
             Text label = CreateLabel(background.transform, "Label", 15, new Color(0.06f, 0.07f, 0.10f, 1f)); // 칩 축약 문구 생성
             RuntimeUiKit.Stretch(label.rectTransform); // 칩 문구 전체 확장
 
@@ -167,6 +175,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 Root = background.gameObject, // 칩 루트 객체 저장
                 Background = background, // 칩 배경 이미지 저장
                 Label = label, // 칩 문구 텍스트 저장
+                Icon = icon, // 아이콘 저장 (Day82)
                 TimerFill = timerFillRect // 잔여 시간 바 채움 저장
             };
         }
@@ -203,6 +212,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 chip.Root.SetActive(true); // 칩 표시
                 chip.Background.color = BattleStatusEffectCatalog.GetColor(snapshot.Id); // 상태이상 분류 색상 적용
                 chip.Label.text = snapshot.StackCount > 1 ? $"{BattleStatusEffectCatalog.GetShortLabel(snapshot.Id)}{snapshot.StackCount}" : BattleStatusEffectCatalog.GetShortLabel(snapshot.Id); // 중첩 수 포함 축약 문구 적용
+                ApplyChipIcon(chip, UiIcon.GetStatus(snapshot.Id), snapshot.StackCount > 1 ? snapshot.StackCount.ToString() : string.Empty); // 정식 상태이상 아이콘 (Day82 — 중첩 수만 글자로)
                 chip.TimerFill.anchorMax = new Vector2(GetTimerRatio(snapshot), 1f); // 앵커 확장 방식 잔여 시간 바 적용
                 chip.Background.rectTransform.anchoredPosition = new Vector2(cursorX, 0f); // 가로 나열 위치 적용
                 cursorX += ChipSizePixels + ChipSpacingPixels; // 다음 칩 위치 이동
@@ -249,6 +259,24 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             return Mathf.Clamp01(snapshot.RemainingSeconds / TimerBarReferenceSeconds); // 기준 지속시간 대비 잔여 비율 반환
+        }
+
+        private static void ApplyChipIcon(ChipRuntime chip, Sprite icon, string countText) // 칩에 정식 아이콘 적용 (Day82 추가 — 없으면 색 칩과 축약 글자 그대로)
+        {
+            if (chip.Icon == null) return; // 아이콘 자리 없음
+            chip.Icon.sprite = icon; // 그림 적용
+            chip.Icon.enabled = icon != null; // 그림 유무
+
+            if (icon == null) // 그림 없음
+            {
+                chip.Label.color = new Color(0.06f, 0.07f, 0.10f, 1f); // 색 칩 위의 어두운 글자로 되돌림
+                return; // 색 칩 유지
+            }
+
+            Color background = chip.Background.color; // 칩 색
+            chip.Background.color = new Color(background.r, background.g, background.b, 0f); // 아이콘이 둥근 배지라 색 칩은 숨김
+            chip.Label.text = countText; // 축약 글자 대신 중첩 수만
+            chip.Label.color = Color.white; // 아이콘 위에서 읽히는 색
         }
 
         private static Text CreateLabel(Transform parent, string name, int fontSize, Color color) // 공통 상태이상 표시 텍스트 생성 (RuntimeUiKit 위임)

@@ -25,6 +25,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 targetImage.sprite = sourceImage.sprite; // 원본 버튼 Sprite 복사
                 targetImage.overrideSprite = sourceImage.overrideSprite; // 원본 버튼 Override Sprite 복사
                 targetImage.type = sourceImage.type; // 원본 버튼 Image 타입 복사
+                targetImage.pixelsPerUnitMultiplier = sourceImage.pixelsPerUnitMultiplier; // 모서리 배율도 복사 (Day82 — 정식 스킨의 9조각 모서리 크기를 템플릿과 같게)
                 targetImage.preserveAspect = sourceImage.preserveAspect; // 원본 버튼 비율 유지 설정 복사
                 targetImage.fillCenter = sourceImage.fillCenter; // 원본 버튼 중앙 채움 설정 복사
                 targetImage.color = sourceImage.color; // 원본 버튼 Image 색상 복사

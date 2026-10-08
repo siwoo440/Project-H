@@ -240,6 +240,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 {
                     image.sprite = templateImage.sprite; // 기존 하단 버튼 스프라이트 복사
                     image.type = templateImage.type; // 기존 하단 버튼 이미지 유형 복사
+                    image.pixelsPerUnitMultiplier = templateImage.pixelsPerUnitMultiplier; // 모서리 배율도 복사 (Day82 — 정식 스킨의 9조각 모서리 크기를 템플릿과 같게)
                     image.color = templateImage.color; // 기존 하단 버튼 색상 복사
                 }
 

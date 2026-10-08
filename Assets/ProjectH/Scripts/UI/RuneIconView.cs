@@ -30,6 +30,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             ring.sprite = RhythmCircleSpriteFactory.GetRingSprite(); // 링 스프라이트
             ring.raycastTarget = false; // 입력 통과
             RuntimeUiKit.Stretch(ring.rectTransform, 8f); // 안쪽 배치
+            Image art = RuntimeUiKit.CreateImage(frame.transform, "Art", Color.white); // 정식 룬 그림 자리 (Day82 추가)
+            art.raycastTarget = false; // 입력 통과
+            art.preserveAspect = true; // 비율 유지
+            art.enabled = false; // 그림이 정해질 때까지 숨김
+            RuntimeUiKit.Stretch(art.rectTransform, 4f); // 안쪽 배치
             Text symbol = RuntimeUiKit.CreateText(frame.transform, "Symbol", string.Empty, 24, Color.white).BestFit(10).Outlined(new Color(0f, 0f, 0f, 0.6f), new Vector2(1f, -1f)); // 룬 글자
             RuntimeUiKit.Stretch(symbol.rectTransform, 12f); // 안쪽 배치
             return frame; // 아이콘 반환
@@ -40,6 +45,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image glow = frame.transform.Find("Glow").GetComponent<Image>(); // 발광 원
             Image ring = frame.transform.Find("Ring").GetComponent<Image>(); // 링
             Text symbol = frame.transform.Find("Symbol").GetComponent<Text>(); // 글자
+            Image art = frame.transform.Find("Art").GetComponent<Image>(); // 정식 룬 그림 (Day82)
+            Sprite icon = rune == null ? null : UiIcon.GetRune(rune.Kind); // 룬 그림 (없으면 null)
+            art.sprite = icon; // 그림 적용
+            art.enabled = icon != null; // 그림 유무
 
             if (rune == null) // 빈 칸 확인
             {
@@ -54,6 +63,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             ring.color = color; // 링 색
             symbol.text = RuneCatalog.Get(rune.Kind).Symbol; // 룬 글자
             symbol.color = Color.Lerp(color, Color.white, 0.55f); // 밝은 글자
+            if (icon == null) return; // 그림 없음 — 발광 원과 글자 그대로
+            ring.color = new Color(color.r, color.g, color.b, 0f); // 그림이 있으면 링 숨김 (Day82)
+            symbol.text = string.Empty; // 글자 숨김 (발광 원은 등급 표시로 그림 뒤에 남긴다)
         }
     }
 }

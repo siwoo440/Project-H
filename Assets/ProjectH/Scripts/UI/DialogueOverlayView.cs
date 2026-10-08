@@ -54,7 +54,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text affiliationText; // 소속
         private Text bodyText; // 대사
         private Text continueMark; // 넘김 표시 ▼
-        private Text autoGlyph; // 자동 아이콘 글자
+        private Graphic autoGlyph; // 자동 아이콘 (글자 기호 또는 정식 아이콘 — 켜지면 금색, Day82)
         private RectTransform choiceRoot; // 선택지 영역
         private GameObject logPanel; // 로그 창
         private Text logText; // 로그 내용
@@ -169,9 +169,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             topLine.raycastTarget = false; // 입력 통과
             RuntimeUiKit.SetRect(topLine.rectTransform, new Vector2(0f, 0.985f), new Vector2(1f, 1f)); // 윗선 배치
 
+            if (UiSkin.Apply(window, UiSkin.DialogueWindow)) // 정식 대화창 (Day82 — 없으면 밝은 회색 상자 그대로)
+            {
+                window.color = Color.white; // 그림 색 그대로
+                topLine.gameObject.SetActive(false); // 테두리가 있으므로 윗선은 숨김
+            }
+
             Image plate = RuntimeUiKit.CreateImage(uiRoot.transform, "NamePlate", NamePlateColor); // 이름표 생성
             plate.raycastTarget = false; // 입력 통과
             namePlate = plate.rectTransform; // 이름표 저장 (화자 쪽으로 이동)
+            if (UiSkin.Apply(plate, UiSkin.NamePlate)) plate.color = Color.white; // 정식 이름표 (Day82 — 남색 바탕이라 흰 이름 글자가 그대로 읽힌다)
             nameText = RuntimeUiKit.CreateText(plate.transform, "Name", string.Empty, ProjectH.Core.GameSettings.ScaleFontSize(24), Color.white, FontStyle.Bold, TextAnchor.MiddleLeft).BestFit(14); // 이름
             RuntimeUiKit.SetRect(nameText.rectTransform, new Vector2(0.07f, 0f), new Vector2(0.52f, 1f)); // 이름 왼쪽
             affiliationText = RuntimeUiKit.CreateText(plate.transform, "Affiliation", string.Empty, ProjectH.Core.GameSettings.ScaleFontSize(16), AffiliationColor, FontStyle.Normal, TextAnchor.MiddleRight).BestFit(10); // 소속
@@ -197,22 +204,38 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RefreshSkipHint(); // 안내 문구
         }
 
-        private Text CreateIconButton(string name, string glyph, string caption, int index, UnityEngine.Events.UnityAction action) // 원형 아이콘 버튼 + 아래 설명
+        private Graphic CreateIconButton(string name, string glyph, string caption, int index, UnityEngine.Events.UnityAction action) // 원형 아이콘 버튼 + 아래 설명 (Day82 — 정식 아이콘이 있으면 그림, 없으면 글자 기호)
         {
             float centerX = 0.735f + (index * 0.057f); // 오른쪽으로 나란히
             Button button = RuntimeUiKit.CreateButton(uiRoot.transform, "Icon_" + name, IconColor); // 원형 버튼
-            button.GetComponent<Image>().sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 원 모양
+            Image round = button.GetComponent<Image>(); // 버튼 바탕
+            if (UiSkin.Apply(round, UiSkin.ButtonRound)) round.color = Color.white; // 정식 원형 버튼 (Day82)
+            else round.sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 없으면 코드로 그린 원
             RectTransform rect = (RectTransform)button.transform; // 버튼 영역
             rect.anchorMin = new Vector2(centerX, 0.945f); // 기준점
             rect.anchorMax = new Vector2(centerX, 0.945f); // 기준점
             rect.sizeDelta = new Vector2(54f, 54f); // 정원 크기
             Text text = RuntimeUiKit.CreateText(button.transform, "Glyph", glyph, 22, Color.white).BestFit(12); // 아이콘 글자
             RuntimeUiKit.Stretch(text.rectTransform, 8f); // 원 안
+            Graphic mark = text; // 버튼 안 표시 (글자 기호 또는 아이콘)
+            Sprite iconSprite = UiIcon.Get(name.ToLowerInvariant()); // 정식 아이콘 (Day82 — auto · skip · hide · log · settings)
+
+            if (iconSprite != null) // 아이콘 있음
+            {
+                text.text = string.Empty; // 글자 기호 비움
+                Image icon = RuntimeUiKit.CreateImage(button.transform, "Icon", Color.white); // 아이콘
+                icon.sprite = iconSprite; // 그림 적용
+                icon.raycastTarget = false; // 클릭은 버튼이 받는다
+                icon.preserveAspect = true; // 비율 유지
+                RuntimeUiKit.Stretch(icon.rectTransform, 12f); // 원 안쪽
+                mark = icon; // 아이콘이 표시를 맡는다
+            }
+
             Text label = RuntimeUiKit.CreateText(uiRoot.transform, "Caption_" + name, caption, 13, Color.white).Outlined(new Color(0f, 0f, 0f, 0.7f), new Vector2(1f, -1f)); // 아래 설명
             label.raycastTarget = false; // 입력 통과
             RuntimeUiKit.SetRect(label.rectTransform, new Vector2(centerX - 0.028f, 0.878f), new Vector2(centerX + 0.028f, 0.908f)); // 원 아래
             button.onClick.AddListener(action); // 기능 연결
-            return text; // 글자 반환
+            return mark; // 표시 반환
         }
 
         private void BuildLogPanel() // 로그 창 (지나간 대사 목록)
@@ -534,7 +557,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 Button button = RuntimeUiKit.CreateButton(choiceRoot, $"Choice_{index}", new Color(0.96f, 0.96f, 0.98f, 0.95f)); // 밝은 선택지 버튼
                 float y = top - (index * (height + gap)); // 버튼 위치
                 RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(0f, y - height), new Vector2(1f, y)); // 버튼 배치
-                button.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 회청색 외곽선
+                Image choiceImage = button.GetComponent<Image>(); // 선택지 바탕
+                if (UiSkin.Apply(choiceImage, UiSkin.ButtonChoice)) choiceImage.color = Color.white; // 정식 선택지 (Day82)
+                else button.gameObject.AddComponent<Outline>().effectColor = WindowLineColor; // 없으면 회청색 외곽선
                 Text text = RuntimeUiKit.CreateText(button.transform, "Label", ResolveHeroName(choices[index].Text), ProjectH.Core.GameSettings.ScaleFontSize(24), BodyColor).BestFit(16); // 선택지 문구 (Day68 — 이름 반영)
                 RuntimeUiKit.Stretch(text.rectTransform, 10f); // 여백 확장
                 button.onClick.AddListener(() => Choose(captured)); // 선택 연결

@@ -58,6 +58,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 background.sprite = chipTemplate.sprite; // GoldChip 스프라이트 복사
                 background.type = chipTemplate.type; // GoldChip 이미지 유형 복사
+                background.pixelsPerUnitMultiplier = chipTemplate.pixelsPerUnitMultiplier; // 모서리 배율도 복사 (Day82 — 정식 스킨의 9조각 모서리 크기를 템플릿과 같게)
                 background.color = new Color(1f, 1f, 1f, 0.95f); // 활력 칩 배경 색상 적용 (Gold/Crystal과 동일 톤)
             }
             else // 템플릿 없음 처리

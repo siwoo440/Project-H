@@ -141,7 +141,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             standing.color = placeholder ? DialogueArtFactory.GetCharacterTint(npc.Id) : Color.white; // 실루엣이면 NPC 색
             standing.preserveAspect = true; // 비율 유지
             standing.raycastTarget = false; // 입력 통과
-            SetRect(standing.rectTransform, new Vector2(0.02f, 0.20f), new Vector2(0.38f, 0.91f)); // 왼쪽 배치
+            ProjectH.Dialogue.DialogueStandingFrame.GrowDown(new Vector2(-0.10f, 0.20f), new Vector2(0.50f, 0.91f), out Vector2 standingMin, out Vector2 standingMax); // 대화 화면과 같은 배율로 키움 (Day77 — 아래쪽은 대사 상자 뒤로)
+            standing.rectTransform.pivot = ProjectH.Dialogue.DialogueStandingFrame.Pivot; // 머리 쪽 기준 (Day77)
+            SetRect(standing.rectTransform, standingMin, standingMax); // 왼쪽 배치
             Image box = CreateImage(parent, "DialogueBox", new Color(0.06f, 0.05f, 0.07f, 0.90f)); // 대사 상자
             SetRect(box.rectTransform, new Vector2(0.01f, 0.02f), new Vector2(0.40f, 0.24f)); // 하단 배치
             AddOutline(box.gameObject, new Color(0.86f, 0.62f, 0.30f, 0.8f)); // 금색 테두리

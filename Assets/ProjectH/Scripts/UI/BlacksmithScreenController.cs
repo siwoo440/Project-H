@@ -139,7 +139,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             standing.color = placeholder ? DialogueArtFactory.GetCharacterTint(npc.Id) : Color.white; // 실루엣이면 구릿빛
             standing.preserveAspect = true; // 비율 유지
             standing.raycastTarget = false; // 입력 통과
-            SetRect(standing.rectTransform, new Vector2(0.60f, 0.20f), new Vector2(0.98f, 0.91f)); // 오른쪽 배치
+            ProjectH.Dialogue.DialogueStandingFrame.GrowDown(new Vector2(0.49f, 0.20f), new Vector2(1.09f, 0.91f), out Vector2 standingMin, out Vector2 standingMax); // 대화 화면과 같은 배율로 키움 (Day77 — 아래쪽은 대사 상자 뒤로)
+            standing.rectTransform.pivot = ProjectH.Dialogue.DialogueStandingFrame.Pivot; // 머리 쪽 기준 (Day77)
+            SetRect(standing.rectTransform, standingMin, standingMax); // 오른쪽 배치
             Image box = CreateImage(parent, "DialogueBox", new Color(0.05f, 0.04f, 0.04f, 0.92f)); // 대사 상자
             SetRect(box.rectTransform, new Vector2(0.52f, 0.02f), new Vector2(0.99f, 0.24f)); // 하단 배치
             AddOutline(box.gameObject, new Color(1f, 0.55f, 0.22f, 0.75f)); // 불씨 테두리
@@ -172,7 +174,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             ownerPortrait = CreateImage(ownerFrame.transform, "Portrait", Color.white); // 장착자 초상
             ownerPortrait.preserveAspect = true; // 비율 유지
             ownerPortrait.raycastTarget = false; // 입력 통과
-            SetRect(ownerPortrait.rectTransform, new Vector2(-0.35f, -1.05f), new Vector2(1.35f, 1.02f)); // 크게 놓고 위쪽만 노출
+            Stretch(ownerPortrait.rectTransform); // 틀 전체 (Day77 — 얼굴 초상화를 틀에 가득 채운다)
             ownerText = CreateText(panel.transform, "OwnerText", string.Empty, 16, new Color(0.85f, 0.82f, 0.78f, 1f)).BestFit(10); // 장착자 이름
             SetRect(ownerText.rectTransform, new Vector2(0.03f, 0.555f), new Vector2(0.26f, 0.60f)); // 초상 아래
 
@@ -440,8 +442,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 종료
             }
 
-            ownerPortrait.sprite = DialogueArtFactory.GetStanding(owner.CharacterId, null, out bool placeholder); // 초상
-            ownerPortrait.color = placeholder ? DialogueArtFactory.GetCharacterTint(owner.CharacterId) : Color.white; // 실루엣 색
+            ownerPortrait.sprite = CharacterPortraitArt.Get(owner.CharacterId, out bool placeholder); // 초상 (Day77 — 스탠딩에서 잘라 낸 얼굴)
+            ownerPortrait.color = placeholder ? CharacterPortraitArt.GetPlaceholderTint(owner.CharacterId) : Color.white; // 임시 그림은 캐릭터 색
+            BackgroundFit.Apply(ownerPortrait); // 비율을 지킨 채 틀을 가득 채움 (넘치는 쪽은 틀이 자른다, Day77)
             CharacterData data = dataManager == null ? null : dataManager.GetCharacter(owner.CharacterId); // 캐릭터 원본
             ownerText.text = $"{(data == null ? owner.CharacterId : data.DisplayName)} 장착 중"; // 장착자 이름
         }

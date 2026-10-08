@@ -8,7 +8,7 @@ Unity로 만드는 **리듬 전투 + 동료 육성 RPG**입니다.
 | --- | --- |
 | 엔진 | Unity (Input System 패키지 사용) |
 | 언어 | C# — 모든 기능 줄에 한국어 주석 |
-| 규모 | 런타임 스크립트 **316개** · 테스트 **141개** · 대사 **229편** |
+| 규모 | 런타임 스크립트 **318개** · 테스트 **142개** · 대사 **229편** |
 | 진행 | 1~74일차 완료 (일차별 기록은 [`Devlogs/`](Devlogs)) |
 
 ---
@@ -55,7 +55,7 @@ Assets/ProjectH/
 │  └─ Editor/      에디터 도구 (밸런스 표 · 리소스 점검 표)
 ├─ Data/           실제 데이터 에셋 (.asset)
 ├─ Resources/      런타임에 불러오는 그림 · 소리 · 대사
-└─ Tests/EditMode/ 테스트 141개
+└─ Tests/EditMode/ 테스트 142개
 ```
 
 ---
@@ -89,7 +89,7 @@ Assets/ProjectH/
 | 대화 배경 | `Resources/Dialogues/Backgrounds/{배경키}.png` |
 | 화면 배경 | `Resources/Dialogues/Backgrounds/SHOP.png` · `BLACKSMITH.png` · `VILLAGE.png` |
 | 캐릭터 스탠딩 | `Resources/Dialogues/Standing/{캐릭터ID}_{표정}.png` (없는 표정은 `_normal`, 그것도 없으면 `{캐릭터ID}.png`) |
-| 정사각 초상화 | `Resources/Portraits/{캐릭터ID}.png` |
+| 정사각 초상화 | `Resources/Portraits/{캐릭터ID}.png` (없으면 스탠딩에서 얼굴을 잘라 쓴다) |
 | 궁극기 컷인 | `Resources/UltimateCutIns/{캐릭터ID}.png` |
 | 배경음 · 효과음 | `Resources/Audio/Bgm/{키}.wav` · `Resources/Audio/Sfx/{키}.wav` |
 | 폰트 | `Resources/Fonts/GameFont.ttf` |
@@ -109,6 +109,16 @@ Assets/ProjectH/
 | `angry` | 화남 · 분노 |
 
 스탠딩은 `{ID}_{표정}` → `{ID}_normal` → `{ID}` → 임시 실루엣 순서로 찾습니다. 표정 그림이 일부만 있어도 나머지는 기본 표정으로 나옵니다.
+
+### 캐릭터가 보이는 크기 바꾸기
+
+| 바꾸고 싶은 것 | 고칠 곳 |
+| --- | --- |
+| 대화 화면의 캐릭터 크기 | `DialogueStandingFrame.Scale` (1 = 전신 · 1.4 = 허벅지까지 · 1.7 = 허리까지) |
+| 초상화에 머리가 들어오는 범위 | `StandingFaceCatalog.PortraitScale` (얼굴 높이의 몇 배를 자를지) |
+| 궁극기 컷인의 얼굴 크기 | `UltimateCutInView.FaceHeightInBand` |
+
+초상화와 컷인은 `StandingFaceCatalog`의 **얼굴 위치표**를 씁니다. 스탠딩을 새로 받아 얼굴 위치가 달라지면 이 표의 값을 다시 재야 합니다.
 
 ---
 
@@ -140,6 +150,7 @@ Assets/ProjectH/
 | 새 스크립트는 **`.meta`를 함께 만들 것** | Unity가 먼저 만들면 GUID가 어긋난다 |
 | 대사 표정 이름은 **`ExpressionCatalog`에 등록** | 등록하지 않은 이름은 기본 표정으로 나오고 테스트가 실패한다 |
 | 전체 화면 배경은 **`BackgroundFit.Apply`** | 그냥 늘리면 16:9가 아닌 화면에서 그림이 찌그러진다 (자식이 없는 배경에만) |
+| 스탠딩을 바꾸면 **`StandingFaceCatalog`를 다시 잴 것** | 초상화와 컷인이 이 표로 얼굴을 찾는다. 값이 어긋나면 얼굴이 잘린다 |
 
 ---
 
@@ -156,7 +167,8 @@ Assets/ProjectH/
 | 폰트 | Unity 기본 | 한글 폰트 1종 |
 | 대화 배경 | **정식 일러스트 27장**(1672×941) | 완료 |
 | 화면 배경 | **정식 일러스트 3장** (상점 · 대장간 · 마을 지도) | 완료 |
-| 초상화 | 코드로 그린 그림 12장 (스탠딩과 그림체가 다름) | 정식 일러스트 12장 |
+| 초상화 | 스탠딩에서 얼굴을 잘라 사용 | 완료 (원하면 전용 그림) |
+| NPC 스탠딩 | **정식 일러스트 4장** (상점 주인 · 대장장이 · 그림자 · 아르카이) | 완료 |
 
 ---
 

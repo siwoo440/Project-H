@@ -131,17 +131,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             view.Image = RuntimeUiKit.CreateImage(transform, "Standing_" + slot, Color.white); // 스탠딩 이미지
             view.Image.preserveAspect = true; // 비율 유지
             view.Image.raycastTarget = false; // 입력 통과
-            Vector2 min = slot == DialogueStageSlot.Left ? new Vector2(0.03f, 0f) : slot == DialogueStageSlot.Right ? new Vector2(0.57f, 0f) : new Vector2(0.32f, 0f); // 자리별 왼쪽 아래
-            Vector2 max = slot == DialogueStageSlot.Left ? new Vector2(0.43f, 0.95f) : slot == DialogueStageSlot.Right ? new Vector2(0.97f, 0.95f) : new Vector2(0.68f, 0.97f); // 자리별 오른쪽 위
+            DialogueStandingFrame.GetAnchors(slot, out Vector2 min, out Vector2 max); // 자리별 영역 (Day77 — 배율만큼 키우고 아래쪽은 대사창 뒤로)
+            view.Image.rectTransform.pivot = DialogueStandingFrame.Pivot; // 머리 쪽 기준 (듣는 쪽을 줄여도 머리 위치 유지, Day77)
             RuntimeUiKit.SetRect(view.Image.rectTransform, min, max); // 배치 (대화창이 하체를 가림)
             view.Fade = RuntimeUiKit.CreateImage(view.Image.transform, "ExpressionFade", Color.white); // 표정 전환용 이전 그림 (Day76)
             view.Fade.preserveAspect = true; // 비율 유지
             view.Fade.raycastTarget = false; // 입력 통과
+            view.Fade.rectTransform.pivot = DialogueStandingFrame.Pivot; // 스탠딩과 같은 기준 (Day77)
             RuntimeUiKit.Stretch(view.Fade.rectTransform); // 스탠딩과 같은 자리
             view.Fade.gameObject.SetActive(false); // 평소에는 숨김
             view.Label = RuntimeUiKit.CreateText(view.Image.transform, "PlaceholderLabel", string.Empty, 26, new Color(0.20f, 0.16f, 0.26f, 0.9f)); // 임시 실루엣 이름·표정
             view.Label.supportRichText = true; // 글자 크기 태그 사용
-            RuntimeUiKit.SetRect(view.Label.rectTransform, new Vector2(0f, 0.40f), new Vector2(1f, 0.56f)); // 가슴 높이 배치
+            RuntimeUiKit.SetRect(view.Label.rectTransform, new Vector2(0f, 0.62f), new Vector2(1f, 0.74f)); // 가슴 높이 배치 (Day77 — 영역이 아래로 길어져 위로 올림)
             standings.Add(view); // 목록 등록
         }
 

@@ -12,6 +12,9 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private const float BandWidth = 2300f; // 사선 띠 가로 길이
         private const float BandHeight = 250f; // 사선 띠 세로 길이
         private const float PortraitRestX = -430f; // 일러스트 정지 위치 (띠 기준)
+        private const float FaceRestX = -520f; // 얼굴 기준으로 놓을 때의 정지 위치 (Day77 — 그림이 커져 궁극기 이름과 겹치지 않게 왼쪽으로)
+        private const float FaceHeightInBand = 110f; // 띠(높이 250) 안에서 얼굴이 보이는 높이 (Day77)
+        private const float FaceOffsetY = -14f; // 얼굴 중심을 띠 가운데보다 살짝 아래로 (머리 위쪽이 잘리지 않게, Day77)
         private static readonly Color Gold = new Color(1f, 0.84f, 0.36f, 1f); // 결속 금색
 
         public static bool Enabled = true; // 컷인 사용 여부 (Day71 설정 일차에 켜기·끄기 연결)
@@ -20,6 +23,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private CanvasGroup group; // 전체 투명도
         private RectTransform band; // 사선 띠
         private RectTransform portrait; // 일러스트
+        private float portraitRestX = PortraitRestX; // 이번 컷인의 일러스트 정지 위치 (Day77)
         private RectTransform nameRect; // 궁극기 이름
         private Action onFinished; // 종료 콜백 (리듬 챌린지 시작)
         private bool finished; // 중복 종료 방지
@@ -77,6 +81,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             portrait.sizeDelta = new Vector2(380f, 760f); // 세로로 긴 일러스트 (띠 안에는 가슴 위만 보임)
             portrait.anchoredPosition = new Vector2(PortraitRestX, -160f); // 머리가 띠 가운데 오도록 아래로 배치
 
+            if (!placeholder && !DialogueArtFactory.HasCutInArt(info.CharacterId) && StandingFaceCatalog.TryGet(info.CharacterId, out StandingFace face)) // 정식 스탠딩을 쓰는 경우 (Day77 — 전신 그림이라 그대로 두면 얼굴이 작다)
+            {
+                StandingFaceCatalog.FrameOnFace(portrait, face, BackgroundFit.GetAspect(art.sprite), FaceHeightInBand); // 얼굴 중심을 기준점으로 · 얼굴 높이에 맞춘 크기
+                portraitRestX = FaceRestX; // 정지 위치
+                portrait.anchoredPosition = new Vector2(portraitRestX, FaceOffsetY); // 얼굴이 띠 가운데 근처에 오게
+            }
+
             Text title = RuntimeUiKit.CreateText(band, "UltimateName", info.UltimateName, 66, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft).Overflow().Outlined(new Color(0f, 0f, 0f, 0.7f), new Vector2(3f, -3f)); // 궁극기 이름
             nameRect = title.rectTransform; // 이름 저장
             nameRect.sizeDelta = new Vector2(900f, 110f); // 이름 영역
@@ -126,7 +137,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             float exit = timeline.ExitProgress; // 퇴장 진행률
             group.alpha = timeline.Visibility; // 전체 투명도
             band.localScale = new Vector3(1f, Mathf.Lerp(0.05f, 1f, enter) * Mathf.Lerp(1f, 0.1f, exit), 1f); // 띠가 펼쳐졌다가 접힘
-            portrait.anchoredPosition = new Vector2(Mathf.Lerp(-1150f, PortraitRestX, enter) + (40f * timeline.HoldProgress) + (320f * exit), portrait.anchoredPosition.y); // 왼쪽에서 들어와 천천히 밀리다 오른쪽으로 빠짐
+            portrait.anchoredPosition = new Vector2(Mathf.Lerp(-1150f, portraitRestX, enter) + (40f * timeline.HoldProgress) + (320f * exit), portrait.anchoredPosition.y); // 왼쪽에서 들어와 천천히 밀리다 오른쪽으로 빠짐
             float punch = Mathf.Clamp01((timeline.Elapsed - 0.18f) / 0.22f); // 이름 등장 진행률
             nameRect.localScale = Vector3.one * Mathf.Lerp(1.35f, 1f, punch); // 이름이 크게 나타났다가 제자리
         }

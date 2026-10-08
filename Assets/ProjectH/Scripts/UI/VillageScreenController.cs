@@ -201,19 +201,23 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             for (int index = 0; index < count; index++) // 있는 사람 순회
             {
                 string characterId = present[index]; // 캐릭터
-                Image face = CreateImage(content, "Face_" + characterId, Color.white); // 초상화 칸
-                face.sprite = CharacterPortraitArt.Get(characterId, out bool placeholder); // 초상화
+                Sprite portrait = CharacterPortraitArt.Get(characterId, out bool placeholder); // 초상화
+                Image tile = CreateImage(content, "Face_" + characterId, placeholder ? new Color(0f, 0f, 0f, 0.25f) : CharacterPortraitArt.GetBackdropColor(characterId)); // 초상화 칸 바탕 (Day77 — 잘라 낸 얼굴은 배경이 투명하다)
+                tile.raycastTarget = false; // 카드 클릭이 먹히도록 입력 통과
+                Image face = CreateImage(tile.transform, "Art", Color.white); // 초상화
+                face.sprite = portrait; // 그림 적용
                 face.color = placeholder ? CharacterPortraitArt.GetPlaceholderTint(characterId) : Color.white; // 임시 그림은 캐릭터 색
                 face.preserveAspect = true; // 정사각 비율 유지
                 face.raycastTarget = false; // 카드 클릭이 먹히도록 입력 통과
-                RectTransform rect = face.rectTransform; // 영역
+                Stretch(face.rectTransform); // 칸 전체
+                RectTransform rect = tile.rectTransform; // 영역
                 rect.anchorMin = new Vector2(0f, 0.5f); // 왼쪽 기준
                 rect.anchorMax = new Vector2(0f, 0.5f); // 왼쪽 기준
                 rect.pivot = new Vector2(0f, 0.5f); // 왼쪽 고정
                 rect.sizeDelta = new Vector2(size, size); // 정사각
                 rect.anchoredPosition = new Vector2(index * step, 0f); // 가로로 나란히
-                AddOutline(face.gameObject, new Color(1f, 1f, 1f, 0.55f)); // 흰 테두리
-                zoneCardPortraits.Add(face.gameObject); // 목록 등록
+                AddOutline(tile.gameObject, new Color(1f, 1f, 1f, 0.55f)); // 흰 테두리 (칸 모양)
+                zoneCardPortraits.Add(tile.gameObject); // 목록 등록
             }
 
             content.sizeDelta = new Vector2(Mathf.Max(0f, (count * step) - 6f), 0f); // 내용 너비 (넘치면 스크롤)

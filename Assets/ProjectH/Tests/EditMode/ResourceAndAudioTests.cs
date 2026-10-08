@@ -51,10 +51,10 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 
             foreach (string characterId in DiaryCatalog.AllCharacters) // 12인 순회
             {
-                string path = ResourcesRoot + CharacterPortraitArt.PortraitFolder + characterId + ".png"; // 초상화 경로
-                UnityEngine.Texture2D texture = AssetDatabase.LoadAssetAtPath<UnityEngine.Texture2D>(path); // 그림
-                Assert.That(texture, Is.Not.Null, $"초상화 없음 : {characterId}"); // 존재
-                Assert.That(texture.width, Is.EqualTo(texture.height), $"초상화가 정사각이 아님 : {characterId}"); // 정사각 확인
+                UnityEngine.Sprite portrait = CharacterPortraitArt.Get(characterId, out bool placeholder); // 초상화 (Day77 — 전용 그림 또는 스탠딩에서 자른 얼굴)
+                Assert.That(portrait, Is.Not.Null, $"초상화 없음 : {characterId}"); // 존재
+                Assert.That(placeholder, Is.False, $"임시 원으로 떨어짐 : {characterId}"); // 정식 그림 사용
+                Assert.That(portrait.rect.width, Is.EqualTo(portrait.rect.height), $"초상화가 정사각이 아님 : {characterId}"); // 정사각 확인
             }
         }
 

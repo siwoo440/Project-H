@@ -111,6 +111,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return GetStanding(characterId, string.Empty, out isPlaceholder); // 없으면 대화 스탠딩 재사용
         }
 
+        public static bool HasCutInArt(string characterId) // 궁극기 전용 일러스트가 있는지 (Day77 추가 — 없으면 스탠딩을 얼굴 기준으로 배치한다)
+        {
+            return !string.IsNullOrEmpty(characterId) && RuntimeSpriteLoader.Load(CutInFolder + characterId) != null; // 전용 그림 존재 여부
+        }
+
         public static Color GetCharacterTint(string characterId) // 캐릭터 임시 실루엣 색
         {
             switch (characterId) // 캐릭터별 분기

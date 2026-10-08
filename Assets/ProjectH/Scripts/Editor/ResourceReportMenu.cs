@@ -35,11 +35,15 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 CheckScreenBackground(key, builder, missingList, ref have, ref missing); // 확인
             }
 
-            builder.Append("\n■ 캐릭터 초상화 (Resources/Portraits)\n"); // 초상화
+            builder.Append("\n■ 캐릭터 초상화 (전용 그림 Resources/Portraits · 없으면 스탠딩에서 얼굴을 잘라 사용)\n"); // 초상화 (Day77 — 전용 그림이 없어도 스탠딩이 있으면 채워진다)
 
             foreach (string characterId in DiaryCatalog.AllCharacters) // 12인
             {
-                Check(CharacterPortraitArt.PortraitFolder + characterId, ".png", characterId, builder, missingList, ref have, ref missing); // 확인
+                bool dedicated = Exists(CharacterPortraitArt.PortraitFolder + characterId, ".png"); // 전용 초상화
+                bool cropped = !dedicated && StandingFaceCatalog.TryGet(characterId, out _)
+                               && (Exists($"{DialogueArtFactory.StandingFolder}{characterId}_{ExpressionCatalog.Normal}", ".png") || Exists(DialogueArtFactory.StandingFolder + characterId, ".png")); // 스탠딩에서 자를 수 있음
+                builder.Append(dedicated ? $"  [O] {characterId}\n" : cropped ? $"  [O] {characterId}  (스탠딩에서 잘라 사용)\n" : $"  [ ] {characterId}\n"); // 표시
+                if (dedicated || cropped) have++; else { missing++; missingList.Add(CharacterPortraitArt.PortraitFolder + characterId); } // 집계
             }
 
             builder.Append("\n■ 캐릭터 스탠딩 · 표정 (Resources/Dialogues/Standing/{캐릭터ID}_{표정}.png)\n"); // 스탠딩 (Day76 — 표정 7종까지 표시)
@@ -57,6 +61,13 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 }
 
                 builder.Append('\n'); // 줄 끝
+            }
+
+            builder.Append("\n■ NPC 스탠딩 (Resources/Dialogues/Standing/{NPC ID}_normal.png)\n"); // NPC (Day77 추가)
+
+            foreach (NpcProfile npc in new[] { NpcLineCatalog.Shopkeeper, NpcLineCatalog.Blacksmith, NpcLineCatalog.Shadow, NpcLineCatalog.Archai }) // 상점 주인 · 대장장이 · 그림자 · 아르카이
+            {
+                Check($"{DialogueArtFactory.StandingFolder}{npc.Id}_{ExpressionCatalog.Normal}", ".png", $"{npc.Id}  ({npc.Title})", builder, missingList, ref have, ref missing); // 확인
             }
 
             builder.Append("\n■ 배경음 (Resources/Audio/Bgm)\n"); // 배경음

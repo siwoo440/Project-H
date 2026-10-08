@@ -8,6 +8,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private const string BuiltinFontName = "LegacyRuntime.ttf"; // Unity 기본 폰트 이름
         public const string GameFontResourcePath = "Fonts/GameFont"; // 정식 폰트 Resources 경로 (Day73 추가 — 여기에 폰트를 넣으면 전체 글자가 바뀐다)
         private static Font defaultFont; // 기본 폰트 캐시 (매 텍스트 생성마다 조회하지 않도록)
+        private static bool hasGameFont; // 정식 폰트를 찾았는지 (Day81 추가)
+
+        public static bool HasGameFont => DefaultFont != null && hasGameFont; // 정식 폰트를 쓰는 중인지 (Day81 추가 — 씬에 놓인 글자를 바꿀지 판단)
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] // 플레이 시작 시 초기화 (도메인 리로드를 끈 Play Mode 대응)
+        private static void ResetFontCache() // 폰트 캐시 비우기 (Day81 추가 — 폰트 파일을 넣고 다시 실행하면 바로 반영된다)
+        {
+            defaultFont = null; // 캐시 제거
+            hasGameFont = false; // 다시 확인
+        }
 
         public static Font DefaultFont // 기본 폰트 반환 (정식 폰트 → Unity 기본 폰트)
         {
@@ -16,6 +26,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 if (defaultFont == null) // 캐시 확인
                 {
                     defaultFont = Resources.Load<Font>(GameFontResourcePath); // 정식 폰트 우선 (Day73 추가)
+                    hasGameFont = defaultFont != null; // 정식 폰트 여부 기록 (Day81)
                 }
 
                 if (defaultFont == null) // 정식 폰트 없음

@@ -50,6 +50,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             BindCharacterButton(); // 기존 하단 캐릭터 버튼 연결
             BindBagButton(); // 하단 가방 버튼 연결
             Refresh(); // 화면 상태 갱신
+            if (GameManager.Instance != null && GameManager.Instance.Save != null && GameManager.Instance.Save.ConsumeRecoveryNotice()) SetText(statusText, "저장 파일이 손상되어 직전 저장으로 복구했습니다."); // 백업 복구 안내 (Day81 — 한 번만)
         }
 
         public void Refresh() // 로비 화면 갱신
@@ -79,7 +80,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetText(bodyText, state.BodyText); // 챕터 본문 표시
             SetText(saveStateText, state.SaveStateText); // 저장 상태 표시
             SetText(partyText, state.PartyText); // 파티 요약 표시
+            RefreshCurrencyChips(saveData); // 상단 재화 표시 (Day81)
             SetPlayable(state.CanNavigate && !isTransitioning); // 주요 버튼 상태 적용
+        }
+
+        private void RefreshCurrencyChips(SaveData saveData) // 상단 바 재화 칩 갱신 (Day81 추가 — 씬에 적혀 있던 예시 값 대신 실제 골드, 게임에 없는 크리스탈 칩은 숨김)
+        {
+            Transform gold = transform.Find("TopBar/GoldChip/Value"); // 골드 글자
+            if (gold != null) SetText(gold.GetComponent<Text>(), GoldCurrencyService.FormatLabel(GoldCurrencyService.GetGold(saveData))); // 실제 골드
+            Transform crystal = transform.Find("TopBar/CrystalChip"); // 크리스탈 칩
+            if (crystal != null) crystal.gameObject.SetActive(false); // 게임에 없는 재화
         }
 
         public void SaveGame() // 현재 진행 저장
@@ -91,13 +101,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (GameManager.Instance == null || GameManager.Instance.Save == null) // 저장 관리자 확인
             {
-                SetText(saveStateText, "SAVE FAILED · MANAGER MISSING"); // 관리자 누락 표시
+                SetText(saveStateText, "저장 실패 · 저장 관리자 없음"); // 관리자 누락 표시
                 return; // 저장 중단
             }
 
             if (!GameManager.Instance.Save.SaveCurrent()) // 저장 실행 결과 확인
             {
-                SetText(saveStateText, "SAVE FAILED"); // 저장 실패 표시
+                SetText(saveStateText, "저장 실패"); // 저장 실패 표시
             }
         }
 
@@ -245,7 +255,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(Text)); // 가방 버튼 라벨 객체 생성
             labelObject.transform.SetParent(buttonObject.transform, false); // 가방 버튼 라벨 부모 연결
             Text label = labelObject.GetComponent<Text>(); // 가방 버튼 라벨 조회
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            label.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             label.text = "가방"; // 가방 버튼 라벨 설정
             label.fontSize = 21; // 가방 버튼 글자 크기 설정
             label.fontStyle = FontStyle.Bold; // 가방 버튼 글자 스타일 설정

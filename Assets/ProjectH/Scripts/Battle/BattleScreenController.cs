@@ -138,7 +138,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             isAutoEnabled = !isAutoEnabled; // AUTO 표시 상태 반전
             RefreshAutoLabel(); // AUTO 버튼 표시 갱신
-            SetText(statusText, isAutoEnabled ? "AUTO ON · 기본 공격은 항상 자동으로 진행됩니다." : "AUTO OFF · 기본 공격은 기획상 계속 자동 진행됩니다."); // AUTO 안내 표시
+            SetText(statusText, isAutoEnabled ? "자동 켬 · 기본 공격은 항상 자동으로 진행됩니다." : "자동 끔 · 기본 공격은 기획상 계속 자동 진행됩니다."); // AUTO 안내 표시
         }
 
         public void DebugShowAttack() // 아군 공격 디버그 텍스트 수동 표시
@@ -211,7 +211,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             menuPanel?.SetActive(false); // 시작 시 전투 메뉴 숨김
             resolvedWaves.Clear(); // 이전 전투 웨이브 목록 초기화 (Day45)
             currentWaveIndex = 0; // 웨이브 번호 초기화 (Day45)
-            SetText(waveText, "WAVE 1 / 1"); // 웨이브 해석 전 임시 표시
+            SetText(waveText, "웨이브 1 / 1"); // 웨이브 해석 전 임시 표시
             RefreshTime(); // 초기 시간 표시
             RefreshAutoLabel(); // 초기 AUTO 상태 표시
             HideAllHudCards(); // HUD 카드 초기 숨김
@@ -286,7 +286,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 전투 초기화 중단
             }
 
-            SetText(waveText, $"WAVE {currentWaveIndex + 1} / {resolvedWaves.Count}"); // 실제 웨이브 진행 상태 표시 (Day45)
+            SetText(waveText, $"웨이브 {currentWaveIndex + 1} / {resolvedWaves.Count}"); // 실제 웨이브 진행 상태 표시 (Day45)
             initialized = true; // 전투 초기화 완료 기록
             SetInteraction(true); // 전투 UI 입력 활성화
             PrepareOutcomeController(); // 전투 승패 컨트롤러 준비
@@ -439,8 +439,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return false; // 다음 웨이브 진행 실패
             }
 
-            SetText(waveText, $"WAVE {currentWaveIndex + 1} / {resolvedWaves.Count}"); // 진행 웨이브 표시 갱신
-            SetText(statusText, $"WAVE {currentWaveIndex + 1} 시작 · 적군 {spawnedEnemies.Count}명"); // 웨이브 진행 상태 표시
+            SetText(waveText, $"웨이브 {currentWaveIndex + 1} / {resolvedWaves.Count}"); // 진행 웨이브 표시 갱신
+            SetText(statusText, $"웨이브 {currentWaveIndex + 1} 시작 · 적군 {spawnedEnemies.Count}명"); // 웨이브 진행 상태 표시
             return true; // 다음 웨이브 진행 성공
         }
 
@@ -517,7 +517,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private void RefreshAutoLabel() // AUTO 버튼 표시 갱신
         {
-            SetText(autoButtonText, isAutoEnabled ? "AUTO ON" : "AUTO OFF"); // AUTO 활성 상태 표시
+            SetText(autoButtonText, isAutoEnabled ? "자동 켬" : "자동 끔"); // AUTO 활성 상태 표시
         }
 
         private void HideAllHudCards() // 전체 HUD 카드 숨김

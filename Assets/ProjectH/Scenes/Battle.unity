@@ -5700,7 +5700,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: SKILL BLOCKS
+  m_Text: "\uC2A4\uD0AC \uBE14\uB85D"
 --- !u!222 &990920969
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12234,7 +12234,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: MENU
+  m_Text: "\uBA54\uB274"
 --- !u!222 &2083094396
 CanvasRenderer:
   m_ObjectHideFlags: 0

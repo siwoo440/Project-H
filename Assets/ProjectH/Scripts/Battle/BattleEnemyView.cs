@@ -193,7 +193,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 전투 불능 표시 중단
             }
 
-            SetText(nameText, $"[DOWN] {Stats.DisplayName}"); // 적군 전투 불능 이름 표시
+            SetText(nameText, $"[쓰러짐] {Stats.DisplayName}"); // 적군 전투 불능 이름 표시
             SetText(runtimeIdText, $"{Stats.RuntimeId} · {Stats.AIType.ToString().ToUpperInvariant()} · DOWN"); // 적군 전투 불능 상태 표시
             SetText(hpText, $"0 / {Stats.MaxHp}"); // 적군 전투 불능 체력 표시
 

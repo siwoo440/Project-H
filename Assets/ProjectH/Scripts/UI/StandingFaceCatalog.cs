@@ -64,6 +64,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return new Rect(x, y, side, side); // 정사각 영역 반환
         }
 
+        public static Rect GetBustRect(StandingFace face, Rect spriteRect, float aspect) // 세로로 긴 칸에 넣을 상반신 영역 (Day81 추가 — 머리 위 여백은 초상화와 같고 아래로 늘인다. aspect = 가로 ÷ 세로)
+        {
+            Rect square = GetPortraitRect(face, spriteRect); // 얼굴 주변 정사각
+            if (aspect <= 0f || aspect >= 1f) return square; // 세로로 길지 않은 칸은 초상화 그대로
+            float height = Mathf.Floor(Mathf.Min(square.width / aspect, square.yMax - spriteRect.y)); // 가로는 그대로 두고 세로를 비율만큼 (그림 아래 끝을 넘지 않게)
+            return new Rect(square.x, square.yMax - height, square.width, height); // 위쪽 끝은 초상화와 같은 높이
+        }
+
         public static Vector2 GetFacePivot(StandingFace face) // 얼굴 중심을 RectTransform 피벗으로 (세로는 아래 기준)
         {
             return new Vector2(face.CenterX, 1f - face.CenterY); // 피벗 반환

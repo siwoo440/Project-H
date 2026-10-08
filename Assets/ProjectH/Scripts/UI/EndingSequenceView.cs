@@ -75,7 +75,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private void BuildTitleCard() // 엔딩 제목 카드 + 크레딧 + 타이틀 버튼
         {
-            Text badge = RuntimeUiKit.CreateText(card, "Badge", isNewEnding ? "NEW ENDING" : "ENDING", 22, HintColor, FontStyle.Bold); // 새 엔딩 표시
+            Text badge = RuntimeUiKit.CreateText(card, "Badge", isNewEnding ? "새로운 엔딩" : "엔딩", 22, HintColor, FontStyle.Bold); // 새 엔딩 표시
             RuntimeUiKit.SetRect(badge.rectTransform, new Vector2(0.1f, 0.70f), new Vector2(0.9f, 0.76f)); // 위
             Text title = RuntimeUiKit.CreateText(card, "Title", ending.Title, 58, TitleColor, FontStyle.Bold).Outlined(new Color(0f, 0f, 0f, 0.85f), new Vector2(2f, -2f)); // 엔딩 제목
             RuntimeUiKit.SetRect(title.rectTransform, new Vector2(0.08f, 0.58f), new Vector2(0.92f, 0.70f)); // 가운데 위

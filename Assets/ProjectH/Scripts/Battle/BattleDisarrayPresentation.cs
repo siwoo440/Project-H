@@ -70,7 +70,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             RuntimeUiKit.SetRect(announceObject.GetComponent<RectTransform>(), new Vector2(0.22f, 0.60f), new Vector2(0.78f, 0.70f)); // 중앙 문구 화면 중앙 상단 배치
 
             announceText = announceObject.GetComponent<Text>(); // 중앙 문구 Text 조회
-            announceText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            announceText.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             announceText.fontSize = 46; // 중앙 문구 크기 적용
             announceText.fontStyle = FontStyle.Bold; // 중앙 문구 굵기 적용
             announceText.color = TextColor; // 중앙 문구 색상 적용

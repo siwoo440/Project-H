@@ -139,7 +139,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             SetFill(bossHpFillImage, boundBoss.HealthRatio); // 보스 체력 게이지 비율 적용
-            SetText(bossHpText, boundBoss.IsAlive ? $"{boundBoss.CurrentHp} / {boundBoss.MaxHp}" : "DOWN"); // 보스 체력 수치 또는 처치 표시
+            SetText(bossHpText, boundBoss.IsAlive ? $"{boundBoss.CurrentHp} / {boundBoss.MaxHp}" : "쓰러짐"); // 보스 체력 수치 또는 처치 표시
 
             if (!boundBoss.IsAlive) // 보스 전투 불능 여부 확인
             {

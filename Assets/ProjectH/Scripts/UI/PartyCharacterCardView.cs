@@ -38,7 +38,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             int level = progress == null ? 1 : progress.Level; // 표시 레벨 결정
             SetText(roleText, PartySlotView.GetRoleLabel(character.Position)); // 역할 표시
-            SetText(portraitText, character.DisplayName); // 임시 초상화 이름 표시
+            SetText(portraitText, PortraitSlot.Apply(portraitText, character.Id, false) == null ? character.DisplayName : string.Empty); // 얼굴 그림 (Day81 — 그림이 없을 때만 이름 글자)
             SetText(levelText, $"LV.{level}"); // 레벨 표시
             SetText(nameText, character.DisplayName); // 이름 표시
             SetText(stateText, isCurrentSlot ? "✓ 현재 선택" : isOtherPartySlot ? "● 편성 중" : "선택 가능"); // 편성 상태 표시

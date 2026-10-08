@@ -38,7 +38,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             int level = progress == null ? 1 : progress.Level; // 표시 레벨 결정
             SetText(roleText, GetRoleLabel(character.Position)); // 역할 텍스트 표시
-            SetText(portraitText, character.DisplayName); // 임시 초상화 이름 표시
+            SetText(portraitText, PortraitSlot.Apply(portraitText, character.Id, true) == null ? character.DisplayName : string.Empty); // 상반신 그림 (Day81 — 그림이 없을 때만 이름 글자)
             SetText(levelText, $"LV.{level}"); // 캐릭터 레벨 표시
             SetText(nameText, character.DisplayName); // 캐릭터 이름 표시
             SetText(hintText, "클릭하여 교체"); // 슬롯 교체 안내 표시
@@ -57,7 +57,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public void SetEmpty(bool interactable) // 빈 슬롯 표시
         {
             SetText(roleText, "+"); // 빈 역할 표시
-            SetText(portraitText, "EMPTY SLOT"); // 빈 초상화 표시
+            PortraitSlot.Clear(portraitText); // 이전 캐릭터 그림 숨김 (Day81)
+            SetText(portraitText, "빈 자리"); // 빈 초상화 표시
             SetText(levelText, "--"); // 빈 레벨 표시
             SetText(nameText, "캐릭터 선택"); // 빈 이름 표시
             SetText(hintText, interactable ? "클릭하여 추가" : "앞 슬롯부터 편성"); // 빈 슬롯 안내 표시
@@ -91,11 +92,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             switch (position) // 역할 종류 분기
             {
                 case BattlePosition.Tank: // 탱커 역할 처리
-                    return "TANK"; // 탱커 라벨 반환
+                    return "탱커"; // 탱커 라벨 반환
                 case BattlePosition.Healer: // 힐러 역할 처리
-                    return "HEALER"; // 힐러 라벨 반환
+                    return "힐러"; // 힐러 라벨 반환
                 default: // 딜러 역할 처리
-                    return "DEALER"; // 딜러 라벨 반환
+                    return "딜러"; // 딜러 라벨 반환
             }
         }
 

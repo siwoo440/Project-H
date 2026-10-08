@@ -104,7 +104,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             HealthState = BattleHudHealthStateEvaluator.Evaluate(Stats.CurrentHp, Stats.MaxHp); // 현재 HUD 체력 상태 계산
-            SetText(hpText, Stats.IsAlive ? $"{Stats.CurrentHp}/{Stats.MaxHp}" : $"DOWN · 0/{Stats.MaxHp}"); // 현재 체력 또는 DOWN 상태 표시
+            SetText(hpText, Stats.IsAlive ? $"{Stats.CurrentHp}/{Stats.MaxHp}" : $"쓰러짐 · 0/{Stats.MaxHp}"); // 현재 체력 또는 DOWN 상태 표시
             SetText(healthStateText, BattleHudHealthStateEvaluator.GetLabel(HealthState)); // 현재 체력 상태 문구 표시
             SetFill(hpFillImage, Stats.HealthRatio); // HP 게이지 비율 적용
             RefreshSkillState(); // 현재 스킬 자리 상태 갱신
@@ -386,7 +386,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             textRect.offsetMin = Vector2.zero; // 텍스트 최소 오프셋 초기화
             textRect.offsetMax = Vector2.zero; // 텍스트 최대 오프셋 초기화
             Text text = textObject.GetComponent<Text>(); // 슬롯 번호 Text 조회
-            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            text.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             text.fontSize = 17; // 슬롯 번호 크기 적용
             text.fontStyle = FontStyle.Bold; // 슬롯 번호 굵기 적용
             text.color = Color.white; // 슬롯 번호 흰색 적용
@@ -463,7 +463,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
             if (skillText != null) // 스킬 자리 텍스트 확인
             {
-                skillText.text = alive ? "SKILL\nLOCKED" : "DOWN"; // 블록 방식 스킬과 중복되지 않는 카드 상태 표시
+                skillText.text = alive ? "스킬\n잠김" : "쓰러짐"; // 블록 방식 스킬과 중복되지 않는 카드 상태 표시
             }
         }
 
@@ -489,7 +489,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (ultimateText != null) // 궁극기 게이지 텍스트 확인
             {
                 int percent = Mathf.RoundToInt(ultimateRatio * 100f); // 궁극기 게이지 퍼센트 계산
-                ultimateText.text = Stats != null && !Stats.IsAlive ? $"ULT {percent}% · DOWN" : IsUltimateReady ? "ULT READY" : $"ULT {percent}%"; // 생존 및 완충 상태 기반 궁극기 문구 표시
+                ultimateText.text = Stats != null && !Stats.IsAlive ? "쓰러짐" : IsUltimateReady ? "궁극기 준비" : $"궁극기 {percent}%"; // 생존 및 완충 상태 기반 궁극기 문구 표시
             }
         }
 

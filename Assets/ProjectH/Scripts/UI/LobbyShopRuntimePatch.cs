@@ -95,7 +95,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(Text)); // 버튼 라벨 생성
             labelObject.transform.SetParent(buttonObject.transform, false); // 버튼 라벨 부모 연결
             Text label = labelObject.GetComponent<Text>(); // 버튼 라벨 조회
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            label.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             label.text = labelText; // 버튼 문구 설정
             label.fontSize = 21; // 버튼 글자 크기 설정
             label.fontStyle = FontStyle.Bold; // 버튼 굵기 설정

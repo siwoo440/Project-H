@@ -67,6 +67,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private bool autoMode; // 자동 켜짐 여부
         private float autoTimer; // 자동 대기 시간
         private bool uiHidden; // 숨김 상태
+        private bool seenBefore; // 이미 본 이야기인지 (Day81 — 빨리 넘기기 · 확인 창 생략)
+        private float fastTimer; // 빨리 넘기기 누적 시간 (Day81)
+        private Text skipHint; // 빨리 넘기기 안내 (Day81)
 
         public static DialogueOverlayView Open(DialogueScript script, Action<DialogueRunner> finishedCallback) // 대화 화면 열기 (대화가 없으면 null)
         {
@@ -88,6 +91,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             view.runner = new DialogueRunner(script); // 진행기 생성
             view.layout = DialogueStageLayout.Build(script); // 좌우 배치 결정 (Day62)
             view.scriptId = script.Id; // 대사 파일 ID (Day63)
+            view.seenBefore = DialogueSkipRules.IsSeen(GameManager.Instance == null || GameManager.Instance.Save == null ? null : GameManager.Instance.Save.CurrentSave, script.Id); // 이미 본 이야기인지 (Day81 — 이번 회차 · 지난 회차 기록)
             view.Build(script); // 화면 구성
             view.ShowCurrent(); // 첫 대사 표시
             return view; // 화면 반환
@@ -187,6 +191,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             CreateIconButton("Hide", "◎", "숨김", 2, HideUi); // UI 숨김 (기획서 'UI 비활성화')
             CreateIconButton("Log", "≡", "로그", 3, OpenLog); // 대화 로그
             CreateIconButton("Settings", "⚙", "설정", 4, OpenSettings); // 통합 설정 창 (대사 속도·자동 넘김·글자 크기, Day72)
+            skipHint = RuntimeUiKit.CreateText(uiRoot.transform, "SkipHint", string.Empty, 15, Color.white, FontStyle.Normal, TextAnchor.MiddleRight).Outlined(new Color(0f, 0f, 0f, 0.7f), new Vector2(1f, -1f)); // 빨리 넘기기 안내 (Day81 — 아이콘 왼쪽)
+            skipHint.raycastTarget = false; // 입력 통과
+            RuntimeUiKit.SetRect(skipHint.rectTransform, new Vector2(0.40f, 0.925f), new Vector2(0.705f, 0.965f)); // 아이콘 메뉴 왼쪽
+            RefreshSkipHint(); // 안내 문구
         }
 
         private Text CreateIconButton(string name, string glyph, string caption, int index, UnityEngine.Events.UnityAction action) // 원형 아이콘 버튼 + 아래 설명
@@ -211,7 +219,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             Image panel = RuntimeUiKit.CreateImage(transform, "LogPanel", new Color(0.06f, 0.07f, 0.09f, 0.92f)); // 어두운 전체 창 (뒤 클릭 차단)
             RuntimeUiKit.Stretch(panel.rectTransform); // 전체 화면
-            Text title = RuntimeUiKit.CreateText(panel.transform, "Title", "LOG", 26, AffiliationColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
+            Text title = RuntimeUiKit.CreateText(panel.transform, "Title", "대화 기록", 26, AffiliationColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
             RuntimeUiKit.SetRect(title.rectTransform, new Vector2(0.08f, 0.90f), new Vector2(0.50f, 0.97f)); // 제목 배치
             CreatePanelButton(panel.transform, "CloseLog", "닫기", new Vector2(0.84f, 0.905f), new Vector2(0.92f, 0.965f), CloseLog); // 닫기 버튼
 
@@ -311,6 +319,25 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             Keyboard keyboard = Keyboard.current; // 키보드 조회
+
+            if (keyboard != null && keyboard.ctrlKey.isPressed && !modalOpen && !uiHidden && DialogueSkipRules.CanFastForward(seenBefore, GameSettings.SkipUnread)) // Ctrl 빨리 넘기기 (Day81 — 이미 본 이야기, 또는 설정에서 허용한 경우)
+            {
+                if (DialogueSkipRules.Tick(ref fastTimer, delta)) // 한 줄 넘길 때가 됨
+                {
+                    if (isTyping) CompleteTyping(); // 글자를 다 보여 준다 (선택지가 있으면 여기서 나타난다)
+
+                    if (!runner.IsWaitingForChoice) // 선택지에서는 멈춤
+                    {
+                        Next(); // 다음 대사
+                        if (runner != null && isTyping) CompleteTyping(); // 넘긴 줄은 타자 효과 없이 바로 표시
+                        return; // 이번 프레임 입력 처리 생략 (종료 직후 보호)
+                    }
+                }
+            }
+            else // 누르지 않음
+            {
+                fastTimer = 0f; // 다시 누르면 처음부터
+            }
 
             if (keyboard != null && !modalOpen && (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame)) // 스페이스·엔터 확인
             {
@@ -543,6 +570,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 선택지는 건너뛸 수 없음
             }
 
+            if (!DialogueSkipRules.NeedsSkipConfirm(seenBefore)) // 이미 본 이야기 (Day81 — 확인 창 없이 바로 건너뛴다)
+            {
+                RunSkip(); // 건너뛰기
+                return; // 처리 끝
+            }
+
             confirmPanel.SetActive(true); // 확인 창 표시
             confirmPanel.transform.SetAsLastSibling(); // 최상단 표시
         }
@@ -606,7 +639,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             if (settingsOpen) return; // 이미 열림
             settingsOpen = true; // 열림 표시 (자동 넘김·키 입력 정지)
-            SettingsView.Open(_ => settingsOpen = false); // 설정 화면
+            SettingsView.Open(_ => { settingsOpen = false; RefreshSkipHint(); }); // 설정 화면 (Day81 — 닫을 때 빨리 넘기기 안내 갱신)
         }
 
         private void HideUi() // 숨김 : 대화창·메뉴 숨기기 (아무 곳이나 클릭하면 복귀)
@@ -621,9 +654,16 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             uiRoot.SetActive(true); // UI 표시
         }
 
+        private void RefreshSkipHint() // 빨리 넘기기 안내 문구 갱신 (Day81 추가)
+        {
+            if (skipHint != null) skipHint.text = DialogueSkipRules.GetHint(seenBefore, GameSettings.SkipUnread); // 본 이야기 · 설정에 따라
+        }
+
         private void RecordSeen(DialogueRunner finished) // 본 이야기 기록 (Day63 — 다시 보기 해금, 새로 기록했을 때만 저장)
         {
-            if (!finished.IsFinished || GameManager.Instance == null || GameManager.Instance.Save == null) return; // 중간 종료·저장 없음
+            if (!finished.IsFinished) return; // 중간 종료
+            PlayerProfile.RecordSeenDialogue(scriptId); // 회차를 넘어 남는 기록 (Day81 — 다음 회차에서 빨리 넘길 수 있다)
+            if (GameManager.Instance == null || GameManager.Instance.Save == null) return; // 저장 없음
             if (DiaryService.MarkDialogueSeen(GameManager.Instance.Save.CurrentSave, scriptId)) GameManager.Instance.Save.SaveCurrent(); // 기록 후 저장
         }
 

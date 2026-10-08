@@ -34,7 +34,7 @@ namespace ProjectH.Tests.EditMode // 프로젝트 EditMode 테스트 영역
             Assert.AreSame(overlay, BattleResultOverlay.ActiveOverlay); // 활성 Overlay 참조 확인
             Assert.AreSame(result, overlay.Result); // 표시 결과 데이터 참조 확인
             Assert.AreEqual(2, overlay.RenderedMemberCount); // 생성 파티 카드 수 확인
-            Assert.AreEqual("WIN!", overlay.TitleText); // 승리 제목 표시 확인
+            Assert.AreEqual("승리!", overlay.TitleText); // 승리 제목 표시 확인
         }
 
         [Test] // 중복 Overlay 방지 테스트 지정
@@ -49,7 +49,7 @@ namespace ProjectH.Tests.EditMode // 프로젝트 EditMode 테스트 영역
             Assert.AreNotSame(firstOverlay, secondOverlay); // 결과 Overlay 인스턴스 교체 확인
             Assert.IsTrue(firstOverlay == null); // 이전 Overlay 제거 확인
             Assert.AreSame(secondOverlay, BattleResultOverlay.ActiveOverlay); // 신규 Overlay 활성 참조 확인
-            Assert.AreEqual("LOSE", secondOverlay.TitleText); // 패배 제목 표시 확인
+            Assert.AreEqual("패배", secondOverlay.TitleText); // 패배 제목 표시 확인
         }
 
         [Test] // 성장 결과 화면 표시 테스트 지정

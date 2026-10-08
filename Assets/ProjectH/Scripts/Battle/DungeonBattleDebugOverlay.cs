@@ -66,7 +66,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             textRect.offsetMin = new Vector2(14f, 8f); // 텍스트 최소 여백 설정
             textRect.offsetMax = new Vector2(-14f, -8f); // 텍스트 최대 여백 설정
             Text label = textObject.GetComponent<Text>(); // 테스트 정보 Text 조회
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            label.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             label.fontSize = 18; // 테스트 정보 글자 크기 설정
             label.fontStyle = FontStyle.Bold; // 테스트 정보 굵기 설정
             label.color = Color.white; // 테스트 정보 글자 색상 설정

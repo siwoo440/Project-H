@@ -21,10 +21,10 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [Test] // 테스트 표시
         public void GetLabel_ReturnsReadableStateText() // 체력 상태 문구 검증
         {
-            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Normal), Is.EqualTo("HP OK")); // 정상 체력 문구 검증
-            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Low), Is.EqualTo("LOW")); // 낮은 체력 문구 검증
-            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Danger), Is.EqualTo("DANGER")); // 위험 체력 문구 검증
-            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Down), Is.EqualTo("DOWN")); // 전투 불능 문구 검증
+            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Normal), Is.EqualTo("정상")); // 정상 체력 문구 검증
+            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Low), Is.EqualTo("주의")); // 낮은 체력 문구 검증
+            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Danger), Is.EqualTo("위험")); // 위험 체력 문구 검증
+            Assert.That(BattleHudHealthStateEvaluator.GetLabel(BattleHudHealthState.Down), Is.EqualTo("쓰러짐")); // 전투 불능 문구 검증
         }
     }
 }

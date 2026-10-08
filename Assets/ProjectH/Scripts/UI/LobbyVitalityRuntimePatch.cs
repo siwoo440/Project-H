@@ -80,7 +80,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameObject labelObject = new GameObject(LabelName, typeof(RectTransform), typeof(Text)); // 라벨 객체 생성
             labelObject.transform.SetParent(parent, false); // 패널 부모 연결
             Text label = labelObject.GetComponent<Text>(); // 라벨 컴포넌트 조회
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            label.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             label.fontSize = 14; // 라벨 글자 크기 설정
             label.fontStyle = FontStyle.Bold; // 라벨 글자 굵기 설정
             label.color = new Color(0.18f, 0.27f, 0.40f, 1f); // 라벨 글자 색상 설정 (Gold/Crystal 칩과 동일한 남색)
@@ -114,7 +114,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(Text)); // 버튼 라벨 객체 생성
             labelObject.transform.SetParent(buttonObject.transform, false); // 버튼 라벨 부모 연결
             Text label = labelObject.GetComponent<Text>(); // 버튼 라벨 컴포넌트 조회
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            label.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             label.text = labelText; // 버튼 라벨 문구 설정
             label.fontSize = 14; // 버튼 라벨 글자 크기 설정
             label.fontStyle = FontStyle.Bold; // 버튼 라벨 글자 굵기 설정
@@ -199,12 +199,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (GameManager.Instance == null || GameManager.Instance.Save == null || GameManager.Instance.Save.CurrentSave == null) // 저장 데이터 확인
             {
-                label.text = "VIT -"; // 저장 데이터 없음 표시
+                label.text = "활력 -"; // 저장 데이터 없음 표시
                 return; // 라벨 갱신 종료
             }
 
             int vitality = VitalityService.GetVitality(GameManager.Instance.Save.CurrentSave); // 현재 활력 조회
-            label.text = $"VIT {vitality}/{SaveData.MaxVitality}"; // 활력 문구 표시
+            label.text = $"활력 {vitality}/{SaveData.MaxVitality}"; // 활력 문구 표시
         }
     }
 }

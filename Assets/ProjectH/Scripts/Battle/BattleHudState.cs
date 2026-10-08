@@ -39,13 +39,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             switch (state) // HUD 체력 상태 분기
             {
                 case BattleHudHealthState.Low: // 낮은 체력 상태 처리
-                    return "LOW"; // 낮은 체력 문구 반환
+                    return "주의"; // 낮은 체력 문구 반환
                 case BattleHudHealthState.Danger: // 위험 체력 상태 처리
-                    return "DANGER"; // 위험 체력 문구 반환
+                    return "위험"; // 위험 체력 문구 반환
                 case BattleHudHealthState.Down: // 전투 불능 상태 처리
-                    return "DOWN"; // 전투 불능 문구 반환
+                    return "쓰러짐"; // 전투 불능 문구 반환
                 default: // 정상 체력 상태 처리
-                    return "HP OK"; // 정상 체력 문구 반환
+                    return "정상"; // 정상 체력 문구 반환
             }
         }
     }

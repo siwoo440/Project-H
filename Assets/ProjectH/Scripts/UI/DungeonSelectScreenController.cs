@@ -65,7 +65,26 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static void HandleSceneLoaded(Scene scene) // 씬 로드 완료 처리
         {
             if (Object.FindFirstObjectByType<DungeonSelectScreenController>() != null) return; // 중복 설치 차단
+            HideLegacySceneUi(scene); // 씬에 남은 옛 프로토타입 화면 끄기 (Day81)
             new GameObject("DungeonSelectScreenRuntime", typeof(DungeonSelectScreenController)); // 런타임 컨트롤러 객체 생성
+        }
+
+        public static int HideLegacySceneUi(Scene scene) // 씬에 남아 있는 옛 프로토타입 화면 끄기 (Day81 추가 — 새 지도 화면에 가려 보이지 않는데도 매 프레임 그려지고 있었다. 끈 개수 반환)
+        {
+            if (!scene.IsValid()) return 0; // 잘못된 씬
+            int hidden = 0; // 끈 개수
+
+            foreach (GameObject root in scene.GetRootGameObjects()) // 루트 순회
+            {
+                foreach (PrototypeScreenController legacy in root.GetComponentsInChildren<PrototypeScreenController>(true)) // 옛 화면 컨트롤러
+                {
+                    if (!legacy.gameObject.activeSelf) continue; // 이미 꺼짐
+                    legacy.gameObject.SetActive(false); // 옛 화면 끄기 (입력 처리용 EventSystem · 카메라는 다른 객체라 그대로 남는다)
+                    hidden++; // 집계
+                }
+            }
+
+            return hidden; // 개수 반환
         }
 
         private void Awake() // 런타임 화면 초기화

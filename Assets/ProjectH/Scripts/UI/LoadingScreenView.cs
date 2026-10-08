@@ -267,7 +267,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             fillRect.offsetMin = Vector2.zero; // 최소 오프셋 초기화
             fillRect.offsetMax = Vector2.zero; // 최대 오프셋 초기화
 
-            Text loading = CreateText(hudObject.transform, "LoadingText", "NOW LOADING", 20, Color.white, TextAnchor.MiddleLeft); // NOW LOADING 문구 생성
+            Text loading = CreateText(hudObject.transform, "LoadingText", "불러오는 중", 20, Color.white, TextAnchor.MiddleLeft); // NOW LOADING 문구 생성
             PlaceUnderBar(loading.rectTransform, barWidth, barY); // 로딩바 아래 배치
             Text percent = CreateText(hudObject.transform, "PercentText", "0%", 20, SubTextColor, TextAnchor.MiddleRight); // 진행률 문구 생성
             PlaceUnderBar(percent.rectTransform, barWidth, barY); // 로딩바 아래 오른쪽 정렬 배치
@@ -513,7 +513,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             activeHud.BarFill.anchorMax = new Vector2(Mathf.Clamp01(progress), 1f); // 앵커 확장 방식 채움 적용
             activeHud.Percent.text = $"{Mathf.RoundToInt(progress * 100f)}%"; // 진행률 문구 적용
             int dots = Mathf.FloorToInt(Time.unscaledTime * 3f) % 4; // 0~3개 점 애니메이션 계산
-            activeHud.Loading.text = "NOW LOADING" + new string('.', dots); // 점 애니메이션 적용
+            activeHud.Loading.text = "불러오는 중" + new string('.', dots); // 점 애니메이션 적용
         }
 
         private void AnimateRunners(float time) // 모드별 달리기 연출 갱신

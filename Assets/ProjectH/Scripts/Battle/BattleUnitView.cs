@@ -124,7 +124,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 return; // 아군 전투 불능 표시 중단
             }
 
-            SetText(characterText, $"[DOWN] {Stats.DisplayName}"); // 아군 전투 불능 이름 표시
+            SetText(characterText, $"[쓰러짐] {Stats.DisplayName}"); // 아군 전투 불능 이름 표시
             SetText(runtimeIdText, $"{Stats.RuntimeId} · DOWN"); // 아군 전투 불능 상태 표시
             SetText(hpText, $"0 / {Stats.MaxHp}"); // 아군 전투 불능 체력 표시
 
@@ -182,11 +182,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             switch (position) // 역할 종류 분기
             {
                 case BattlePosition.Tank: // 탱커 역할 처리
-                    return "TANK"; // 탱커 라벨 반환
+                    return "탱커"; // 탱커 라벨 반환
                 case BattlePosition.Healer: // 힐러 역할 처리
-                    return "HEALER"; // 힐러 라벨 반환
+                    return "힐러"; // 힐러 라벨 반환
                 default: // 딜러 역할 처리
-                    return "DEALER"; // 딜러 라벨 반환
+                    return "딜러"; // 딜러 라벨 반환
             }
         }
 

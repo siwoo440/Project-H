@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 사전 자료형
+using System.Globalization; // 캐시 키 숫자 표기 기능
 using UnityEngine; // 텍스처·스프라이트 기능
 
 namespace ProjectH.UI // 프로젝트 UI 영역
@@ -19,6 +20,23 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (art != null) return art; // 정식 반환
             if (placeholder == null) placeholder = CreatePlaceholder(); // 임시 생성
             return placeholder; // 임시 반환
+        }
+
+        public static Sprite GetBust(string characterId, float aspect) // 세로로 긴 칸에 넣을 상반신 (Day81 추가 — 스탠딩에서 머리부터 가슴까지 자른다. 그림이 없으면 null)
+        {
+            if (string.IsNullOrEmpty(characterId) || !StandingFaceCatalog.TryGet(characterId, out StandingFace face)) return null; // 빈 ID · 얼굴 위치를 재지 않은 캐릭터
+            float safeAspect = Mathf.Clamp(Mathf.Round(aspect * 20f) / 20f, 0.4f, 1f); // 0.05 단위로 묶어 캐시 수를 줄인다
+            string key = characterId + "@" + safeAspect.ToString("0.00", CultureInfo.InvariantCulture); // 캐시 키
+            if (CropCache.TryGetValue(key, out Sprite cached) && cached != null) return cached; // 캐시
+            Sprite standing = DialogueArtFactory.GetStanding(characterId, null, out bool standingPlaceholder); // 기본 표정 스탠딩
+            if (standingPlaceholder || standing == null || standing.texture == null) return null; // 정식 스탠딩 없음
+            Rect rect = StandingFaceCatalog.GetBustRect(face, standing.rect, safeAspect); // 상반신 영역
+            if (rect.width < 8f || rect.height < 8f) return null; // 그림이 너무 작음
+            Sprite crop = Sprite.Create(standing.texture, rect, new Vector2(0.5f, 0.5f), 100f, 0u, SpriteMeshType.FullRect); // 같은 텍스처의 일부만 쓰는 스프라이트
+            crop.name = characterId + "_Bust"; // 이름
+            crop.hideFlags = HideFlags.HideAndDontSave; // 씬 저장 제외
+            CropCache[key] = crop; // 캐시 저장
+            return crop; // 반환
         }
 
         public static Color GetPlaceholderTint(string characterId) => DialogueArtFactory.GetCharacterTint(characterId); // 임시 초상화에 입힐 색

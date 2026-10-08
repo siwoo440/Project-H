@@ -59,7 +59,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetRect(topBand.rectTransform, new Vector2(0f, 0.82f), new Vector2(1f, 1f)); // 상단 결과 띠 배치
             Text battleResultLabel = CreateText(topBand.transform, "BattleResultLabel", "BATTLE RESULT", 22, FontStyle.Bold, new Color(0.80f, 0.86f, 0.92f, 1f)); // 결과 보조 제목 생성
             SetRect(battleResultLabel.rectTransform, new Vector2(0.03f, 0.70f), new Vector2(0.30f, 0.96f)); // 결과 보조 제목 배치
-            resultTitle = CreateText(topBand.transform, "ResultTitle", Result.Outcome == BattleOutcome.Victory ? "WIN!" : "LOSE", 72, FontStyle.Bold, Color.white); // 승패 메인 제목 생성
+            resultTitle = CreateText(topBand.transform, "ResultTitle", Result.Outcome == BattleOutcome.Victory ? "승리!" : "패배", 72, FontStyle.Bold, Color.white); // 승패 메인 제목 생성
             SetRect(resultTitle.rectTransform, new Vector2(0.28f, 0.22f), new Vector2(0.72f, 0.88f)); // 승패 메인 제목 배치
             Text starText = CreateText(topBand.transform, "StarText", Result.StarCount > 0 ? "★  ★  ★" : "☆  ☆  ☆", 36, FontStyle.Bold, GoldColor); // 결과 별 표시 생성
             SetRect(starText.rectTransform, new Vector2(0.70f, 0.22f), new Vector2(0.97f, 0.78f)); // 결과 별 표시 배치
@@ -67,7 +67,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetRect(rewardBar.rectTransform, new Vector2(0.08f, 0.70f), new Vector2(0.92f, 0.80f)); // 보상 요약 바 배치
             Text rewardText = CreateText(rewardBar.transform, "RewardText", $"EXP  +{Result.Experience}        GOLD  +{Result.Gold}", 28, FontStyle.Bold, NavyColor); // 보상 요약 텍스트 생성
             Stretch(rewardText.rectTransform, 8f); // 보상 요약 텍스트 확장
-            Text partyLabel = CreateText(panel.transform, "PartyLabel", "PARTY", 21, FontStyle.Bold, NavyColor); // 파티 결과 라벨 생성
+            Text partyLabel = CreateText(panel.transform, "PartyLabel", "파티", 21, FontStyle.Bold, NavyColor); // 파티 결과 라벨 생성
             SetRect(partyLabel.rectTransform, new Vector2(0.07f, 0.635f), new Vector2(0.22f, 0.69f)); // 파티 결과 라벨 배치
             BuildPartyCards(panel.transform); // 파티원 결과 카드 구성
             Button returnButton = CreateButton(panel.transform, "NextButton", "다음"); // 다음 버튼 생성
@@ -120,6 +120,13 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetRect(portrait.rectTransform, new Vector2(0.08f, 0.38f), new Vector2(0.92f, 0.91f)); // 성장 정보 공간 포함 임시 캐릭터 영역 배치
             Text portraitLabel = CreateText(portrait.transform, "PortraitLabel", GetPortraitLabel(member.DisplayName), 58, FontStyle.Bold, new Color(1f, 1f, 1f, 0.94f)); // 임시 캐릭터 이름 문자 생성
             Stretch(portraitLabel.rectTransform, 4f); // 임시 캐릭터 문자 확장
+            Image portraitArt = ProjectH.UI.PortraitSlot.Apply(portraitLabel, member.CharacterId, true); // 상반신 그림 (Day81 — 색 상자와 이름 첫 글자 대신)
+
+            if (portraitArt != null) // 그림 있음
+            {
+                portraitLabel.text = string.Empty; // 글자 비움
+                portraitArt.color = member.IsAlive ? Color.white : new Color(0.50f, 0.50f, 0.56f, 1f); // 쓰러진 동료는 어둡게
+            }
             Text nameText = CreateText(card.transform, "Name", member.DisplayName, 24, FontStyle.Bold, NavyColor); // 캐릭터 이름 생성
             SetRect(nameText.rectTransform, new Vector2(0.05f, 0.88f), new Vector2(0.95f, 0.99f)); // 캐릭터 이름 배치
             Text levelText = CreateText(card.transform, "Level", GetLevelText(member), 22, FontStyle.Bold, NavyColor); // 실제 성장 반영 레벨 텍스트 생성
@@ -142,7 +149,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             hpFill.fillAmount = Mathf.Clamp01(member.HealthRatio); // 결과 HP 비율 적용
             Text hpText = CreateText(card.transform, "HpText", $"HP {member.CurrentHp} / {member.MaxHp}", 18, FontStyle.Bold, NavyColor); // 종료 체력 텍스트 생성
             SetRect(hpText.rectTransform, new Vector2(0.05f, 0.06f), new Vector2(0.95f, 0.13f)); // 종료 체력 텍스트 배치
-            Text stateText = CreateText(card.transform, "State", member.IsAlive ? "ALIVE" : "DOWN", 18, FontStyle.Bold, member.IsAlive ? HpColor : DownColor); // 종료 생존 상태 텍스트 생성
+            Text stateText = CreateText(card.transform, "State", member.IsAlive ? "생존" : "쓰러짐", 18, FontStyle.Bold, member.IsAlive ? HpColor : DownColor); // 종료 생존 상태 텍스트 생성
             SetRect(stateText.rectTransform, new Vector2(0.05f, 0.005f), new Vector2(0.95f, 0.06f)); // 종료 생존 상태 텍스트 배치
         }
 

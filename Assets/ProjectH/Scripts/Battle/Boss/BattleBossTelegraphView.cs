@@ -56,7 +56,7 @@ namespace ProjectH.Battle.Boss // 프로젝트 전투 보스 영역 (Day54)
             textObject.transform.SetParent(transform, false); // 예고 문구 부모 연결
             RuntimeUiKit.SetRect(textObject.GetComponent<RectTransform>(), new Vector2(-0.3f, 0.30f), new Vector2(1.3f, 1f)); // 예고 문구 패널 상단 배치 (좁은 적 폭보다 넓게 허용)
             labelText = textObject.GetComponent<Text>(); // 예고 문구 Text 조회
-            labelText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            labelText.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             labelText.fontSize = 18; // 예고 문구 크기 적용
             labelText.fontStyle = FontStyle.Bold; // 예고 문구 굵기 적용
             labelText.alignment = TextAnchor.MiddleCenter; // 예고 문구 중앙 정렬

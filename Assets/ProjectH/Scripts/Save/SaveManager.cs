@@ -24,6 +24,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         public bool HasSaveData { get; private set; } // 저장 존재 여부
         public SaveData CurrentSave { get; private set; } // 현재 저장 데이터
         public string SavePath { get; private set; } // 저장 파일 경로
+        public bool RecoveredFromBackup { get; private set; } // 마지막 불러오기가 백업으로 복구한 것인지 (Day81 추가)
 
         public void Initialize(DataManager manager) // 저장 관리자 초기화
         {
@@ -40,7 +41,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             dataManager = manager; // 데이터 관리자 저장
             SavePath = Path.Combine(Application.persistentDataPath, SaveFileName); // 저장 경로 생성
-            HasSaveData = File.Exists(SavePath); // 기존 저장 확인
+            HasSaveData = SaveFileStore.Exists(SavePath); // 기존 저장 확인 (Day81 — 원본이 없어도 백업이 있으면 이어 할 수 있다)
             IsInitialized = true; // 초기화 완료 기록
             GameLog.Info($"[Project H] SaveManager initialized. HasSaveData={HasSaveData}"); // 저장 초기화 로그
         }
@@ -81,7 +82,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 CurrentSave.EnsureDefaults(); // 저장 기본값 확인
                 CurrentSave.MarkSavedNow(); // 저장 시각 기록 (Day72 추가)
                 string json = JsonUtility.ToJson(CurrentSave, true); // 저장 데이터 JSON 변환
-                File.WriteAllText(SavePath, json); // JSON 파일 저장
+                SaveFileStore.Write(SavePath, json); // JSON 파일 저장 (Day81 — 임시 파일에 쓴 뒤 교체, 직전 저장은 백업으로 남는다)
                 HasSaveData = true; // 저장 존재 상태 갱신
                 ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Saved)); // 저장 완료 이벤트 발행
                 GameLog.Info($"[Project H] Save complete. Path={SavePath}"); // 저장 완료 로그
@@ -101,7 +102,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 return false; // 불러오기 실패
             }
 
-            if (!File.Exists(SavePath)) // 저장 파일 확인
+            if (!SaveFileStore.Exists(SavePath)) // 저장 파일 확인 (Day81 — 백업 포함)
             {
                 HasSaveData = false; // 저장 없음 상태 갱신
                 Debug.LogWarning("[Project H] Save file does not exist."); // 저장 없음 로그
@@ -110,19 +111,14 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             try // 파일 불러오기 시도
             {
-                string json = File.ReadAllText(SavePath); // JSON 파일 읽기
-                SaveData loadedSave = JsonUtility.FromJson<SaveData>(json); // 저장 데이터 역직렬화
+                SaveData loadedSave = ReadSaveFile(SavePath, out bool recovered); // 저장 읽기 (Day81 — 원본이 읽히지 않으면 백업으로)
 
-                if (loadedSave != null) // 불러온 저장 확인
-                {
-                    loadedSave.EnsureDefaults(); // 이전 저장 기본값 보정
-                }
-
-                if (!ValidateLoadedSave(loadedSave)) // 불러온 데이터 검증
+                if (loadedSave == null) // 원본 · 백업 모두 읽지 못함
                 {
                     return false; // 불러오기 실패
                 }
 
+                RecoveredFromBackup = recovered; // 백업 복구 여부 기록 (Day81)
                 CurrentSave = loadedSave; // 현재 저장 데이터 교체
                 HasSaveData = true; // 저장 존재 상태 갱신
                 ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Loaded)); // 불러오기 완료 이벤트 발행
@@ -145,10 +141,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             try // 파일 삭제 시도
             {
-                if (File.Exists(SavePath)) // 저장 파일 확인
-                {
-                    File.Delete(SavePath); // 저장 파일 삭제
-                }
+                SaveFileStore.Delete(SavePath); // 저장 파일 삭제 (Day81 — 백업 · 임시 파일까지. 남기면 지운 저장이 되살아난다)
 
                 CurrentSave = null; // 현재 저장 데이터 제거
                 HasSaveData = false; // 저장 없음 상태 갱신
@@ -183,14 +176,16 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
         {
             string path = GetSlotPath(slot); // 슬롯 경로
 
-            if (string.IsNullOrEmpty(path) || !File.Exists(path)) // 파일 확인
+            string readable = SaveFileStore.PickReadable(path); // 읽을 파일 (Day81 — 원본이 깨졌으면 백업)
+
+            if (readable == null) // 파일 확인
             {
                 return new SaveSlotInfo(slot); // 빈 슬롯 반환
             }
 
             try // 읽기 시도
             {
-                SaveSlotHeader header = JsonUtility.FromJson<SaveSlotHeader>(File.ReadAllText(path)); // 요약 읽기
+                SaveSlotHeader header = JsonUtility.FromJson<SaveSlotHeader>(File.ReadAllText(readable)); // 요약 읽기
 
                 if (header == null) // 해석 확인
                 {
@@ -208,7 +203,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                     }
                 }
 
-                DateTime savedAt = header.savedAtTicks > 0L ? new DateTime(header.savedAtTicks, DateTimeKind.Local) : File.GetLastWriteTime(path); // 저장 시각 (없으면 파일 시각)
+                DateTime savedAt = header.savedAtTicks > 0L ? new DateTime(header.savedAtTicks, DateTimeKind.Local) : File.GetLastWriteTime(readable); // 저장 시각 (없으면 파일 시각)
                 string timeLabel = GameTimeService.GetPhaseLabel((SaveTimeOfDay)Math.Max(0, header.currentTime)); // 시간대 문구
                 return new SaveSlotInfo(slot, savedAt, header.currentDay, timeLabel, header.currentChapter, header.heroName, partyCount, topLevel); // 요약 반환
             }
@@ -248,8 +243,8 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
                 CurrentSave.EnsureDefaults(); // 기본값 확인
                 CurrentSave.MarkSavedNow(); // 저장 시각 기록
                 string json = JsonUtility.ToJson(CurrentSave, true); // JSON 변환
-                File.WriteAllText(GetSlotPath(slot), json); // 슬롯 파일 저장
-                File.WriteAllText(SavePath, json); // 이어하기용 파일도 갱신
+                SaveFileStore.Write(GetSlotPath(slot), json); // 슬롯 파일 저장 (Day81 — 안전 저장)
+                SaveFileStore.Write(SavePath, json); // 이어하기용 파일도 갱신 (Day81 — 안전 저장)
                 HasSaveData = true; // 저장 존재 기록
                 ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Saved)); // 저장 이벤트
                 message = $"{SaveSlotCatalog.GetSlotNumber(slot)}번 칸에 저장했습니다."; // 안내
@@ -268,7 +263,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             message = string.Empty; // 안내 초기화
             string path = GetSlotPath(slot); // 슬롯 경로
 
-            if (!EnsureInitialized() || string.IsNullOrEmpty(path) || !File.Exists(path)) // 조건 확인
+            if (!EnsureInitialized() || !SaveFileStore.Exists(path)) // 조건 확인 (Day81 — 백업 포함)
             {
                 message = "비어 있는 칸입니다."; // 안내
                 return false; // 실패
@@ -276,19 +271,19 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             try // 불러오기 시도
             {
-                SaveData loadedSave = JsonUtility.FromJson<SaveData>(File.ReadAllText(path)); // 역직렬화
-                if (loadedSave != null) loadedSave.EnsureDefaults(); // 기본값 보정
+                SaveData loadedSave = ReadSaveFile(path, out bool recovered); // 저장 읽기 (Day81 — 원본이 읽히지 않으면 백업으로)
 
-                if (!ValidateLoadedSave(loadedSave)) // 검증
+                if (loadedSave == null) // 원본 · 백업 모두 읽지 못함
                 {
                     message = "저장을 읽을 수 없습니다."; // 안내
                     return false; // 실패
                 }
 
+                RecoveredFromBackup = recovered; // 백업 복구 여부 기록 (Day81)
                 CurrentSave = loadedSave; // 현재 저장 교체
                 HasSaveData = true; // 저장 존재 기록
                 ProjectHEventBus.Publish(new SaveLifecycleEvent(SaveLifecycleType.Loaded)); // 불러오기 이벤트
-                message = $"{SaveSlotCatalog.GetSlotNumber(slot)}번 칸을 불러왔습니다."; // 안내
+                message = recovered ? $"{SaveSlotCatalog.GetSlotNumber(slot)}번 칸이 손상되어 직전 저장으로 복구했습니다." : $"{SaveSlotCatalog.GetSlotNumber(slot)}번 칸을 불러왔습니다."; // 안내 (Day81 — 복구 안내)
                 return true; // 성공
             }
             catch (Exception exception) // 불러오기 예외
@@ -304,7 +299,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             message = string.Empty; // 안내 초기화
             string path = GetSlotPath(slot); // 슬롯 경로
 
-            if (string.IsNullOrEmpty(path) || !File.Exists(path)) // 파일 확인
+            if (!SaveFileStore.Exists(path)) // 파일 확인 (Day81 — 백업 포함)
             {
                 message = "이미 비어 있는 칸입니다."; // 안내
                 return false; // 실패
@@ -312,7 +307,7 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 
             try // 삭제 시도
             {
-                File.Delete(path); // 파일 삭제
+                SaveFileStore.Delete(path); // 파일 삭제 (Day81 — 백업 · 임시 파일까지)
                 message = $"{SaveSlotCatalog.GetSlotNumber(slot)}번 칸을 비웠습니다."; // 안내
                 return true; // 성공
             }
@@ -358,6 +353,52 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             CharacterSaveData serena = CurrentSave.FindCharacter("CH_SERENA"); // 세레나 진행 조회
             string serenaState = serena == null ? "Missing" : $"Lv={serena.Level}, Exp={serena.Experience}"; // 세레나 상태 생성
             GameLog.Info($"[Project H] Save State: Day={CurrentSave.CurrentDay}, Time={CurrentSave.CurrentTime}, Serena={serenaState}, Flags={CurrentSave.StoryFlags.Count}"); // 현재 진행 로그
+        }
+
+        public bool ConsumeRecoveryNotice() // 백업 복구 안내를 한 번만 꺼내기 (Day81 추가 — 화면이 한 번 알린 뒤에는 false)
+        {
+            bool recovered = RecoveredFromBackup; // 복구 여부
+            RecoveredFromBackup = false; // 알림 소진
+            return recovered; // 반환
+        }
+
+        private SaveData ReadSaveFile(string path, out bool recovered) // 저장 읽기 : 원본 → 읽히지 않으면 백업 (Day81 추가)
+        {
+            recovered = false; // 기본은 원본
+            SaveData data = ParseSaveFile(path); // 원본
+            if (data != null) return data; // 원본 정상
+            data = ParseSaveFile(SaveFileStore.GetBackupPath(path)); // 백업
+            if (data == null) return null; // 백업도 읽지 못함
+            recovered = true; // 백업으로 복구
+            Debug.LogWarning($"[Project H] Save restored from backup. Path={path}"); // 복구 로그
+
+            try // 원본 자리 되돌리기 (실패해도 불러온 진행은 유효하다)
+            {
+                SaveFileStore.RestoreFromBackup(path); // 백업을 원본으로
+            }
+            catch (Exception exception) // 되돌리기 예외
+            {
+                Debug.LogWarning($"[Project H] Backup restore failed. {exception.Message}"); // 경고 로그
+            }
+
+            return data; // 복구한 진행 반환
+        }
+
+        private SaveData ParseSaveFile(string path) // 파일 하나를 읽어 검증 (읽히지 않으면 null)
+        {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path)) return null; // 파일 없음
+
+            try // 읽기 시도
+            {
+                SaveData loaded = JsonUtility.FromJson<SaveData>(File.ReadAllText(path)); // 역직렬화
+                if (loaded != null) loaded.EnsureDefaults(); // 이전 저장 기본값 보정
+                return ValidateLoadedSave(loaded) ? loaded : null; // 검증
+            }
+            catch (Exception exception) // 깨진 파일
+            {
+                Debug.LogWarning($"[Project H] Save file unreadable. Path={path}, {exception.Message}"); // 경고 로그
+                return null; // 읽지 못함
+            }
         }
 
         private bool EnsureInitialized() // 초기화 상태 검증

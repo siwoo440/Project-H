@@ -108,6 +108,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             AddSection("대화"); // 대화
             AddStepRow("대사 속도", $"×{GameSettings.DialogueSpeed:0.00}", () => GameSettings.AddDialogueSpeed(-GameSettings.DialogueSpeedStep), () => GameSettings.AddDialogueSpeed(GameSettings.DialogueSpeedStep)); // 속도
             AddStepRow("자동 진행 대기", $"{GameSettings.AutoAdvanceSeconds:0.0}초", () => GameSettings.AddAutoAdvance(-GameSettings.AutoAdvanceStep), () => GameSettings.AddAutoAdvance(GameSettings.AutoAdvanceStep)); // 자동 진행
+            AddToggleRow("처음 보는 대사도 빨리 넘기기 (Ctrl)", GameSettings.SkipUnread, () => GameSettings.SetSkipUnread(!GameSettings.SkipUnread)); // 빨리 넘기기 범위 (Day81 — 끄면 이미 본 이야기만)
             AddSection("접근성"); // 접근성
             AddStepRow("글자 크기", FormatPercent(GameSettings.TextScale), () => GameSettings.AddTextScale(-GameSettings.TextScaleStep), () => GameSettings.AddTextScale(GameSettings.TextScaleStep)); // 글자 크기
             AddToggleRow("화면 흔들림 줄이기", GameSettings.ReduceShake, () => GameSettings.SetReduceShake(!GameSettings.ReduceShake)); // 흔들림

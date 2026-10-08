@@ -82,6 +82,35 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 Check(ItemIconArt.Folder + item.Id, ".png", $"{item.Id}  ({item.DisplayName})", builder, missingList, ref have, ref missing); // 확인
             }
 
+            builder.Append("\n■ UI 스킨 (Resources/UI/Skin/{이름}.png · 없으면 색 상자)\n"); // UI 스킨 (Day81 추가)
+
+            foreach (UiSkinPart part in UiSkin.Parts) // 스킨 조각 순회
+            {
+                Check(UiSkin.Folder + part.Key, ".png", $"{part.Key}  ({part.Width}×{part.Height} · 테두리 {part.Border} · {part.Usage})", builder, missingList, ref have, ref missing); // 확인
+            }
+
+            builder.Append("\n■ UI 아이콘 (Resources/UI/Icons/{이름}.png · 없으면 글자 기호)\n"); // UI 아이콘 (Day81 추가)
+            foreach (string key in UiIcon.MenuKeys) Check(UiIcon.Folder + key, ".png", key, builder, missingList, ref have, ref missing); // 메뉴 아이콘
+            foreach (string key in UiIcon.NavKeys) Check(UiIcon.Folder + key, ".png", key, builder, missingList, ref have, ref missing); // 내비 아이콘
+            foreach (string key in UiIcon.CurrencyKeys) Check(UiIcon.Folder + key, ".png", key, builder, missingList, ref have, ref missing); // 재화 아이콘
+
+            builder.Append("\n■ 룬 · 상태이상 · 속성 아이콘 (Resources/Icons/Runes · Status · Elements · 없으면 색 원과 글자)\n"); // 전투 아이콘 (Day81 추가)
+
+            foreach (ProjectH.SaveSystem.RuneKind kind in System.Enum.GetValues(typeof(ProjectH.SaveSystem.RuneKind))) // 룬 순회
+            {
+                Check(UiIcon.GetRunePath(kind), ".png", $"룬 {kind}", builder, missingList, ref have, ref missing); // 확인
+            }
+
+            foreach (ProjectH.Battle.BattleStatusEffectId id in System.Enum.GetValues(typeof(ProjectH.Battle.BattleStatusEffectId))) // 상태이상 순회
+            {
+                if (id != ProjectH.Battle.BattleStatusEffectId.None) Check(UiIcon.GetStatusPath(id), ".png", $"상태이상 {id}", builder, missingList, ref have, ref missing); // 확인
+            }
+
+            foreach (ProjectH.Battle.BattleElement element in System.Enum.GetValues(typeof(ProjectH.Battle.BattleElement))) // 속성 순회
+            {
+                if (element != ProjectH.Battle.BattleElement.None) Check(UiIcon.GetElementPath(element), ".png", $"속성 {element}", builder, missingList, ref have, ref missing); // 확인
+            }
+
             builder.Append("\n■ NPC 스탠딩 (Resources/Dialogues/Standing/{NPC ID}_normal.png)\n"); // NPC (Day77 추가)
 
             foreach (NpcProfile npc in new[] { NpcLineCatalog.Shopkeeper, NpcLineCatalog.Blacksmith, NpcLineCatalog.Shadow, NpcLineCatalog.Archai }) // 상점 주인 · 대장장이 · 그림자 · 아르카이

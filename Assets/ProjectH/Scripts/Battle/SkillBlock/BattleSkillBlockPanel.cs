@@ -228,7 +228,7 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
             GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(Text)); // 블록 라벨 객체 생성
             labelObject.transform.SetParent(blockObject.transform, false); // 블록 라벨 부모 연결
             Text label = labelObject.GetComponent<Text>(); // 블록 라벨 Text 조회
-            label.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+            label.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             label.fontSize = 15; // 블록 라벨 기본 글자 크기 적용
             label.fontStyle = FontStyle.Bold; // 블록 라벨 굵게 표시
             label.color = Color.white; // 블록 라벨 흰색 적용

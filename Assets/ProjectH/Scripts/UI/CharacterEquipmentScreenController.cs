@@ -159,7 +159,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button previousButton = CreateButton(leftArea, "PreviousCharacter", "◀", new Color(0.90f, 0.90f, 0.92f, 1f)); // 이전 캐릭터
             SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(0.14f, 0.93f), new Vector2(0.24f, 1f)); // 배치
             previousButton.onClick.AddListener(SelectPreviousCharacter); // 연결
-            characterNameText = CreateText(leftArea, "CharacterName", "CHARACTER", 26, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 이름
+            characterNameText = CreateText(leftArea, "CharacterName", "캐릭터", 26, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 이름
             SetRect(characterNameText.rectTransform, new Vector2(0.25f, 0.93f), new Vector2(0.60f, 1f)); // 배치
             characterLevelText = CreateText(leftArea, "CharacterLevel", "Lv. 1", 18, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 레벨
             SetRect(characterLevelText.rectTransform, new Vector2(0.60f, 0.93f), new Vector2(0.75f, 1f)); // 배치
@@ -1042,9 +1042,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             string hp = BuildIntComparison("HP", currentStats.MaxHp, previewStats.MaxHp); // 최대 체력 비교 문구 생성
-            string attack = BuildIntComparison("ATK", currentStats.Attack, previewStats.Attack); // 공격력 비교 문구 생성
-            string defense = BuildIntComparison("DEF", currentStats.Defense, previewStats.Defense); // 방어력 비교 문구 생성
-            string resistance = BuildIntComparison("RES", currentStats.Resistance, previewStats.Resistance); // 저항력 비교 문구 생성
+            string attack = BuildIntComparison("공격", currentStats.Attack, previewStats.Attack); // 공격력 비교 문구 생성
+            string defense = BuildIntComparison("방어", currentStats.Defense, previewStats.Defense); // 방어력 비교 문구 생성
+            string resistance = BuildIntComparison("저항", currentStats.Resistance, previewStats.Resistance); // 저항력 비교 문구 생성
             string attackSpeed = BuildFloatComparison("공격속도", currentStats.AttackSpeed, previewStats.AttackSpeed, false); // 공격속도 비교 문구 생성
             string accuracy = BuildFloatComparison("명중률", currentStats.Accuracy, previewStats.Accuracy, true); // 명중률 비교 문구 생성
             string criticalRate = BuildFloatComparison("치명타율", currentStats.CriticalRate, previewStats.CriticalRate, true); // 치명타율 비교 문구 생성

@@ -20,7 +20,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(Text)); // 신규 라벨 객체 생성
                 labelObject.transform.SetParent(button.transform, false); // 신규 라벨 버튼 하위 연결
                 primary = labelObject.GetComponent<Text>(); // 신규 라벨 Text 조회
-                primary.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); // Unity 기본 폰트 적용
+                primary.font = ProjectH.UI.RuntimeUiKit.DefaultFont; // 게임 폰트 적용 (Day81 — 정식 폰트가 있으면 그 폰트, 없으면 Unity 기본)
             }
 
             for (int index = labels.Length - 1; index >= 0; index--) // 중복 라벨 역순 정리

@@ -72,6 +72,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RefreshSlots(); // 메인 슬롯 갱신
             RefreshPresetButtons(); // 프리셋 버튼 갱신
             RefreshConfirmState(); // 확정 버튼 상태 갱신
+            RefreshCurrency(); // 상단 골드 표시 갱신 (Day81)
+        }
+
+        private void RefreshCurrency() // 상단 골드 표시 갱신 (Day81 추가 — 씬에 적혀 있던 예시 값 "◆ 10000" 대신 실제 값)
+        {
+            Transform currency = transform.Find("FormationHeader/CurrencyPanel/CurrencyText"); // 골드 글자
+            Text label = currency == null ? null : currency.GetComponent<Text>(); // 글자 컴포넌트
+            if (label != null) label.text = GoldCurrencyService.FormatLabel(GoldCurrencyService.GetGold(currentSave)); // 실제 골드
         }
 
         public void OpenCharacterPopup(int slotIndex) // 캐릭터 선택 팝업 열기

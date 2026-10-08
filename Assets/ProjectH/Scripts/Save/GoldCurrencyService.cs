@@ -1,11 +1,17 @@
 using System; // 문자열 및 숫자 기능
 using System.Collections.Generic; // 플래그 목록 기능
+using System.Globalization; // 숫자 표기 기능
 
 namespace ProjectH.SaveSystem // 프로젝트 저장 영역
 {
     public static class GoldCurrencyService // Gold 재화 공통 처리 기능
     {
         private const string GoldFlagPrefix = "SYS_BATTLE_GOLD:"; // 기존 Gold 저장 플래그 접두사
+
+        public static string FormatLabel(int gold) // 화면에 보여 줄 골드 문구 (Day81 추가 — 세 자리마다 쉼표)
+        {
+            return "골드  " + Math.Max(0, gold).ToString("N0", CultureInfo.InvariantCulture); // 예 : 골드  5,548
+        }
 
         public static int GetGold(SaveData saveData) // 현재 Gold 조회
         {

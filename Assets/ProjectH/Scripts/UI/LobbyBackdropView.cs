@@ -57,6 +57,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Refresh(); // 즉시 반영
         }
 
+        private void Start() // 첫 프레임 (Day84 추가 — 다른 연결이 내비 버튼을 다 만든 뒤에 아이콘을 올린다)
+        {
+            LobbyNavIcons.Apply(transform.parent); // 하단 내비 아이콘
+        }
+
         private void Update() // 시간대 · 파티 변화 감시 (값 두 개만 비교한다)
         {
             Refresh(); // 달라졌을 때만 다시 그림

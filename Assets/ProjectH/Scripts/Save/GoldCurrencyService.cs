@@ -13,6 +13,11 @@ namespace ProjectH.SaveSystem // 프로젝트 저장 영역
             return "골드  " + Math.Max(0, gold).ToString("N0", CultureInfo.InvariantCulture); // 예 : 골드  5,548
         }
 
+        public static string Format(int gold, bool hasIcon) // 골드 문구 (Day84 추가 — 금화 아이콘이 옆에 있으면 숫자만)
+        {
+            return hasIcon ? Math.Max(0, gold).ToString("N0", CultureInfo.InvariantCulture) : FormatLabel(gold); // 예 : 5,548
+        }
+
         public static int GetGold(SaveData saveData) // 현재 Gold 조회
         {
             if (saveData == null) // 저장 데이터 확인

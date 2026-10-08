@@ -9,6 +9,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public static readonly Color TextOnDark = new Color(0.96f, 0.95f, 0.90f, 1f); // 어두운 조각 위의 글자색
         public static readonly Color DangerTint = new Color(1f, 0.66f, 0.66f, 1f); // 나가기 · 지우기처럼 조심할 버튼에 입히는 붉은 기
         public static readonly Color DimTint = new Color(0.62f, 0.64f, 0.70f, 1f); // 빈 칸 · 잠긴 칸에 입히는 어두운 기
+        public static readonly Color SelectedTint = new Color(1f, 0.84f, 0.50f, 1f); // 고른 카드 · 줄에 입히는 금빛 기 (Day84)
+        public const string CurrencyIconName = "CurrencyIcon"; // 재화 아이콘 이름 (Day84)
 
         public static bool Panel(Image image, string key) => Panel(image, key, Color.white); // 창 · 카드 · 칸 (그림 색 그대로)
 
@@ -39,6 +41,42 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public static bool Toggle(Button button, bool on) // 켬 · 끔 · 선택된 탭 : 켜짐은 밝은 금색, 꺼짐은 어두운 청회색
         {
             return Button(button, on ? UiSkin.ButtonTabOn : UiSkin.ButtonTabOff); // 그림 교체 (글자색도 함께)
+        }
+
+        public static void SetState(Image image, Color skinTint, Color plainColor) // 상태에 따라 색을 바꾸는 곳에서 쓴다 (Day84 추가 — 스킨을 입힌 그림에는 옅은 기를, 색 상자에는 예전 색을 넣는다)
+        {
+            if (image == null) return; // 대상 없음
+            image.color = UiSkin.IsSkinSprite(image.sprite) ? skinTint : plainColor; // 그림 위에 진한 상자 색을 곱하면 그림이 까맣게 죽는다
+        }
+
+        public static void SetSelected(Image image, bool selected, Color plainSelected, Color plainNormal) // 고른 카드 · 줄 표시 (Day84 추가 — 스킨 위에서는 금빛 기로 나타낸다)
+        {
+            SetState(image, selected ? SelectedTint : Color.white, selected ? plainSelected : plainNormal); // 고른 것만 금빛
+        }
+
+        public static Color Hint(Color color) // 버튼의 원래 색을 옅은 기로 바꾼다 (Day84 추가 — 초록 · 갈색처럼 색이 뜻을 가진 버튼의 색감을 그림 위에 남긴다)
+        {
+            float peak = Mathf.Max(color.r, Mathf.Max(color.g, color.b)); // 가장 밝은 성분
+            if (peak <= 0.001f) return Color.white; // 검정은 기를 줄 수 없음
+            Color pure = new Color(color.r / peak, color.g / peak, color.b / peak, 1f); // 밝기를 끌어올린 색
+            return Color.Lerp(Color.white, pure, 0.45f); // 흰색과 섞어 옅게
+        }
+
+        public static bool CurrencyIcon(Text label, string iconKey) // 재화 글자 왼쪽에 아이콘 (Day84 추가 — 한 번만 만든다. 아이콘이 없으면 false, 글자 그대로)
+        {
+            if (label == null || label.transform.parent == null) return false; // 대상 없음
+            Transform parent = label.transform.parent; // 재화 칩
+            if (parent.Find(CurrencyIconName) != null) return true; // 이미 만든 아이콘
+            Sprite sprite = UiIcon.Get(iconKey); // 아이콘
+            if (sprite == null) return false; // 아이콘 없음
+            Image icon = RuntimeUiKit.CreateImage(parent, CurrencyIconName, Color.white); // 아이콘
+            icon.sprite = sprite; // 그림 적용
+            icon.raycastTarget = false; // 입력 통과
+            icon.preserveAspect = true; // 비율 유지
+            RuntimeUiKit.SetRect(icon.rectTransform, new Vector2(0.05f, 0.14f), new Vector2(0.27f, 0.86f)); // 칩 왼쪽
+            RectTransform labelRect = label.rectTransform; // 글자 영역
+            labelRect.anchorMin = new Vector2(0.26f, labelRect.anchorMin.y); // 글자는 아이콘 오른쪽으로
+            return true; // 아이콘 있음
         }
 
         public static Image Glyph(Button button, string iconKey, float padding = 10f) // 버튼의 글자 기호(◀ ▶ ✕)를 아이콘으로 (아이콘이 없으면 null — 글자 그대로)

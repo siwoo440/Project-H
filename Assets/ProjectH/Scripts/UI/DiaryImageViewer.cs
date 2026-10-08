@@ -62,6 +62,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             standing.raycastTarget = false; // 입력 통과
             RuntimeUiKit.SetRect(standing.rectTransform, new Vector2(0.32f, 0f), new Vector2(0.68f, 1f)); // 가운데
             Button close = CreateButton(transform, "Close", "✕  닫기", new Color(0.25f, 0.20f, 0.18f, 0.92f), Color.white); // 닫기
+            if (UiSkinKit.Button(close, UiSkin.ButtonTabOff)) UiSkinKit.LeadIcon(close, "close", "닫기"); // 정식 버튼과 닫기 아이콘 (Day84)
             RuntimeUiKit.SetRect((RectTransform)close.transform, new Vector2(0.88f, 0.92f), new Vector2(0.985f, 0.98f)); // 오른쪽 위
             close.onClick.AddListener(Close); // 닫기
             closeButton = close.gameObject; // 저장 (정지 컷신에서만 표시)
@@ -76,12 +77,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = RuntimeUiKit.CreateImage(transform, "PlayPrompt", PanelColor); // 상자
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.33f, 0.40f), new Vector2(0.67f, 0.60f)); // 화면 가운데
             box.gameObject.AddComponent<Outline>().effectColor = new Color(0.52f, 0.30f, 0.18f, 0.9f); // 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelLight); // 정식 밝은 창 (Day84)
             promptText = RuntimeUiKit.CreateText(box.transform, "Question", string.Empty, 22, InkColor, FontStyle.Bold); // 질문
             RuntimeUiKit.SetRect(promptText.rectTransform, new Vector2(0.04f, 0.52f), new Vector2(0.96f, 0.96f)); // 위
             Button yes = CreateButton(box.transform, "Yes", "네", ButtonColor, Color.white); // 네
+            UiSkinKit.Button(yes, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day84)
             RuntimeUiKit.SetRect((RectTransform)yes.transform, new Vector2(0.12f, 0.10f), new Vector2(0.46f, 0.46f)); // 왼쪽
             yes.onClick.AddListener(Play); // 재생
             Button no = CreateButton(box.transform, "No", "아니요", new Color(0.46f, 0.42f, 0.38f, 1f), Color.white); // 아니요
+            UiSkinKit.Button(no, UiSkin.ButtonSecondary); // 정식 보조 버튼 (Day84)
             RuntimeUiKit.SetRect((RectTransform)no.transform, new Vector2(0.54f, 0.10f), new Vector2(0.88f, 0.46f)); // 오른쪽
             no.onClick.AddListener(Close); // 아니요 → 바로 닫기 (닫기 버튼 없이)
             prompt = box.gameObject; // 저장

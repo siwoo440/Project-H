@@ -140,6 +140,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image leather = CreateImage(root, "Leather", LeatherColor); // 가죽 표지
             Stretch(leather.rectTransform); // 전체
             Button close = CreateButton(root, "Close", "◀  닫기", new Color(0.36f, 0.24f, 0.16f, 1f), Color.white); // 닫기
+            UiSkinKit.LeadIcon(close, "back", "닫기"); // 뒤로 아이콘 (Day84)
             SetRect(close.GetComponent<RectTransform>(), new Vector2(0.015f, 0.905f), new Vector2(0.115f, 0.975f)); // 왼쪽 위
             close.onClick.AddListener(Close); // 돌아가기
             Text title = CreateText(root, "Title", "일기장", 32, new Color(0.98f, 0.88f, 0.66f, 1f), FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
@@ -184,11 +185,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             Button prev = CreateButton(page, "Prev", "◀", TabOffColor, Color.white); // 이전 쪽
+            UiSkinKit.Glyph(prev, "arrow_left"); // 화살표 아이콘 (Day84)
             SetRect(prev.GetComponent<RectTransform>(), new Vector2(0.04f, 0.02f), new Vector2(0.14f, 0.07f)); // 왼쪽 아래
             prev.onClick.AddListener(() => ChangePage(-1)); // 이전
             pageText = CreateText(page, "Page", "1 / 1", 17, FadedInk, FontStyle.Bold); // 쪽 표시
             SetRect(pageText.rectTransform, new Vector2(0.15f, 0.02f), new Vector2(0.35f, 0.07f)); // 가운데
             Button next = CreateButton(page, "Next", "▶", TabOffColor, Color.white); // 다음 쪽
+            UiSkinKit.Glyph(next, "arrow_right"); // 화살표 아이콘 (Day84)
             SetRect(next.GetComponent<RectTransform>(), new Vector2(0.36f, 0.02f), new Vector2(0.46f, 0.07f)); // 오른쪽
             next.onClick.AddListener(() => ChangePage(1)); // 다음
         }
@@ -256,11 +259,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             Button prev = CreateButton(page, "GalleryPrev", "◀", TabOffColor, Color.white); // 이전 쪽
+            UiSkinKit.Glyph(prev, "arrow_left"); // 화살표 아이콘 (Day84 · 갤러리)
             SetRect(prev.GetComponent<RectTransform>(), new Vector2(0.30f, 0.02f), new Vector2(0.40f, 0.075f)); // 아래
             prev.onClick.AddListener(() => ChangeGalleryPage(-1)); // 이전
             galleryPageText = CreateText(page, "GalleryPage", "1 / 1", 17, FadedInk, FontStyle.Bold); // 쪽 표시
             SetRect(galleryPageText.rectTransform, new Vector2(0.40f, 0.02f), new Vector2(0.60f, 0.075f)); // 가운데
             Button next = CreateButton(page, "GalleryNext", "▶", TabOffColor, Color.white); // 다음 쪽
+            UiSkinKit.Glyph(next, "arrow_right"); // 화살표 아이콘 (Day84 · 갤러리)
             SetRect(next.GetComponent<RectTransform>(), new Vector2(0.60f, 0.02f), new Vector2(0.70f, 0.075f)); // 아래
             next.onClick.AddListener(() => ChangeGalleryPage(1)); // 다음
             galleryRoot = new GameObject("GalleryRoot", typeof(RectTransform)); // 켜고 끄기 묶음

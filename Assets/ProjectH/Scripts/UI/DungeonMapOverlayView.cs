@@ -103,6 +103,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = RuntimeUiKit.CreateImage(transform, "MapPanel", PanelColor); // 지도 패널 생성
             RuntimeUiKit.SetRect(panel.rectTransform, new Vector2(0.04f, 0.10f), new Vector2(0.96f, 0.90f)); // 지도 패널 배치
             panel.gameObject.AddComponent<Outline>().effectColor = new Color(1f, 0.86f, 0.40f, 0.35f); // 패널 금색 외곽선 적용
+            UiSkinKit.Panel(panel, UiSkin.PanelDark); // 정식 어두운 창 (Day84)
 
             titleText = CreateText(panel.transform, "Title", string.Empty, 34, AccentColor, TextAnchor.MiddleLeft); // 제목 생성
             RuntimeUiKit.SetRect(titleText.rectTransform, new Vector2(0.03f, 0.88f), new Vector2(0.70f, 0.98f)); // 제목 좌상단 배치
@@ -121,6 +122,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RuntimeUiKit.SetRect(statusText.rectTransform, new Vector2(0.03f, 0.02f), new Vector2(0.78f, 0.12f)); // 하단 상태 배치
 
             abandonButton = CreateButton(panel.transform, "AbandonButton", "탐험 포기", new Color(0.45f, 0.16f, 0.18f, 0.95f)); // 탐험 포기 버튼 생성
+            UiSkinKit.Button(abandonButton, UiSkin.ButtonTabOff, UiSkinKit.DangerTint); // 정식 버튼 (Day84 — 포기는 붉은 기)
             RuntimeUiKit.SetRect((RectTransform)abandonButton.transform, new Vector2(0.82f, 0.025f), new Vector2(0.97f, 0.11f)); // 포기 버튼 우하단 배치
             abandonButton.onClick.AddListener(HandleAbandonClicked); // 포기 이벤트 연결
 
@@ -145,6 +147,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = RuntimeUiKit.CreateImage(blocker.transform, "PopupBox", new Color(0.10f, 0.12f, 0.19f, 0.98f)); // 팝업 상자 생성
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.30f, 0.30f), new Vector2(0.70f, 0.70f)); // 팝업 중앙 배치
             box.gameObject.AddComponent<Outline>().effectColor = new Color(1f, 0.86f, 0.40f, 0.5f); // 팝업 금색 외곽선 적용
+            UiSkinKit.Panel(box, UiSkin.PanelDark); // 정식 어두운 창 (Day84)
 
             popupTitle = CreateText(box.transform, "PopupTitle", string.Empty, 30, AccentColor, TextAnchor.MiddleCenter); // 팝업 제목 생성
             RuntimeUiKit.SetRect(popupTitle.rectTransform, new Vector2(0.05f, 0.78f), new Vector2(0.95f, 0.95f)); // 팝업 제목 배치
@@ -155,6 +158,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             for (int index = 0; index < 2; index++) // 선택지 버튼 2개 생성
             {
                 Button button = CreateButton(box.transform, $"PopupButton_{index}", string.Empty, new Color(0.20f, 0.30f, 0.52f, 0.95f)); // 팝업 버튼 생성
+                UiSkinKit.Button(button, UiSkin.ButtonTabOff); // 정식 버튼 (Day84)
                 popupButtons.Add(button); // 팝업 버튼 목록 등록
             }
 

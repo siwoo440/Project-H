@@ -87,7 +87,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void RefreshCurrencyChips(SaveData saveData) // 상단 바 재화 칩 갱신 (Day81 추가 — 씬에 적혀 있던 예시 값 대신 실제 골드, 게임에 없는 크리스탈 칩은 숨김)
         {
             Transform gold = transform.Find("TopBar/GoldChip/Value"); // 골드 글자
-            if (gold != null) SetText(gold.GetComponent<Text>(), GoldCurrencyService.FormatLabel(GoldCurrencyService.GetGold(saveData))); // 실제 골드
+            if (gold != null) SetText(gold.GetComponent<Text>(), GoldCurrencyService.Format(GoldCurrencyService.GetGold(saveData), UiSkinKit.CurrencyIcon(gold.GetComponent<Text>(), "gold"))); // 실제 골드 (Day84 — 금화 아이콘이 있으면 숫자만)
             Transform crystal = transform.Find("TopBar/CrystalChip"); // 크리스탈 칩
             if (crystal != null) crystal.gameObject.SetActive(false); // 게임에 없는 재화
         }

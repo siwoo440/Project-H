@@ -79,7 +79,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             Transform currency = transform.Find("FormationHeader/CurrencyPanel/CurrencyText"); // 골드 글자
             Text label = currency == null ? null : currency.GetComponent<Text>(); // 글자 컴포넌트
-            if (label != null) label.text = GoldCurrencyService.FormatLabel(GoldCurrencyService.GetGold(currentSave)); // 실제 골드
+            if (label != null) label.text = GoldCurrencyService.Format(GoldCurrencyService.GetGold(currentSave), UiSkinKit.CurrencyIcon(label, "gold")); // 실제 골드 (Day84 — 금화 아이콘이 있으면 숫자만)
         }
 
         public void OpenCharacterPopup(int slotIndex) // 캐릭터 선택 팝업 열기

@@ -26,6 +26,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static readonly Color HintColor = new Color(0.82f, 0.84f, 0.88f, 1f); // 안내 글자
         private static readonly Color RecruitColor = new Color(0.36f, 0.62f, 0.40f, 1f); // 새 동료 소식 초록 (Day64 추가)
         private static readonly Color MinigameColor = new Color(0.62f, 0.42f, 0.26f, 1f); // 야시장 놀이판 갈색 (Day70 추가)
+        private static readonly Color ZoneCardTint = new Color(1f, 1f, 1f, 0.92f); // 스킨을 입힌 구역 카드의 투명도 (Day84)
         private const float PanelViewHeight = 700f; // 행동 패널 기준 높이 (기존 비율 배치를 픽셀로 바꾸는 기준, Day67 추가)
 
         private readonly Dictionary<VillageZone, Button> zoneCards = new Dictionary<VillageZone, Button>(); // 지도 구역 카드
@@ -123,8 +124,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildTopBar() // 상단 바 : 뒤로 · 제목 · 일차/시간대 · 활력/결속/골드
         {
             Image bar = CreateImage(canvasRoot, "TopBar", BarColor); // 상단 띠
+            UiSkinKit.Panel(bar, UiSkin.BarTop); // 정식 상단 바 (Day84)
             SetRect(bar.rectTransform, new Vector2(0f, 0.915f), new Vector2(1f, 1f)); // 상단 배치
             Button back = CreateButton(bar.transform, "Back", "◀  뒤로", SubColor); // 뒤로 (구역 → 지도 → 로비)
+            if (UiSkinKit.Button(back, UiSkin.ButtonTabOff)) UiSkinKit.LeadIcon(back, "back", "뒤로"); // 정식 버튼과 뒤로 아이콘 (Day84)
             SetRect(back.GetComponent<RectTransform>(), new Vector2(0.01f, 0.14f), new Vector2(0.11f, 0.86f)); // 왼쪽
             back.onClick.AddListener(GoBack); // 뒤로 가기
             titleText = CreateText(bar.transform, "Title", "마을", 30, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
@@ -149,6 +152,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 Vector2 min = mins[(int)zone]; // 왼쪽 아래
                 SetRect(card.GetComponent<RectTransform>(), min, min + new Vector2(0.27f, 0.25f)); // 카드 크기
                 AddOutline(card.gameObject, new Color(1f, 1f, 1f, 0.35f)); // 흰 테두리
+                UiSkinKit.Panel(card.GetComponent<Image>(), UiSkin.Slot, ZoneCardTint); // 정식 칸 (Day84 — 뒤의 마을 그림이 살짝 비친다)
                 Text name = CreateText(card.transform, "Name", info.Name, 34, Color.white, FontStyle.Bold, TextAnchor.UpperLeft); // 구역 이름
                 SetRect(name.rectTransform, new Vector2(0.06f, 0.62f), new Vector2(0.94f, 0.95f)); // 위
                 Text desc = CreateText(card.transform, "Desc", info.Description, 15, HintColor, FontStyle.Normal, TextAnchor.UpperLeft).Wrap(); // 설명
@@ -236,6 +240,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = CreateImage(zoneRoot.transform, "ActionPanel", PanelColor); // 행동 패널
             SetRect(panel.rectTransform, new Vector2(0.69f, 0.015f), new Vector2(0.99f, 0.90f)); // 오른쪽
             AddOutline(panel.gameObject, new Color(1f, 1f, 1f, 0.25f)); // 테두리
+            UiSkinKit.Panel(panel, UiSkin.PanelDark); // 정식 어두운 창 (Day84)
             GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D)); // 보이는 영역 (밖으로 나간 버튼은 잘림)
             viewportObject.transform.SetParent(panel.transform, false); // 패널 하위
             RectTransform viewport = (RectTransform)viewportObject.transform; // 영역 저장
@@ -325,7 +330,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 int recruits = info.Zone == VillageZone.Guild ? RecruitService.GetPending(saveData).Count : 0; // 길드 새 동료 소식 수 (Day64)
                 string status = !open ? "영업 종료 (밤)" : present.Count > 0 ? $"{present.Count}명이 있습니다" : "아무도 없음"; // 상태 글자
                 zoneCardPeople[info.Zone].text = open && recruits > 0 ? $"★ 새 동료 소식 {recruits}건 · {status}" : status; // 카드 글자
-                zoneCards[info.Zone].GetComponent<Image>().color = open ? CardColor : new Color(0.05f, 0.05f, 0.06f, 0.65f); // 닫힌 구역 어둡게
+                UiSkinKit.SetState(zoneCards[info.Zone].GetComponent<Image>(), open ? ZoneCardTint : UiSkinKit.DimTint, open ? CardColor : new Color(0.05f, 0.05f, 0.06f, 0.65f)); // 닫힌 구역 어둡게
             }
 
             if (currentZone.HasValue) // 구역 화면
@@ -493,6 +498,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private float AddButton(string text, Color color, float top, float height, bool interactable, UnityEngine.Events.UnityAction action) // 패널 버튼 한 줄 추가 후 다음 위치 반환
         {
             Button button = CreateButton(panelContent, "Action", text, color); // 버튼
+            UiSkinKit.Button(button, color == TimeColor ? UiSkin.ButtonPrimary : UiSkin.ButtonTabOff, color == TimeColor ? Color.white : UiSkinKit.Hint(color)); // 정식 버튼 (Day84 — 시간을 쓰는 행동은 주황, 나머지는 원래 색을 옅게 남긴다)
             PlaceRow((RectTransform)button.transform, top, height, 0.012f); // 배치 (위에서부터 쌓기)
             button.interactable = interactable; // 가능 여부
             button.onClick.AddListener(action); // 기능 연결

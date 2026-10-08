@@ -15,6 +15,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image inner = RuntimeUiKit.CreateImage(frame.transform, "Inner", new Color(0.10f, 0.10f, 0.13f, 1f)); // 어두운 안쪽 칸
             inner.raycastTarget = false; // 입력 통과
             RuntimeUiKit.Stretch(inner.rectTransform, 4f); // 테두리 두께 4px
+            if (UiSkin.Apply(frame, UiSkin.Slot, 3f)) inner.gameObject.SetActive(false); // 정식 칸 (Day84 — 은테에 등급 색을 입힌다. 안쪽 어두운 칸은 그림에 있다)
             Image disc = RuntimeUiKit.CreateImage(frame.transform, "Disc", Color.white); // 유형 색 원
             disc.sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 채움 원
             disc.raycastTarget = false; // 입력 통과
@@ -36,7 +37,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             if (item == null) // 빈 칸 확인
             {
-                frame.color = new Color(0.30f, 0.30f, 0.34f, 0.8f); // 흐린 테두리
+                frame.color = GetFrameColor(frame, new Color(0.30f, 0.30f, 0.34f, 0.8f)); // 흐린 테두리
                 disc.color = new Color(1f, 1f, 1f, 0.05f); // 흐린 원
                 art.enabled = false; // 아이콘 숨김
                 symbol.text = "+"; // 빈 칸 표시
@@ -44,7 +45,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 처리 종료
             }
 
-            frame.color = CharacterEquipmentScreenController.GetGradeColor(item.Grade); // 등급 테두리 색
+            frame.color = GetFrameColor(frame, CharacterEquipmentScreenController.GetGradeColor(item.Grade)); // 등급 테두리 색
             Sprite icon = ItemIconArt.Get(item); // 정식 아이콘 (Day80 — Resources/Icons/Items/{ID} 우선)
             art.enabled = icon != null; // 정식 아이콘 유무
             art.sprite = icon; // 정식 아이콘 적용
@@ -70,6 +71,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 case ItemType.Quest: return "!"; // 퀘스트
                 default: return "?"; // 기타
             }
+        }
+
+        private static Color GetFrameColor(Image frame, Color color) // 칸 테두리 색 (Day84 추가 — 정식 칸 그림은 어두워서 색을 그대로 곱하면 테두리가 묻힌다. 흰색과 섞어 밝게 입힌다)
+        {
+            if (!UiSkin.IsSkinSprite(frame.sprite)) return color; // 색 상자는 예전 색 그대로
+            Color bright = Color.Lerp(color, Color.white, 0.45f); // 밝게
+            return new Color(bright.r, bright.g, bright.b, color.a); // 투명도는 그대로
         }
 
         private static Color GetTypeColor(ItemData item) // 유형 색

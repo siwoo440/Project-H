@@ -121,8 +121,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildTopBar(Transform parent) // 상단 바 : 로비로·제목·골드 (로비 하단 '대장간' 버튼으로 진입)
         {
             Image bar = CreateImage(parent, "TopBar", new Color(0.04f, 0.03f, 0.03f, 0.90f)); // 상단 띠
+            UiSkinKit.Panel(bar, UiSkin.BarTop); // 정식 상단 바 (Day84)
             SetRect(bar.rectTransform, new Vector2(0f, 0.915f), new Vector2(1f, 1f)); // 상단 배치
             Button backButton = CreateButton(bar.transform, "BackButton", "◀  로비", TabOffColor, Color.white); // 로비 복귀 버튼
+            if (UiSkinKit.Button(backButton, UiSkin.ButtonTabOff)) UiSkinKit.LeadIcon(backButton, "back", "로비"); // 정식 버튼과 뒤로 아이콘 (Day84)
             SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.01f, 0.14f), new Vector2(0.11f, 0.86f)); // 왼쪽 배치
             backButton.onClick.AddListener(() => LoadScene(GameScenes.Lobby)); // 로비 이동
             Text title = CreateText(bar.transform, "Title", "대장간", 30, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
@@ -145,6 +147,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = CreateImage(parent, "DialogueBox", new Color(0.05f, 0.04f, 0.04f, 0.92f)); // 대사 상자
             SetRect(box.rectTransform, new Vector2(0.52f, 0.02f), new Vector2(0.99f, 0.24f)); // 하단 배치
             AddOutline(box.gameObject, new Color(1f, 0.55f, 0.22f, 0.75f)); // 불씨 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelDark); // 정식 어두운 창 (Day84)
             Image plate = CreateImage(parent, "NamePlate", EmberColor); // 이름표
             SetRect(plate.rectTransform, new Vector2(0.53f, 0.215f), new Vector2(0.72f, 0.265f)); // 상자 위 왼쪽
             Text plateText = CreateText(plate.transform, "Name", NpcLineCatalog.FormatSpeaker(npc), 20, new Color(0.12f, 0.05f, 0.02f, 1f)).BestFit(12); // 이름·소속
@@ -158,17 +161,22 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = CreateImage(parent, "Workbench", PanelColor); // 작업대 패널
             SetRect(panel.rectTransform, new Vector2(0.01f, 0.02f), new Vector2(0.505f, 0.90f)); // 왼쪽 배치
             AddOutline(panel.gameObject, new Color(1f, 0.55f, 0.22f, 0.35f)); // 불씨 테두리
+            UiSkinKit.Panel(panel, UiSkin.PanelDark); // 정식 어두운 창 (Day84)
             enhanceTab = CreateButton(panel.transform, "EnhanceTab", "강화  +0~+5", TabOffColor, Color.white); // 강화 탭
+            UiSkinKit.Toggle(enhanceTab, true); // 정식 탭 (Day84 — 고른 탭은 갱신 때 그림을 바꾼다)
             SetRect(enhanceTab.GetComponent<RectTransform>(), new Vector2(0.03f, 0.915f), new Vector2(0.30f, 0.98f)); // 탭 배치
             enhanceTab.onClick.AddListener(() => SetMode(false)); // 강화 모드
             transcendTab = CreateButton(panel.transform, "TranscendTab", "초월  ★1~★3", TabOffColor, Color.white); // 초월 탭
+            UiSkinKit.Toggle(transcendTab, false); // 정식 탭 (Day84)
             SetRect(transcendTab.GetComponent<RectTransform>(), new Vector2(0.31f, 0.915f), new Vector2(0.58f, 0.98f)); // 탭 배치
             transcendTab.onClick.AddListener(() => SetMode(true)); // 초월 모드
             Button pickButton = CreateButton(panel.transform, "PickButton", "장비 선택", new Color(0.36f, 0.30f, 0.26f, 1f), Color.white); // 장비 선택 목록 열기
+            UiSkinKit.Button(pickButton, UiSkin.ButtonTabOff); // 정식 버튼 (Day84)
             SetRect(pickButton.GetComponent<RectTransform>(), new Vector2(0.72f, 0.915f), new Vector2(0.97f, 0.98f)); // 오른쪽 위
             pickButton.onClick.AddListener(() => ShowList(true)); // 목록 열기
 
             ownerFrame = CreateImage(panel.transform, "OwnerFrame", new Color(0.12f, 0.10f, 0.10f, 1f)); // 장착자 초상 틀
+            UiSkinKit.Panel(ownerFrame, UiSkin.Slot); // 정식 칸 (Day84)
             SetRect(ownerFrame.rectTransform, new Vector2(0.04f, 0.60f), new Vector2(0.25f, 0.89f)); // 왼쪽 위
             ownerFrame.gameObject.AddComponent<RectMask2D>(); // 상반신만 보이게 자르기
             ownerPortrait = CreateImage(ownerFrame.transform, "Portrait", Color.white); // 장착자 초상
@@ -201,6 +209,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 ScrollGrade grade = (ScrollGrade)index; // 등급 값
                 scrollButtons[index] = CreateButton(panel.transform, "Scroll_" + grades[index], grades[index], TabOffColor, Color.white); // 등급 버튼
+                UiSkinKit.Toggle(scrollButtons[index], false); // 정식 탭 (Day84 — 고른 등급은 갱신 때 그림을 바꾼다)
                 SetRect(scrollButtons[index].GetComponent<RectTransform>(), new Vector2(0.63f + (index * 0.112f), 0.56f), new Vector2(0.73f + (index * 0.112f), 0.615f)); // 칸 아래 한 줄
                 scrollButtons[index].onClick.AddListener(() => SelectGrade(grade)); // 등급 선택
             }
@@ -218,6 +227,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             costText = CreateText(panel.transform, "Cost", string.Empty, 18, GoldColor, FontStyle.Bold, TextAnchor.MiddleRight).BestFit(11); // 비용
             SetRect(costText.rectTransform, new Vector2(0.45f, 0.135f), new Vector2(0.96f, 0.205f)); // 비용 배치
             actionButton = CreateButton(panel.transform, "Action", "강화하기", new Color(0.78f, 0.36f, 0.12f, 1f), Color.white); // 실행 버튼
+            UiSkinKit.Button(actionButton, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day84)
             SetRect(actionButton.GetComponent<RectTransform>(), new Vector2(0.20f, 0.025f), new Vector2(0.80f, 0.12f)); // 하단 가운데
             actionLabel = actionButton.GetComponentInChildren<Text>(); // 버튼 글자
             actionLabel.fontSize = 28; // 큰 글자
@@ -229,10 +239,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = CreateImage(parent, "EquipmentList", new Color(0.05f, 0.04f, 0.04f, 0.94f)); // 목록 패널
             SetRect(panel.rectTransform, new Vector2(0.52f, 0.275f), new Vector2(0.99f, 0.90f)); // 대사 상자 위
             AddOutline(panel.gameObject, new Color(1f, 0.55f, 0.22f, 0.5f)); // 불씨 테두리
+            UiSkinKit.Panel(panel, UiSkin.PanelDark); // 정식 어두운 창 (Day84 · 장비 목록)
             listPanel = panel.gameObject; // 패널 저장
             Text title = CreateText(panel.transform, "Title", "강화할 장비 선택", 22, EmberColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
             SetRect(title.rectTransform, new Vector2(0.03f, 0.90f), new Vector2(0.70f, 0.985f)); // 위 왼쪽
             Button close = CreateButton(panel.transform, "Close", "닫기", TabOffColor, Color.white); // 닫기
+            UiSkinKit.Button(close, UiSkin.ButtonTabOff); // 정식 버튼 (Day84)
             SetRect(close.GetComponent<RectTransform>(), new Vector2(0.84f, 0.905f), new Vector2(0.98f, 0.98f)); // 위 오른쪽
             close.onClick.AddListener(() => ShowList(false)); // 목록 닫기
             GameObject grid = new GameObject("Grid", typeof(RectTransform)); // 카드 격자
@@ -246,11 +258,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             listPrev = CreateButton(panel.transform, "Prev", "◀", TabOffColor, Color.white); // 이전 페이지
+            if (UiSkinKit.Button(listPrev, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(listPrev, "arrow_left"); // 정식 버튼과 화살표 아이콘 (Day84)
             SetRect(listPrev.GetComponent<RectTransform>(), new Vector2(0.02f, 0.02f), new Vector2(0.10f, 0.095f)); // 왼쪽 아래
             listPrev.onClick.AddListener(() => ChangeListPage(-1)); // 이전
             listPageText = CreateText(panel.transform, "Page", "1 / 1", 18, Color.white); // 페이지
             SetRect(listPageText.rectTransform, new Vector2(0.10f, 0.02f), new Vector2(0.22f, 0.095f)); // 가운데
             listNext = CreateButton(panel.transform, "Next", "▶", TabOffColor, Color.white); // 다음 페이지
+            if (UiSkinKit.Button(listNext, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(listNext, "arrow_right"); // 정식 버튼과 화살표 아이콘 (Day84)
             SetRect(listNext.GetComponent<RectTransform>(), new Vector2(0.22f, 0.02f), new Vector2(0.30f, 0.095f)); // 오른쪽
             listNext.onClick.AddListener(() => ChangeListPage(1)); // 다음
         }
@@ -263,6 +277,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             float height = 1f / ListRows; // 칸 높이
             EquipmentCardView card = new EquipmentCardView(); // 카드 참조
             Button body = CreateButton(grid, "Card_" + index, string.Empty, new Color(0.15f, 0.12f, 0.12f, 1f), Color.white); // 카드 본체
+            UiSkinKit.Panel(body.GetComponent<Image>(), UiSkin.Slot); // 정식 칸 (Day84)
             SetRect(body.GetComponent<RectTransform>(), new Vector2((column * width) + 0.008f, 1f - ((row + 1) * height) + 0.012f), new Vector2(((column + 1) * width) - 0.008f, 1f - (row * height) - 0.012f)); // 격자 배치
             body.onClick.AddListener(() => SelectEquipment(card.InstanceId)); // 장비 선택
             card.Root = body.gameObject; // 루트 저장
@@ -291,8 +306,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void SetMode(bool transcend) // 강화·초월 모드 전환
         {
             transcendMode = transcend; // 모드 저장
-            enhanceTab.GetComponent<Image>().color = transcend ? TabOffColor : EmberColor; // 강화 탭 강조
-            transcendTab.GetComponent<Image>().color = transcend ? EmberColor : TabOffColor; // 초월 탭 강조
+            if (!UiSkinKit.Toggle(enhanceTab, !transcend)) enhanceTab.GetComponent<Image>().color = transcend ? TabOffColor : EmberColor; // 강화 탭 강조
+            if (!UiSkinKit.Toggle(transcendTab, transcend)) transcendTab.GetComponent<Image>().color = transcend ? EmberColor : TabOffColor; // 초월 탭 강조
             RefreshView(); // 갱신
         }
 
@@ -349,7 +364,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             for (int index = 0; index < scrollButtons.Length; index++) // 등급 버튼
             {
                 scrollButtons[index].gameObject.SetActive(!transcendMode); // 초월 모드에서는 숨김
-                scrollButtons[index].GetComponent<Image>().color = index == (int)selectedGrade ? EmberColor : TabOffColor; // 선택 강조
+                if (!UiSkinKit.Toggle(scrollButtons[index], index == (int)selectedGrade)) scrollButtons[index].GetComponent<Image>().color = index == (int)selectedGrade ? EmberColor : TabOffColor; // 선택 강조
             }
 
             if (equipment == null) // 장비 미선택
@@ -475,7 +490,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 CharacterSaveData owner = CharacterEquipmentService.FindEquippedCharacter(saveData, instance.InstanceId); // 장착자
                 CharacterData ownerData = owner == null || dataManager == null ? null : dataManager.GetCharacter(owner.CharacterId); // 장착자 원본
                 card.Owner.text = owner == null ? "보관 중" : $"{(ownerData == null ? owner.CharacterId : ownerData.DisplayName)} 장착"; // 장착자
-                card.Root.GetComponent<Image>().color = instance.InstanceId == selectedInstanceId ? new Color(0.45f, 0.22f, 0.10f, 1f) : new Color(0.15f, 0.12f, 0.12f, 1f); // 선택 강조
+                UiSkinKit.SetSelected(card.Root.GetComponent<Image>(), instance.InstanceId == selectedInstanceId, new Color(0.45f, 0.22f, 0.10f, 1f), new Color(0.15f, 0.12f, 0.12f, 1f)); // 선택 강조
             }
         }
 

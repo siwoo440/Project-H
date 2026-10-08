@@ -8,7 +8,7 @@ Unity로 만드는 **리듬 전투 + 동료 육성 RPG**입니다.
 | --- | --- |
 | 엔진 | Unity (Input System 패키지 사용) |
 | 언어 | C# — 모든 기능 줄에 한국어 주석 |
-| 규모 | 런타임 스크립트 **318개** · 테스트 **142개** · 대사 **229편** |
+| 규모 | 런타임 스크립트 **322개** · 테스트 **145개** · 대사 **229편** |
 | 진행 | 1~74일차 완료 (일차별 기록은 [`Devlogs/`](Devlogs)) |
 
 ---
@@ -55,7 +55,7 @@ Assets/ProjectH/
 │  └─ Editor/      에디터 도구 (밸런스 표 · 리소스 점검 표)
 ├─ Data/           실제 데이터 에셋 (.asset)
 ├─ Resources/      런타임에 불러오는 그림 · 소리 · 대사
-└─ Tests/EditMode/ 테스트 142개
+└─ Tests/EditMode/ 테스트 145개
 ```
 
 ---
@@ -66,10 +66,11 @@ Assets/ProjectH/
 
 1. `Assets/ProjectH/Resources/Dialogues/{ID}.json` 작성
 2. 화자는 `CH_*`(동료) · `NPC_*` · `HERO` · `NARRATION`
-3. `{HERO}`는 주인공 이름으로 자동 치환
-4. 선택지에 `"flag": "..."`를 넣으면 스토리 플래그가 남는다 (엔딩 분기에 사용)
-5. 대사 줄의 `"expression"`에는 표정 이름을 적는다 (`기본` · `미소` · `진지` · `부끄러움` · `놀람` · `슬픔` 등). **새 이름은 `ExpressionCatalog`에 먼저 등록할 것**
-6. `.json.meta`는 `TextScriptImporter`로 만들 것
+3. `"background"`에는 **그 장소의 배경 키**를 쓴다. 분위기가 비슷하다고 다른 장소의 키를 빌려 쓰면 엉뚱한 그림이 나온다 (새 장소면 키를 새로 만들고 `DialogueArtFactory`에 대체 배경을 적어 둔다)
+4. `{HERO}`는 주인공 이름으로 자동 치환
+5. 선택지에 `"flag": "..."`를 넣으면 스토리 플래그가 남는다 (엔딩 분기에 사용)
+6. 대사 줄의 `"expression"`에는 표정 이름을 적는다 (`기본` · `미소` · `진지` · `부끄러움` · `놀람` · `슬픔` 등). **새 이름은 `ExpressionCatalog`에 먼저 등록할 것**
+7. `.json.meta`는 `TextScriptImporter`로 만들 것
 
 ### 던전 추가
 
@@ -91,6 +92,9 @@ Assets/ProjectH/
 | 캐릭터 스탠딩 | `Resources/Dialogues/Standing/{캐릭터ID}_{표정}.png` (없는 표정은 `_normal`, 그것도 없으면 `{캐릭터ID}.png`) |
 | 정사각 초상화 | `Resources/Portraits/{캐릭터ID}.png` (없으면 스탠딩에서 얼굴을 잘라 쓴다) |
 | 궁극기 컷인 | `Resources/UltimateCutIns/{캐릭터ID}.png` |
+| 전투 SD 그림 | `Resources/BattleUnits/{캐릭터ID}.png` · `{몬스터ID}.png` (아군은 없으면 스탠딩, 몬스터는 없으면 색 상자) |
+| 전투 배경 | `Resources/Dialogues/Backgrounds/BATTLE_{지역}.png` (없으면 비슷한 대화 배경으로 대신) |
+| 모험 지도 지역 아이콘 | `Resources/Map/Regions/{지역ID}.png` (없으면 색 원과 글자) |
 | 배경음 · 효과음 | `Resources/Audio/Bgm/{키}.wav` · `Resources/Audio/Sfx/{키}.wav` |
 | 폰트 | `Resources/Fonts/GameFont.ttf` |
 
@@ -117,6 +121,9 @@ Assets/ProjectH/
 | 대화 화면의 캐릭터 크기 | `DialogueStandingFrame.Scale` (1 = 전신 · 1.4 = 허벅지까지 · 1.7 = 허리까지) |
 | 초상화에 머리가 들어오는 범위 | `StandingFaceCatalog.PortraitScale` (얼굴 높이의 몇 배를 자를지) |
 | 궁극기 컷인의 얼굴 크기 | `UltimateCutInView.FaceHeightInBand` |
+| 전투 유닛 그림이 차지하는 영역 | `BattleUnitArt.SpriteAnchorMin` · `SpriteAnchorMax` |
+| 보스가 일반 몬스터보다 커 보이는 배율 | `BattleUnitArt.BossScale` |
+| 전투 배경을 어둡게 덮는 정도 | `BattleBackgroundCatalog.DimAlpha` |
 
 초상화와 컷인은 `StandingFaceCatalog`의 **얼굴 위치표**를 씁니다. 스탠딩을 새로 받아 얼굴 위치가 달라지면 이 표의 값을 다시 재야 합니다.
 
@@ -165,10 +172,14 @@ Assets/ProjectH/
 | CG · 정지 컷신 | 테스트 1장 | 개인 1화 · 결속 5단계 · 특별한 밤 |
 | 배경음 · 효과음 | 코드로 합성한 간이 음원 | 정식 음원 |
 | 폰트 | Unity 기본 | 한글 폰트 1종 |
-| 대화 배경 | **정식 일러스트 27장**(1672×941) | 완료 |
+| 대화 배경 | **정식 일러스트 27장**(1672×941) · 노아르 도시와 지하 서고는 밤의 관측실 그림으로 대신 | `NOIR` · `NOIR_ARCHIVE` 2장 |
 | 화면 배경 | **정식 일러스트 3장** (상점 · 대장간 · 마을 지도) | 완료 |
 | 초상화 | 스탠딩에서 얼굴을 잘라 사용 | 완료 (원하면 전용 그림) |
 | NPC 스탠딩 | **정식 일러스트 4장** (상점 주인 · 대장장이 · 그림자 · 아르카이) | 완료 |
+| 전투 아군 그림 | 스탠딩 전신을 작게 표시 | SD 그림 12장 |
+| 전투 몬스터 그림 | 이름이 적힌 색 상자 | SD 그림 34장 (보스 14 · 일반 20) |
+| 전투 배경 | 지역별로 비슷한 대화 배경을 대신 사용 | 원하면 전용 배경 8장 |
+| 모험 지도 지역 아이콘 | **8개 지역 적용** · 바다는 색 원 | 바다 1개 |
 
 ---
 

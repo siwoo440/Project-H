@@ -9,6 +9,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private const string BackgroundFolder = "Dialogues/Backgrounds/"; // 정식 배경 Resources 경로 (배경 키 이름의 Sprite)
         public const string StandingFolder = "Dialogues/Standing/"; // 정식 스탠딩 Resources 경로 ({캐릭터ID}_{표정 키} 또는 {캐릭터ID}, Day76 공개 — 점검 표·테스트 공용)
         private const string CutInFolder = "UltimateCutIns/"; // 궁극기 컷인 전용 일러스트 Resources 경로 (Day59 추가, {캐릭터ID})
+        private const int MaxAliasHops = 4; // 대체 배경을 따라가는 최대 횟수 (Day78 추가)
         private const int BackgroundWidth = 320; // 임시 배경 가로 픽셀
         private const int BackgroundHeight = 180; // 임시 배경 세로 픽셀
         private const int StandingWidth = 256; // 임시 스탠딩 가로 픽셀
@@ -19,7 +20,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static readonly Dictionary<string, string> BackgroundAliases = new Dictionary<string, string> // 전용 그림이 없을 때 대신 쓸 배경 (Day76 추가 — 전용 그림을 넣으면 그쪽이 우선)
         {
             { "SHOP", "VILLAGE_MARKET" }, // 상점 화면 → 시장 거리
-            { "VILLAGE", "VILLAGE_PLAZA" } // 마을 지도 화면 → 광장
+            { "VILLAGE", "VILLAGE_PLAZA" }, // 마을 지도 화면 → 광장
+            { "NOIR", "OBSERVATORY_NIGHT" }, // 노아르 마법도시 → 도시가 내다보이는 밤의 관측실 (Day78 추가 — 도시 그림이 오면 그쪽이 우선)
+            { "NOIR_ARCHIVE", "OBSERVATORY_NIGHT" }, // 노아르 지하 서고 → 책장이 있는 밤의 관측실 (Day78 추가)
+            { "BATTLE_FOREST", "SILVARAN" }, // 전투 · 숲 → 숲 그림 (Day78 추가 — 전용 전투 배경이 오면 그쪽이 우선)
+            { "BATTLE_SWAMP", "GARDEN_POND" }, // 전투 · 늪지대 → 물가 그림
+            { "BATTLE_DEMON_CASTLE", "ABYSS" }, // 전투 · 마왕성 → 침식된 심연
+            { "BATTLE_NOIR", "NOIR_ARCHIVE" }, // 전투 · 노아르 → 지하 서고 (서고 그림이 없으면 다시 그 대체 배경으로)
+            { "BATTLE_SILVARAN", "SILVARAN" }, // 전투 · 실바란
+            { "BATTLE_KARNIAN", "KARNIAN" }, // 전투 · 카르니안
+            { "BATTLE_DESERT", "DESERT" }, // 전투 · 사막
+            { "BATTLE_SEA", "SEA_RIFT" } // 전투 · 바다
         };
 
         private readonly struct BackgroundPalette // 임시 배경 색 구성
@@ -63,12 +74,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return !string.IsNullOrEmpty(key) && LoadBackgroundArt(key) != null; // 그림 존재 여부
         }
 
-        private static Sprite LoadBackgroundArt(string key) // 배경 그림 파일 조회 : 전용 그림 → 대신 쓸 그림 (Day76 추가)
+        private static Sprite LoadBackgroundArt(string key) // 배경 그림 파일 조회 : 전용 그림 → 대신 쓸 그림 (Day76 추가 · Day78 — 대체 배경의 대체 배경까지 따라간다)
         {
-            Sprite art = RuntimeSpriteLoader.Load(BackgroundFolder + key); // 전용 그림
-            if (art != null) return art; // 전용 그림 반환
-            string alias = GetBackgroundAlias(key); // 대신 쓸 배경 키
-            return string.IsNullOrEmpty(alias) ? null : RuntimeSpriteLoader.Load(BackgroundFolder + alias); // 대신 쓸 그림 (없으면 null)
+            string current = key; // 지금 찾는 키
+
+            for (int hop = 0; hop < MaxAliasHops && !string.IsNullOrEmpty(current); hop++) // 대체 배경을 차례로 따라감 (횟수 제한으로 순환 방지)
+            {
+                Sprite art = RuntimeSpriteLoader.Load(BackgroundFolder + current); // 그림 조회
+                if (art != null) return art; // 찾음
+                current = GetBackgroundAlias(current); // 다음 대체 배경
+            }
+
+            return null; // 그림 없음
         }
 
         public static List<string> GetStandingResourcePaths(string characterId, string expression) // 스탠딩을 찾는 순서 (Day76 추가 — 표정 키 → 대사에 적힌 이름 → 기본 표정 → 표정 없는 그림)
@@ -189,6 +206,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new BackgroundPalette(new Color(0.30f, 0.34f, 0.44f), new Color(0.78f, 0.72f, 0.60f), new Color(0.36f, 0.32f, 0.30f), false); // 석조 길드 홀
                 case "INN_NIGHT": // 여관 밤 (Day62 추가)
                     return new BackgroundPalette(new Color(0.03f, 0.04f, 0.10f), new Color(0.24f, 0.16f, 0.22f), new Color(0.10f, 0.07f, 0.08f), true); // 달빛 비치는 방
+                case "ABYSS": // 침식된 심연 · 무명의 옥좌 (Day78 추가)
+                    return new BackgroundPalette(new Color(0.05f, 0.03f, 0.10f), new Color(0.34f, 0.14f, 0.42f), new Color(0.08f, 0.06f, 0.12f), true); // 검보랏빛 심연
+                case "NOIR_ARCHIVE": // 노아르 지하 서고 (Day78 추가)
+                    return new BackgroundPalette(new Color(0.05f, 0.07f, 0.18f), new Color(0.24f, 0.34f, 0.62f), new Color(0.12f, 0.12f, 0.20f), false); // 푸른 등이 켜진 지하 서고
                 case "NOIR": // 노아르 마법도시 (Day65 추가)
                     return new BackgroundPalette(new Color(0.06f, 0.08f, 0.22f), new Color(0.32f, 0.46f, 0.86f), new Color(0.14f, 0.16f, 0.30f), true); // 푸른 마법등 밤거리
                 case "SILVARAN": // 실바란 숲 (Day65 추가)

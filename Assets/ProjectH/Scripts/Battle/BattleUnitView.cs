@@ -71,14 +71,18 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetDebugInfoVisible(showDebugInfo); // Runtime 개발 정보 표시 상태 적용
             SetText(roleText, GetRoleLabel(Stats.Position)); // 역할 표시
 
+            bool hasArt = BattleUnitArt.ApplyTo(bodyImage, BattleUnitArt.GetAlly(Stats.CharacterId)); // 그림 적용 (Day78 — SD → 스탠딩, 없으면 색 상자 유지)
+            Color bodyColor = hasArt ? Color.white : roleColor; // 그림은 원래 색 · 상자는 역할 색
+            if (hasArt && characterText != null) characterText.gameObject.SetActive(false); // 그림이 있으면 상자 안 이름 숨김 (이름은 아래 카드에 있다, Day78)
+
             if (bodyImage != null) // 바디 이미지 확인
             {
-                bodyImage.color = roleColor; // 역할 기반 임시 캐릭터 색상 적용
+                bodyImage.color = bodyColor; // 바디 색상 적용
             }
 
             if (actor != null) // 전투 액터 확인
             {
-                actor.SetBodyColor(roleColor); // 전투 액터 기본 바디색 적용
+                actor.SetBodyColor(bodyColor); // 전투 액터 기본 바디색 적용
                 actor.Initialize(BattleTeam.Ally, Stats, transform.position); // 아군 전투 액터 초기화
             }
 

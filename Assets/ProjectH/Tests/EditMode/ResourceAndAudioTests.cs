@@ -32,7 +32,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             return keys.ToList(); // 목록 반환
         }
 
-        [Test] // 대사가 쓰는 배경 키마다 그림 파일이 있다
+        [Test] // 대사가 쓰는 배경 키마다 그림이 나온다 (전용 그림 또는 정해 둔 대체 배경 — 코드로 그린 임시 배경으로 떨어지지 않는다)
         public void EveryDialogueBackground_HasImage() // 배경 그림 테스트
         {
             List<string> keys = CollectBackgroundKeys(); // 배경 키
@@ -40,7 +40,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
 
             foreach (string key in keys) // 키 순회
             {
-                Assert.That(Exists($"Dialogues/Backgrounds/{key}", ".png"), Is.True, $"배경 그림 없음 : {key}"); // 그림 확인
+                Assert.That(DialogueArtFactory.HasBackgroundArt(key), Is.True, $"배경 그림 없음 : {key}"); // 그림 확인 (Day78 — 대체 배경도 인정)
             }
         }
 

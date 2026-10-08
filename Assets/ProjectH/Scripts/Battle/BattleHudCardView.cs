@@ -22,6 +22,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private Button ultimateButton; // 궁극기 텍스트 Runtime 입력 버튼
         private Button portraitButton; // 초상화 Runtime 궁극기 입력 버튼 (Day49 추가)
         private Image portraitImage; // 초상화 배경 이미지 참조 (Day49 추가)
+        private Image portraitFace; // 초상화 얼굴 그림 (Day78 추가)
+        private Outline portraitFaceOutline; // 얼굴 그림 선택 윤곽 (Day78 추가)
         private BattleUltimateBeginResult pendingUltimate; // 리듬 챌린지 대기 중인 궁극기 선행 단계 결과 (Day50 추가)
         private BattleTimeController pausedTimeController; // 챌린지 동안 일시정지시킨 전투 시간 컨트롤러 (Day50 추가)
         private bool ultimateChallengeActive; // 리듬 챌린지 진행 여부 (Day50 추가)
@@ -82,6 +84,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetText(nameText, Stats.DisplayName); // 캐릭터 이름 표시
             SetText(levelText, $"Lv.{Stats.Level}"); // 캐릭터 레벨 표시
             SetText(portraitText, Stats.DisplayName); // 임시 초상화 이름 표시
+            ApplyPortraitFace(); // 얼굴 그림이 있으면 이름 글자 대신 표시 (Day78)
             EnsurePortraitSelectionOutline(); // 현재 초상화 선택 윤곽 효과 준비
             EnsurePortraitButton(); // 현재 초상화 궁극기 입력 버튼 준비 (Day49 추가)
             RefreshBondBadge(); // 결속 단계 배지 표시 (Day59 추가)
@@ -117,6 +120,41 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             {
                 portraitSelectionOutline.enabled = highlighted; // 선택 여부 기반 초상화 윤곽 활성 상태 적용
             }
+
+            if (portraitFaceOutline != null) // 얼굴 그림 윤곽 확인 (Day78)
+            {
+                portraitFaceOutline.enabled = highlighted; // 얼굴 그림에도 같은 선택 윤곽
+            }
+        }
+
+        private void ApplyPortraitFace() // 초상화 칸에 얼굴 그림 표시 (Day78 추가 — 그림이 없으면 예전처럼 이름 글자)
+        {
+            Transform portraitRoot = portraitText == null ? null : portraitText.transform.parent; // 초상화 칸
+            if (portraitRoot == null || Stats == null || portraitRoot.GetComponent<Image>() == null) return; // 초상화 칸 없음
+            Sprite face = ProjectH.UI.CharacterPortraitArt.Get(Stats.CharacterId, out bool placeholder); // 스탠딩에서 잘라 낸 얼굴
+
+            if (placeholder) // 얼굴 그림 없음
+            {
+                if (portraitFace != null) portraitFace.gameObject.SetActive(false); // 이전 얼굴 숨김
+                return; // 이름 글자 유지
+            }
+
+            if (portraitFace == null) // 얼굴 이미지 준비
+            {
+                portraitFace = ProjectH.UI.RuntimeUiKit.CreateImage(portraitRoot, "Face", Color.white); // 얼굴 이미지
+                portraitFace.raycastTarget = false; // 클릭은 초상화 칸이 받음
+                portraitFace.preserveAspect = true; // 정사각 비율 유지
+                ProjectH.UI.RuntimeUiKit.Stretch(portraitFace.rectTransform, 3f); // 칸 안쪽
+                portraitFace.transform.SetAsFirstSibling(); // 글자·상태이상 표시보다 뒤
+                portraitFaceOutline = portraitFace.gameObject.AddComponent<Outline>(); // 선택 윤곽
+                portraitFaceOutline.effectColor = new Color(1f, 0.78f, 0.12f, 1f); // 금색
+                portraitFaceOutline.effectDistance = new Vector2(3f, -3f); // 두께
+                portraitFaceOutline.enabled = portraitSelectionOutline != null && portraitSelectionOutline.enabled; // 현재 선택 상태 반영
+            }
+
+            portraitFace.sprite = face; // 얼굴 적용
+            portraitFace.gameObject.SetActive(true); // 표시
+            SetText(portraitText, string.Empty); // 얼굴이 있으면 이름 글자는 비움 (이름은 카드의 이름 칸에 있다)
         }
 
         public bool TryUseUltimate() // 현재 HUD 캐릭터 궁극기 사용 시도 (Day50 리듬 성적 연동 흐름)

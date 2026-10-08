@@ -31,7 +31,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private sealed class RegionMarker // 지도 위 지역 표시
         {
             public AdventureRegion Region; // 지역
-            public Image Disc; // 원
+            public Image Disc; // 원 (아이콘이 있으면 납작한 받침)
+            public Image Icon; // 지역 아이콘 (없으면 null, Day78 추가)
+            public float AlertHeight; // "!" 안내 높이 (아이콘이 있으면 더 높다, Day78 추가)
             public Outline Ring; // 선택 테두리
             public Text Label; // 이름
             public RectTransform Alert; // 새 던전 "!" 안내 (Day66 추가)
@@ -138,12 +140,28 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 ring.effectDistance = new Vector2(4f, -4f); // 테두리 두께
                 Text glyph = CreateText(button.transform, "Glyph", region.Kind == AdventureRegionKind.Village ? "집" : region.Kind == AdventureRegionKind.Locked ? "✕" : region.Name.Substring(0, 1), 24, Color.white, FontStyle.Bold).Outlined(new Color(0f, 0f, 0f, 0.7f), new Vector2(1f, -1f)); // 원 안 글자
                 Stretch(glyph.rectTransform); // 원 채움
+                Sprite iconSprite = AdventureRegionArt.Get(region.Id); // 지역 아이콘 (Day78 — 없으면 색 원과 글자 그대로)
+                Image icon = null; // 아이콘 이미지
+                float alertHeight = AlertHeight; // "!" 높이
+
+                if (iconSprite != null) // 아이콘이 있는 지역
+                {
+                    rect.sizeDelta = AdventureRegionArt.PedestalSize; // 원을 납작한 받침으로 (지역 상태 색은 받침에 남는다)
+                    glyph.gameObject.SetActive(false); // 글자 숨김
+                    icon = RuntimeUiKit.CreateImage(button.transform, "Icon", Color.white); // 아이콘 (클릭을 받으므로 누를 수 있는 범위가 넓어진다)
+                    icon.sprite = iconSprite; // 그림 적용
+                    icon.preserveAspect = true; // 비율 유지
+                    icon.rectTransform.sizeDelta = new Vector2(AdventureRegionArt.IconSize, AdventureRegionArt.IconSize); // 아이콘 크기
+                    icon.rectTransform.anchoredPosition = new Vector2(0f, AdventureRegionArt.IconLift); // 받침 위에 올림
+                    alertHeight = AdventureRegionArt.AlertLift; // "!"는 아이콘 머리 위로
+                }
+
                 Text label = CreateText(root, "Label_" + region.Id, region.Name, 22, Color.white, FontStyle.Bold).Outlined(new Color(0f, 0f, 0f, 0.85f), new Vector2(2f, -2f)); // 이름
                 label.raycastTarget = false; // 입력 통과
                 RectTransform labelRect = label.rectTransform; // 이름 영역
                 labelRect.anchorMin = anchor; // 기준점
                 labelRect.anchorMax = anchor; // 기준점
-                labelRect.anchoredPosition = new Vector2(0f, -50f); // 원 아래
+                labelRect.anchoredPosition = new Vector2(0f, icon == null ? -50f : AdventureRegionArt.LabelDrop); // 원 아래 (아이콘이 있으면 받침 아래)
                 labelRect.sizeDelta = new Vector2(200f, 32f); // 크기
                 button.onClick.AddListener(() => SelectRegion(captured)); // 지역 선택
                 RectTransform rift = CreateRiftBadge(root, "Rift_" + region.Id); // 균열 표시 (Day67 추가)
@@ -153,8 +171,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 RectTransform alert = CreateAlertBadge(root, "Alert_" + region.Id, 30f); // 원 위 "!" (Day66 추가)
                 alert.anchorMin = anchor; // 기준점
                 alert.anchorMax = anchor; // 기준점
-                alert.anchoredPosition = new Vector2(0f, AlertHeight); // 원 위
-                markers.Add(new RegionMarker { Region = region, Disc = disc, Ring = ring, Label = label, Alert = alert, Rift = rift }); // 목록 등록
+                alert.anchoredPosition = new Vector2(0f, alertHeight); // 원 위 (아이콘이 있으면 아이콘 위)
+                markers.Add(new RegionMarker { Region = region, Disc = disc, Icon = icon, AlertHeight = alertHeight, Ring = ring, Label = label, Alert = alert, Rift = rift }); // 목록 등록
             }
         }
 
@@ -235,6 +253,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 bool selected = marker.Region == selectedRegion; // 선택 여부
                 marker.Disc.color = GetRegionColor(saveData, marker.Region); // 상태 색
+                if (marker.Icon != null) marker.Icon.color = marker.Region.Kind == AdventureRegionKind.Locked ? AdventureRegionArt.LockedTint : Color.white; // 잠긴 지역은 아이콘을 어둡게 (Day78)
                 marker.Ring.effectColor = selected ? GoldColor : new Color(0f, 0f, 0f, 0.6f); // 선택 금테
                 marker.Disc.rectTransform.localScale = Vector3.one * (selected ? 1.18f : 1f); // 선택 확대
                 marker.Label.color = selected ? GoldColor : Color.white; // 이름 강조
@@ -354,7 +373,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             float bob = Mathf.Sin(Time.unscaledTime * 4f) * 4f; // 흔들림
             foreach (RegionMarker marker in markers) // 지역 표시 순회
             {
-                if (marker.Alert.gameObject.activeSelf) marker.Alert.anchoredPosition = new Vector2(0f, AlertHeight + bob); // 원 위에서 흔들림
+                if (marker.Alert.gameObject.activeSelf) marker.Alert.anchoredPosition = new Vector2(0f, marker.AlertHeight + bob); // 원 위에서 흔들림 (Day78 — 지역마다 높이가 다르다)
             }
         }
 

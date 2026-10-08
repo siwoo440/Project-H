@@ -64,14 +64,19 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetText(runtimeIdText, $"{Stats.RuntimeId} · {Stats.AIType.ToString().ToUpperInvariant()}"); // 적군 런타임 ID 및 AI 유형 적용
             SetDebugInfoVisible(showDebugInfo); // 적군 Runtime 개발 정보 표시 상태 적용
 
+            float artScale = BattleUnitArt.IsBoss(Stats.MonsterId) ? BattleUnitArt.BossScale : 1f; // 보스는 크게 (Day78)
+            bool hasArt = BattleUnitArt.ApplyTo(bodyImage, BattleUnitArt.GetEnemy(Stats.MonsterId), artScale); // 그림 적용 (Day78 — SD 그림, 없으면 색 상자 유지)
+            Color bodyColor = hasArt ? Color.white : enemyColor; // 그림은 원래 색 · 상자는 적군 색
+            if (hasArt) BattleUnitArt.PlaceNameAbove(nameText, bodyImage); // 상자 안에 있던 이름을 머리 위로 (Day78)
+
             if (bodyImage != null) // 적군 바디 이미지 확인
             {
-                bodyImage.color = enemyColor; // 적군 기본색 적용
+                bodyImage.color = bodyColor; // 적군 바디 색상 적용
             }
 
             if (actor != null) // 적군 전투 액터 확인
             {
-                actor.SetBodyColor(enemyColor); // 적군 액터 기본 바디색 적용
+                actor.SetBodyColor(bodyColor); // 적군 액터 기본 바디색 적용
                 actor.Initialize(BattleTeam.Enemy, Stats, transform.position); // 적군 전투 액터 초기화
             }
 

@@ -25,7 +25,7 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
 
             foreach (string key in CollectBackgroundKeys()) // 대사에서 쓰는 배경 키
             {
-                Check($"Dialogues/Backgrounds/{key}", ".png", key, builder, missingList, ref have, ref missing); // 확인
+                CheckScreenBackground(key, builder, missingList, ref have, ref missing); // 확인 (Day78 — 전용 그림이 없으면 무엇으로 대신하는지 표시)
             }
 
             builder.Append("\n■ 화면 배경 (상점 · 대장간 · 마을 지도)\n"); // 화면 전용 배경 (Day76 추가)
@@ -63,11 +63,41 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 builder.Append('\n'); // 줄 끝
             }
 
+            builder.Append("\n■ 모험 지도 지역 아이콘 (Resources/Map/Regions/{지역ID}.png · 없으면 색 원)\n"); // 지역 아이콘 (Day78 추가)
+
+            foreach (ProjectH.Dungeon.AdventureRegion region in ProjectH.Dungeon.AdventureRegionCatalog.All) // 지역 순회
+            {
+                Check(AdventureRegionArt.Folder + region.Id, ".png", $"{region.Id}  ({region.Name})", builder, missingList, ref have, ref missing); // 확인
+            }
+
             builder.Append("\n■ NPC 스탠딩 (Resources/Dialogues/Standing/{NPC ID}_normal.png)\n"); // NPC (Day77 추가)
 
             foreach (NpcProfile npc in new[] { NpcLineCatalog.Shopkeeper, NpcLineCatalog.Blacksmith, NpcLineCatalog.Shadow, NpcLineCatalog.Archai }) // 상점 주인 · 대장장이 · 그림자 · 아르카이
             {
                 Check($"{DialogueArtFactory.StandingFolder}{npc.Id}_{ExpressionCatalog.Normal}", ".png", $"{npc.Id}  ({npc.Title})", builder, missingList, ref have, ref missing); // 확인
+            }
+
+            builder.Append("\n■ 전투 SD 그림 · 아군 (Resources/BattleUnits/{캐릭터ID}.png · 없으면 스탠딩 사용)\n"); // 아군 SD (Day78 추가)
+
+            foreach (string characterId in DiaryCatalog.AllCharacters) // 12인
+            {
+                Check(ProjectH.Battle.BattleUnitArt.Folder + characterId, ".png", characterId, builder, missingList, ref have, ref missing); // 확인
+            }
+
+            builder.Append("\n■ 전투 SD 그림 · 몬스터 (Resources/BattleUnits/{몬스터ID}.png · 없으면 색 상자)\n"); // 몬스터 SD (Day78 추가)
+
+            foreach (string guid in AssetDatabase.FindAssets("t:MonsterData", new[] { "Assets/ProjectH/Data/Monsters" })) // 몬스터 데이터 순회
+            {
+                ProjectH.Data.MonsterData monster = AssetDatabase.LoadAssetAtPath<ProjectH.Data.MonsterData>(AssetDatabase.GUIDToAssetPath(guid)); // 몬스터 원본
+                if (monster == null) continue; // 데이터 아님
+                Check(ProjectH.Battle.BattleUnitArt.Folder + monster.Id, ".png", $"{monster.Id}  ({monster.DisplayName})", builder, missingList, ref have, ref missing); // 확인
+            }
+
+            builder.Append("\n■ 전투 배경 (Resources/Dialogues/Backgrounds/BATTLE_{지역}.png)\n"); // 전투 배경 (Day78 추가)
+
+            foreach (string key in ProjectH.Battle.BattleBackgroundCatalog.Keys) // 지역별 전투 배경 키
+            {
+                CheckScreenBackground(key, builder, missingList, ref have, ref missing); // 확인 (없으면 무엇으로 대신하는지 표시)
             }
 
             builder.Append("\n■ 배경음 (Resources/Audio/Bgm)\n"); // 배경음

@@ -302,7 +302,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         private IEnumerator FlashRoutine() // 피격 미리보기 색상 변화
         {
-            bodyImage.color = Color.white; // 피격 순간 흰색 표시
+            bodyImage.color = bodyImage.sprite != null ? BattleUnitArt.HitTint : Color.white; // 피격 순간 표시 (Day78 — 그림은 붉게, 색 상자는 흰색)
             yield return new WaitForSeconds(0.08f); // 짧은 피격 표시 대기
             bodyImage.color = baseBodyColor; // 기본 바디 색상 복원
             flashRoutine = null; // 피격 코루틴 참조 초기화

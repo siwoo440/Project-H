@@ -51,16 +51,19 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = RuntimeUiKit.CreateImage(transform, "Box", BoxColor); // 상자
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.20f, 0.06f), new Vector2(0.80f, 0.95f)); // 가운데
             box.gameObject.AddComponent<Outline>().effectColor = new Color(0.86f, 0.72f, 0.36f, 0.85f); // 금색 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelDark); // 정식 어두운 창 (Day83 — 금색 테두리는 그림에 있어 코드 외곽선은 꺼진다)
             Text header = RuntimeUiKit.CreateText(box.transform, "Header", "설정", 30, TitleColor, FontStyle.Bold); // 제목
             RuntimeUiKit.SetRect(header.rectTransform, new Vector2(0.04f, 0.92f), new Vector2(0.60f, 0.99f)); // 위
             header.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
             Button reset = RuntimeUiKit.CreateButton(box.transform, "Reset", SubColor); // 기본값
             RuntimeUiKit.SetRect(reset.GetComponent<RectTransform>(), new Vector2(0.62f, 0.92f), new Vector2(0.80f, 0.99f)); // 위
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(reset.transform, "Label", "기본값", 18, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Button(reset, UiSkin.ButtonTabOff); // 정식 버튼 (Day83)
             reset.onClick.AddListener(() => { GameSettings.ResetToDefault(); Refresh(); }); // 되돌리기
             Button close = RuntimeUiKit.CreateButton(box.transform, "Close", SubColor); // 닫기
             RuntimeUiKit.SetRect(close.GetComponent<RectTransform>(), new Vector2(0.82f, 0.92f), new Vector2(0.96f, 0.99f)); // 오른쪽 위
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(close.transform, "Label", "닫기", 18, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Button(close, UiSkin.ButtonTabOff); // 정식 버튼 (Day83)
             close.onClick.AddListener(Close); // 닫기 연결
             BuildScrollArea(box.transform); // 스크롤 영역 (줄이 넘치면 내려서 봄)
             Text hint = RuntimeUiKit.CreateText(box.transform, "Hint", "설정은 저장 파일과 따로 보관되어, 새로 시작해도 그대로 유지됩니다.  ·  휠을 굴려 더 볼 수 있어요.", 15, HintColor, FontStyle.Normal).Wrap(); // 안내
@@ -133,12 +136,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button minus = RuntimeUiKit.CreateButton(row.transform, "Minus", StepColor); // 줄이기
             RuntimeUiKit.SetRect(minus.GetComponent<RectTransform>(), new Vector2(0.57f, 0.16f), new Vector2(0.67f, 0.84f)); // 배치
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(minus.transform, "Label", "◀", 20, Color.white, FontStyle.Bold).rectTransform); // 글자
+            if (UiSkinKit.Button(minus, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(minus, "arrow_left"); // 정식 버튼과 화살표 아이콘 (Day83)
             minus.onClick.AddListener(() => { decrease(); Refresh(); }); // 연결
             Text valueText = RuntimeUiKit.CreateText(row.transform, "Value", value, 21, Color.white, FontStyle.Bold); // 값
             RuntimeUiKit.SetRect(valueText.rectTransform, new Vector2(0.68f, 0f), new Vector2(0.84f, 1f)); // 가운데
             Button plus = RuntimeUiKit.CreateButton(row.transform, "Plus", StepColor); // 늘리기
             RuntimeUiKit.SetRect(plus.GetComponent<RectTransform>(), new Vector2(0.85f, 0.16f), new Vector2(0.95f, 0.84f)); // 배치
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(plus.transform, "Label", "▶", 20, Color.white, FontStyle.Bold).rectTransform); // 글자
+            if (UiSkinKit.Button(plus, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(plus, "arrow_right"); // 정식 버튼과 화살표 아이콘 (Day83)
             plus.onClick.AddListener(() => { increase(); Refresh(); }); // 연결
             rows.Add(row.gameObject); // 목록 등록
         }
@@ -152,6 +157,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button button = RuntimeUiKit.CreateButton(row.transform, "Toggle", on ? OnColor : OffColor); // 켬·끔 버튼
             RuntimeUiKit.SetRect(button.GetComponent<RectTransform>(), new Vector2(0.68f, 0.16f), new Vector2(0.95f, 0.84f)); // 배치
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(button.transform, "Label", on ? "켬" : "끔", 20, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Toggle(button, on); // 켬은 밝은 금색, 끔은 어두운 청회색 그림 (Day83)
             button.onClick.AddListener(() => { toggle(); Refresh(); }); // 연결
             rows.Add(row.gameObject); // 목록 등록
         }

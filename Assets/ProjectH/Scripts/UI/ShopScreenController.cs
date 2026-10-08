@@ -123,8 +123,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildTopBar(Transform parent) // 상단 바 : 뒤로·제목·골드 (대장간은 로비 하단 버튼으로 진입)
         {
             Image bar = CreateImage(parent, "TopBar", new Color(0.05f, 0.04f, 0.06f, 0.88f)); // 상단 띠
+            UiSkinKit.Panel(bar, UiSkin.BarTop); // 정식 상단 바 (Day83)
             SetRect(bar.rectTransform, new Vector2(0f, 0.915f), new Vector2(1f, 1f)); // 상단 배치
             Button backButton = CreateButton(bar.transform, "BackButton", "◀  로비", new Color(0.24f, 0.21f, 0.24f, 1f), Color.white); // 로비 복귀 버튼
+            if (UiSkinKit.Button(backButton, UiSkin.ButtonTabOff)) UiSkinKit.LeadIcon(backButton, "back", "로비"); // 정식 버튼과 뒤로 아이콘 (Day83)
             SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.01f, 0.14f), new Vector2(0.11f, 0.86f)); // 왼쪽 배치
             backButton.onClick.AddListener(() => LoadScene(GameScenes.Lobby)); // 로비 이동
             Text title = CreateText(bar.transform, "Title", shop == null || string.IsNullOrWhiteSpace(shop.DisplayName) ? "상점" : shop.DisplayName, 30, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft); // 상점 이름
@@ -147,6 +149,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = CreateImage(parent, "DialogueBox", new Color(0.06f, 0.05f, 0.07f, 0.90f)); // 대사 상자
             SetRect(box.rectTransform, new Vector2(0.01f, 0.02f), new Vector2(0.40f, 0.24f)); // 하단 배치
             AddOutline(box.gameObject, new Color(0.86f, 0.62f, 0.30f, 0.8f)); // 금색 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelDark); // 정식 어두운 창 (Day83)
             Image plate = CreateImage(parent, "NamePlate", new Color(0.86f, 0.62f, 0.30f, 1f)); // 이름표
             SetRect(plate.rectTransform, new Vector2(0.02f, 0.215f), new Vector2(0.22f, 0.265f)); // 상자 위 왼쪽
             Text plateText = CreateText(plate.transform, "Name", NpcLineCatalog.FormatSpeaker(npc), 20, new Color(0.10f, 0.07f, 0.04f, 1f), FontStyle.Bold).BestFit(12); // 이름·소속
@@ -158,6 +161,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildProductPanel(Transform parent) // 오른쪽 탭 + 카드 격자 + 페이지·새로고침
         {
             Image panel = CreateImage(parent, "ProductPanel", PanelColor); // 상품 패널
+            UiSkinKit.Panel(panel, UiSkin.PanelDark); // 정식 어두운 창 (Day83)
             SetRect(panel.rectTransform, new Vector2(0.41f, 0.02f), new Vector2(0.99f, 0.90f)); // 오른쪽 배치
             string[] tabNames = { "상시 상품", "오늘의 상품", "판매" }; // 탭 이름
 
@@ -165,6 +169,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 ShopTab tab = (ShopTab)index; // 탭 값
                 tabButtons[index] = CreateButton(panel.transform, "Tab_" + tab, tabNames[index], TabOffColor, Color.white); // 탭 버튼
+                UiSkinKit.Toggle(tabButtons[index], false); // 정식 탭 (Day83 — 선택 여부는 갱신 때 그림을 바꾼다)
                 SetRect(tabButtons[index].GetComponent<RectTransform>(), new Vector2(0.015f + (index * 0.165f), 0.915f), new Vector2(0.17f + (index * 0.165f), 0.985f)); // 왼쪽부터 배치
                 tabButtons[index].onClick.AddListener(() => SelectTab(tab)); // 탭 선택
             }
@@ -184,14 +189,17 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             emptyText = CreateText(gridRect, "Empty", string.Empty, 22, new Color(1f, 1f, 1f, 0.6f), FontStyle.Normal); // 빈 목록 안내
             Stretch(emptyText.rectTransform); // 격자 전체
             prevPageButton = CreateButton(panel.transform, "PrevPage", "◀", TabOffColor, Color.white); // 이전 페이지
+            if (UiSkinKit.Button(prevPageButton, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(prevPageButton, "arrow_left"); // 정식 버튼과 화살표 아이콘 (Day83)
             SetRect(prevPageButton.GetComponent<RectTransform>(), new Vector2(0.015f, 0.02f), new Vector2(0.075f, 0.085f)); // 왼쪽 아래
             prevPageButton.onClick.AddListener(() => ChangePage(-1)); // 이전
             pageText = CreateText(panel.transform, "Page", "1 / 1", 18, Color.white, FontStyle.Bold); // 페이지 표시
             SetRect(pageText.rectTransform, new Vector2(0.08f, 0.02f), new Vector2(0.16f, 0.085f)); // 가운데
             nextPageButton = CreateButton(panel.transform, "NextPage", "▶", TabOffColor, Color.white); // 다음 페이지
+            if (UiSkinKit.Button(nextPageButton, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(nextPageButton, "arrow_right"); // 정식 버튼과 화살표 아이콘 (Day83)
             SetRect(nextPageButton.GetComponent<RectTransform>(), new Vector2(0.165f, 0.02f), new Vector2(0.225f, 0.085f)); // 오른쪽
             nextPageButton.onClick.AddListener(() => ChangePage(1)); // 다음
             rerollButton = CreateButton(panel.transform, "Reroll", "새로고침", new Color(0.30f, 0.45f, 0.62f, 1f), Color.white); // 오늘의 상품 새로고침
+            UiSkinKit.Button(rerollButton, UiSkin.ButtonSecondary); // 정식 보조 버튼 (Day83)
             SetRect(rerollButton.GetComponent<RectTransform>(), new Vector2(0.66f, 0.02f), new Vector2(0.985f, 0.085f)); // 오른쪽 아래
             rerollLabel = rerollButton.GetComponentInChildren<Text>(); // 버튼 글자
             rerollButton.onClick.AddListener(Reroll); // 새로고침 실행
@@ -207,6 +215,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button body = CreateButton(grid, "Card_" + index, string.Empty, CardColor, Color.white); // 카드 본체 (누르면 설명)
             SetRect(body.GetComponent<RectTransform>(), new Vector2((column * width) + 0.006f, 1f - ((row + 1) * height) + 0.01f), new Vector2(((column + 1) * width) - 0.006f, 1f - (row * height) - 0.01f)); // 격자 배치
             AddOutline(body.gameObject, new Color(0.86f, 0.62f, 0.30f, 0.35f)); // 금색 얇은 테두리
+            UiSkinKit.Panel(body.GetComponent<Image>(), UiSkin.Slot); // 정식 칸 (Day83)
             card.Root = body.gameObject; // 루트 저장
             body.onClick.AddListener(() => Describe(card.Product)); // 설명 대사
             card.Icon = ItemIconView.Create(body.transform, "Icon"); // 아이콘
@@ -221,6 +230,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             card.Stock = CreateText(body.transform, "Stock", string.Empty, 15, new Color(0.85f, 0.85f, 0.88f, 1f), FontStyle.Normal, TextAnchor.MiddleRight).BestFit(10); // 재고
             SetRect(card.Stock.rectTransform, new Vector2(0.50f, 0.23f), new Vector2(0.94f, 0.36f)); // 재고 배치
             card.Action = CreateButton(body.transform, "Action", "구매", TabOnColor, new Color(0.10f, 0.07f, 0.04f, 1f)); // 구매·판매 버튼
+            UiSkinKit.Button(card.Action, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day83)
             SetRect(card.Action.GetComponent<RectTransform>(), new Vector2(0.10f, 0.04f), new Vector2(0.90f, 0.20f)); // 버튼 배치
             card.ActionLabel = card.Action.GetComponentInChildren<Text>(); // 버튼 글자
             card.Action.onClick.AddListener(() => Trade(card.Product)); // 거래 실행
@@ -241,7 +251,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             for (int index = 0; index < tabButtons.Length; index++) // 탭 색 갱신
             {
-                tabButtons[index].GetComponent<Image>().color = index == (int)tab ? TabOnColor : TabOffColor; // 선택 탭 강조
+                if (!UiSkinKit.Toggle(tabButtons[index], index == (int)tab)) tabButtons[index].GetComponent<Image>().color = index == (int)tab ? TabOnColor : TabOffColor; // 선택 탭 강조 (Day83 — 정식 탭은 그림을 바꾸고, 그림이 없으면 색으로)
             }
 
             RefreshView(); // 목록 갱신

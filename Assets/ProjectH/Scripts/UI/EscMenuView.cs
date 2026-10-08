@@ -55,6 +55,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image barImage = RuntimeUiKit.CreateImage(transform, "Bar", BarColor); // 세로 메뉴바
             RuntimeUiKit.SetRect(barImage.rectTransform, new Vector2(0f, 0f), new Vector2(0.24f, 1f)); // 왼쪽 세로 전체
             barImage.gameObject.AddComponent<Outline>().effectColor = new Color(0.86f, 0.72f, 0.36f, 0.8f); // 금색 테두리
+            UiSkinKit.Panel(barImage, UiSkin.PanelDark); // 정식 어두운 창 (Day83)
             bar = barImage.transform; // 보관
             Text title = RuntimeUiKit.CreateText(bar, "Title", "메 뉴", 32, TitleColor, FontStyle.Bold); // 제목
             RuntimeUiKit.SetRect(title.rectTransform, new Vector2(0.08f, 0.89f), new Vector2(0.92f, 0.97f)); // 위
@@ -74,6 +75,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button button = RuntimeUiKit.CreateButton(bar, label, color); // 버튼
             RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(0.08f, top - ItemHeight), new Vector2(0.92f, top)); // 배치
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(button.transform, "Label", label, 21, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Button(button, UiSkin.ButtonTabOff, color == ExitColor ? UiSkinKit.DangerTint : Color.white); // 정식 버튼 (Day83 — 나가기는 붉은 기)
             button.onClick.AddListener(action); // 기능 연결
             return top - ItemHeight - ItemGap; // 다음 위치 반환
         }

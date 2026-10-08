@@ -145,11 +145,6 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             LoadScene(GameScenes.Battle); // 전투 씬 전환
         }
 
-        public void GoResult() // 결과 이동
-        {
-            LoadScene(GameScenes.Result); // 결과 씬 전환
-        }
-
         public void QuitGame() // 게임 종료
         {
             GameLog.Info("[Project H] Quit requested."); // 종료 요청 로그

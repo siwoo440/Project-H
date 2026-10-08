@@ -87,6 +87,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildHeader(Transform parent) // 가방 상단 메뉴 구성
         {
             Button backButton = CreateButton(parent, "BackButton", "◀  로비", new Color(0.78f, 0.87f, 0.94f, 1f)); // 로비 복귀 버튼 생성
+            if (UiSkinKit.Button(backButton, UiSkin.ButtonSecondary)) UiSkinKit.LeadIcon(backButton, "back", "로비"); // 정식 버튼과 뒤로 아이콘 (Day83)
             SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.025f, 0.92f), new Vector2(0.16f, 0.975f)); // 로비 복귀 버튼 배치
             backButton.onClick.AddListener(ReturnToLobby); // 로비 복귀 이벤트 연결
             Text titleText = CreateText(parent, "Title", "가방", 32, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 가방 제목 생성
@@ -101,6 +102,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = CreateImage(parent, "InventoryPanel", new Color(0.97f, 0.97f, 0.97f, 1f)); // 가방 목록 패널 생성
             SetRect(panel.rectTransform, new Vector2(0.025f, 0.055f), new Vector2(0.70f, 0.90f)); // 가방 목록 패널 배치
             AddOutline(panel.gameObject); // 가방 목록 패널 외곽선 추가
+            UiSkinKit.Panel(panel, UiSkin.PanelLight); // 정식 밝은 창 (Day83)
             Text label = CreateText(panel.transform, "InventoryLabel", "보유 아이템", 24, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 가방 목록 제목 생성
             SetRect(label.rectTransform, new Vector2(0.03f, 0.92f), new Vector2(0.26f, 0.985f)); // 가방 목록 제목 배치
             inventoryCountText = CreateText(panel.transform, "InventoryCount", "0종", 18, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 보유 아이템 종류 수 텍스트 생성
@@ -118,6 +120,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image scrollImage = scrollObject.GetComponent<Image>(); // ScrollView 배경 이미지 조회
             scrollImage.color = new Color(0.90f, 0.91f, 0.92f, 1f); // ScrollView 배경색 적용
             AddOutline(scrollObject); // ScrollView 외곽선 추가
+            UiSkinKit.Panel(scrollImage, UiSkin.PanelInset); // 정식 안쪽 칸 (Day83)
             SetRect(scrollObject.GetComponent<RectTransform>(), new Vector2(0.025f, 0.09f), new Vector2(0.975f, 0.91f)); // ScrollView 배치
             GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask)); // ScrollView Viewport 생성
             viewportObject.transform.SetParent(scrollObject.transform, false); // ScrollView Viewport 부모 연결
@@ -191,6 +194,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image illustrationPanel = CreateImage(parent, "IllustrationPanel", new Color(0.96f, 0.96f, 0.96f, 1f)); // 상단 일러스트 패널 생성
             SetRect(illustrationPanel.rectTransform, new Vector2(0.72f, 0.48f), new Vector2(0.975f, 0.90f)); // 상단 일러스트 패널 배치
             AddOutline(illustrationPanel.gameObject); // 상단 일러스트 패널 외곽선 추가
+            UiSkinKit.Panel(illustrationPanel, UiSkin.PanelLight); // 정식 밝은 창 (Day83)
             Text illustrationLabel = CreateText(illustrationPanel.transform, "IllustrationLabel", "아이템 일러스트", 20, FontStyle.Bold, new Color(0.18f, 0.20f, 0.23f, 1f)); // 일러스트 패널 제목 생성
             SetRect(illustrationLabel.rectTransform, new Vector2(0.06f, 0.88f), new Vector2(0.94f, 0.98f)); // 일러스트 패널 제목 배치
             illustrationImage = CreateImage(illustrationPanel.transform, "ItemIllustration", Color.white); // 실제 아이템 일러스트 이미지 생성
@@ -201,6 +205,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image detailPanel = CreateImage(parent, "ItemDetailPanel", new Color(0.97f, 0.97f, 0.97f, 1f)); // 하단 아이템 상세 패널 생성
             SetRect(detailPanel.rectTransform, new Vector2(0.72f, 0.055f), new Vector2(0.975f, 0.46f)); // 하단 아이템 상세 패널 배치
             AddOutline(detailPanel.gameObject); // 하단 아이템 상세 패널 외곽선 추가
+            UiSkinKit.Panel(detailPanel, UiSkin.PanelLight); // 정식 밝은 창 (Day83)
             itemNameText = CreateText(detailPanel.transform, "ItemName", "아이템을 선택하세요", 25, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 아이템 이름 텍스트 생성
             SetRect(itemNameText.rectTransform, new Vector2(0.06f, 0.82f), new Vector2(0.94f, 0.96f)); // 아이템 이름 배치
             itemMetaText = CreateText(detailPanel.transform, "ItemMeta", "-", 17, FontStyle.Bold, new Color(0.28f, 0.32f, 0.38f, 1f)); // 아이템 메타 정보 생성
@@ -214,6 +219,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             itemCountText = CreateText(detailPanel.transform, "ItemCount", "보유 수량 0", 19, FontStyle.Bold, new Color(0.20f, 0.24f, 0.30f, 1f)); // 아이템 수량 텍스트 생성
             SetRect(itemCountText.rectTransform, new Vector2(0.07f, 0.22f), new Vector2(0.55f, 0.33f)); // 아이템 수량 배치
             useButton = CreateButton(detailPanel.transform, "UseButton", "사용", new Color(0.78f, 0.87f, 0.94f, 1f)); // 아이템 사용 버튼 생성
+            UiSkinKit.Button(useButton, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day83)
             SetRect(useButton.GetComponent<RectTransform>(), new Vector2(0.60f, 0.08f), new Vector2(0.93f, 0.27f)); // 아이템 사용 버튼 배치
             useButton.onClick.AddListener(UseSelectedItem); // 아이템 사용 이벤트 연결
             useButton.interactable = false; // 초기 아이템 사용 버튼 비활성화
@@ -293,6 +299,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 if (index >= stacks.Count) // 빈 슬롯 여부 확인
                 {
                     Button emptyButton = CreateButton(inventoryContent, $"EmptySlot_{slotNumber:00}", $"[{slotNumber:00}]", new Color(0.86f, 0.87f, 0.89f, 1f)); // 빈 가방 슬롯 생성
+                    UiSkinKit.Panel(emptyButton.GetComponent<Image>(), UiSkin.Card, new Color(0.86f, 0.86f, 0.88f, 1f)); // 정식 카드 (Day83 — 빈 칸은 흐리게)
                     emptyButton.interactable = false; // 빈 슬롯 입력 비활성화
                     continue; // 다음 슬롯 이동
                 }
@@ -302,6 +309,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 string displayName = item == null || string.IsNullOrWhiteSpace(item.DisplayName) ? stack.ItemId : item.DisplayName; // 가방 슬롯 표시 이름 결정
                 string slotLabel = $"{displayName}\nx{stack.Quantity}"; // 가방 슬롯 라벨 생성 (Day80 — 칸 번호 대신 아이콘을 보여 준다)
                 Button itemButton = CreateButton(inventoryContent, $"ItemSlot_{slotNumber:00}", slotLabel, new Color(0.94f, 0.94f, 0.94f, 1f)); // 보유 아이템 슬롯 생성
+                UiSkinKit.Panel(itemButton.GetComponent<Image>(), UiSkin.Card); // 정식 카드 (Day83)
                 SetRect(itemButton.GetComponentInChildren<Text>().rectTransform, new Vector2(0.04f, 0.03f), new Vector2(0.96f, 0.34f)); // 이름 · 수량은 칸 아래쪽 (Day80)
                 Image slotIcon = ItemIconView.Create(itemButton.transform, "Icon"); // 아이템 아이콘 (Day80 — 등급 테두리 + 그림, 그림이 없으면 색 원과 글자)
                 slotIcon.rectTransform.anchorMin = new Vector2(0.5f, 0.66f); // 칸 위쪽 가운데

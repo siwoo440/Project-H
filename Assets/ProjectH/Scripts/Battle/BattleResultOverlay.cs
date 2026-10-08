@@ -57,6 +57,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetRect(panel.rectTransform, new Vector2(0.065f, 0.075f), new Vector2(0.915f, 0.925f)); // 결과 메인 패널 배치
             Image topBand = CreateImage(panel.transform, "TopBand", new Color(0.12f, 0.24f, 0.39f, 1f)); // 상단 결과 띠 생성
             SetRect(topBand.rectTransform, new Vector2(0f, 0.82f), new Vector2(1f, 1f)); // 상단 결과 띠 배치
+
+            if (ProjectH.UI.UiSkinKit.Panel(panel, ProjectH.UI.UiSkin.PanelLight)) // 정식 밝은 창 (Day83)
+            {
+                panelShadow.gameObject.SetActive(false); // 그림에 테두리가 있어 그림자 상자는 숨김
+                SetRect(topBand.rectTransform, new Vector2(0.014f, 0.82f), new Vector2(0.986f, 0.978f)); // 띠를 창 테두리 안쪽으로
+                ProjectH.UI.UiSkinKit.Panel(topBand, ProjectH.UI.UiSkin.NamePlate); // 남색 띠
+            }
+
             Text battleResultLabel = CreateText(topBand.transform, "BattleResultLabel", "BATTLE RESULT", 22, FontStyle.Bold, new Color(0.80f, 0.86f, 0.92f, 1f)); // 결과 보조 제목 생성
             SetRect(battleResultLabel.rectTransform, new Vector2(0.03f, 0.70f), new Vector2(0.30f, 0.96f)); // 결과 보조 제목 배치
             resultTitle = CreateText(topBand.transform, "ResultTitle", Result.Outcome == BattleOutcome.Victory ? "승리!" : "패배", 72, FontStyle.Bold, Color.white); // 승패 메인 제목 생성
@@ -64,6 +72,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Text starText = CreateText(topBand.transform, "StarText", Result.StarCount > 0 ? "★  ★  ★" : "☆  ☆  ☆", 36, FontStyle.Bold, GoldColor); // 결과 별 표시 생성
             SetRect(starText.rectTransform, new Vector2(0.70f, 0.22f), new Vector2(0.97f, 0.78f)); // 결과 별 표시 배치
             Image rewardBar = CreateImage(panel.transform, "RewardBar", new Color(0.84f, 0.81f, 0.72f, 1f)); // 보상 요약 바 생성
+            ProjectH.UI.UiSkinKit.Panel(rewardBar, ProjectH.UI.UiSkin.PanelInset); // 정식 안쪽 칸 (Day83)
             SetRect(rewardBar.rectTransform, new Vector2(0.08f, 0.70f), new Vector2(0.92f, 0.80f)); // 보상 요약 바 배치
             Text rewardText = CreateText(rewardBar.transform, "RewardText", $"EXP  +{Result.Experience}        GOLD  +{Result.Gold}", 28, FontStyle.Bold, NavyColor); // 보상 요약 텍스트 생성
             Stretch(rewardText.rectTransform, 8f); // 보상 요약 텍스트 확장
@@ -71,6 +80,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetRect(partyLabel.rectTransform, new Vector2(0.07f, 0.635f), new Vector2(0.22f, 0.69f)); // 파티 결과 라벨 배치
             BuildPartyCards(panel.transform); // 파티원 결과 카드 구성
             Button returnButton = CreateButton(panel.transform, "NextButton", "다음"); // 다음 버튼 생성
+            ProjectH.UI.UiSkinKit.Button(returnButton, ProjectH.UI.UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day83)
             SetRect(returnButton.GetComponent<RectTransform>(), new Vector2(0.76f, 0.035f), new Vector2(0.93f, 0.12f)); // 다음 버튼 배치
 
             if (returnAction != null) // 다음 버튼 이벤트 존재 확인
@@ -116,6 +126,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             Outline cardOutline = card.gameObject.AddComponent<Outline>(); // 파티원 카드 외곽선 추가
             cardOutline.effectColor = member.IsAlive ? new Color(0.28f, 0.38f, 0.50f, 0.65f) : new Color(0.55f, 0.22f, 0.24f, 0.78f); // 생존 상태별 카드 외곽선 적용
             cardOutline.effectDistance = new Vector2(2f, -2f); // 카드 외곽선 두께 설정
+            ProjectH.UI.UiSkinKit.Panel(card, ProjectH.UI.UiSkin.Card, member.IsAlive ? Color.white : new Color(1f, 0.88f, 0.88f, 1f)); // 정식 카드 (Day83 — 쓰러진 동료는 붉은 기)
             Image portrait = CreateImage(card.transform, "PortraitPlaceholder", GetPortraitColor(index, member.IsAlive)); // 임시 캐릭터 스탠딩 영역 생성
             SetRect(portrait.rectTransform, new Vector2(0.08f, 0.38f), new Vector2(0.92f, 0.91f)); // 성장 정보 공간 포함 임시 캐릭터 영역 배치
             Text portraitLabel = CreateText(portrait.transform, "PortraitLabel", GetPortraitLabel(member.DisplayName), 58, FontStyle.Bold, new Color(1f, 1f, 1f, 0.94f)); // 임시 캐릭터 이름 문자 생성
@@ -140,8 +151,10 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             Image hpBack = CreateImage(card.transform, "HpBack", new Color(0.25f, 0.27f, 0.29f, 0.28f)); // 결과 HP 배경 생성
+            ProjectH.UI.UiSkinKit.Panel(hpBack, ProjectH.UI.UiSkin.GaugeBack); // 정식 게이지 바탕 (Day83)
             SetRect(hpBack.rectTransform, new Vector2(0.08f, 0.135f), new Vector2(0.92f, 0.19f)); // 성장 정보 아래 결과 HP 배경 배치
             Image hpFill = CreateImage(hpBack.transform, "HpFill", member.IsAlive ? HpColor : DownColor); // 결과 HP 채움 생성
+            ProjectH.UI.UiSkin.Apply(hpFill, ProjectH.UI.UiSkin.GaugeFill); // 정식 게이지 채움 (Day83 — 색은 그대로 입힌다)
             Stretch(hpFill.rectTransform); // 결과 HP 채움 확장
             hpFill.type = Image.Type.Filled; // 결과 HP Filled 타입 설정
             hpFill.fillMethod = Image.FillMethod.Horizontal; // 결과 HP 가로 채움 설정

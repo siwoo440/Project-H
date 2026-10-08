@@ -63,12 +63,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = RuntimeUiKit.CreateImage(transform, "Box", BoxColor); // 상자
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.10f, 0.08f), new Vector2(0.90f, 0.94f)); // 가운데
             box.gameObject.AddComponent<Outline>().effectColor = new Color(0.86f, 0.72f, 0.36f, 0.85f); // 금색 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelDark); // 정식 어두운 창 (Day83)
             headerText = RuntimeUiKit.CreateText(box.transform, "Header", string.Empty, 30, Color.white, FontStyle.Bold); // 제목
             RuntimeUiKit.SetRect(headerText.rectTransform, new Vector2(0.03f, 0.91f), new Vector2(0.80f, 0.99f)); // 위
             headerText.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
             Button close = RuntimeUiKit.CreateButton(box.transform, "Close", SubColor); // 닫기
             RuntimeUiKit.SetRect(close.GetComponent<RectTransform>(), new Vector2(0.83f, 0.91f), new Vector2(0.97f, 0.99f)); // 오른쪽 위
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(close.transform, "Label", "닫기", 20, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Button(close, UiSkin.ButtonTabOff); // 정식 버튼 (Day83)
             close.onClick.AddListener(Close); // 닫기 연결
             Image bodyImage = RuntimeUiKit.CreateImage(box.transform, "Body", new Color(0f, 0f, 0f, 0f)); // 칸 영역 (투명)
             RuntimeUiKit.SetRect(bodyImage.rectTransform, new Vector2(0.03f, 0.20f), new Vector2(0.97f, 0.89f)); // 가운데
@@ -85,6 +87,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button previous = RuntimeUiKit.CreateButton(parent, "PrevPage", SubColor); // 이전 페이지
             RuntimeUiKit.SetRect(previous.GetComponent<RectTransform>(), new Vector2(0.34f, 0.09f), new Vector2(0.42f, 0.17f)); // 왼쪽
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(previous.transform, "Label", "◀", 24, Color.white, FontStyle.Bold).rectTransform); // 글자
+            if (UiSkinKit.Button(previous, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(previous, "arrow_left"); // 정식 버튼과 화살표 아이콘 (Day83)
             previous.onClick.AddListener(() => ChangePage(-1)); // 연결
             Text pageText = RuntimeUiKit.CreateText(parent, "PageText", string.Empty, 22, DateColor, FontStyle.Bold); // 페이지 표시
             RuntimeUiKit.SetRect(pageText.rectTransform, new Vector2(0.43f, 0.09f), new Vector2(0.57f, 0.17f)); // 가운데
@@ -92,6 +95,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button next = RuntimeUiKit.CreateButton(parent, "NextPage", SubColor); // 다음 페이지
             RuntimeUiKit.SetRect(next.GetComponent<RectTransform>(), new Vector2(0.58f, 0.09f), new Vector2(0.66f, 0.17f)); // 오른쪽
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(next.transform, "Label", "▶", 24, Color.white, FontStyle.Bold).rectTransform); // 글자
+            if (UiSkinKit.Button(next, UiSkin.ButtonTabOff)) UiSkinKit.Glyph(next, "arrow_right"); // 정식 버튼과 화살표 아이콘 (Day83)
             next.onClick.AddListener(() => ChangePage(1)); // 연결
         }
 
@@ -140,6 +144,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button cell = RuntimeUiKit.CreateButton(body, $"Slot{info.Slot}", info.Exists ? FilledColor : EmptyColor); // 칸 버튼
             RuntimeUiKit.SetRect((RectTransform)cell.transform, new Vector2(left, bottom), new Vector2(right, top)); // 배치
             cell.gameObject.AddComponent<Outline>().effectColor = new Color(0f, 0f, 0f, 0.6f); // 테두리
+            UiSkinKit.Panel(cell.GetComponent<Image>(), UiSkin.Slot, info.Exists ? Color.white : UiSkinKit.DimTint); // 정식 칸 (Day83 — 빈 칸은 어둡게)
             int slot = info.Slot; // 클릭용 복사
             cell.onClick.AddListener(() => AskConfirm(slot, info.Exists)); // 선택
             cell.interactable = mode == SaveSlotMode.Save || info.Exists; // 불러오기는 빈 칸을 고를 수 없음
@@ -161,6 +166,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 Button clear = RuntimeUiKit.CreateButton(cell.transform, "Clear", NoColor); // 비우기
                 RuntimeUiKit.SetRect(clear.GetComponent<RectTransform>(), new Vector2(0.76f, 0.05f), new Vector2(0.95f, 0.22f)); // 오른쪽 아래
                 RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(clear.transform, "Label", "비우기", 15, Color.white, FontStyle.Bold).rectTransform); // 글자
+                UiSkinKit.Button(clear, UiSkin.ButtonTabOff, UiSkinKit.DangerTint); // 정식 버튼 (Day83 — 지우기는 붉은 기)
                 clear.onClick.AddListener(() => AskDelete(slot)); // 연결
             }
 
@@ -227,10 +233,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button yes = RuntimeUiKit.CreateButton(confirmBar, "Yes", YesColor); // 예
             RuntimeUiKit.SetRect(yes.GetComponent<RectTransform>(), new Vector2(0.64f, 0.14f), new Vector2(0.79f, 0.86f)); // 배치
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(yes.transform, "Label", "예", 20, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Button(yes, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day83)
             yes.onClick.AddListener(() => { HideConfirm(); accepted?.Invoke(); }); // 연결
             Button no = RuntimeUiKit.CreateButton(confirmBar, "No", SubColor); // 아니오
             RuntimeUiKit.SetRect(no.GetComponent<RectTransform>(), new Vector2(0.81f, 0.14f), new Vector2(0.96f, 0.86f)); // 배치
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(no.transform, "Label", "아니오", 20, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Button(no, UiSkin.ButtonTabOff); // 정식 버튼 (Day83)
             no.onClick.AddListener(HideConfirm); // 연결
             confirmBar.gameObject.SetActive(true); // 표시
         }

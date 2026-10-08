@@ -39,7 +39,6 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             CreatePartyScene(); // 파티 씬 생성
             CreateDungeonScene(); // 던전 씬 생성
             CreateBattleScene(); // 전투 씬 생성
-            CreateResultScene(); // 결과 씬 생성
             ConfigureBootstrap(); // 부트스트랩 진입 연결
             ConfigureBuildSettings(); // 빌드 씬 순서 설정
             AssetDatabase.SaveAssets(); // 에셋 변경 저장
@@ -207,33 +206,8 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             CreateBattlePortraitBar(canvas.transform); // 전투 하단 카드 생성
             Button autoButton = CreateButton(canvas.transform, "AutoButton", "AUTO", "button_small.png", 23); // 자동 버튼 생성
             SetRect(autoButton.GetComponent<RectTransform>(), new Vector2(0.86f, 0.18f), new Vector2(0.96f, 0.27f), Vector2.zero, Vector2.zero); // 자동 버튼 위치 설정
-            Button victoryButton = CreateButton(canvas.transform, "PrototypeVictoryButton", "임시 승리", "button_secondary.png", 21); // 임시 승리 버튼 생성
-            SetRect(victoryButton.GetComponent<RectTransform>(), new Vector2(0.83f, 0.90f), new Vector2(0.96f, 0.98f), Vector2.zero, Vector2.zero); // 승리 버튼 위치 설정
-            UnityEventTools.AddPersistentListener(victoryButton.onClick, controller.GoResult); // 승리 이벤트 연결
             controller.Configure(PrototypeScreenKind.Battle, status, body, null, null); // 전투 참조 설정
             SaveScene(scene, GameScenes.Battle); // 전투 씬 저장
-        }
-
-        private static void CreateResultScene() // 결과 씬 생성
-        {
-            Scene scene = CreateScene(GameScenes.Result, "bg_result.png"); // 결과 기본 씬 생성
-            Canvas canvas = FindCanvas(scene); // 결과 캔버스 조회
-            PrototypeScreenController controller = CreateController(canvas, PrototypeScreenKind.Result); // 결과 컨트롤러 생성
-            Text victory = CreateText(canvas.transform, "VictoryTitle", "VICTORY", 82, FontStyle.Bold, new Color(0.95f, 0.77f, 0.28f, 1f), TextAnchor.MiddleCenter); // 승리 제목 생성
-            SetRect(victory.rectTransform, new Vector2(0.18f, 0.74f), new Vector2(0.82f, 0.92f), Vector2.zero, Vector2.zero); // 승리 제목 위치 설정
-            Image resultPanel = CreateImage(canvas.transform, "ResultPanel", LoadSprite("Frames/frame_panel.png"), Color.white); // 결과 패널 생성
-            SetRect(resultPanel.rectTransform, new Vector2(0.20f, 0.24f), new Vector2(0.80f, 0.74f), Vector2.zero, Vector2.zero); // 결과 패널 위치 설정
-            Text status = CreateText(resultPanel.transform, "ResultStatus", string.Empty, 34, FontStyle.Bold, Navy, TextAnchor.MiddleCenter); // 결과 상태 생성
-            SetRect(status.rectTransform, new Vector2(0.08f, 0.76f), new Vector2(0.92f, 0.94f), Vector2.zero, Vector2.zero); // 결과 상태 위치 설정
-            Text body = CreateText(resultPanel.transform, "RewardBody", string.Empty, 29, FontStyle.Bold, SoftText, TextAnchor.MiddleCenter); // 결과 보상 생성
-            SetRect(body.rectTransform, new Vector2(0.08f, 0.34f), new Vector2(0.92f, 0.73f), Vector2.zero, Vector2.zero); // 결과 보상 위치 설정
-            Text auxiliary = CreateText(resultPanel.transform, "RewardHint", string.Empty, 19, FontStyle.Normal, SoftText, TextAnchor.MiddleCenter); // 결과 안내 생성
-            SetRect(auxiliary.rectTransform, new Vector2(0.08f, 0.22f), new Vector2(0.92f, 0.34f), Vector2.zero, Vector2.zero); // 결과 안내 위치 설정
-            Button lobbyButton = CreateButton(resultPanel.transform, "LobbyButton", "로비로 돌아가기", "button_primary.png", 26); // 로비 버튼 생성
-            SetRect(lobbyButton.GetComponent<RectTransform>(), new Vector2(0.28f, 0.05f), new Vector2(0.72f, 0.20f), Vector2.zero, Vector2.zero); // 로비 버튼 위치 설정
-            UnityEventTools.AddPersistentListener(lobbyButton.onClick, controller.GoLobby); // 로비 이벤트 연결
-            controller.Configure(PrototypeScreenKind.Result, status, body, auxiliary, null); // 결과 참조 설정
-            SaveScene(scene, GameScenes.Result); // 결과 씬 저장
         }
 
         private static Scene CreateScene(string sceneName, string backgroundFile) // 공통 씬 생성
@@ -523,8 +497,7 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 SceneRoot + "/" + GameScenes.Lobby + ".unity", // 로비 경로
                 SceneRoot + "/" + GameScenes.Party + ".unity", // 파티 경로
                 SceneRoot + "/" + GameScenes.DungeonSelect + ".unity", // 던전 경로
-                SceneRoot + "/" + GameScenes.Battle + ".unity", // 전투 경로
-                SceneRoot + "/" + GameScenes.Result + ".unity" // 결과 경로
+                SceneRoot + "/" + GameScenes.Battle + ".unity" // 전투 경로
             }; // 핵심 씬 경로 종료
 
             List<EditorBuildSettingsScene> scenes = new List<EditorBuildSettingsScene>(); // 새 빌드 목록 생성

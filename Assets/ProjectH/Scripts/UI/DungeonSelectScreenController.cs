@@ -135,8 +135,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildTopBar(Transform root) // 상단 바 : 로비 · 제목 · 일차/활력
         {
             Image bar = CreateImage(root, "TopBar", BarColor); // 상단 띠
+            UiSkinKit.Panel(bar, UiSkin.BarTop); // 정식 상단 바 (Day83)
             SetRect(bar.rectTransform, new Vector2(0f, MapTop), Vector2.one); // 위
             Button back = CreateButton(bar.transform, "BackButton", "◀  로비", new Color(0.24f, 0.26f, 0.32f, 1f)); // 로비 복귀
+            if (UiSkinKit.Button(back, UiSkin.ButtonTabOff)) UiSkinKit.LeadIcon(back, "back", "로비"); // 정식 버튼과 뒤로 아이콘 (Day83)
             SetRect(back.GetComponent<RectTransform>(), new Vector2(0.01f, 0.14f), new Vector2(0.11f, 0.86f)); // 왼쪽
             back.onClick.AddListener(() => LoadScene(GameScenes.Lobby)); // 로비 이동
             Text title = CreateText(bar.transform, "Title", "모험", 30, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
@@ -201,6 +203,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildPanel(Transform root) // 오른쪽 지역 패널 (내용은 선택할 때마다 다시 그림)
         {
             Image panel = CreateImage(root, "RegionPanel", PanelColor); // 패널
+            UiSkinKit.Panel(panel, UiSkin.PanelDark); // 정식 어두운 창 (Day83)
             SetRect(panel.rectTransform, new Vector2(MapRight + 0.01f, 0.015f), new Vector2(0.99f, MapTop - 0.012f)); // 오른쪽
             GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(RectMask2D)); // 보이는 영역 (밖으로 나간 카드는 잘림)
             viewportObject.transform.SetParent(panel.transform, false); // 패널 하위
@@ -226,6 +229,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             statusText = CreateText(panel.transform, "Status", string.Empty, 16, HintColor, FontStyle.Normal, TextAnchor.MiddleLeft).Wrap(); // 안내
             SetRect(statusText.rectTransform, new Vector2(0.05f, 0.135f), new Vector2(0.95f, 0.225f)); // 버튼 위
             actionButton = CreateButton(panel.transform, "EnterButton", "탐험 시작", ActionColor); // 실행 버튼
+            UiSkinKit.Button(actionButton, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day83)
             SetRect(actionButton.GetComponent<RectTransform>(), new Vector2(0.05f, 0.035f), new Vector2(0.95f, 0.125f)); // 아래
             actionLabel = actionButton.GetComponentInChildren<Text>(); // 버튼 글자
             actionLabel.fontSize = 24; // 큰 글자
@@ -334,6 +338,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 y = AddLabel($"긴급 · 검은 균열 (남은 {RiftService.GetRemainingDays(saveData)}일)", 20, new Color(0.86f, 0.52f, 1f, 1f), FontStyle.Bold, y, 0.05f); // 긴급 안내
                 y = AddLabel($"{(riftDungeon == null ? saveData.RiftState.DungeonId : riftDungeon.DisplayName)} 깊은 곳에서 균열이 번지고 있어요. 막으면 침식도 -{RiftService.ClearErosionRelief} · 골드 {RiftService.RewardMultiplier:0.0}배, 놓치면 침식도 +{RiftService.MissErosionPenalty}", 15, HintColor, FontStyle.Normal, y, 0.075f); // 설명
                 Button riftButton = CreateButton(panelContent, "RiftEnter", $"검은 균열 막기  (활력 {(riftDungeon == null ? 0 : riftDungeon.VitalityCost)})", new Color(0.46f, 0.24f, 0.62f, 1f)); // 긴급 입장
+                UiSkinKit.Button(riftButton, UiSkin.ButtonTabOff, new Color(0.86f, 0.72f, 1f, 1f)); // 정식 버튼 (Day83 — 균열은 보랏빛)
                 PlaceRow((RectTransform)riftButton.transform, y, 0.06f, 0.015f); // 배치 (위에서부터 쌓기)
                 riftButton.onClick.AddListener(EnterRift); // 균열 입장
                 panelItems.Add(riftButton.gameObject); // 목록 등록
@@ -363,6 +368,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             bool selected = DungeonSelectionRuntimeState.SelectedDungeonId == dungeonId; // 선택 여부
             bool locked = dungeon == null || saveData == null || state == DungeonProgressState.Locked; // 잠김
             Button card = CreateButton(panelContent, "DungeonCard_" + dungeonId, string.Empty, locked ? LockedCardColor : selected ? SelectedCardColor : CardColor); // 카드
+            UiSkinKit.Panel(card.GetComponent<Image>(), UiSkin.Slot, locked ? UiSkinKit.DimTint : Color.white); // 정식 칸 (Day83 — 잠긴 던전은 어둡게, 선택은 아래의 금테)
             PlaceRow((RectTransform)card.transform, top, 0.17f, 0.015f); // 배치 (위에서부터 쌓기)
             if (selected) card.gameObject.AddComponent<Outline>().effectColor = GoldColor; // 선택 금테
             bool isNew = !locked && DungeonGuideService.IsNewDungeon(saveData, dungeonId); // 아직 클리어하지 않은 새 던전 (Day66 추가)

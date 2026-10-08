@@ -1,10 +1,13 @@
 using UnityEngine; // 텍스처·스프라이트 기능
+using UnityEngine.UI; // 지도 비율 맞춤 기능
 
 namespace ProjectH.UI // 프로젝트 UI 영역
 {
-    public static class AdventureMapArt // 모험 세계 지도 그림 (Day63 신규 — 정식 지도 전까지 바다 · 대륙 · 지역색 임시 그림)
+    public static class AdventureMapArt // 모험 세계 지도 그림 (Day63 신규 — 정식 지도 Resources/Map/WORLD.png, 없으면 바다 · 대륙 · 지역색 임시 그림)
     {
-        private const string ResourcePath = "Map/WORLD"; // 정식 지도 Resources 경로
+        public const string ResourcePath = "Map/WORLD"; // 정식 지도 Resources 경로
+        public const float Aspect = 1400f / 1100f; // 지도 가로 ÷ 세로 (Day80 — 정식 지도 1400×1100, 지역 표시 좌표가 이 비율의 그림을 기준으로 한다)
+        public static readonly Color SeaColor = new Color(0.04f, 0.32f, 0.58f, 1f); // 지도 가장자리 바다색 (Day80 — 화면 비율이 달라 지도가 채우지 못한 자리에 깐다)
         private const int Width = 512; // 임시 지도 가로
         private const int Height = 320; // 임시 지도 세로
         private static Sprite cached; // 임시 지도 캐시
@@ -15,6 +18,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (art != null) return art; // 정식 지도 반환
             if (cached == null) cached = Create(); // 임시 지도 생성
             return cached; // 임시 지도 반환
+        }
+
+        public static void Fit(Image map) // 지도를 늘이지 않고 영역 안에 맞춤 (Day80 — 지역 표시를 지도의 자식으로 두면 어떤 화면 비율에서도 같은 땅 위에 놓인다)
+        {
+            if (map == null) return; // 지도 없음
+            AspectRatioFitter fitter = map.GetComponent<AspectRatioFitter>(); // 기존 맞춤 컴포넌트
+            if (fitter == null) fitter = map.gameObject.AddComponent<AspectRatioFitter>(); // 없으면 추가
+            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent; // 영역 안에 다 보이게 (지역 표시가 잘리지 않는다)
+            fitter.aspectRatio = Aspect; // 지도 비율
         }
 
         private static Sprite Create() // 임시 지도 생성 (대륙 = 원 여러 개를 합친 모양, 방위별 색)

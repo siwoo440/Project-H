@@ -44,6 +44,22 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             }
         }
 
+        [Test] // Resources의 모든 그림은 가로 · 세로가 4의 배수다 (아니면 압축되지 않아 메모리와 빌드 용량을 6배쯤 쓴다)
+        public void EveryResourceTexture_HasBlockCompressibleSize() // 그림 크기 테스트 (Day80 — 배경 1672×941이 압축되지 않고 올라가던 문제의 재발 방지)
+        {
+            List<string> bad = new List<string>(); // 크기가 맞지 않는 그림
+
+            foreach (string guid in AssetDatabase.FindAssets("t:Texture2D", new[] { "Assets/ProjectH/Resources" })) // 그림 순회
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid); // 경로
+                UnityEngine.Texture2D texture = AssetDatabase.LoadAssetAtPath<UnityEngine.Texture2D>(path); // 그림
+                if (texture == null) continue; // 그림 아님
+                if (texture.width % 4 != 0 || texture.height % 4 != 0) bad.Add($"{path} ({texture.width}×{texture.height})"); // 4의 배수가 아님
+            }
+
+            Assert.That(bad, Is.Empty, "가로 · 세로를 4의 배수로 맞춰 주세요 (예: 941 → 940) : " + string.Join(", ", bad)); // 전부 4의 배수
+        }
+
         [Test] // 12인 전원에게 정사각 초상화가 있다
         public void EveryCharacter_HasSquarePortrait() // 초상화 테스트
         {

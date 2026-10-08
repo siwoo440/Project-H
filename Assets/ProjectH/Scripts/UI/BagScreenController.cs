@@ -15,6 +15,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     {
         public const int SlotColumnCount = 7; // 가방 가로 슬롯 수
         public const int MinimumSlotCount = 28; // 가방 최소 표시 슬롯 수
+        private const float BagIconSize = 78f; // 가방 칸 안 아이콘 한 변 (Day80)
         private const int DemoPotionTargetCount = 5; // 테스트 물약 목표 수량
         private const int DemoMaterialTargetCount = 12; // 테스트 재료 목표 수량
         private const int DemoQuestTargetCount = 1; // 테스트 퀘스트 아이템 목표 수량
@@ -299,8 +300,15 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 ItemStackSaveData stack = stacks[index]; // 현재 보유 아이템 스택 조회
                 ItemData item = dataManager.GetItem(stack.ItemId); // 현재 아이템 원본 조회
                 string displayName = item == null || string.IsNullOrWhiteSpace(item.DisplayName) ? stack.ItemId : item.DisplayName; // 가방 슬롯 표시 이름 결정
-                string slotLabel = $"[{slotNumber:00}]\n{displayName}\nx{stack.Quantity}"; // 가방 슬롯 라벨 생성
+                string slotLabel = $"{displayName}\nx{stack.Quantity}"; // 가방 슬롯 라벨 생성 (Day80 — 칸 번호 대신 아이콘을 보여 준다)
                 Button itemButton = CreateButton(inventoryContent, $"ItemSlot_{slotNumber:00}", slotLabel, new Color(0.94f, 0.94f, 0.94f, 1f)); // 보유 아이템 슬롯 생성
+                SetRect(itemButton.GetComponentInChildren<Text>().rectTransform, new Vector2(0.04f, 0.03f), new Vector2(0.96f, 0.34f)); // 이름 · 수량은 칸 아래쪽 (Day80)
+                Image slotIcon = ItemIconView.Create(itemButton.transform, "Icon"); // 아이템 아이콘 (Day80 — 등급 테두리 + 그림, 그림이 없으면 색 원과 글자)
+                slotIcon.rectTransform.anchorMin = new Vector2(0.5f, 0.66f); // 칸 위쪽 가운데
+                slotIcon.rectTransform.anchorMax = new Vector2(0.5f, 0.66f); // 칸 위쪽 가운데
+                slotIcon.rectTransform.anchoredPosition = Vector2.zero; // 기준점에 배치
+                slotIcon.rectTransform.sizeDelta = new Vector2(BagIconSize, BagIconSize); // 아이콘 크기
+                ItemIconView.Apply(slotIcon, item, dataManager); // 아이콘 적용
                 string capturedItemId = stack.ItemId; // 클릭 이벤트 아이템 ID 캡처
                 itemButton.onClick.AddListener(() => SelectItem(capturedItemId)); // 아이템 슬롯 선택 이벤트 연결
             }
@@ -357,10 +365,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             itemMetaText.text = $"{item.Type} · {item.Grade} · MaxStack {item.MaxStack}"; // 선택 아이템 유형 및 등급 표시
             itemDescriptionText.text = string.IsNullOrWhiteSpace(item.Description) ? "설명이 없습니다." : item.Description; // 선택 아이템 설명 표시
             itemCountText.text = $"보유 수량  {count}"; // 선택 아이템 수량 표시
-            illustrationImage.sprite = item.Icon; // 선택 아이템 일러스트 연결
-            illustrationImage.enabled = item.Icon != null; // 실제 일러스트 존재 시 이미지 활성화
-            illustrationPlaceholderText.gameObject.SetActive(item.Icon == null); // 일러스트 누락 시 임시 텍스트 활성화
-            illustrationPlaceholderText.text = item.Icon == null ? $"{item.DisplayName}\n{item.Type}" : string.Empty; // 임시 일러스트 문구 표시
+            Sprite illustration = ItemIconArt.Get(item); // 아이템 그림 (Day80 — 아이콘 파일 우선)
+            illustrationImage.sprite = illustration; // 선택 아이템 일러스트 연결
+            illustrationImage.enabled = illustration != null; // 실제 일러스트 존재 시 이미지 활성화
+            illustrationPlaceholderText.gameObject.SetActive(illustration == null); // 일러스트 누락 시 임시 텍스트 활성화
+            illustrationPlaceholderText.text = illustration == null ? $"{item.DisplayName}\n{item.Type}" : string.Empty; // 임시 일러스트 문구 표시
             useButton.interactable = item.Type == ItemType.Consumable && count > 0; // Consumable 아이템 사용 버튼 활성화
         }
 

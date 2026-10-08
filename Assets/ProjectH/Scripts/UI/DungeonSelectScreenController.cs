@@ -101,11 +101,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Transform root = canvasObject.transform; // 루트
             Image backdrop = CreateImage(root, "Backdrop", new Color(0.04f, 0.07f, 0.12f, 1f)); // 뒤 바탕
             Stretch(backdrop.rectTransform); // 전체
-            Image map = CreateImage(root, "WorldMap", Color.white); // 세계 지도
+            Image sea = CreateImage(root, "MapSea", AdventureMapArt.SeaColor); // 지도 영역 바탕 (Day80 — 화면 비율이 달라 지도가 채우지 못한 자리는 바다색)
+            sea.raycastTarget = false; // 입력 통과
+            SetRect(sea.rectTransform, Vector2.zero, new Vector2(MapRight, MapTop)); // 왼쪽 큰 영역
+            Image map = CreateImage(sea.transform, "WorldMap", Color.white); // 세계 지도
             map.sprite = AdventureMapArt.Get(); // 정식 지도 우선
             map.raycastTarget = false; // 입력 통과
-            SetRect(map.rectTransform, Vector2.zero, new Vector2(MapRight, MapTop)); // 왼쪽 큰 영역
-            BuildMarkers(root); // 지역 표시
+            AdventureMapArt.Fit(map); // 지도 비율 유지 (Day80 — 늘이지 않고 영역 안에 맞춘다)
+            BuildMarkers(map.transform); // 지역 표시 (Day80 — 지도 위에 올려 지도와 함께 움직인다)
             BuildPanel(root); // 오른쪽 패널
             BuildTopBar(root); // 상단 바
         }
@@ -123,12 +126,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetRect(timeText.rectTransform, new Vector2(0.45f, 0f), new Vector2(0.985f, 1f)); // 오른쪽
         }
 
-        private void BuildMarkers(Transform root) // 지도 위 지역 원 + 이름
+        private void BuildMarkers(Transform root) // 지도 위 지역 원 + 이름 (root = 세계 지도 그림)
         {
             foreach (AdventureRegion region in AdventureRegionCatalog.All) // 지역 순회
             {
                 AdventureRegion captured = region; // 클릭용 복사
-                Vector2 anchor = new Vector2(region.Position.x * MapRight, region.Position.y * MapTop); // 지도 영역 안 좌표
+                Vector2 anchor = region.Position; // 지도 그림 안 좌표 (Day80 — 지도의 자식이라 0~1 그대로 쓴다)
                 Button button = RuntimeUiKit.CreateButton(root, "Region_" + region.Id, Color.white); // 원 버튼
                 Image disc = button.GetComponent<Image>(); // 원 이미지
                 disc.sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 원 모양

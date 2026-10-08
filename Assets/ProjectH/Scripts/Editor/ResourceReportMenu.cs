@@ -70,6 +70,18 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 Check(AdventureRegionArt.Folder + region.Id, ".png", $"{region.Id}  ({region.Name})", builder, missingList, ref have, ref missing); // 확인
             }
 
+            builder.Append("\n■ 세계 지도 (Resources/Map/WORLD.png · 없으면 코드로 그린 임시 지도)\n"); // 세계 지도 (Day80 추가)
+            Check("Map/WORLD", ".png", "WORLD", builder, missingList, ref have, ref missing); // 확인
+
+            builder.Append("\n■ 아이템 · 장비 아이콘 (Resources/Icons/Items/{아이템ID}.png · 없으면 색 원과 글자)\n"); // 아이콘 (Day80 추가)
+
+            foreach (string guid in AssetDatabase.FindAssets("t:ItemData", new[] { "Assets/ProjectH/Data/Items" })) // 아이템 데이터 순회
+            {
+                ProjectH.Data.ItemData item = AssetDatabase.LoadAssetAtPath<ProjectH.Data.ItemData>(AssetDatabase.GUIDToAssetPath(guid)); // 아이템 원본
+                if (item == null) continue; // 데이터 아님
+                Check(ItemIconArt.Folder + item.Id, ".png", $"{item.Id}  ({item.DisplayName})", builder, missingList, ref have, ref missing); // 확인
+            }
+
             builder.Append("\n■ NPC 스탠딩 (Resources/Dialogues/Standing/{NPC ID}_normal.png)\n"); // NPC (Day77 추가)
 
             foreach (NpcProfile npc in new[] { NpcLineCatalog.Shopkeeper, NpcLineCatalog.Blacksmith, NpcLineCatalog.Shadow, NpcLineCatalog.Archai }) // 상점 주인 · 대장장이 · 그림자 · 아르카이

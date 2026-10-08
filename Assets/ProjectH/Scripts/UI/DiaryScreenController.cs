@@ -325,13 +325,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 bool seen = DiaryService.IsDialogueSeen(saveData, cg.ScriptId); // 해금
                 DialogueScript script = DialogueLibrary.Load(cg.ScriptId); // 연결 이야기
                 string title = script == null ? cg.Id : script.Title; // 제목
-                Sprite art = RuntimeSpriteLoader.Load("Diary/CG/" + cg.Id); // 정식 CG
+                Sprite art = seen ? RuntimeSpriteLoader.Load("Diary/CG/" + cg.Id) : null; // 정식 CG (Day80 — 잠긴 칸은 그림을 보여 주지 않으므로 불러오지 않는다)
                 GalleryItem item = new GalleryItem // 그림 항목
                 {
                     Title = title, // 제목
                     Caption = seen ? $"{GetName(cg.CharacterId)} · {title}" : "???", // 칸 글자
                     Unlocked = seen, // 열림
-                    Sprite = art != null ? art : script == null ? null : DialogueArtFactory.GetBackground(script.Background), // 정식 CG 또는 이야기 배경
+                    Sprite = !seen ? null : art != null ? art : script == null ? null : DialogueArtFactory.GetBackground(script.Background), // 정식 CG 또는 이야기 배경 (Day80 — 열린 칸만)
                     StandingId = art == null ? cg.CharacterId : null, // 임시 CG는 실루엣 겹침
                     Question = "CG를 재생하겠습니까?", // 재생 질문
                     Play = script == null ? null : (System.Action)(() => DialogueOverlayView.Open(script, null)) // 네 → CG 장면 재생 (보상 없음)
@@ -344,7 +344,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 string captured = characterId; // 클릭용 복사
                 bool owned = saveData != null && saveData.FindCharacter(characterId) != null; // 동료로 합류
                 string ultimate = BattleUltimateEffectExecutor.GetUltimateName(characterId); // 궁극기 이름
-                Sprite cutIn = DialogueArtFactory.GetCutIn(characterId, out bool placeholder); // 컷인 그림
+                bool placeholder = true; // 임시 그림 여부
+                Sprite cutIn = owned ? DialogueArtFactory.GetCutIn(characterId, out placeholder) : null; // 컷인 그림 (Day80 — 합류하지 않은 동료의 그림은 불러오지 않는다)
                 int bond = owned ? saveData.FindCharacter(characterId).BondLevel : 0; // 결속 단계 (5단계 금빛 연출)
                 GalleryItem item = new GalleryItem // 그림 항목
                 {

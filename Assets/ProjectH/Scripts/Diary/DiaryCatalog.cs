@@ -149,7 +149,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
         {
             List<DiaryCgEntry> result = new List<DiaryCgEntry>(); // 결과
 
-            foreach (string characterId in Starters) // 초기 4인
+            foreach (string characterId in AllCharacters) // 12인 (Day80 — 초기 4인에서 확장. 개인 1화 · 결속 · 여관 대사는 70일차부터 12인 모두 있다)
             {
                 string shortId = characterId.Substring(3); // CH_ 제거
                 CharacterEventDefinition first = FirstEpisode(characterId); // 개인 1화

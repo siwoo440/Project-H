@@ -48,6 +48,8 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Text currentStatsText; // 현재 최종 능력치 텍스트
         private readonly Image[] equipmentSlotFrames = new Image[CharacterSlotLayout.SlotCount]; // 장비 5칸 틀 (Day60 추가)
         private readonly Text[] equipmentSlotNames = new Text[CharacterSlotLayout.SlotCount]; // 장비 5칸 아래 이름 (Day60 추가)
+        private readonly Text[] equipmentSlotSymbols = new Text[CharacterSlotLayout.SlotCount]; // 장비 5칸 글자 (Day80 추가 — 아이콘이 있으면 숨긴다)
+        private readonly Image[] equipmentSlotIcons = new Image[CharacterSlotLayout.SlotCount]; // 장비 5칸 장착 장비 아이콘 (Day80 추가)
         private GameObject equipmentSlotRoot; // 일러스트 둘레 장비 칸 묶음 (Day60 추가, 장비 탭에서만 표시)
         private int equipmentFilter = -1; // 보유 장비 목록 슬롯 필터 (-1 전체, Day60 추가)
         private Text inventoryCountText; // 인벤토리 개수 텍스트
@@ -328,6 +330,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 outline.effectDistance = new Vector2(2f, -2f); // 두께
                 Text symbol = CreateText(button.transform, "Symbol", EquipmentSlotInfo.GetSymbol(slot), 30, FontStyle.Bold, new Color(0.95f, 0.95f, 0.98f, 1f)); // 슬롯 글자
                 SetRect(symbol.rectTransform, new Vector2(0f, 0.30f), new Vector2(1f, 1f)); // 위쪽
+                equipmentSlotSymbols[index] = symbol; // 글자 저장 (Day80)
+                Image slotIcon = CreateImage(button.transform, "Icon", Color.white); // 장착 장비 아이콘 (Day80 — 글자 자리에 그림)
+                slotIcon.raycastTarget = false; // 입력 통과 (칸 버튼이 받는다)
+                slotIcon.preserveAspect = true; // 비율 유지
+                slotIcon.enabled = false; // 장착 전에는 숨김
+                SetRect(slotIcon.rectTransform, new Vector2(0.08f, 0.28f), new Vector2(0.92f, 0.98f)); // 글자와 같은 자리
+                equipmentSlotIcons[index] = slotIcon; // 아이콘 저장
                 Text label = CreateText(button.transform, "SlotLabel", EquipmentSlotInfo.GetLabel(slot), 13, FontStyle.Normal, new Color(0.80f, 0.80f, 0.86f, 1f)); // 슬롯 이름
                 SetRect(label.rectTransform, new Vector2(0f, 0.02f), new Vector2(1f, 0.30f)); // 아래쪽
                 equipmentSlotNames[index] = CreateText(equipmentSlotRoot.transform, $"EquipName_{slot}", string.Empty, 14, FontStyle.Bold, new Color(0.25f, 0.20f, 0.10f, 1f)); // 칸 아래 장비 이름
@@ -346,6 +355,10 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 EquipmentData equipment = instance == null ? null : dataManager.GetEquipment(instance.EquipmentId); // 원본
                 equipmentSlotFrames[index].color = equipment == null ? new Color(0.12f, 0.12f, 0.16f, 1f) : GetGradeColor(equipment.Grade); // 등급 색
                 equipmentSlotNames[index].text = equipment == null ? string.Empty : EquipmentUpgradeCatalog.FormatName(equipment.DisplayName, instance); // 장비 이름 (Day61 강화·초월 표시)
+                Sprite slotArt = equipment == null ? null : ItemIconArt.Get(dataManager.GetItem(equipment.Id)); // 장착 장비 아이콘 (Day80 — 없으면 글자 그대로)
+                equipmentSlotIcons[index].sprite = slotArt; // 아이콘 적용
+                equipmentSlotIcons[index].enabled = slotArt != null; // 아이콘 유무
+                equipmentSlotSymbols[index].enabled = slotArt == null; // 아이콘이 있으면 글자 숨김
                 equipmentSlotFrames[index].GetComponent<Outline>().effectColor = equipmentFilter == (int)slot ? new Color(1f, 0.80f, 0.25f, 1f) : new Color(0.85f, 0.85f, 0.9f, 0.6f); // 선택 칸 금색
             }
         }

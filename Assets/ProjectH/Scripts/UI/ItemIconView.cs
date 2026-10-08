@@ -45,8 +45,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             frame.color = CharacterEquipmentScreenController.GetGradeColor(item.Grade); // 등급 테두리 색
-            art.enabled = item.Icon != null; // 정식 아이콘 유무
-            art.sprite = item.Icon; // 정식 아이콘 적용
+            Sprite icon = ItemIconArt.Get(item); // 정식 아이콘 (Day80 — Resources/Icons/Items/{ID} 우선)
+            art.enabled = icon != null; // 정식 아이콘 유무
+            art.sprite = icon; // 정식 아이콘 적용
             Color color = GetTypeColor(item); // 유형 색
             disc.color = art.enabled ? new Color(color.r, color.g, color.b, 0.15f) : new Color(color.r, color.g, color.b, 0.55f); // 정식 아이콘이면 흐리게
             symbol.text = art.enabled ? string.Empty : GetSymbol(item, dataManager); // 임시 글자

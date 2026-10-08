@@ -17,9 +17,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private static readonly Color NormalColor = new Color(0.94f, 0.93f, 0.90f, 1f); // 보통 베이지색
         private static readonly Color DislikeColor = new Color(0.82f, 0.86f, 0.92f, 1f); // 별로 회청색
         private static readonly Color UnknownColor = new Color(0.90f, 0.90f, 0.92f, 1f); // 모르는 취향 회색
+        private const float GiftIconSize = 76f; // 선물 버튼 안 그림 한 변 (Day80)
+        private const float GiftIconInset = 10f; // 버튼 왼쪽 끝에서 그림까지 (Day80)
 
         private readonly List<Button> giftButtons = new List<Button>(); // 선물 버튼 목록
         private readonly List<string> giftOrder = new List<string>(); // 버튼 순서별 선물 ID
+        private readonly List<Image> giftIcons = new List<Image>(); // 버튼 순서별 선물 그림 (Day80 추가 — 그림이 없는 선물은 null)
         private Text titleText; // 패널 제목
         private Text dailyText; // 오늘 선물 횟수 문구
         private Text legendText; // 취향 증가량 안내 문구
@@ -64,6 +67,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 float left = column == 0 ? 0.04f : 0.51f; // 버튼 왼쪽 위치 계산
                 RuntimeUiKit.SetRect((RectTransform)giftButton.transform, new Vector2(left, top - 0.15f), new Vector2(left + 0.45f, top)); // 버튼 배치
                 giftButton.onClick.AddListener(() => Give(itemId)); // 선물 이벤트 연결
+                giftIcons.Add(CreateGiftIcon(giftButton, itemId)); // 선물 그림 (Day80)
                 giftButtons.Add(giftButton); // 버튼 목록 등록
                 giftOrder.Add(itemId); // 선물 순서 등록
             }
@@ -88,6 +92,25 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Text text = RuntimeUiKit.CreateText(button.transform, "Text", label, 16, new Color(0.10f, 0.10f, 0.10f, 1f)).Wrap(); // 줄바꿈 라벨 생성
             RuntimeUiKit.Stretch(text.rectTransform, 7f); // 라벨 확장
             return button; // 버튼 반환
+        }
+
+        private static Image CreateGiftIcon(Button giftButton, string itemId) // 선물 버튼 왼쪽 그림 (Day80 추가 — 그림이 없으면 만들지 않고 글자만 둔다)
+        {
+            Sprite art = ItemIconArt.Get(itemId); // 선물 그림
+            if (art == null) return null; // 그림 없음
+            Image icon = RuntimeUiKit.CreateImage(giftButton.transform, "Icon", Color.white); // 그림
+            icon.sprite = art; // 그림 적용
+            icon.raycastTarget = false; // 입력 통과 (버튼이 받는다)
+            icon.preserveAspect = true; // 비율 유지
+            RectTransform rect = icon.rectTransform; // 그림 영역
+            rect.anchorMin = new Vector2(0f, 0.5f); // 왼쪽 가운데 기준
+            rect.anchorMax = new Vector2(0f, 0.5f); // 왼쪽 가운데 기준
+            rect.pivot = new Vector2(0f, 0.5f); // 왼쪽 가운데 고정
+            rect.anchoredPosition = new Vector2(GiftIconInset, 0f); // 버튼 왼쪽
+            rect.sizeDelta = new Vector2(GiftIconSize, GiftIconSize); // 그림 크기
+            RectTransform label = giftButton.GetComponentInChildren<Text>().rectTransform; // 버튼 글자
+            label.offsetMin = new Vector2(GiftIconInset + GiftIconSize + 4f, label.offsetMin.y); // 글자는 그림 오른쪽으로
+            return icon; // 그림 반환
         }
 
         public void Toggle() // 패널 열기·닫기
@@ -128,6 +151,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 string preferenceText = known ? $"{GiftPreferenceCatalog.GetLabel(preference)} (+{GiftPreferenceCatalog.GetAffinityGain(preference)})" : "?"; // 모르면 ? 표시
                 SetButtonLabel(giftButtons[index], $"{itemName}   보유 {count}\n취향 : {preferenceText}"); // 버튼 문구 적용
                 giftButtons[index].interactable = count > 0; // 보유 중일 때만 입력 허용 (제한·최대는 누르면 사유 안내)
+                if (giftIcons[index] != null) giftIcons[index].color = count > 0 ? Color.white : new Color(1f, 1f, 1f, 0.35f); // 없는 선물은 그림을 흐리게 (Day80)
                 giftButtons[index].GetComponent<Image>().color = known ? GetPreferenceColor(preference) : UnknownColor; // 취향별 색상 적용
             }
 

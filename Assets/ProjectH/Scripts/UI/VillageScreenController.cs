@@ -262,6 +262,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             mapRoot.SetActive(true); // 지도 표시
             zoneRoot.SetActive(false); // 구역 숨김
             background.sprite = DialogueArtFactory.GetBackground("VILLAGE"); // 마을 전경
+            BackgroundFit.Apply(background); // 화면 비율이 달라도 늘리지 않고 잘라서 채움 (Day76)
             RefreshAll(); // 갱신
         }
 
@@ -282,6 +283,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             mapRoot.SetActive(false); // 지도 숨김
             zoneRoot.SetActive(true); // 구역 표시
             background.sprite = DialogueArtFactory.GetBackground(VillageZoneCatalog.Get(zone).BackgroundKey); // 구역 배경
+            BackgroundFit.Apply(background); // 구역 그림 비율로 다시 맞춤 (Day76)
             SetStatus(present.Count > 0 ? $"{JoinNames(present)}이(가) 있어요." : "지금은 아무도 없네요. 시간이 지나면 누군가 올지도 몰라요."); // 안내
             RefreshAll(); // 갱신
         }

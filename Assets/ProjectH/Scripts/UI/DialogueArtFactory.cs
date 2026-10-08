@@ -1,4 +1,5 @@
 using System.Collections.Generic; // 사전 자료형
+using ProjectH.Dialogue; // 표정 연결표 기능 (Day76)
 using UnityEngine; // Unity 기본 기능
 
 namespace ProjectH.UI // 프로젝트 UI 영역
@@ -6,7 +7,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     public static class DialogueArtFactory // 대화 화면 배경·스탠딩 제공 (Day58 신규 — 정식 아트가 없으면 절차적 임시 이미지 생성)
     {
         private const string BackgroundFolder = "Dialogues/Backgrounds/"; // 정식 배경 Resources 경로 (배경 키 이름의 Sprite)
-        private const string StandingFolder = "Dialogues/Standing/"; // 정식 스탠딩 Resources 경로 ({캐릭터ID}_{표정} 또는 {캐릭터ID})
+        public const string StandingFolder = "Dialogues/Standing/"; // 정식 스탠딩 Resources 경로 ({캐릭터ID}_{표정 키} 또는 {캐릭터ID}, Day76 공개 — 점검 표·테스트 공용)
         private const string CutInFolder = "UltimateCutIns/"; // 궁극기 컷인 전용 일러스트 Resources 경로 (Day59 추가, {캐릭터ID})
         private const int BackgroundWidth = 320; // 임시 배경 가로 픽셀
         private const int BackgroundHeight = 180; // 임시 배경 세로 픽셀
@@ -14,6 +15,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private const int StandingHeight = 512; // 임시 스탠딩 세로 픽셀
         private static readonly Dictionary<string, Sprite> BackgroundCache = new Dictionary<string, Sprite>(); // 배경 캐시
         private static Sprite silhouetteSprite; // 임시 실루엣 캐시
+
+        private static readonly Dictionary<string, string> BackgroundAliases = new Dictionary<string, string> // 전용 그림이 없을 때 대신 쓸 배경 (Day76 추가 — 전용 그림을 넣으면 그쪽이 우선)
+        {
+            { "SHOP", "VILLAGE_MARKET" }, // 상점 화면 → 시장 거리
+            { "VILLAGE", "VILLAGE_PLAZA" } // 마을 지도 화면 → 광장
+        };
 
         private readonly struct BackgroundPalette // 임시 배경 색 구성
         {
@@ -34,7 +41,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public static Sprite GetBackground(string key) // 배경 스프라이트 조회
         {
             string safeKey = string.IsNullOrEmpty(key) ? "DEFAULT" : key; // 빈 키 기본값
-            Sprite art = RuntimeSpriteLoader.Load(BackgroundFolder + safeKey); // 정식 배경 우선 사용
+            Sprite art = LoadBackgroundArt(safeKey); // 정식 배경 우선 사용 (없으면 대신 쓸 배경, Day76)
             if (art != null) return art; // 정식 배경 반환
 
             if (!BackgroundCache.TryGetValue(safeKey, out Sprite cached) || cached == null) // 캐시 확인 (도메인 리로드 대응)
@@ -46,10 +53,46 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return cached; // 임시 배경 반환
         }
 
+        public static string GetBackgroundAlias(string key) // 전용 그림이 없을 때 대신 쓸 배경 키 (없으면 빈 문자열, Day76 추가)
+        {
+            return key != null && BackgroundAliases.TryGetValue(key, out string alias) ? alias : string.Empty; // 대체 키 반환
+        }
+
+        public static bool HasBackgroundArt(string key) // 이 배경에 그림 파일이 있는지 (전용 그림 또는 대신 쓸 그림, Day76 추가)
+        {
+            return !string.IsNullOrEmpty(key) && LoadBackgroundArt(key) != null; // 그림 존재 여부
+        }
+
+        private static Sprite LoadBackgroundArt(string key) // 배경 그림 파일 조회 : 전용 그림 → 대신 쓸 그림 (Day76 추가)
+        {
+            Sprite art = RuntimeSpriteLoader.Load(BackgroundFolder + key); // 전용 그림
+            if (art != null) return art; // 전용 그림 반환
+            string alias = GetBackgroundAlias(key); // 대신 쓸 배경 키
+            return string.IsNullOrEmpty(alias) ? null : RuntimeSpriteLoader.Load(BackgroundFolder + alias); // 대신 쓸 그림 (없으면 null)
+        }
+
+        public static List<string> GetStandingResourcePaths(string characterId, string expression) // 스탠딩을 찾는 순서 (Day76 추가 — 표정 키 → 대사에 적힌 이름 → 기본 표정 → 표정 없는 그림)
+        {
+            List<string> paths = new List<string>(4); // 찾을 경로
+            string key = ExpressionCatalog.Resolve(expression); // 그림 표정 키 (미소 → smile)
+            string raw = string.IsNullOrWhiteSpace(expression) ? string.Empty : expression.Trim(); // 대사에 적힌 이름
+            paths.Add($"{StandingFolder}{characterId}_{key}"); // 1순위 : {ID}_{표정 키}
+            if (raw.Length > 0 && raw != key) paths.Add($"{StandingFolder}{characterId}_{raw}"); // 2순위 : {ID}_{대사에 적힌 이름} (이전 규칙 호환)
+            if (key != ExpressionCatalog.Normal) paths.Add($"{StandingFolder}{characterId}_{ExpressionCatalog.Normal}"); // 3순위 : {ID}_normal (그 표정 그림이 아직 없을 때)
+            paths.Add(StandingFolder + characterId); // 4순위 : 표정 이름이 없는 그림
+            return paths; // 순서대로 반환
+        }
+
         public static Sprite GetStanding(string characterId, string expression, out bool isPlaceholder) // 스탠딩 스프라이트 조회
         {
-            Sprite art = string.IsNullOrEmpty(expression) ? null : RuntimeSpriteLoader.Load($"{StandingFolder}{characterId}_{expression}"); // 표정별 정식 스탠딩
-            if (art == null) art = RuntimeSpriteLoader.Load(StandingFolder + characterId); // 기본 정식 스탠딩
+            Sprite art = null; // 찾은 그림
+            List<string> paths = GetStandingResourcePaths(characterId, expression); // 찾는 순서 (Day76)
+
+            for (int index = 0; index < paths.Count && art == null; index++) // 찾을 때까지 순회
+            {
+                art = RuntimeSpriteLoader.Load(paths[index]); // 정식 스탠딩 조회
+            }
+
             isPlaceholder = art == null; // 임시 이미지 여부
             if (art != null) return art; // 정식 스탠딩 반환
 

@@ -15,6 +15,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
     public sealed class DialogueOverlayView : MonoBehaviour // 미연시형 대화 화면 (Day58 신규 · Day62 목업 개편 — 2인 좌우 스탠딩 · 이름/소속 · 우상단 아이콘 메뉴 · 밝은 회색 창)
     {
         private const int SortingOrder = 600; // 캐릭터 화면(100) 위, 로딩창(1000) 아래
+        private const float ExpressionFadeSeconds = 0.1f; // 표정이 바뀔 때 이전 그림이 겹쳐 사라지는 시간 (Day76)
         private static readonly Color WindowColor = new Color(0.94f, 0.94f, 0.96f, 0.93f); // 대화창 밝은 회색
         private static readonly Color WindowLineColor = new Color(0.55f, 0.58f, 0.66f, 1f); // 대화창 윗선 회청색
         private static readonly Color BodyColor = new Color(0.13f, 0.14f, 0.18f, 1f); // 대사 글자 진회색
@@ -31,6 +32,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             public string CharacterId; // 캐릭터 ID
             public string Expression = string.Empty; // 현재 표정
             public Image Image; // 스탠딩 이미지
+            public Image Fade; // 표정이 바뀔 때 잠깐 겹쳐 보이는 이전 그림 (Day76)
+            public Color FadeColor; // 이전 그림의 밝기 (Day76)
+            public float FadeLeft; // 남은 겹침 시간 (Day76)
             public Text Label; // 임시 실루엣 이름·표정
             public DialogueStageSlot Slot; // 자리
         }
@@ -95,6 +99,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             background.sprite = DialogueArtFactory.GetBackground(script.Background); // 배경 이미지 적용
             background.raycastTarget = false; // 입력 통과
             RuntimeUiKit.Stretch(background.rectTransform); // 전체 화면
+            BackgroundFit.Apply(background); // 화면 비율이 달라도 늘리지 않고 잘라서 채움 (Day76)
             backgroundImage = background; // 배경 보관 (Day63 CG 교체용)
             sceneBackground = background.sprite; // 원래 배경 보관 (Day63)
             AddStanding(layout.Left, DialogueStageSlot.Left); // 왼쪽 스탠딩
@@ -129,6 +134,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Vector2 min = slot == DialogueStageSlot.Left ? new Vector2(0.03f, 0f) : slot == DialogueStageSlot.Right ? new Vector2(0.57f, 0f) : new Vector2(0.32f, 0f); // 자리별 왼쪽 아래
             Vector2 max = slot == DialogueStageSlot.Left ? new Vector2(0.43f, 0.95f) : slot == DialogueStageSlot.Right ? new Vector2(0.97f, 0.95f) : new Vector2(0.68f, 0.97f); // 자리별 오른쪽 위
             RuntimeUiKit.SetRect(view.Image.rectTransform, min, max); // 배치 (대화창이 하체를 가림)
+            view.Fade = RuntimeUiKit.CreateImage(view.Image.transform, "ExpressionFade", Color.white); // 표정 전환용 이전 그림 (Day76)
+            view.Fade.preserveAspect = true; // 비율 유지
+            view.Fade.raycastTarget = false; // 입력 통과
+            RuntimeUiKit.Stretch(view.Fade.rectTransform); // 스탠딩과 같은 자리
+            view.Fade.gameObject.SetActive(false); // 평소에는 숨김
             view.Label = RuntimeUiKit.CreateText(view.Image.transform, "PlaceholderLabel", string.Empty, 26, new Color(0.20f, 0.16f, 0.26f, 0.9f)); // 임시 실루엣 이름·표정
             view.Label.supportRichText = true; // 글자 크기 태그 사용
             RuntimeUiKit.SetRect(view.Label.rectTransform, new Vector2(0f, 0.40f), new Vector2(1f, 0.56f)); // 가슴 높이 배치
@@ -268,6 +278,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             float delta = Time.unscaledDeltaTime; // 일시정지와 무관한 시간
+            UpdateExpressionFades(delta); // 표정 전환 겹침 진행 (Day76)
 
             if (isTyping) // 타자 효과 진행 확인
             {
@@ -415,6 +426,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             cgActive = cg != null; // 표시 여부
             backgroundImage.sprite = cgActive ? cg : sceneBackground; // CG 또는 원래 배경
             backgroundImage.preserveAspect = false; // 화면 가득
+            BackgroundFit.Apply(backgroundImage); // 바뀐 그림 비율로 다시 맞춤 (Day76)
         }
 
         private void RefreshStandings(string speaker) // 스탠딩 이미지·밝기 갱신 (말하는 사람 밝게, 듣는 사람 어둡게)
@@ -424,6 +436,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             for (int index = 0; index < standings.Count; index++) // 무대 순회
             {
                 StandingView view = standings[index]; // 스탠딩
+                bool wasVisible = view.Image.gameObject.activeSelf; // 바뀌기 전에 보이고 있었는지 (Day76)
+                Sprite previousSprite = view.Image.sprite; // 바뀌기 전 그림 (Day76)
+                Color previousColor = view.Image.color; // 바뀌기 전 밝기 (Day76)
                 view.Image.gameObject.SetActive(!cgActive); // CG 중에는 스탠딩 숨김 (Day63)
                 view.Image.sprite = DialogueArtFactory.GetStanding(view.CharacterId, view.Expression, out bool placeholder); // 표정별 스탠딩
                 Color tint = placeholder ? DialogueArtFactory.GetCharacterTint(view.CharacterId) : Color.white; // 임시 실루엣은 캐릭터 색
@@ -433,6 +448,37 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 view.Image.rectTransform.localScale = Vector3.one * (speaking || !characterSpeaking ? 1f : 0.96f); // 듣는 쪽 살짝 작게
                 view.Label.gameObject.SetActive(placeholder); // 정식 아트가 있으면 글자 숨김
                 view.Label.text = placeholder ? $"{DialogueSpeakerInfo.ResolveName(view.CharacterId)}\n<size=20>[{(string.IsNullOrEmpty(view.Expression) ? "기본" : view.Expression)}]</size>" : string.Empty; // 이름·표정 표시
+                if (wasVisible && !cgActive && previousSprite != null && previousSprite != view.Image.sprite) StartExpressionFade(view, previousSprite, previousColor); // 그림이 실제로 바뀔 때만 겹침 (Day76)
+            }
+        }
+
+        private static void StartExpressionFade(StandingView view, Sprite previousSprite, Color previousColor) // 표정 전환 시작 : 이전 그림을 위에 겹쳐 두고 서서히 지움 (Day76 추가)
+        {
+            view.Fade.sprite = previousSprite; // 이전 그림
+            view.FadeColor = previousColor; // 이전 밝기
+            view.FadeLeft = ExpressionFadeSeconds; // 겹침 시간 시작
+            view.Fade.color = previousColor; // 처음에는 그대로 보임
+            view.Fade.gameObject.SetActive(true); // 겹침 표시
+        }
+
+        private void UpdateExpressionFades(float delta) // 표정 전환 겹침 진행 (Day76 추가)
+        {
+            for (int index = 0; index < standings.Count; index++) // 무대 순회
+            {
+                StandingView view = standings[index]; // 스탠딩
+                if (view.FadeLeft <= 0f) continue; // 겹침 없음
+                view.FadeLeft -= delta; // 시간 경과
+
+                if (view.FadeLeft <= 0f || cgActive) // 끝났거나 CG로 가려짐
+                {
+                    view.FadeLeft = 0f; // 겹침 종료
+                    view.Fade.gameObject.SetActive(false); // 이전 그림 숨김
+                    continue; // 다음 스탠딩
+                }
+
+                Color color = view.FadeColor; // 이전 밝기
+                color.a *= view.FadeLeft / ExpressionFadeSeconds; // 남은 시간만큼 투명하게
+                view.Fade.color = color; // 적용
             }
         }
 

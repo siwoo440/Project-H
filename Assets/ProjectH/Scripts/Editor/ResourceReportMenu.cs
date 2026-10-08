@@ -28,6 +28,13 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 Check($"Dialogues/Backgrounds/{key}", ".png", key, builder, missingList, ref have, ref missing); // 확인
             }
 
+            builder.Append("\n■ 화면 배경 (상점 · 대장간 · 마을 지도)\n"); // 화면 전용 배경 (Day76 추가)
+
+            foreach (string key in new[] { "SHOP", "BLACKSMITH", "VILLAGE" }) // 대사가 아니라 화면이 직접 쓰는 배경 키
+            {
+                CheckScreenBackground(key, builder, missingList, ref have, ref missing); // 확인
+            }
+
             builder.Append("\n■ 캐릭터 초상화 (Resources/Portraits)\n"); // 초상화
 
             foreach (string characterId in DiaryCatalog.AllCharacters) // 12인
@@ -35,11 +42,21 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 Check(CharacterPortraitArt.PortraitFolder + characterId, ".png", characterId, builder, missingList, ref have, ref missing); // 확인
             }
 
-            builder.Append("\n■ 캐릭터 스탠딩 (Resources/Dialogues/Standing)\n"); // 스탠딩
+            builder.Append("\n■ 캐릭터 스탠딩 · 표정 (Resources/Dialogues/Standing/{캐릭터ID}_{표정}.png)\n"); // 스탠딩 (Day76 — 표정 7종까지 표시)
 
             foreach (string characterId in DiaryCatalog.AllCharacters) // 12인
             {
-                Check($"Dialogues/Standing/{characterId}", ".png", characterId, builder, missingList, ref have, ref missing); // 확인
+                builder.Append($"  {characterId,-12}"); // 캐릭터 ID (줄 맞춤)
+
+                foreach (string key in ExpressionCatalog.Keys) // 표정 7종
+                {
+                    bool exists = Exists($"{DialogueArtFactory.StandingFolder}{characterId}_{key}", ".png")
+                                  || (key == ExpressionCatalog.Normal && Exists(DialogueArtFactory.StandingFolder + characterId, ".png")); // 표정 그림 (기본은 표정 없는 그림도 인정)
+                    builder.Append(exists ? $" [O]{key}" : $" [ ]{key}"); // 표시
+                    if (exists) have++; else { missing++; missingList.Add($"{DialogueArtFactory.StandingFolder}{characterId}_{key}"); } // 집계
+                }
+
+                builder.Append('\n'); // 줄 끝
             }
 
             builder.Append("\n■ 배경음 (Resources/Audio/Bgm)\n"); // 배경음
@@ -67,9 +84,30 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
             Debug.Log(builder.ToString()); // 출력
         }
 
+        private static bool Exists(string resourcePath, string extension) // Resources 안에 파일이 있는지 (Day76 분리)
+        {
+            return AssetDatabase.LoadAssetAtPath<Object>(ResourcesRoot + resourcePath + extension) != null; // 존재 확인
+        }
+
+        private static void CheckScreenBackground(string key, StringBuilder builder, List<string> missingList, ref int have, ref int missing) // 화면 배경 하나 확인 (Day76 추가 — 전용 그림이 없으면 무엇으로 대신하는지 표시)
+        {
+            if (Exists($"Dialogues/Backgrounds/{key}", ".png")) // 전용 그림 확인
+            {
+                builder.Append($"  [O] {key}\n"); // 표시
+                have++; // 집계
+                return; // 확인 끝
+            }
+
+            string alias = DialogueArtFactory.GetBackgroundAlias(key); // 대신 쓸 배경 키
+            bool aliasExists = !string.IsNullOrEmpty(alias) && Exists($"Dialogues/Backgrounds/{alias}", ".png"); // 대신 쓸 그림 존재
+            builder.Append(aliasExists ? $"  [ ] {key}  (지금은 {alias} 그림을 대신 사용)\n" : $"  [ ] {key}  (코드로 그린 임시 그림 사용)\n"); // 표시
+            missing++; // 집계
+            missingList.Add($"Dialogues/Backgrounds/{key}"); // 빠진 목록
+        }
+
         private static void Check(string resourcePath, string extension, string label, StringBuilder builder, List<string> missingList, ref int have, ref int missing) // 파일 하나 확인
         {
-            bool exists = AssetDatabase.LoadAssetAtPath<Object>(ResourcesRoot + resourcePath + extension) != null; // 존재 확인
+            bool exists = Exists(resourcePath, extension); // 존재 확인
             builder.Append(exists ? $"  [O] {label}\n" : $"  [ ] {label}\n"); // 표시
             if (exists) have++; else { missing++; missingList.Add(resourcePath); } // 집계
         }

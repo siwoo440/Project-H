@@ -13,6 +13,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         [SerializeField] private BattleFloatingValueText floatingValueText; // 피해 회복 숫자 디버그 텍스트
         private Color baseBodyColor = Color.white; // 기본 바디 색상
         private Coroutine flashRoutine; // 피격 미리보기 코루틴
+        private BattleUnitMotion motion; // 바디 움직임 (Day79 추가 — 대기 · 공격 · 피격 · 쓰러짐)
         [SerializeField] private Outline selectionOutline; // 선택 캐릭터 바디 윤곽 효과
         public BattleTeam Team { get; private set; } // 전투 팀
         public IBattleCombatantStats Stats { get; private set; } // 공통 전투 스탯
@@ -50,6 +51,20 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             BattleSelectionRuntimeState.SelectionChanged += HandleSelectionChanged; // 선택 변경 이벤트 구독
             EnsureSelectionOutline(); // 전투 초기화 시 바디 윤곽 효과 준비
             RefreshSelectionHighlight(); // 현재 선택 상태 바디 윤곽 반영
+            EnsureMotion(); // 바디 움직임 준비 (Day79)
+        }
+
+        private void EnsureMotion() // 바디 움직임 준비 (Day79 추가 — 유닛을 다시 묶으면 자세도 처음으로 돌아간다)
+        {
+            if (bodyImage == null) return; // 바디 없음
+            if (motion == null) motion = GetComponent<BattleUnitMotion>(); // 기존 움직임
+            if (motion == null) motion = gameObject.AddComponent<BattleUnitMotion>(); // 없으면 추가
+            motion.Configure(bodyImage.rectTransform, ForwardDirection, Stats == null ? string.Empty : Stats.RuntimeId); // 대상 · 방향 · 박자 연결
+        }
+
+        public void PlayDefeatMotion() // 쓰러지는 움직임 (Day79 추가)
+        {
+            if (motion != null) motion.PlayDefeat(); // 뒤로 기울며 내려앉음
         }
 
         public void SetSelectionHighlighted(bool highlighted) // 전장 캐릭터 선택 윤곽 표시 설정
@@ -283,6 +298,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public void ShowAction(BattleActionKind actionKind) // 머리 위 행동 텍스트 표시
         {
             actionDebugText?.Show(actionKind); // 행동 디버그 텍스트 호출
+            if (motion != null) motion.PlayLunge(); // 공격 · 스킬 · 궁극기 순간 앞으로 튀어나감 (Day79)
         }
 
         public void FlashHitPreview() // 기본 공격 적중 미리보기 표시
@@ -298,6 +314,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             flashRoutine = StartCoroutine(FlashRoutine()); // 피격 미리보기 코루틴 시작
+            if (motion != null) motion.PlayRecoil(); // 뒤로 살짝 밀림 (Day79)
         }
 
         private IEnumerator FlashRoutine() // 피격 미리보기 색상 변화

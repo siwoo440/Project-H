@@ -22,6 +22,34 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(BattleUnitArt.GetAlly("CH_NOT_EXIST"), Is.Null); // 없는 캐릭터는 색 상자
         }
 
+        [Test] // 12인 모두 전투용 SD 그림이 있고 정사각이다 (Day79 — 스탠딩으로 떨어지지 않는다)
+        public void EveryCharacter_HasSquareSdArt() // 아군 SD 그림 테스트
+        {
+            foreach (string characterId in DiaryCatalog.AllCharacters) // 12인 순회
+            {
+                Sprite sd = BattleUnitArt.GetSd(characterId); // SD 그림
+                Assert.That(sd, Is.Not.Null, $"SD 그림 없음 : {characterId}"); // 존재
+                Assert.That(sd.rect.width, Is.EqualTo(sd.rect.height), $"SD 그림이 정사각이 아님 : {characterId}"); // 정사각
+                Assert.That(BattleUnitArt.GetAlly(characterId), Is.SameAs(sd), $"SD 대신 다른 그림을 씀 : {characterId}"); // SD 우선
+            }
+        }
+
+        [Test] // 몬스터 데이터가 있는 몬스터는 모두 SD 그림이 있다 (Day79 — 몬스터를 추가하고 그림을 빠뜨리면 여기서 실패)
+        public void EveryMonster_HasSquareSdArt() // 몬스터 SD 그림 테스트
+        {
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("t:MonsterData", new[] { "Assets/ProjectH/Data/Monsters" }); // 몬스터 데이터
+            Assert.That(guids.Length, Is.GreaterThanOrEqualTo(34)); // 34종 이상
+
+            foreach (string guid in guids) // 몬스터 순회
+            {
+                ProjectH.Data.MonsterData monster = UnityEditor.AssetDatabase.LoadAssetAtPath<ProjectH.Data.MonsterData>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid)); // 몬스터 원본
+                Assert.That(monster, Is.Not.Null); // 데이터 존재
+                Sprite sd = BattleUnitArt.GetEnemy(monster.Id); // SD 그림
+                Assert.That(sd, Is.Not.Null, $"SD 그림 없음 : {monster.Id} ({monster.DisplayName})"); // 존재
+                Assert.That(sd.rect.width, Is.EqualTo(sd.rect.height), $"SD 그림이 정사각이 아님 : {monster.Id}"); // 정사각
+            }
+        }
+
         [Test] // 몬스터는 SD 그림이 없으면 null을 돌려준다 (색 상자 유지)
         public void Enemy_WithoutArt_ReturnsNull() // 몬스터 그림 테스트
         {

@@ -15,6 +15,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private const float FaceRestX = -520f; // 얼굴 기준으로 놓을 때의 정지 위치 (Day77 — 그림이 커져 궁극기 이름과 겹치지 않게 왼쪽으로)
         private const float FaceHeightInBand = 110f; // 띠(높이 250) 안에서 얼굴이 보이는 높이 (Day77)
         private const float FaceOffsetY = -14f; // 얼굴 중심을 띠 가운데보다 살짝 아래로 (머리 위쪽이 잘리지 않게, Day77)
+        public const float WideArtWidth = 1500f; // 전용 컷인 그림의 표시 너비 (Day79 — 가로로 긴 그림의 세로 가운데 띠만 보인다)
+        private const float WideArtRestX = 0f; // 전용 컷인 그림의 정지 위치 (띠 가운데)
         private static readonly Color Gold = new Color(1f, 0.84f, 0.36f, 1f); // 결속 금색
 
         public static bool Enabled = true; // 컷인 사용 여부 (Day71 설정 일차에 켜기·끄기 연결)
@@ -86,6 +88,12 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 StandingFaceCatalog.FrameOnFace(portrait, face, BackgroundFit.GetAspect(art.sprite), FaceHeightInBand); // 얼굴 중심을 기준점으로 · 얼굴 높이에 맞춘 크기
                 portraitRestX = FaceRestX; // 정지 위치
                 portrait.anchoredPosition = new Vector2(portraitRestX, FaceOffsetY); // 얼굴이 띠 가운데 근처에 오게
+            }
+            else if (!placeholder && DialogueArtFactory.HasCutInArt(info.CharacterId)) // 전용 컷인 그림을 쓰는 경우 (Day79 — 화면 너비만큼 크게 놓고 가운데 띠를 보여 준다)
+            {
+                portrait.sizeDelta = new Vector2(WideArtWidth, WideArtWidth / BackgroundFit.GetAspect(art.sprite)); // 그림 비율을 지킨 크기
+                portraitRestX = WideArtRestX; // 정지 위치
+                portrait.anchoredPosition = new Vector2(portraitRestX, 0f); // 그림의 세로 가운데가 띠에 오게
             }
 
             Text title = RuntimeUiKit.CreateText(band, "UltimateName", info.UltimateName, 66, Color.white, FontStyle.Bold, TextAnchor.MiddleLeft).Overflow().Outlined(new Color(0f, 0f, 0f, 0.7f), new Vector2(3f, -3f)); // 궁극기 이름

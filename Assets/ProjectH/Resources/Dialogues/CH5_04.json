@@ -2,7 +2,7 @@
   "id": "CH5_04",
   "title": "사도의 선택",
   "characterId": "CH_SEPHIRA",
-  "background": "DESERT",
+  "background": "DESERT_TEMPLE",
   "location": "아스타르 · 신전 제단",
   "nodes": [
     {

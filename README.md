@@ -8,7 +8,7 @@ Unity로 만드는 **리듬 전투 + 동료 육성 RPG**입니다.
 | --- | --- |
 | 엔진 | Unity (Input System 패키지 사용) |
 | 언어 | C# — 모든 기능 줄에 한국어 주석 |
-| 규모 | 런타임 스크립트 **322개** · 테스트 **145개** · 대사 **229편** |
+| 규모 | 런타임 스크립트 **324개** · 테스트 **146개** · 대사 **229편** |
 | 진행 | 1~74일차 완료 (일차별 기록은 [`Devlogs/`](Devlogs)) |
 
 ---
@@ -55,7 +55,7 @@ Assets/ProjectH/
 │  └─ Editor/      에디터 도구 (밸런스 표 · 리소스 점검 표)
 ├─ Data/           실제 데이터 에셋 (.asset)
 ├─ Resources/      런타임에 불러오는 그림 · 소리 · 대사
-└─ Tests/EditMode/ 테스트 145개
+└─ Tests/EditMode/ 테스트 146개
 ```
 
 ---
@@ -91,7 +91,7 @@ Assets/ProjectH/
 | 화면 배경 | `Resources/Dialogues/Backgrounds/SHOP.png` · `BLACKSMITH.png` · `VILLAGE.png` |
 | 캐릭터 스탠딩 | `Resources/Dialogues/Standing/{캐릭터ID}_{표정}.png` (없는 표정은 `_normal`, 그것도 없으면 `{캐릭터ID}.png`) |
 | 정사각 초상화 | `Resources/Portraits/{캐릭터ID}.png` (없으면 스탠딩에서 얼굴을 잘라 쓴다) |
-| 궁극기 컷인 | `Resources/UltimateCutIns/{캐릭터ID}.png` |
+| 궁극기 컷인 | `Resources/UltimateCutIns/{캐릭터ID}.png` (가로 3:2 그림 · 세로 가운데 띠만 보인다) |
 | 전투 SD 그림 | `Resources/BattleUnits/{캐릭터ID}.png` · `{몬스터ID}.png` (아군은 없으면 스탠딩, 몬스터는 없으면 색 상자) |
 | 전투 배경 | `Resources/Dialogues/Backgrounds/BATTLE_{지역}.png` (없으면 비슷한 대화 배경으로 대신) |
 | 모험 지도 지역 아이콘 | `Resources/Map/Regions/{지역ID}.png` (없으면 색 원과 글자) |
@@ -124,6 +124,8 @@ Assets/ProjectH/
 | 전투 유닛 그림이 차지하는 영역 | `BattleUnitArt.SpriteAnchorMin` · `SpriteAnchorMax` |
 | 보스가 일반 몬스터보다 커 보이는 배율 | `BattleUnitArt.BossScale` |
 | 전투 배경을 어둡게 덮는 정도 | `BattleBackgroundCatalog.DimAlpha` |
+| 전투 유닛 움직임의 폭과 빠르기 | `BattleUnitMotionMath`의 상수 (대기 · 공격 · 피격 · 쓰러짐) |
+| 전용 컷인 그림의 표시 너비 | `UltimateCutInView.WideArtWidth` |
 
 초상화와 컷인은 `StandingFaceCatalog`의 **얼굴 위치표**를 씁니다. 스탠딩을 새로 받아 얼굴 위치가 달라지면 이 표의 값을 다시 재야 합니다.
 
@@ -158,6 +160,7 @@ Assets/ProjectH/
 | 대사 표정 이름은 **`ExpressionCatalog`에 등록** | 등록하지 않은 이름은 기본 표정으로 나오고 테스트가 실패한다 |
 | 전체 화면 배경은 **`BackgroundFit.Apply`** | 그냥 늘리면 16:9가 아닌 화면에서 그림이 찌그러진다 (자식이 없는 배경에만) |
 | 스탠딩을 바꾸면 **`StandingFaceCatalog`를 다시 잴 것** | 초상화와 컷인이 이 표로 얼굴을 찾는다. 값이 어긋나면 얼굴이 잘린다 |
+| 전투 연출은 **바디 그림만** 움직일 것 | 유닛의 실제 위치는 사거리와 이동 계산에 쓰인다. 위치를 흔들면 전투 결과가 달라진다 |
 
 ---
 
@@ -172,13 +175,13 @@ Assets/ProjectH/
 | CG · 정지 컷신 | 테스트 1장 | 개인 1화 · 결속 5단계 · 특별한 밤 |
 | 배경음 · 효과음 | 코드로 합성한 간이 음원 | 정식 음원 |
 | 폰트 | Unity 기본 | 한글 폰트 1종 |
-| 대화 배경 | **정식 일러스트 27장**(1672×941) · 노아르 도시와 지하 서고는 밤의 관측실 그림으로 대신 | `NOIR` · `NOIR_ARCHIVE` 2장 |
+| 대화 배경 | **정식 일러스트 33장**(1672×941) | 완료 |
 | 화면 배경 | **정식 일러스트 3장** (상점 · 대장간 · 마을 지도) | 완료 |
 | 초상화 | 스탠딩에서 얼굴을 잘라 사용 | 완료 (원하면 전용 그림) |
 | NPC 스탠딩 | **정식 일러스트 4장** (상점 주인 · 대장장이 · 그림자 · 아르카이) | 완료 |
-| 전투 아군 그림 | 스탠딩 전신을 작게 표시 | SD 그림 12장 |
-| 전투 몬스터 그림 | 이름이 적힌 색 상자 | SD 그림 34장 (보스 14 · 일반 20) |
-| 전투 배경 | 지역별로 비슷한 대화 배경을 대신 사용 | 원하면 전용 배경 8장 |
+| 전투 아군 그림 | **정식 SD 12장**(1024×1024) | 완료 |
+| 전투 몬스터 그림 | **정식 SD 34장** (보스 14 · 일반 20) | 완료 |
+| 전투 배경 | 지역별로 그 지역의 대화 배경을 사용 | 원하면 전용 배경 8장 |
 | 모험 지도 지역 아이콘 | **8개 지역 적용** · 바다는 색 원 | 바다 1개 |
 
 ---

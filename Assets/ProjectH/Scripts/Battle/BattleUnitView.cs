@@ -142,6 +142,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 defeatedColor.a = 0.45f; // 전투 불능 투명도 적용
                 bodyImage.color = defeatedColor; // 전투 불능 바디 색상 적용
             }
+
+            if (actor != null) actor.PlayDefeatMotion(); // 쓰러지는 움직임 (Day79)
         }
 
         public void ShowDebugAction(BattleActionKind actionKind) // 전투 행동 디버그 텍스트 표시

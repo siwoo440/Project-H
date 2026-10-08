@@ -23,8 +23,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             { "VILLAGE", "VILLAGE_PLAZA" }, // 마을 지도 화면 → 광장
             { "NOIR", "OBSERVATORY_NIGHT" }, // 노아르 마법도시 → 도시가 내다보이는 밤의 관측실 (Day78 추가 — 도시 그림이 오면 그쪽이 우선)
             { "NOIR_ARCHIVE", "OBSERVATORY_NIGHT" }, // 노아르 지하 서고 → 책장이 있는 밤의 관측실 (Day78 추가)
-            { "BATTLE_FOREST", "SILVARAN" }, // 전투 · 숲 → 숲 그림 (Day78 추가 — 전용 전투 배경이 오면 그쪽이 우선)
-            { "BATTLE_SWAMP", "GARDEN_POND" }, // 전투 · 늪지대 → 물가 그림
+            { "DESERT_TEMPLE", "DESERT" }, // 사막 신전 내부 → 그림이 빠지면 사막 (Day79 추가)
+            { "KARNIAN_ARCHIVE", "KARNIAN" }, // 요새 기록실 → 그림이 빠지면 요새 외경 (Day79 추가)
+            { "ERODED_RUINS", "SANCTUARY_PRACTICE" }, // 무너진 성역 · 폐허 → 그림이 빠지면 성역 (Day79 추가)
+            { "SWAMP_GATE", "GARDEN_POND" }, // 국경 습지 입구 → 그림이 빠지면 정원 연못 (Day79 추가)
+            { "BATTLE_FOREST", "ERODED_RUINS" }, // 전투 · 숲 → 숲에 묻힌 성역 폐허 (Day78 추가 · Day79 폐허 그림으로 변경 — 전용 전투 배경이 오면 그쪽이 우선)
+            { "BATTLE_SWAMP", "SWAMP_GATE" }, // 전투 · 늪지대 → 국경 습지 (Day79 습지 그림으로 변경)
             { "BATTLE_DEMON_CASTLE", "ABYSS" }, // 전투 · 마왕성 → 침식된 심연
             { "BATTLE_NOIR", "NOIR_ARCHIVE" }, // 전투 · 노아르 → 지하 서고 (서고 그림이 없으면 다시 그 대체 배경으로)
             { "BATTLE_SILVARAN", "SILVARAN" }, // 전투 · 실바란
@@ -206,6 +210,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                     return new BackgroundPalette(new Color(0.30f, 0.34f, 0.44f), new Color(0.78f, 0.72f, 0.60f), new Color(0.36f, 0.32f, 0.30f), false); // 석조 길드 홀
                 case "INN_NIGHT": // 여관 밤 (Day62 추가)
                     return new BackgroundPalette(new Color(0.03f, 0.04f, 0.10f), new Color(0.24f, 0.16f, 0.22f), new Color(0.10f, 0.07f, 0.08f), true); // 달빛 비치는 방
+                case "DESERT_TEMPLE": // 아스타르 신전 내부 (Day79 추가)
+                    return new BackgroundPalette(new Color(0.62f, 0.44f, 0.26f), new Color(1f, 0.86f, 0.58f), new Color(0.70f, 0.54f, 0.34f), false); // 햇빛 드는 사암 신전
+                case "KARNIAN_ARCHIVE": // 카르니안 요새 기록실 (Day79 추가)
+                    return new BackgroundPalette(new Color(0.30f, 0.34f, 0.44f), new Color(0.70f, 0.76f, 0.86f), new Color(0.36f, 0.38f, 0.44f), false); // 얼어붙은 석조 방
+                case "ERODED_RUINS": // 침식에 무너진 성역 폐허 (Day79 추가)
+                    return new BackgroundPalette(new Color(0.14f, 0.22f, 0.24f), new Color(0.46f, 0.58f, 0.52f), new Color(0.12f, 0.14f, 0.20f), false); // 숲에 묻힌 어두운 폐허
+                case "SWAMP_GATE": // 국경 습지 입구 (Day79 추가)
+                    return new BackgroundPalette(new Color(0.46f, 0.52f, 0.60f), new Color(0.78f, 0.82f, 0.84f), new Color(0.30f, 0.38f, 0.34f), false); // 안개 낀 습지
                 case "ABYSS": // 침식된 심연 · 무명의 옥좌 (Day78 추가)
                     return new BackgroundPalette(new Color(0.05f, 0.03f, 0.10f), new Color(0.34f, 0.14f, 0.42f), new Color(0.08f, 0.06f, 0.12f), true); // 검보랏빛 심연
                 case "NOIR_ARCHIVE": // 노아르 지하 서고 (Day78 추가)

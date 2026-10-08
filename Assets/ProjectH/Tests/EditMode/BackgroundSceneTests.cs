@@ -48,6 +48,21 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(script.Background, Is.EqualTo("ABYSS"), $"심연 장면이 다른 배경을 씀 : {scriptId}"); // 심연 배경
         }
 
+        [TestCase("CH5_03", "DESERT_TEMPLE")] // 아스타르 · 신전 회랑
+        [TestCase("CH5_04", "DESERT_TEMPLE")] // 아스타르 · 신전 제단
+        [TestCase("CH4_05", "KARNIAN_ARCHIVE")] // 카르니안 · 요새 기록실
+        [TestCase("CH1_03", "ERODED_RUINS")] // 무너진 성역의 숲
+        [TestCase("CH1_04", "ERODED_RUINS")] // 성역 외곽 폐허
+        [TestCase("CH2_03", "ERODED_RUINS")] // 침식된 회랑 안쪽
+        [TestCase("CH2_02", "SWAMP_GATE")] // 국경 습지 입구
+        public void PlaceScenes_UseTheirOwnBackground(string scriptId, string backgroundKey) // 장소별 배경 테스트 (Day79 — 실내 · 폐허 · 습지가 다른 장소의 그림을 빌려 쓰지 않는다)
+        {
+            DialogueScript script = Load(scriptId); // 대사
+            Assert.That(script, Is.Not.Null, $"대사 없음 : {scriptId}"); // 존재
+            Assert.That(script.Background, Is.EqualTo(backgroundKey), $"장소와 다른 배경을 씀 : {scriptId}"); // 장소 배경
+            Assert.That(AssetDatabase.LoadAssetAtPath<Texture2D>(BackgroundRoot + backgroundKey + ".png"), Is.Not.Null, $"배경 그림 없음 : {backgroundKey}"); // 전용 그림
+        }
+
         [Test] // 심연 배경에는 전용 그림이 있다
         public void AbyssBackground_HasOwnArt() // 심연 그림 테스트
         {

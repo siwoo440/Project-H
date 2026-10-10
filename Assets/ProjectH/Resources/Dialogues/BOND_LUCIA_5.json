@@ -9,7 +9,8 @@
       "id": "b1",
       "speaker": "CH_LUCIA",
       "expression": "진지",
-      "text": "마지막 계약을 하나 쓰자. 기한도 없고 보수도 없어."
+      "text": "마지막 계약을 하나 쓰자. 기한도 없고 보수도 없어.",
+      "cg": "CG_LUCIA_BOND5"
     },
     {
       "id": "b2",

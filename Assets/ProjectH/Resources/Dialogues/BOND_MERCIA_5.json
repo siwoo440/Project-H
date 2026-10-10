@@ -9,7 +9,8 @@
       "id": "b1",
       "speaker": "CH_MERCIA",
       "expression": "미소",
-      "text": "순례를 끝내겠습니다. 도착지를 찾았거든요."
+      "text": "순례를 끝내겠습니다. 도착지를 찾았거든요.",
+      "cg": "CG_MERCIA_BOND5"
     },
     {
       "id": "b2",

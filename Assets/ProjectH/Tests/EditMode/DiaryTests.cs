@@ -81,7 +81,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(personal, Is.GreaterThanOrEqualTo(12)); // 12인 1화 (Day70)
             Assert.That(DiaryCatalog.Scenarios.Count, Is.EqualTo(personal + 32 + 4 + 5 + 7 + 60 + 48 + 12)); // 개인 + 메인 스토리 32 + 엔딩 4 (Day72) + 지역 5 + 길드 합류 7 + 결속 60 + 마을 48 + 특별한 밤 12
             Assert.That(DiaryCatalog.AllCharacters.Count, Is.EqualTo(12)); // 궁극기 컷신 12인 (Day64)
-            Assert.That(DiaryCatalog.Cgs.Count, Is.EqualTo(36)); // 12인 × 3장 (Day80 — 초기 4인에서 12인으로 확장)
+            Assert.That(DiaryCatalog.Cgs.Count, Is.EqualTo(28)); // 12인 × 2장(개인 1화 · 결속 5단계) + 엔딩 4장 (Day89 — 그림을 그리지 않는 특별한 밤 12칸은 뺐다)
 
             foreach (DiaryCgEntry cg in DiaryCatalog.Cgs) // CG 순회
             {

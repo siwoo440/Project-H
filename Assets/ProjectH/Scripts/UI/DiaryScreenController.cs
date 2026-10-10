@@ -327,21 +327,22 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             foreach (DiaryCgEntry cg in DiaryCatalog.Cgs) // CG 순회
             {
-                bool seen = DiaryService.IsDialogueSeen(saveData, cg.ScriptId); // 해금
+                bool seen = DiaryService.IsDialogueSeen(saveData, cg.ScriptId) || (cg.IsEnding && PlayerProfile.HasSeenDialogue(cg.ScriptId)); // 해금 (Day89 — 엔딩 CG는 새로 시작해도 열려 있다)
+                string owner = cg.IsEnding ? "엔딩" : GetName(cg.CharacterId); // 칸 글자의 앞머리 (Day89 — 엔딩은 캐릭터가 없다)
                 DialogueScript script = DialogueLibrary.Load(cg.ScriptId); // 연결 이야기
                 string title = script == null ? cg.Id : script.Title; // 제목
                 Sprite art = seen ? RuntimeSpriteLoader.Load("Diary/CG/" + cg.Id) : null; // 정식 CG (Day80 — 잠긴 칸은 그림을 보여 주지 않으므로 불러오지 않는다)
                 GalleryItem item = new GalleryItem // 그림 항목
                 {
                     Title = title, // 제목
-                    Caption = seen ? $"{GetName(cg.CharacterId)} · {title}" : "???", // 칸 글자
+                    Caption = seen ? $"{owner} · {title}" : "???", // 칸 글자
                     Unlocked = seen, // 열림
                     Sprite = !seen ? null : art != null ? art : script == null ? null : DialogueArtFactory.GetBackground(script.Background), // 정식 CG 또는 이야기 배경 (Day80 — 열린 칸만)
                     StandingId = art == null ? cg.CharacterId : null, // 임시 CG는 실루엣 겹침
                     Question = "CG를 재생하겠습니까?", // 재생 질문
                     Play = script == null ? null : (System.Action)(() => DialogueOverlayView.Open(script, null)) // 네 → CG 장면 재생 (보상 없음)
                 };
-                AddGalleryItem(item, seen ? $"CG · {GetName(cg.CharacterId)} · {title}" : $"CG · {GetName(cg.CharacterId)} · ???"); // 줄 + 칸
+                AddGalleryItem(item, seen ? $"CG · {owner} · {title}" : $"CG · {owner} · ???"); // 줄 + 칸
             }
 
             foreach (string characterId in DiaryCatalog.AllCharacters) // 궁극기 컷신 (Day64 — 12인, 합류하면 열림)

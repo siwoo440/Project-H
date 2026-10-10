@@ -48,6 +48,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Image backgroundImage; // 배경 (CG가 나오면 CG로 교체, Day63)
         private Sprite sceneBackground; // 대사 파일 원래 배경 (Day63)
         private bool cgActive; // CG 표시 중 (Day63 — 스탠딩 숨김)
+        private const float CgFadeSeconds = 0.4f; // CG가 나타나고 사라지는 시간 (Day89)
+        private Image cgImage; // CG 층 (Day89 — 배경 위에 겹쳐 부드럽게 나타난다)
+        private float cgAlpha; // CG 층의 지금 투명도 (Day89)
         private GameObject uiRoot; // 숨김 대상 UI 묶음
         private RectTransform namePlate; // 이름표
         private Text nameText; // 이름
@@ -106,6 +109,9 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             BackgroundFit.Apply(background); // 화면 비율이 달라도 늘리지 않고 잘라서 채움 (Day76)
             backgroundImage = background; // 배경 보관 (Day63 CG 교체용)
             sceneBackground = background.sprite; // 원래 배경 보관 (Day63)
+            cgImage = RuntimeUiKit.CreateImage(transform, "Cg", new Color(1f, 1f, 1f, 0f)); // CG 층 (Day89 — 배경 바로 위 · 스탠딩 아래. 처음에는 투명)
+            cgImage.raycastTarget = false; // 입력 통과
+            RuntimeUiKit.Stretch(cgImage.rectTransform); // 전체 화면
             AddStanding(layout.Left, DialogueStageSlot.Left); // 왼쪽 스탠딩
             AddStanding(layout.Right, DialogueStageSlot.Right); // 오른쪽 스탠딩
             AddStanding(layout.Center, DialogueStageSlot.Center); // 가운데 스탠딩 (1인)
@@ -311,6 +317,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             float delta = Time.unscaledDeltaTime; // 일시정지와 무관한 시간
             UpdateExpressionFades(delta); // 표정 전환 겹침 진행 (Day76)
+            UpdateCgFade(delta); // CG가 부드럽게 나타나고 사라짐 (Day89)
 
             if (isTyping) // 타자 효과 진행 확인
             {
@@ -476,9 +483,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             Sprite cg = cgId == "-" ? null : RuntimeSpriteLoader.Load("Diary/CG/" + cgId); // CG 그림 ("-"은 끄기)
             cgActive = cg != null; // 표시 여부
-            backgroundImage.sprite = cgActive ? cg : sceneBackground; // CG 또는 원래 배경
-            backgroundImage.preserveAspect = false; // 화면 가득
-            BackgroundFit.Apply(backgroundImage); // 바뀐 그림 비율로 다시 맞춤 (Day76)
+            if (!cgActive) return; // 끄기 · 그림 파일 없음 (떠 있던 CG는 Update에서 서서히 사라지고 원래 배경이 드러난다)
+            cgImage.sprite = cg; // CG 그림 (Day89 — 배경을 바꿔 끼우지 않고 그 위의 층에 올린다)
+            cgImage.preserveAspect = false; // 화면 가득
+            BackgroundFit.Apply(cgImage); // 그림 비율에 맞춰 잘라서 채움 (Day76)
+        }
+
+        private void UpdateCgFade(float delta) // CG 층 투명도 진행 (Day89 추가 — 목표에 닿으면 할 일이 없다)
+        {
+            float target = cgActive ? 1f : 0f; // 목표 투명도
+            if (Mathf.Approximately(cgAlpha, target)) return; // 이미 도착
+            cgAlpha = Mathf.MoveTowards(cgAlpha, target, delta / CgFadeSeconds); // 서서히
+            cgImage.color = new Color(1f, 1f, 1f, cgAlpha); // 반영
         }
 
         private void RefreshStandings(string speaker) // 스탠딩 이미지·밝기 갱신 (말하는 사람 밝게, 듣는 사람 어둡게)

@@ -109,7 +109,8 @@
       "id": "m1",
       "speaker": "NARRATION",
       "expression": "",
-      "text": "세피라가 제단 옆에 세워 둔 심판봉을 가져와 무릎 위에 뉘었다."
+      "text": "세피라가 제단 옆에 세워 둔 심판봉을 가져와 무릎 위에 뉘었다.",
+      "cg": "CG_SEPHIRA_EVENT1"
     },
     {
       "id": "m2",

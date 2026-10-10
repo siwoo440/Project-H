@@ -9,7 +9,8 @@
       "id": "b1",
       "speaker": "CH_TYRIA",
       "expression": "진지",
-      "text": "새 맹세를 씁니다. '약한 이를 지킨다' 아래에 한 줄."
+      "text": "새 맹세를 씁니다. '약한 이를 지킨다' 아래에 한 줄.",
+      "cg": "CG_TYRIA_BOND5"
     },
     {
       "id": "b2",

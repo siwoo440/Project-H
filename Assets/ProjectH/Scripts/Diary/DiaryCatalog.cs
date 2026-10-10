@@ -46,7 +46,8 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
     {
         public string Id { get; } // CG ID (Resources/Diary/CG/{Id}에 정식 그림)
         public string ScriptId { get; } // 이 이야기를 보면 해금
-        public string CharacterId { get; } // 캐릭터 ID
+        public string CharacterId { get; } // 캐릭터 ID (엔딩 CG는 빈 값)
+        public bool IsEnding => string.IsNullOrEmpty(CharacterId); // 엔딩 CG인지 (Day89 추가 — 캐릭터가 없고, 새로 시작해도 열려 있다)
 
         public DiaryCgEntry(string id, string scriptId, string characterId) // 항목 생성
         {
@@ -145,7 +146,7 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
             return result; // 결과 반환
         }
 
-        private static List<DiaryCgEntry> BuildCgs() // CG 목록 (개인 1화 · 결속 5단계 · 특별한 밤 = 캐릭터당 3장)
+        private static List<DiaryCgEntry> BuildCgs() // CG 목록 (개인 1화 · 결속 5단계 = 캐릭터당 2장 + 엔딩 4장. Day89 — 그림을 그리지 않는 특별한 밤 칸은 뺐다. 그 이야기는 시나리오 목록에서 다시 볼 수 있다)
         {
             List<DiaryCgEntry> result = new List<DiaryCgEntry>(); // 결과
 
@@ -155,7 +156,11 @@ namespace ProjectH.Diary // 프로젝트 일기장 영역 (Day63 신규)
                 CharacterEventDefinition first = FirstEpisode(characterId); // 개인 1화
                 if (first != null) result.Add(new DiaryCgEntry($"CG_{shortId}_EVENT1", first.ScriptId, characterId)); // 개인 1화 CG
                 result.Add(new DiaryCgEntry($"CG_{shortId}_BOND5", BondCatalog.GetBondScriptId(characterId, BondCatalog.MaxLevel), characterId)); // 결속 5단계 CG
-                result.Add(new DiaryCgEntry($"CG_{shortId}_INN", VillageActionService.GetInnEventScriptId(characterId), characterId)); // 특별한 밤 CG
+            }
+
+            foreach (ProjectH.Story.EndingDefinition definition in ProjectH.Story.EndingCatalog.All) // 엔딩 4종 (Day89 추가)
+            {
+                result.Add(new DiaryCgEntry("CG_" + definition.ScriptId, definition.ScriptId, string.Empty)); // 엔딩 CG (CG_ENDING_01 ~ 04 · 캐릭터 없음)
             }
 
             return result; // 결과 반환

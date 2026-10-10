@@ -9,7 +9,8 @@
       "id": "b1",
       "speaker": "CH_NATASHA",
       "expression": "진지",
-      "text": "복수의 값을 다시 계산했어. 내 목숨 하나로는 모자라더라."
+      "text": "복수의 값을 다시 계산했어. 내 목숨 하나로는 모자라더라.",
+      "cg": "CG_NATASHA_BOND5"
     },
     {
       "id": "b2",

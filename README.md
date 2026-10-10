@@ -93,6 +93,7 @@ Assets/ProjectH/
 | 정사각 초상화 | `Resources/Portraits/{캐릭터ID}.png` (없으면 스탠딩에서 얼굴을 잘라 쓴다) |
 | 궁극기 컷인 | `Resources/UltimateCutIns/{캐릭터ID}.png` (가로 3:2 그림 · 세로 가운데 띠만 보인다) |
 | 의상 파괴 그림 | `Resources/BattleBreak/{캐릭터ID}_{단계}.png` (단계 1 = 체력 60% 이하 · 2 = 30% 이하. 스탠딩과 같은 1024×1536 · 같은 자세) |
+| 이벤트 CG | `Resources/Diary/CG/{CG 이름}.png` (가로 16:9 · 1672×940. 이름은 `CG_{캐릭터}_EVENT1` · `CG_{캐릭터}_BOND5` · `CG_ENDING_01~04` — 대사의 `"cg"` 줄과 일기장 칸이 같은 이름을 쓴다) |
 | 전투 SD 그림 | `Resources/BattleUnits/{캐릭터ID}.png` · `{몬스터ID}.png` (아군은 없으면 스탠딩, 몬스터는 없으면 색 상자) |
 | 전투 배경 | `Resources/Dialogues/Backgrounds/BATTLE_{지역}.png` (없으면 비슷한 대화 배경으로 대신) |
 | 모험 지도 지역 아이콘 | `Resources/Map/Regions/{지역ID}.png` (없으면 색 원과 글자) |
@@ -142,6 +143,7 @@ Assets/ProjectH/
 | 효과음별 크기 | `AudioCatalog.GetSfxVolume` (자주 나는 타격 · 대사 넘김은 작게) |
 | 같은 효과음이 겹치지 않는 간격 | `AudioCatalog.GetSfxInterval` |
 | 배경음이 바뀌는 빠르기 | `BgmFader.FadeOutSeconds` · `FadeInSeconds` |
+| CG가 나타나고 사라지는 빠르기 | `DialogueOverlayView.CgFadeSeconds` |
 | 버튼 이름에 따라 나는 소리 | `UiSound.GetDefaultKey` (Close · Back = 취소 / Tab · Next = 넘김 / Confirm = 확인) |
 | UI 스킨의 모서리 두께 | `UiSkin.GetCornerScale` (값이 클수록 모서리가 작게 그려진다) |
 | 씬에 놓인 임시 그림을 어떤 스킨으로 바꿀지 | `UiSkinScenePatch`의 대응표 |
@@ -184,6 +186,7 @@ Assets/ProjectH/
 | 버튼은 **`RuntimeUiKit.CreateButton`** 으로 만들 것 (직접 만들면 `UiSound.Attach`) | 누르는 소리가 여기서 붙는다. 씬에 놓인 버튼은 `ButtonSoundScenePatch`가 붙인다. 한 버튼에 한 번만 붙어 소리가 두 번 나지 않는다 |
 | 소리를 추가하면 **`AudioCatalog.AllSfx` · `AllBgm`** 에도 넣을 것 | 테스트와 리소스 점검 표가 이 목록으로 파일이 있는지 검사한다 |
 | 결과가 정해지는 자리에서 **`UiSound.Result(성공 여부)`** | 화면마다 성공 · 실패 소리가 달라지지 않게 한 곳에서 고른다 |
+| CG를 넣을 대사에는 **`"cg": "이름"`** 을 적고 **`DiaryCatalog.BuildCgs`** 에도 등록할 것 | 대사에만 적으면 일기장에 칸이 없고, 이름이 틀리면 그림이 조용히 뜨지 않는다 (테스트가 양쪽을 맞춰 본다). 선택지가 갈리는 대사에서는 다시 합쳐진 뒤의 줄에 적는다 |
 | 초상화 자리(이름 글자)에는 **`PortraitSlot.Apply`** | 글자와 같은 자리에 얼굴이나 상반신을 넣고, 그림이 없으면 글자를 그대로 둔다 |
 | 글자의 폰트는 **`RuntimeUiKit.DefaultFont`** | 기본 폰트를 직접 지정하면 정식 폰트를 넣어도 그 글자만 바뀌지 않는다 (테스트가 막는다) |
 | 회차를 넘겨 "본 이야기"를 물을 때는 **`DialogueSkipRules.IsSeen`** | 저장 파일의 기록은 새 게임에서 비워진다 |
@@ -208,7 +211,7 @@ Assets/ProjectH/
 | 캐릭터 스탠딩 | **정식 일러스트 84장**(1024×1536 · 12인 × 표정 7종 · 86일차에 4.5등신의 단순한 그림체로 다시 그림) | 완료 |
 | 궁극기 컷인 | 정식 스탠딩을 재사용 | 전용 그림 12장 |
 | 의상 파괴 그림 | **정식 일러스트 24장**(1024×1536 · 12인 × 2단계 · 스탠딩과 같은 자세) | 완료 |
-| CG · 정지 컷신 | 테스트 1장 | 개인 1화 · 결속 5단계 · 특별한 밤 |
+| 이벤트 CG | **정식 일러스트 28장**(1672×940 · 개인 1화 12 · 결속 5단계 12 · 엔딩 4) — 그 대사에서 화면 가득 뜨고 일기장에서 다시 본다 | 완료 (특별한 밤은 그리지 않는다) |
 | 배경음 · 효과음 | 코드로 합성한 간이 음원 (배경음 6곡 · 효과음 23개 — 88일차에 전부 연결) | 정식 음원 |
 | 폰트 | Unity 기본 | 한글 폰트 1종 |
 | 대화 배경 | **정식 일러스트 33장**(1672×940) | 완료 |

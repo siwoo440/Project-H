@@ -139,7 +139,8 @@
       "id": "m5",
       "speaker": "NARRATION",
       "expression": "",
-      "text": "잠시 말이 끊긴다. 세레나는 기도서를 덮고, 조금 멋쩍게 웃었다."
+      "text": "잠시 말이 끊긴다. 세레나는 기도서를 덮고, 조금 멋쩍게 웃었다.",
+      "cg": "CG_SERENA_EVENT1"
     },
     {
       "id": "m6",

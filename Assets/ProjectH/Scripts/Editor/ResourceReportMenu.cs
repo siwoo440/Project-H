@@ -118,6 +118,13 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
                 Check($"{DialogueArtFactory.StandingFolder}{npc.Id}_{ExpressionCatalog.Normal}", ".png", $"{npc.Id}  ({npc.Title})", builder, missingList, ref have, ref missing); // 확인
             }
 
+            builder.Append("\n■ 이벤트 CG (Resources/Diary/CG/{CG 이름}.png · 없으면 대사 배경 그대로)\n"); // 이벤트 CG (Day89 추가)
+
+            foreach (DiaryCgEntry cg in DiaryCatalog.Cgs) // CG 28칸
+            {
+                Check("Diary/CG/" + cg.Id, ".png", $"{cg.Id}  ({cg.ScriptId})", builder, missingList, ref have, ref missing); // 확인
+            }
+
             builder.Append("\n■ 전투 SD 그림 · 아군 (Resources/BattleUnits/{캐릭터ID}.png · 없으면 스탠딩 사용)\n"); // 아군 SD (Day78 추가)
 
             foreach (string characterId in DiaryCatalog.AllCharacters) // 12인

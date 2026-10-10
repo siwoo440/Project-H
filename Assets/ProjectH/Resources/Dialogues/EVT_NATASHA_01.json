@@ -109,7 +109,8 @@
       "id": "m1",
       "speaker": "NARRATION",
       "expression": "",
-      "text": "나타샤는 명단을 등불에 가져다 댔다. 종이가 파랗게 말려 올라갔다."
+      "text": "나타샤는 명단을 등불에 가져다 댔다. 종이가 파랗게 말려 올라갔다.",
+      "cg": "CG_NATASHA_EVENT1"
     },
     {
       "id": "m2",

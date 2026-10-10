@@ -236,6 +236,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private NodeView CreateNode(DungeonMapNode node, int floorCount) // 노드 원형 버튼 생성
         {
             GameObject nodeObject = new GameObject($"Node_{node.Id}", typeof(RectTransform), typeof(Image), typeof(Button)); // 노드 객체 생성
+            UiSound.Attach(nodeObject.GetComponent<Button>()); // 누르는 소리 (Day88)
             nodeObject.transform.SetParent(nodeLayer, false); // 노드 레이어 자식 연결
             RectTransform rect = nodeObject.GetComponent<RectTransform>(); // 노드 RectTransform 조회
             rect.anchorMin = new Vector2(0.5f, 0.5f); // 중심 앵커 설정
@@ -486,6 +487,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             GoldCurrencyService.AddGold(save, amount); // 골드 증가
+            ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxGold); // 골드 획득 소리 (Day88)
             GameManager.Instance.Save.SaveCurrent(); // 즉시 저장
             DungeonRunState.AddGold(amount); // 탐험 획득 골드 누적
         }

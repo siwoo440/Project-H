@@ -32,6 +32,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public static UltimateCutInView Show(UltimateCutInInfo info, Action finishedCallback) // 컷인 표시 (꺼져 있으면 바로 콜백)
         {
+            ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxUltimate); // 궁극기 발동 소리 — 컷인을 꺼 두어도 난다 (Day88)
+
             if (!Enabled) // 설정 확인
             {
                 finishedCallback?.Invoke(); // 컷인 없이 진행

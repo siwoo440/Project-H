@@ -134,6 +134,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             bool raised = BondService.TryRaise(saveData, boundCharacterId, out string message); // 단계 올리기
             bool saved = raised && saveManager.SaveCurrent(); // 성공 시 저장
+            UiSound.Result(raised, ProjectH.Core.AudioCatalog.SfxLevelUp); // 결속 단계가 오른 소리 · 못 올린 소리 (Day88)
             resultText.text = raised && !saved ? $"{message} (저장 실패)" : message; // 결과 표시
             onChanged?.Invoke(); // 화면 갱신
 

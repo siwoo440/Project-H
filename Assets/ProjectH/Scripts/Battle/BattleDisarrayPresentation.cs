@@ -35,6 +35,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             controller.Play(target.Stats == null ? string.Empty : target.Stats.DisplayName); // 대상 이름 기반 연출 시작
+            ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxDisarray); // 흐트러짐 소리 (Day88)
         }
 
         private static BattleDisarrayPresentation EnsureRuntime() // 흐트러짐 연출 컨트롤러 확보

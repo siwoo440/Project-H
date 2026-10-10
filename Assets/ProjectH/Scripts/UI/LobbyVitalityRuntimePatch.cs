@@ -104,6 +104,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image image = buttonObject.GetComponent<Image>(); // 버튼 이미지 조회
             image.color = new Color(0.90f, 0.95f, 1f, 1f); // 기본 버튼 색상 적용
             Button button = buttonObject.GetComponent<Button>(); // 버튼 컴포넌트 조회
+            UiSound.Attach(button); // 누르는 소리 (Day88)
             button.targetGraphic = image; // 버튼 대상 그래픽 연결
             button.onClick.AddListener(onClick); // 버튼 클릭 이벤트 연결
             RectTransform rect = buttonObject.GetComponent<RectTransform>(); // 버튼 RectTransform 조회

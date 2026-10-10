@@ -45,6 +45,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             defeated = true; // 사망 처리 시작 기록
+            ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxDown); // 쓰러지는 소리 (Day88)
             registry?.Unregister(actor); // 사망 전투 객체 Registry 즉시 제외
 
             if (attackController != null) // 기본 공격 컨트롤러 확인

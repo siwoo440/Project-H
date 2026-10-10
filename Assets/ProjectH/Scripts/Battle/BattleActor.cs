@@ -231,6 +231,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             FlashHitPreview(); // 피해 피격 표시
+            ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxHit); // 타격 소리 (Day88)
             floatingValueText?.ShowDamage(applied, result.Affinity); // 속성 상성 반영 피해 숫자 표시 (Day52 수정)
             AccumulateDisarray(result); // 실제 피해 발생 시에만 흐트러짐 누적 (Day53 추가)
             BattlePassiveSystem.Handle(BattlePassiveEventContext.CreateDamageTaken(this, applied)); // 피해 수신 패시브 Trigger 처리
@@ -290,6 +291,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (applied > 0) // 실제 회복 발생 확인
             {
                 floatingValueText?.ShowHealing(applied); // 회복 숫자 표시
+                ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxHeal); // 회복 소리 (Day88)
             }
 
             return applied; // 실제 회복량 반환
@@ -298,6 +300,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         public void ShowAction(BattleActionKind actionKind) // 머리 위 행동 텍스트 표시
         {
             actionDebugText?.Show(actionKind); // 행동 디버그 텍스트 호출
+            if (actionKind == BattleActionKind.Skill) ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxSkill); // 스킬 사용 소리 (Day88 — 기본 공격은 맞는 순간의 타격음, 궁극기는 컷인이 낸다)
             if (motion != null) motion.PlayLunge(); // 공격 · 스킬 · 궁극기 순간 앞으로 튀어나감 (Day79)
         }
 

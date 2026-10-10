@@ -143,14 +143,14 @@ namespace ProjectH.EditorTools // 프로젝트 에디터 도구 영역
 
             builder.Append("\n■ 배경음 (Resources/Audio/Bgm)\n"); // 배경음
 
-            foreach (string key in new[] { AudioCatalog.BgmTitle, AudioCatalog.BgmVillage, AudioCatalog.BgmBattle }) // 곡
+            foreach (string key in AudioCatalog.AllBgm) // 곡 (Day88 — 카탈로그의 전체 목록)
             {
                 Check(AudioCatalog.BgmFolder + key, ".wav", key, builder, missingList, ref have, ref missing); // 확인
             }
 
             builder.Append("\n■ 효과음 (Resources/Audio/Sfx)\n"); // 효과음
 
-            foreach (string key in new[] { AudioCatalog.SfxClick, AudioCatalog.SfxConfirm, AudioCatalog.SfxCancel, AudioCatalog.SfxPage, AudioCatalog.SfxGold, AudioCatalog.SfxItem, AudioCatalog.SfxHit, AudioCatalog.SfxPerfect, AudioCatalog.SfxLevelUp }) // 소리
+            foreach (string key in AudioCatalog.AllSfx) // 소리 (Day88 — 카탈로그의 전체 목록)
             {
                 Check(AudioCatalog.SfxFolder + key, ".wav", key, builder, missingList, ref have, ref missing); // 확인
             }

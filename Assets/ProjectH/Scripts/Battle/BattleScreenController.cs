@@ -168,6 +168,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             menuPanel?.SetActive(false); // 전투 종료 시 기존 메뉴 숨김
             SetInteraction(false); // 전투 종료 후 기존 전투 UI 입력 잠금
             OutfitBreakView.Stop(); // 의상 파괴 연출 정리 (Day87 — 결과창 뒤에 그림이 남지 않게)
+            ProjectH.Core.AudioService.PlaySfx(outcome == BattleOutcome.Victory ? ProjectH.Core.AudioCatalog.SfxVictory : ProjectH.Core.AudioCatalog.SfxDefeat); // 승리 · 패배 소리 (Day88)
+            ProjectH.Core.AudioService.PlayBgm(outcome == BattleOutcome.Victory ? ProjectH.Core.AudioCatalog.BgmVictory : string.Empty); // 승리 곡으로 · 패배하면 배경음을 끈다 (Day88 — 다음 씬에서 그 씬의 곡으로 돌아온다)
             SetText(waveText, "BATTLE END"); // 전투 종료 표시 적용
             SetText(statusText, outcome == BattleOutcome.Victory ? "VICTORY · 모든 적 전투 불능" : "DEFEAT · 파티 전원 전투 불능"); // 전투 종료 상태 표시
             string resultId = string.IsNullOrWhiteSpace(currentBattleResultId) ? Guid.NewGuid().ToString("N") : currentBattleResultId; // 현재 전투 결과 고유 ID 보정

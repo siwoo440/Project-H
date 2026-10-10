@@ -50,6 +50,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             buttonObject.transform.SetParent(lobby.transform, false); // Lobby 루트 부모 연결 (PartySummary와 Title/Save 버튼 사이 빈 공간 활용)
             Image image = buttonObject.GetComponent<Image>(); // 버튼 이미지 조회
             Button button = buttonObject.GetComponent<Button>(); // 버튼 컴포넌트 조회
+            UiSound.Attach(button); // 누르는 소리 (Day88)
 
             if (chipTemplate != null) // GoldChip 템플릿 존재 확인
             {

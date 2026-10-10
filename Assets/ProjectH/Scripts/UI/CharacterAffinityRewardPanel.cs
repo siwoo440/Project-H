@@ -190,6 +190,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             bool claimed = AffinityRewardService.TryClaim(saveData, GameManager.Instance.Data, boundCharacterId, tier, out string message); // 보상 수령 시도
             bool saved = claimed && saveManager.SaveCurrent(); // 성공 시 즉시 저장
+            UiSound.Result(claimed, ProjectH.Core.AudioCatalog.SfxItem); // 보상을 받은 소리 · 못 받은 소리 (Day88)
             resultText.text = claimed && !saved ? $"{message} (저장 실패)" : message; // 결과 문구 표시
             onClaimed?.Invoke(); // 능력치·버튼 상태 갱신 요청 (전투 보너스 즉시 반영)
         }

@@ -129,6 +129,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             editState = PartyEditState.Create(currentSave); // 저장 완료 편집 상태 재생성
+            ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxConfirm); // 편성을 저장한 소리 (Day88)
             SetText(statusText, $"편성 #{editState.SelectedPresetIndex + 1} 저장 완료"); // 저장 완료 표시
             Refresh(); // 메인 화면 갱신
         }

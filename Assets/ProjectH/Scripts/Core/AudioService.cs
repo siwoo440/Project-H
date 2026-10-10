@@ -8,15 +8,16 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
     public sealed class AudioService : MonoBehaviour // 배경음·효과음 재생기 (Day73 신규 — 음량은 72일차 설정을 따른다)
     {
         private const string ObjectName = "AudioService"; // 재생기 오브젝트 이름
-        private const int SfxChannelCount = 4; // 동시에 겹쳐 낼 수 있는 효과음 수
+        private const int SfxChannelCount = 6; // 동시에 겹쳐 낼 수 있는 효과음 채널 수 (Day88 — 전투에서 소리가 늘어 4 → 6)
 
         private static AudioService instance; // 단일 재생기
         private static readonly Dictionary<string, AudioClip> ClipCache = new Dictionary<string, AudioClip>(); // 불러온 소리 캐시
 
+        private readonly BgmFader fader = new BgmFader(); // 배경음 전환 (Day88 — 뚝 끊기지 않고 줄였다가 바꾼다)
+        private readonly SfxThrottle throttle = new SfxThrottle(); // 같은 효과음 겹침 방지 (Day88)
         private AudioSource bgmSource; // 배경음 채널
         private AudioSource[] sfxSources; // 효과음 채널
         private int sfxCursor; // 다음에 쓸 효과음 채널
-        private string currentBgm = string.Empty; // 재생 중인 배경음
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)] // 첫 씬 로드 후 시작
         private static void Create() // 재생기 만들기 (씬이 바뀌어도 유지)
@@ -26,7 +27,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             DontDestroyOnLoad(root); // 유지
         }
 
-        public static void PlayBgm(string key) // 배경음 바꾸기 (같은 곡이면 이어서 재생)
+        public static void PlayBgm(string key) // 배경음 바꾸기 (같은 곡이면 이어서 재생, 빈 값이면 끄기)
         {
             if (instance != null) instance.PlayBgmInternal(key); // 재생
         }
@@ -64,49 +65,66 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             if (instance == this) instance = null; // 등록 해제
         }
 
+        private void Update() // 배경음 전환 진행 (전환 중이 아니면 할 일이 없다)
+        {
+            if (!fader.IsBusy) return; // 전환 중 아님
+            if (fader.Tick(Time.unscaledDeltaTime)) SwapBgmClip(); // 다 줄였으면 곡 교체 (전투가 멈춰 있어도 진행되도록 실제 시간)
+            ApplyVolume(); // 줄이고 키우는 음량 반영
+        }
+
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) // 씬이 바뀌면 배경음 교체
         {
             PlayBgmInternal(AudioCatalog.GetSceneBgm(scene.name)); // 씬 배경음
         }
 
-        private void PlayBgmInternal(string key) // 배경음 재생 (같은 곡이면 그대로 둔다)
+        private void PlayBgmInternal(string key) // 배경음 바꾸기 요청 (같은 곡이면 그대로 둔다)
         {
-            if (currentBgm == key && bgmSource.isPlaying) return; // 이미 재생 중
-            currentBgm = key ?? string.Empty; // 곡 기록
+            fader.Request(ResolveBgm(key)); // 파일이 있는 곡으로 요청 (실제 교체는 Update에서 줄인 뒤에)
+        }
 
-            if (string.IsNullOrEmpty(currentBgm)) // 끄기
+        private static string ResolveBgm(string key) // 파일이 있는 곡 찾기 (Day88 — 그 곡이 없으면 대신할 곡, 그것도 없으면 무음)
+        {
+            string current = key ?? string.Empty; // 찾을 곡
+
+            for (int guard = 0; guard < 4 && current.Length > 0; guard++) // 대신할 곡을 따라감 (돌고 도는 연결 방지)
             {
-                bgmSource.Stop(); // 정지
-                return; // 종료
+                if (Load(AudioCatalog.BgmFolder + current) != null) return current; // 파일 있음
+                current = AudioCatalog.GetBgmFallback(current); // 대신할 곡
             }
 
-            AudioClip clip = Load(AudioCatalog.BgmFolder + currentBgm); // 곡 불러오기
+            return string.Empty; // 틀 곡 없음
+        }
 
-            if (clip == null) // 파일 없음
+        private void SwapBgmClip() // 채널의 곡을 바꿔 끼움
+        {
+            AudioClip clip = string.IsNullOrEmpty(fader.Current) ? null : Load(AudioCatalog.BgmFolder + fader.Current); // 새 곡
+
+            if (clip == null) // 끄기 · 파일 없음
             {
                 bgmSource.Stop(); // 정지 (소리 없이 진행)
+                bgmSource.clip = null; // 곡 비움
                 return; // 종료
             }
 
             bgmSource.clip = clip; // 곡 지정
-            ApplyVolume(); // 음량 반영
-            bgmSource.Play(); // 재생
+            bgmSource.Play(); // 재생 (음량은 호출 측이 이어서 반영)
         }
 
         private void PlaySfxInternal(string key) // 효과음 재생 (채널을 돌려 가며 겹쳐 낸다)
         {
             if (string.IsNullOrEmpty(key) || sfxSources == null) return; // 입력 확인
+            if (!throttle.TryPass(key, Time.unscaledTime, AudioCatalog.GetSfxInterval(key))) return; // 방금 난 같은 소리 (Day88 — 겹쳐서 시끄러워지지 않게)
             AudioClip clip = Load(AudioCatalog.SfxFolder + key); // 소리 불러오기
             if (clip == null) return; // 파일 없음
             AudioSource source = sfxSources[sfxCursor]; // 채널 선택
             sfxCursor = (sfxCursor + 1) % sfxSources.Length; // 다음 채널
             source.volume = GameSettings.SfxVolume; // 설정 음량
-            source.PlayOneShot(clip); // 재생
+            source.PlayOneShot(clip, AudioCatalog.GetSfxVolume(key)); // 재생 (소리별 음량 배율, Day88)
         }
 
         private void ApplyVolume() // 설정 음량을 채널에 반영
         {
-            if (bgmSource != null) bgmSource.volume = GameSettings.BgmVolume; // 배경음
+            if (bgmSource != null) bgmSource.volume = GameSettings.BgmVolume * fader.Gain; // 배경음 (전환 중에는 줄어든 음량, Day88)
             if (sfxSources == null) return; // 채널 확인
 
             foreach (AudioSource source in sfxSources) // 채널 순회

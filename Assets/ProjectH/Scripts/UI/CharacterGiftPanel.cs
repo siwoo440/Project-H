@@ -219,6 +219,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             bool given = GiftService.TryGive(saveData, GameManager.Instance.Data, boundCharacterId, itemId, out GiftResult result); // 선물 시도
             bool saved = given && saveManager.SaveCurrent(); // 성공 시 즉시 저장
+            UiSound.Result(given); // 선물 결과 소리 (Day88)
             resultText.text = given && !saved ? $"{result.Message} (저장 실패)" : result.Message; // 결과 문구 표시
             onChanged?.Invoke(); // 호감도·버튼 상태 갱신 요청
         }

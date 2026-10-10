@@ -86,6 +86,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
 
             BindHealthBar(bossStats); // 보스 체력바 연결
+            ProjectH.Core.AudioService.PlayBgm(ProjectH.Core.AudioCatalog.BgmBoss); // 보스전 곡으로 (Day88)
 
             if (introRoutine != null) // 기존 등장 연출 진행 확인
             {

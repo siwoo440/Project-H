@@ -87,12 +87,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
         [Test] // 소리 파일이 경로 규약대로 들어와 있다
         public void AudioFiles_ExistForEveryKey() // 소리 파일 테스트
         {
-            string[] bgm = { AudioCatalog.BgmTitle, AudioCatalog.BgmVillage, AudioCatalog.BgmBattle }; // 배경음
-            string[] sfx =
-            {
-                AudioCatalog.SfxClick, AudioCatalog.SfxConfirm, AudioCatalog.SfxCancel, AudioCatalog.SfxPage,
-                AudioCatalog.SfxGold, AudioCatalog.SfxItem, AudioCatalog.SfxHit, AudioCatalog.SfxPerfect, AudioCatalog.SfxLevelUp
-            }; // 효과음
+            string[] bgm = AudioCatalog.AllBgm; // 배경음 전체 (Day88 — 카탈로그의 목록을 그대로 쓴다. 소리를 추가하고 파일을 빠뜨리면 여기서 걸린다)
+            string[] sfx = AudioCatalog.AllSfx; // 효과음 전체
 
             Assert.That(bgm.Distinct().Count(), Is.EqualTo(bgm.Length)); // 곡 이름 중복 없음
             Assert.That(sfx.Distinct().Count(), Is.EqualTo(sfx.Length)); // 소리 이름 중복 없음

@@ -334,6 +334,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (portraitButton == null) // 기존 초상화 버튼 존재 확인
             {
                 portraitButton = portraitRoot.gameObject.AddComponent<Button>(); // 초상화 배경에 Runtime 버튼 추가
+                ProjectH.UI.UiSound.Attach(portraitButton); // 누르는 소리 (Day88)
             }
 
             if (portraitImage != null) // 초상화 배경 이미지 존재 확인
@@ -441,6 +442,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (ultimateButton == null) // 기존 궁극기 버튼 존재 확인
             {
                 ultimateButton = ultimateText.gameObject.AddComponent<Button>(); // 궁극기 텍스트에 Runtime 버튼 추가
+                ProjectH.UI.UiSound.Attach(ultimateButton); // 누르는 소리 (Day88)
             }
 
             ultimateText.raycastTarget = true; // 궁극기 텍스트 포인터 입력 활성화

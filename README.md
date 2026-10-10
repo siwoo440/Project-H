@@ -102,7 +102,7 @@ Assets/ProjectH/
 | 타이틀 로고 | `Resources/UI/Logo.png` (1024×512 · 없으면 제목 글자) |
 | UI 아이콘 (메뉴 · 내비 · 재화) | `Resources/UI/Icons/{이름}.png` (이름은 `UiIcon`의 목록 · 없으면 글자 기호) |
 | 룬 · 상태이상 · 속성 아이콘 | `Resources/Icons/Runes/{RuneKind}.png` · `Icons/Status/{BattleStatusEffectId}.png` · `Icons/Elements/{BattleElement}.png` |
-| 배경음 · 효과음 | `Resources/Audio/Bgm/{키}.wav` · `Resources/Audio/Sfx/{키}.wav` |
+| 배경음 · 효과음 | `Resources/Audio/Bgm/{키}.wav` · `Resources/Audio/Sfx/{키}.wav` (키 목록은 `AudioCatalog.AllBgm` · `AllSfx` — 같은 이름으로 넣으면 교체된다) |
 | 폰트 | `Resources/Fonts/GameFont.ttf` (또는 `.otf` · 넣으면 코드로 만든 글자와 씬에 놓인 글자가 모두 바뀐다) |
 
 > PNG의 `.meta`에는 반드시 **`nPOTScale: 0`**을 넣으세요. 없으면 1280 크기가 1024로 줄어듭니다.
@@ -139,6 +139,10 @@ Assets/ProjectH/
 | 의상 파괴 그림이 나오는 체력 | `OutfitBreakRules.LightThreshold`(60%) · `HeavyThreshold`(30%) |
 | 의상 파괴 그림의 자리와 크기 | `OutfitBreakView.FrameMin` · `FrameMax` (화면 비율) · `ArtScale` (1 = 전신 · 1.2 = 무릎까지) |
 | 의상 파괴 그림이 머무는 시간 | `OutfitBreakTimeline`의 상수 (들어옴 · 머묾 · 나감) |
+| 효과음별 크기 | `AudioCatalog.GetSfxVolume` (자주 나는 타격 · 대사 넘김은 작게) |
+| 같은 효과음이 겹치지 않는 간격 | `AudioCatalog.GetSfxInterval` |
+| 배경음이 바뀌는 빠르기 | `BgmFader.FadeOutSeconds` · `FadeInSeconds` |
+| 버튼 이름에 따라 나는 소리 | `UiSound.GetDefaultKey` (Close · Back = 취소 / Tab · Next = 넘김 / Confirm = 확인) |
 | UI 스킨의 모서리 두께 | `UiSkin.GetCornerScale` (값이 클수록 모서리가 작게 그려진다) |
 | 씬에 놓인 임시 그림을 어떤 스킨으로 바꿀지 | `UiSkinScenePatch`의 대응표 |
 
@@ -177,6 +181,9 @@ Assets/ProjectH/
 | 새 그림의 파일 이름이 **기존 코드가 찾는 경로와 겹치지 않는지** 확인할 것 | `Resources` 경로는 대소문자를 가리지 않는다. 82일차의 `UI/Icons/alert.png`가 지도 안내 아이콘의 경로 `UI/Icons/ALERT`와 겹쳐 다른 그림이 나왔다 |
 | 게이지 그림은 **`UiSkinKit.Gauge`** | 채움과 바탕에 함께 입힌다. 채움 그림이 흰색이라 코드가 넣는 색이 그대로 보인다 |
 | 전투 중에 뜨는 연출은 **입력을 막지 말 것** | 전투가 실시간이라 스킬 블록과 리듬 조작이 끊긴다. `OutfitBreakView`는 클릭 판정(GraphicRaycaster)이 없는 Canvas를 쓰고 전투 시간을 멈추지 않는다 |
+| 버튼은 **`RuntimeUiKit.CreateButton`** 으로 만들 것 (직접 만들면 `UiSound.Attach`) | 누르는 소리가 여기서 붙는다. 씬에 놓인 버튼은 `ButtonSoundScenePatch`가 붙인다. 한 버튼에 한 번만 붙어 소리가 두 번 나지 않는다 |
+| 소리를 추가하면 **`AudioCatalog.AllSfx` · `AllBgm`** 에도 넣을 것 | 테스트와 리소스 점검 표가 이 목록으로 파일이 있는지 검사한다 |
+| 결과가 정해지는 자리에서 **`UiSound.Result(성공 여부)`** | 화면마다 성공 · 실패 소리가 달라지지 않게 한 곳에서 고른다 |
 | 초상화 자리(이름 글자)에는 **`PortraitSlot.Apply`** | 글자와 같은 자리에 얼굴이나 상반신을 넣고, 그림이 없으면 글자를 그대로 둔다 |
 | 글자의 폰트는 **`RuntimeUiKit.DefaultFont`** | 기본 폰트를 직접 지정하면 정식 폰트를 넣어도 그 글자만 바뀌지 않는다 (테스트가 막는다) |
 | 회차를 넘겨 "본 이야기"를 물을 때는 **`DialogueSkipRules.IsSeen`** | 저장 파일의 기록은 새 게임에서 비워진다 |
@@ -202,7 +209,7 @@ Assets/ProjectH/
 | 궁극기 컷인 | 정식 스탠딩을 재사용 | 전용 그림 12장 |
 | 의상 파괴 그림 | **정식 일러스트 24장**(1024×1536 · 12인 × 2단계 · 스탠딩과 같은 자세) | 완료 |
 | CG · 정지 컷신 | 테스트 1장 | 개인 1화 · 결속 5단계 · 특별한 밤 |
-| 배경음 · 효과음 | 코드로 합성한 간이 음원 | 정식 음원 |
+| 배경음 · 효과음 | 코드로 합성한 간이 음원 (배경음 6곡 · 효과음 23개 — 88일차에 전부 연결) | 정식 음원 |
 | 폰트 | Unity 기본 | 한글 폰트 1종 |
 | 대화 배경 | **정식 일러스트 33장**(1672×940) | 완료 |
 | 화면 배경 | **정식 일러스트 3장** (상점 · 대장간 · 마을 지도) | 완료 |

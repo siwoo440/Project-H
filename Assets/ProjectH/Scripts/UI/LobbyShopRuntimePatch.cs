@@ -70,6 +70,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             buttonObject.transform.SetParent(navigationRoot, false); // 하단 내비게이션 부모 연결
             Image image = buttonObject.GetComponent<Image>(); // 버튼 이미지 조회
             Button button = buttonObject.GetComponent<Button>(); // 버튼 컴포넌트 조회
+            UiSound.Attach(button, ProjectH.Core.AudioCatalog.SfxPage); // 화면 이동 소리 (Day88)
 
             if (template != null) // 템플릿 버튼 존재 확인
             {

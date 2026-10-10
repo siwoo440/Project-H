@@ -397,6 +397,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 return; // 선택지를 골라야 함
             }
 
+            ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxDialogueNext); // 직접 넘길 때만 나는 소리 — 자동 진행과 빨리 넘기기에서는 나지 않는다 (Day88)
             Next(); // 다음 대사
         }
 

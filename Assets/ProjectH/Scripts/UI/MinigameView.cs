@@ -159,6 +159,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             MinigameResult result = MinigameService.Settle(saveData, dataManager, kind, bet, score, busted); // 보상 반영
             lastMessage = result.Message; // 안내 저장
+            UiSound.Result(result.GoldChange > 0 || result.Shards > 0 || result.Materials > 0 || result.Scrolls > 0, result.GoldChange > 0 ? ProjectH.Core.AudioCatalog.SfxGold : ProjectH.Core.AudioCatalog.SfxItem); // 딴 소리 · 잃은 소리 (Day88)
             ShowSelect(); // 고르기 화면
         }
 

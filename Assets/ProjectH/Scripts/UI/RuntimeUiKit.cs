@@ -111,7 +111,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 button.targetGraphic = image; // 버튼 색 전환 대상 연결
             }
 
-            button.onClick.AddListener(() => ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxClick)); // 누를 때 소리 (Day73 추가 — 여기 한 곳에서 모든 런타임 버튼에 적용)
+            UiSound.Attach(button); // 누를 때 소리 (Day88 — 버튼 이름을 보고 닫기 · 넘기기 · 확인 소리를 고른다. Day73 추가 — 여기 한 곳에서 모든 런타임 버튼에 적용)
             return button; // 생성 UI 버튼 반환
         }
 

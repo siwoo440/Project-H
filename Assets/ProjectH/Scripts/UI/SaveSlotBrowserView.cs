@@ -199,6 +199,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 SaveManager manager = GetSaveManager(); // 저장 관리자
                 if (manager == null) return; // 없음
                 manager.DeleteSlot(slot, out string message); // 삭제
+                ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxCancel); // 칸을 비운 소리 (Day88)
                 lastMessage = message; // 안내 저장
                 Refresh(); // 다시 그리기
             });
@@ -215,6 +216,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             }
 
             bool done = mode == SaveSlotMode.Save ? manager.SaveToSlot(slot, out string message) : manager.LoadFromSlot(slot, out message); // 실행
+            UiSound.Result(done); // 저장 · 불러오기 결과 소리 (Day88)
             lastMessage = message; // 안내 저장
 
             if (done && mode == SaveSlotMode.Load) // 불러오기 성공

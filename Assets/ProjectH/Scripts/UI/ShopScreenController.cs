@@ -401,6 +401,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private void Say(NpcLineKind kind, string detail) // 상점 주인 대사 + 시스템 안내
         {
+            UiSound.Play(UiSound.GetNpcLineKey(kind)); // 상황별 소리 (Day88 — 구매 · 판매 · 품절 · 골드 부족)
             lineSeed++; // 변주
             string line = NpcLineCatalog.GetLine(NpcLineCatalog.Shopkeeper, kind, lineSeed); // 대사
             dialogueText.text = string.IsNullOrEmpty(detail) ? line : $"{line}\n<color=#B9B2A8><size=17>{detail}</size></color>"; // 대사 + 안내

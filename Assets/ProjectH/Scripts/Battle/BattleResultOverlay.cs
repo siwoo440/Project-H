@@ -146,6 +146,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             if (member.HasGrowthResult) // 실제 성장 결과 존재 확인
             {
                 Color growthColor = member.LevelsGained > 0 ? GoldColor : NavyColor; // 레벨업 여부별 성장 글자 색상 선택
+                if (member.LevelsGained > 0) ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxLevelUp); // 레벨 업 소리 (Day88 — 여러 명이 올라도 한 번만 난다)
                 Text growthText = CreateText(card.transform, "Growth", GetGrowthText(member), 18, FontStyle.Bold, growthColor); // 경험치 및 레벨업 결과 텍스트 생성
                 SetRect(growthText.rectTransform, new Vector2(0.04f, 0.205f), new Vector2(0.96f, 0.275f)); // 성장 결과 텍스트 배치
             }

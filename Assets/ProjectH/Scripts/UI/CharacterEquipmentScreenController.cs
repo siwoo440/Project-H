@@ -910,10 +910,12 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (!succeeded) // 장비 액션 실패 확인
             {
                 SetStatus(error); // 장비 액션 오류 표시
+                ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxError); // 할 수 없음 소리 (Day88)
                 return; // 장비 액션 종료
             }
 
             bool saved = saveManager.SaveCurrent(); // 장비 변경 즉시 저장
+            ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxConfirm); // 장비를 바꾼 소리 (Day88)
             SetStatus(saved ? "장비 변경을 저장했습니다." : "장비는 변경되었지만 저장에 실패했습니다."); // 장비 저장 결과 표시
             Refresh(); // 장비 변경 화면 갱신
         }

@@ -344,6 +344,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void Commit(bool success, string message) // 결과 저장·갱신
         {
             bool saved = success && GameManager.Instance != null && GameManager.Instance.Save.SaveCurrent(); // 성공 시 저장
+            UiSound.Result(success); // 룬 장착 · 해제 · 분해 결과 소리 (Day88)
             onStatus?.Invoke(success && !saved ? $"{message} (저장 실패)" : message); // 결과 안내
             onChanged?.Invoke(); // 능력치 포함 화면 갱신
         }

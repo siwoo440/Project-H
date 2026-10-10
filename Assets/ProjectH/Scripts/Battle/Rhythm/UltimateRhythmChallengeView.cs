@@ -350,6 +350,7 @@ namespace ProjectH.Battle.Rhythm // 프로젝트 전투 리듬 영역 (Day49)
             circle.JudgeText.color = resultColor; // 판정 문구 색상 적용
             circle.JudgeText.gameObject.SetActive(true); // 판정 문구 표시
             CountResult(result); // 판정 등급 집계
+            ProjectH.Core.AudioService.PlaySfx(result == RhythmHitResult.Perfect ? ProjectH.Core.AudioCatalog.SfxPerfect : result == RhythmHitResult.Good ? ProjectH.Core.AudioCatalog.SfxGood : ProjectH.Core.AudioCatalog.SfxMiss); // 판정 소리 (Day88)
             resolvedCircleCount++; // 판정 완료 원 수 증가
             ShowComboAndJudge(result); // 콤보 카운터와 중앙 판정 문구 갱신 (Day50)
             Destroy(circle.Root, ResultHoldSeconds); // 판정 결과 표시 유지 후 원 객체 제거

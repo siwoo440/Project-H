@@ -43,6 +43,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
         private static TimeTransitionView Create(GameTimeChange change) // 연출 화면 생성
         {
+            ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxPage); // 시간이 넘어가는 소리 (Day88)
             GameObject root = new GameObject("TimeTransition", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasGroup)); // 연출 Canvas
             DontDestroyOnLoad(root); // 씬이 바뀌어도 끝까지 재생
             Canvas canvas = root.GetComponent<Canvas>(); // Canvas 조회

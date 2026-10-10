@@ -703,6 +703,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void Finish(bool changed, string message) // 행동 결과 저장·안내·갱신
         {
             if (changed) Save(); // 즉시 저장
+            UiSound.Result(changed); // 행동 결과 소리 (Day88 — 됨 · 안 됨)
             SetStatus(message); // 안내
             List<string> present = currentZone.HasValue ? VillagePresenceService.GetCharactersIn(GetSave(), currentZone.Value) : new List<string>(); // 시간이 흘러 바뀐 배치
 

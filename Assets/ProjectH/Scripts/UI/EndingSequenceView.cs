@@ -29,6 +29,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Canvas canvas = root.GetComponent<Canvas>(); // Canvas 조회
             canvas.renderMode = RenderMode.ScreenSpaceOverlay; // Overlay 렌더링
             canvas.sortingOrder = 800; // 모든 화면보다 위
+            ProjectH.Core.AudioService.PlayBgm(ProjectH.Core.AudioCatalog.BgmEnding); // 엔딩 곡으로 (Day88 — 타이틀로 돌아가면 타이틀 곡이 된다)
             CanvasScaler scaler = root.GetComponent<CanvasScaler>(); // 스케일러 조회
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; // 화면 크기 기반
             scaler.referenceResolution = new Vector2(1600f, 900f); // 기준 해상도

@@ -412,6 +412,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 bool opened = RuneService.TryOpenBox(saveData, dataManager, selectedItemId, out RuneInstanceSaveData rune, out string boxMessage); // 상자 열기
                 bool boxSaved = opened && saveManager.SaveCurrent(); // 성공 시 저장
+                UiSound.Result(opened, ProjectH.Core.AudioCatalog.SfxItem); // 상자를 연 소리 · 못 연 소리 (Day88)
                 SetStatus(opened && !boxSaved ? $"{boxMessage} (저장 실패)" : opened ? $"{boxMessage} · 캐릭터 창 [룬] 탭에서 장착" : boxMessage); // 결과 안내
                 Refresh(); // 가방 갱신
                 return; // 처리 종료
@@ -420,8 +421,11 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             if (!ItemUseService.TryUse(saveData, dataManager, selectedItemId, out int remainingCount, out error)) // 소비 아이템 사용 시도
             {
                 SetStatus(error); // 아이템 사용 오류 표시
+                ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxError); // 쓸 수 없음 소리 (Day88)
                 return; // 아이템 사용 중단
             }
+
+            ProjectH.UI.UiSound.Play(ProjectH.Core.AudioCatalog.SfxConfirm); // 아이템을 쓴 소리 (Day88)
 
             if (!saveManager.SaveCurrent()) // 사용 후 즉시 저장 실행
             {

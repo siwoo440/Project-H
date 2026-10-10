@@ -179,6 +179,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 label.color = OutfitBreakRules.GetLabelColor(request.Stage); // 단계 색
                 timeline.Start(queue.Count > 0); // 기다리는 그림이 있으면 짧게
                 IsShowing = true; // 표시 시작
+                ProjectH.Core.AudioService.PlaySfx(ProjectH.Core.AudioCatalog.SfxBreak); // 옷이 찢기는 소리 (Day88)
                 return true; // 시작함
             }
 

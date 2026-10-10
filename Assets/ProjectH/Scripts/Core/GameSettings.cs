@@ -28,6 +28,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
         private const string ReduceShakeKey = "ProjectH.Settings.ReduceShake"; // 저장 키
         private const string EasyTimingKey = "ProjectH.Settings.EasyTiming"; // 저장 키
         private const string SkipUnreadKey = "ProjectH.Settings.SkipUnread"; // 저장 키 (Day81)
+        private const string OutfitBreakKey = "ProjectH.Settings.OutfitBreak"; // 저장 키 (Day87)
 
         private static bool loaded; // 불러왔는지
         private static float masterVolume = 0.8f; // 전체 음량
@@ -39,6 +40,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
         private static bool reduceShake; // 화면 흔들림 줄이기
         private static bool easyTiming; // 리듬 판정 완화
         private static bool skipUnread; // 처음 보는 대사도 빨리 넘기기 허용 (Day81 추가 — 기본은 이미 본 이야기만)
+        private static bool outfitBreak = true; // 전투 중 의상 파괴 연출 (Day87 추가 — 기본은 켬)
 
         public static event Action Changed; // 설정이 바뀔 때 알림 (화면 갱신용)
 
@@ -51,6 +53,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
         public static bool ReduceShake { get { EnsureLoaded(); return reduceShake; } } // 흔들림 줄이기 반환
         public static bool EasyTiming { get { EnsureLoaded(); return easyTiming; } } // 판정 완화 반환
         public static bool SkipUnread { get { EnsureLoaded(); return skipUnread; } } // 처음 보는 대사 빨리 넘기기 허용 반환 (Day81)
+        public static bool OutfitBreak { get { EnsureLoaded(); return outfitBreak; } } // 의상 파괴 연출 사용 여부 반환 (Day87)
 
         public static float GetTimingWindowScale() => EasyTiming ? 1f + EasyTimingBonus : 1f; // 리듬 판정 창 배수 (Day72 — 전투에서 사용)
 
@@ -132,6 +135,14 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             Commit(); // 저장·알림
         }
 
+        public static void SetOutfitBreak(bool value) // 의상 파괴 연출 사용 여부 저장 (Day87 추가)
+        {
+            EnsureLoaded(); // 불러오기 보장
+            outfitBreak = value; // 값 저장
+            PlayerPrefs.SetInt(OutfitBreakKey, value ? 1 : 0); // 기록
+            Commit(); // 저장·알림
+        }
+
         public static void ResetToDefault() // 기본값으로 되돌리기
         {
             EnsureLoaded(); // 불러오기 보장
@@ -144,6 +155,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             SetReduceShake(false); // 흔들림
             SetEasyTiming(false); // 판정 완화
             SetSkipUnread(false); // 빨리 넘기기 (Day81)
+            SetOutfitBreak(true); // 의상 파괴 연출 (Day87)
         }
 
         private static float Get(ref float field) // 값 조회 (처음 부를 때 불러오기)
@@ -165,6 +177,7 @@ namespace ProjectH.Core // 프로젝트 핵심 영역
             reduceShake = PlayerPrefs.GetInt(ReduceShakeKey, 0) != 0; // 흔들림
             easyTiming = PlayerPrefs.GetInt(EasyTimingKey, 0) != 0; // 판정 완화
             skipUnread = PlayerPrefs.GetInt(SkipUnreadKey, 0) != 0; // 빨리 넘기기 (Day81)
+            outfitBreak = PlayerPrefs.GetInt(OutfitBreakKey, 1) != 0; // 의상 파괴 연출 (Day87 — 기록이 없으면 켬)
             ApplyAudio(); // 음량 반영
         }
 

@@ -27,7 +27,7 @@ Unity로 만드는 **리듬 전투 + 동료 육성 RPG**입니다.
 
 | 축 | 내용 |
 | --- | --- |
-| **전투** | 리듬 판정(Perfect/Good/Miss) · 스킬 블록 · 궁극기 컷인 · 보스 페이즈 · 속성 · 상태이상 |
+| **전투** | 리듬 판정(Perfect/Good/Miss) · 스킬 블록 · 궁극기 컷인 · 보스 페이즈 · 속성 · 상태이상 · 의상 파괴 연출 |
 | **육성** | 레벨 · 장비 5칸(강화 +5 / 초월 ★3) · 룬 15종 5칸 · 전용 장비 12종 |
 | **관계** | 호감도 · 결속 5단계 · 선물 · 개인 이벤트 · 마을 구역 이벤트 |
 | **진행** | 일차/시간대(아침·점심·저녁·밤) · 활력 · 17던전 · 검은 균열 · 길드 의뢰 |
@@ -92,6 +92,7 @@ Assets/ProjectH/
 | 캐릭터 스탠딩 | `Resources/Dialogues/Standing/{캐릭터ID}_{표정}.png` (없는 표정은 `_normal`, 그것도 없으면 `{캐릭터ID}.png`) |
 | 정사각 초상화 | `Resources/Portraits/{캐릭터ID}.png` (없으면 스탠딩에서 얼굴을 잘라 쓴다) |
 | 궁극기 컷인 | `Resources/UltimateCutIns/{캐릭터ID}.png` (가로 3:2 그림 · 세로 가운데 띠만 보인다) |
+| 의상 파괴 그림 | `Resources/BattleBreak/{캐릭터ID}_{단계}.png` (단계 1 = 체력 60% 이하 · 2 = 30% 이하. 스탠딩과 같은 1024×1536 · 같은 자세) |
 | 전투 SD 그림 | `Resources/BattleUnits/{캐릭터ID}.png` · `{몬스터ID}.png` (아군은 없으면 스탠딩, 몬스터는 없으면 색 상자) |
 | 전투 배경 | `Resources/Dialogues/Backgrounds/BATTLE_{지역}.png` (없으면 비슷한 대화 배경으로 대신) |
 | 모험 지도 지역 아이콘 | `Resources/Map/Regions/{지역ID}.png` (없으면 색 원과 글자) |
@@ -135,6 +136,9 @@ Assets/ProjectH/
 | 로비 배경을 어둡게 덮는 정도 | `LobbyBackdropCatalog.DimAlpha` |
 | 전투 유닛 움직임의 폭과 빠르기 | `BattleUnitMotionMath`의 상수 (대기 · 공격 · 피격 · 쓰러짐) |
 | 전용 컷인 그림의 표시 너비 | `UltimateCutInView.WideArtWidth` |
+| 의상 파괴 그림이 나오는 체력 | `OutfitBreakRules.LightThreshold`(60%) · `HeavyThreshold`(30%) |
+| 의상 파괴 그림의 자리와 크기 | `OutfitBreakView.FrameMin` · `FrameMax` (화면 비율) · `ArtScale` (1 = 전신 · 1.2 = 무릎까지) |
+| 의상 파괴 그림이 머무는 시간 | `OutfitBreakTimeline`의 상수 (들어옴 · 머묾 · 나감) |
 | UI 스킨의 모서리 두께 | `UiSkin.GetCornerScale` (값이 클수록 모서리가 작게 그려진다) |
 | 씬에 놓인 임시 그림을 어떤 스킨으로 바꿀지 | `UiSkinScenePatch`의 대응표 |
 
@@ -172,6 +176,7 @@ Assets/ProjectH/
 | 어두운 화면의 버튼은 **`button_tab_off`**, 밝은 화면은 **`button_secondary`** | 어두운 화면의 글자는 흰색이라 어두운 버튼이어야 읽힌다. 눈에 띄어야 하는 버튼만 `button_primary`(글자는 어둡게 바뀐다) |
 | 새 그림의 파일 이름이 **기존 코드가 찾는 경로와 겹치지 않는지** 확인할 것 | `Resources` 경로는 대소문자를 가리지 않는다. 82일차의 `UI/Icons/alert.png`가 지도 안내 아이콘의 경로 `UI/Icons/ALERT`와 겹쳐 다른 그림이 나왔다 |
 | 게이지 그림은 **`UiSkinKit.Gauge`** | 채움과 바탕에 함께 입힌다. 채움 그림이 흰색이라 코드가 넣는 색이 그대로 보인다 |
+| 전투 중에 뜨는 연출은 **입력을 막지 말 것** | 전투가 실시간이라 스킬 블록과 리듬 조작이 끊긴다. `OutfitBreakView`는 클릭 판정(GraphicRaycaster)이 없는 Canvas를 쓰고 전투 시간을 멈추지 않는다 |
 | 초상화 자리(이름 글자)에는 **`PortraitSlot.Apply`** | 글자와 같은 자리에 얼굴이나 상반신을 넣고, 그림이 없으면 글자를 그대로 둔다 |
 | 글자의 폰트는 **`RuntimeUiKit.DefaultFont`** | 기본 폰트를 직접 지정하면 정식 폰트를 넣어도 그 글자만 바뀌지 않는다 (테스트가 막는다) |
 | 회차를 넘겨 "본 이야기"를 물을 때는 **`DialogueSkipRules.IsSeen`** | 저장 파일의 기록은 새 게임에서 비워진다 |
@@ -195,6 +200,7 @@ Assets/ProjectH/
 | --- | --- | --- |
 | 캐릭터 스탠딩 | **정식 일러스트 84장**(1024×1536 · 12인 × 표정 7종 · 86일차에 4.5등신의 단순한 그림체로 다시 그림) | 완료 |
 | 궁극기 컷인 | 정식 스탠딩을 재사용 | 전용 그림 12장 |
+| 의상 파괴 그림 | **정식 일러스트 24장**(1024×1536 · 12인 × 2단계 · 스탠딩과 같은 자세) | 완료 |
 | CG · 정지 컷신 | 테스트 1장 | 개인 1화 · 결속 5단계 · 특별한 밤 |
 | 배경음 · 효과음 | 코드로 합성한 간이 음원 | 정식 음원 |
 | 폰트 | Unity 기본 | 한글 폰트 1종 |

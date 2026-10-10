@@ -167,6 +167,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             timeController?.Pause(); // 전투 종료 시 전투 시간 정지
             menuPanel?.SetActive(false); // 전투 종료 시 기존 메뉴 숨김
             SetInteraction(false); // 전투 종료 후 기존 전투 UI 입력 잠금
+            OutfitBreakView.Stop(); // 의상 파괴 연출 정리 (Day87 — 결과창 뒤에 그림이 남지 않게)
             SetText(waveText, "BATTLE END"); // 전투 종료 표시 적용
             SetText(statusText, outcome == BattleOutcome.Victory ? "VICTORY · 모든 적 전투 불능" : "DEFEAT · 파티 전원 전투 불능"); // 전투 종료 상태 표시
             string resultId = string.IsNullOrWhiteSpace(currentBattleResultId) ? Guid.NewGuid().ToString("N") : currentBattleResultId; // 현재 전투 결과 고유 ID 보정
@@ -328,6 +329,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 spawnedUnits.Add(unit); // 생성 유닛 목록 등록
                 hudCards[index].Bind(entry.Stats); // 하단 HUD 카드 연결
                 hudCards[index].SetSlotNumber(index + 1); // 숫자키 슬롯 번호 표시 (Day54 추가, 숫자키 1~4 선택 순서와 동일)
+                OutfitBreakView.Watch(entry.Stats); // 의상 파괴 연출이 이 아군의 체력을 지켜본다 (Day87)
             }
 
             return true; // 아군 생성 성공
@@ -587,6 +589,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
         private void ClearSpawnedCombatants() // 생성 전투 객체 전체 정리
         {
             outcomeController?.StopMonitoring(); // 재초기화 및 Scene 종료 중 승패 이벤트 차단
+            OutfitBreakView.Stop(); // 이전 전투의 의상 파괴 감시 해제 (Day87)
 
             foreach (BattleUnitView unit in spawnedUnits) // 생성 아군 목록 순회
             {

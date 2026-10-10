@@ -4,7 +4,7 @@ namespace ProjectH.Dialogue // 프로젝트 대화 영역
 {
     public static class DialogueStandingFrame // 대화 화면 스탠딩 구도 (Day77 신규 — 배율 하나로 캐릭터 크기를 정한다)
     {
-        public const float Scale = 1.4f; // 확대 배율 — 이 숫자만 바꾸면 구도가 바뀐다 (1 = 전신 · 1.4 = 허벅지까지 · 1.7 = 허리까지)
+        public const float Scale = 1.25f; // 확대 배율 — 이 숫자만 바꾸면 구도가 바뀐다 (Day86 4.5등신 그림 기준 : 1 = 전신 · 1.25 = 무릎까지 · 1.4 = 허벅지까지. 값이 클수록 머리가 커진다)
         public const float SideTop = 0.95f; // 좌우 자리의 그림 위쪽 높이 (화면 높이 비율)
         public const float CenterTop = 0.97f; // 가운데 자리의 그림 위쪽 높이 (1인 대화)
         public const float HalfWidth = 0.40f; // 영역 반폭 (그림은 비율을 지켜 가운데에 그려지므로 넉넉하게 잡는다)

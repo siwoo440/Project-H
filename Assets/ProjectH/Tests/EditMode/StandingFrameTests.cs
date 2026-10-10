@@ -19,8 +19,8 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             {
                 Assert.That(StandingFaceCatalog.TryGet(characterId, out StandingFace face), Is.True, $"얼굴 위치 없음 : {characterId}"); // 등록됨
                 Assert.That(face.CenterX, Is.InRange(0.40f, 0.60f), $"얼굴 가로 위치가 이상함 : {characterId}"); // 가운데 근처
-                Assert.That(face.CenterY, Is.InRange(0.08f, 0.16f), $"얼굴 세로 위치가 이상함 : {characterId}"); // 위쪽
-                Assert.That(face.Height, Is.InRange(0.06f, 0.10f), $"얼굴 크기가 이상함 : {characterId}"); // 8등신 비율
+                Assert.That(face.CenterY, Is.InRange(0.08f, 0.20f), $"얼굴 세로 위치가 이상함 : {characterId}"); // 위쪽 (Day86 — 4.5등신 새 그림은 얼굴 중심이 조금 더 아래)
+                Assert.That(face.Height, Is.InRange(0.06f, 0.14f), $"얼굴 크기가 이상함 : {characterId}"); // 8등신(약 0.08) ~ 4.5등신(약 0.115)
             }
         }
 
@@ -40,7 +40,7 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
                 StandingFaceCatalog.TryGet(characterId, out StandingFace face); // 얼굴 위치
                 Rect rect = StandingFaceCatalog.GetPortraitRect(face, SourceRect); // 자를 영역
                 Assert.That(rect.width, Is.EqualTo(rect.height), $"정사각이 아님 : {characterId}"); // 정사각
-                Assert.That(rect.width, Is.InRange(250f, 400f), $"초상화 크기가 이상함 : {characterId}"); // 머리가 들어갈 크기
+                Assert.That(rect.width, Is.InRange(250f, 520f), $"초상화 크기가 이상함 : {characterId}"); // 머리가 들어갈 크기 (Day86 — 4.5등신 새 그림은 머리가 커서 약 458)
                 Assert.That(rect.xMin, Is.GreaterThanOrEqualTo(SourceRect.xMin), characterId); // 왼쪽 안
                 Assert.That(rect.yMin, Is.GreaterThanOrEqualTo(SourceRect.yMin), characterId); // 아래 안
                 Assert.That(rect.xMax, Is.LessThanOrEqualTo(SourceRect.xMax), characterId); // 오른쪽 안

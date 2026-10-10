@@ -53,8 +53,11 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             }
         }
 
+        public const float WorldGaugeCornerScale = 4f; // 전투 월드 안 작은 체력바의 모서리 배율 (Day86 — 값이 클수록 모서리가 작게 그려진다)
+
         public void Bind(BattleStats stats) // 전투 스탯 연결
         {
+            ProjectH.UI.UiSkinKit.Gauge(hpFillImage, WorldGaugeCornerScale); // 정식 체력바 (Day86 — 작은 막대라 모서리를 작게)
             UnbindHealthEvent(); // 기존 체력 이벤트 연결 해제
             Stats = stats; // 전투 스탯 저장
 

@@ -115,6 +115,47 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(likeCard.color.g, Is.GreaterThan(likeCard.color.r)); // 연두는 초록 쪽
         }
 
+        [Test] // 게이지 : 채움과 바탕에 그림을 입히고, 채움 색은 그대로 둔다 (Day86)
+        public void Gauge_SkinsFillAndBackAndKeepsFillColor() // 게이지 테스트
+        {
+            Color hpColor = new Color(0.30f, 0.82f, 0.38f, 1f); // 체력 초록
+            Image back = RuntimeUiKit.CreateImage(root.transform, "HpBack", new Color(0.16f, 0.19f, 0.20f, 0.90f)); // 어두운 바탕
+            Image fill = RuntimeUiKit.CreateImage(back.transform, "HpFill", hpColor); // 초록 채움
+            Assert.That(UiSkinKit.Gauge(fill, 4f), Is.True); // 적용
+            Assert.That(fill.sprite, Is.SameAs(UiSkin.Get(UiSkin.GaugeFill))); // 채움 그림
+            Assert.That(back.sprite, Is.SameAs(UiSkin.Get(UiSkin.GaugeBack))); // 바탕 그림
+            Assert.That(fill.color, Is.EqualTo(hpColor)); // 채움 색은 그대로 (그림이 흰색이라 색이 살아난다)
+            Assert.That(back.color, Is.EqualTo(Color.white)); // 바탕은 그림 색 그대로
+            Assert.That(fill.pixelsPerUnitMultiplier, Is.EqualTo(4f)); // 작은 게이지용 모서리 배율
+            Assert.That(UiSkinKit.Gauge(null), Is.False); // null 안전
+        }
+
+        [Test] // 오른쪽 끝 아이콘 : 한 번만 만들고, 글자는 아이콘 왼쪽에서 끝난다 (Day86)
+        public void TrailingIcon_SitsAtTheRightEndOfTheLabel() // 오른쪽 아이콘 테스트
+        {
+            Image bar = RuntimeUiKit.CreateImage(root.transform, "TopBar", Color.black); // 상단 바
+            Text gold = RuntimeUiKit.CreateText(bar.transform, "Gold", "0", 26, Color.white); // 골드 글자
+            RuntimeUiKit.SetRect(gold.rectTransform, new Vector2(0.70f, 0f), new Vector2(0.985f, 1f)); // 오른쪽 배치
+            Assert.That(UiSkinKit.HasCurrencyIcon(gold), Is.False); // 아직 없음
+            Assert.That(UiSkinKit.TrailingIcon(gold, "gold"), Is.True); // 아이콘 추가
+            Assert.That(UiSkinKit.TrailingIcon(gold, "gold"), Is.True); // 이미 있음
+            Assert.That(bar.transform.childCount, Is.EqualTo(2)); // 글자 + 아이콘 하나
+            Assert.That(UiSkinKit.HasCurrencyIcon(gold), Is.True); // 있음
+            RectTransform icon = (RectTransform)bar.transform.Find(UiSkinKit.CurrencyIconName); // 아이콘
+            Assert.That(gold.rectTransform.anchorMax.x, Is.LessThan(icon.anchorMin.x)); // 글자는 아이콘 왼쪽에서 끝남
+            Assert.That(icon.anchorMax.x, Is.EqualTo(0.985f).Within(0.0001f)); // 아이콘은 원래 글자 영역의 오른쪽 끝
+            Assert.That(UiSkinKit.TrailingIcon(null, "gold"), Is.False); // null 안전
+        }
+
+        [Test] // 지도 위 안내 아이콘은 메뉴 아이콘 폴더를 쓰지 않는다 (같은 이름의 메뉴 아이콘이 대신 불려 오는 사고 방지, Day86)
+        public void MapMarkIcons_DoNotShareTheMenuIconFolder() // 아이콘 이름 겹침 테스트
+        {
+            Assert.That(DungeonAlertArt.ResourcePath.StartsWith(UiIcon.Folder, System.StringComparison.OrdinalIgnoreCase), Is.False); // 새 던전 안내
+            Assert.That(RiftMarkArt.ResourcePath.StartsWith(UiIcon.Folder, System.StringComparison.OrdinalIgnoreCase), Is.False); // 균열 표시
+            Assert.That(RuntimeSpriteLoader.Load(DungeonAlertArt.ResourcePath), Is.Null); // 정식 그림이 없으므로 코드로 그린 노란 아이콘을 쓴다
+            Assert.That(DungeonAlertArt.Get(), Is.Not.SameAs(UiIcon.Get("alert"))); // 메뉴의 흰 느낌표가 아님
+        }
+
         private static Button CreateButton(Transform parent, string name, string label) // 테스트용 버튼
         {
             Button button = RuntimeUiKit.CreateButton(parent, name, Color.white); // 버튼

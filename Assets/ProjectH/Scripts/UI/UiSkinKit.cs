@@ -79,6 +79,35 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             return true; // 아이콘 있음
         }
 
+        public static bool Gauge(Image fill, float cornerScale = 0f) // 게이지 : 채움과 그 부모(바탕)에 스킨 (Day86 추가 — 채움 그림은 흰색이라 지금 쓰는 채움 색이 그대로 입혀진다. 작은 게이지는 cornerScale을 키운다)
+        {
+            if (fill == null || !UiSkin.Apply(fill, UiSkin.GaugeFill, cornerScale)) return false; // 대상 · 스킨 없음
+            Image back = fill.transform.parent == null ? null : fill.transform.parent.GetComponent<Image>(); // 게이지 바탕
+            if (back != null && UiSkin.Apply(back, UiSkin.GaugeBack, cornerScale)) back.color = Color.white; // 바탕은 그림 색 그대로 (예전의 어두운 상자 색을 곱하지 않는다)
+            return true; // 적용함
+        }
+
+        public static bool TrailingIcon(Text label, string iconKey, float width = 0.03f) // 오른쪽 정렬 글자의 오른쪽 끝에 아이콘 (Day86 추가 — "5,548 [금화]" 모양. 한 번만 만든다. 아이콘이 없으면 false)
+        {
+            if (label == null || label.transform.parent == null) return false; // 대상 없음
+            if (HasCurrencyIcon(label)) return true; // 이미 만든 아이콘
+            Sprite sprite = UiIcon.Get(iconKey); // 아이콘
+            if (sprite == null) return false; // 아이콘 없음
+            RectTransform labelRect = label.rectTransform; // 글자 영역
+            Image icon = RuntimeUiKit.CreateImage(label.transform.parent, CurrencyIconName, Color.white); // 아이콘 (글자와 같은 부모)
+            icon.sprite = sprite; // 그림 적용
+            icon.raycastTarget = false; // 입력 통과
+            icon.preserveAspect = true; // 비율 유지
+            RuntimeUiKit.SetRect(icon.rectTransform, new Vector2(labelRect.anchorMax.x - width, 0.18f), new Vector2(labelRect.anchorMax.x, 0.82f)); // 글자 영역의 오른쪽 끝
+            labelRect.anchorMax = new Vector2(labelRect.anchorMax.x - width - 0.005f, labelRect.anchorMax.y); // 글자는 아이콘 왼쪽에서 끝난다
+            return true; // 아이콘 있음
+        }
+
+        public static bool HasCurrencyIcon(Text label) // 재화 아이콘이 이미 붙어 있는지 (Day86 추가 — 글자에서 기호를 뺄지 판단)
+        {
+            return label != null && label.transform.parent != null && label.transform.parent.Find(CurrencyIconName) != null; // 같은 부모 아래의 아이콘
+        }
+
         public static Image Glyph(Button button, string iconKey, float padding = 10f) // 버튼의 글자 기호(◀ ▶ ✕)를 아이콘으로 (아이콘이 없으면 null — 글자 그대로)
         {
             Sprite sprite = button == null ? null : UiIcon.Get(iconKey); // 아이콘

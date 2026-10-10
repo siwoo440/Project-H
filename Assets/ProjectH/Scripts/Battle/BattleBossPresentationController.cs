@@ -65,12 +65,14 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             SetRect((RectTransform)healthBarRoot.transform, new Vector2(0.26f, 0.895f), new Vector2(0.74f, 0.965f)); // 화면 상단 중앙 보스 체력바 배치
             Image back = CreateImage(healthBarRoot.transform, "Back", new Color(0.06f, 0.06f, 0.08f, 0.88f)); // 보스 체력바 배경 생성
             Stretch(back.rectTransform); // 보스 체력바 배경 확장
+            UiSkinKit.Panel(back, UiSkin.NamePlate); // 정식 남색 판 (Day86 — 이름과 게이지를 담는 틀)
             bossNameText = CreateText(healthBarRoot.transform, "Name", string.Empty, 19, FontStyle.Bold, Color.white); // 보스 체력바 이름 텍스트 생성
             SetRect(bossNameText.rectTransform, new Vector2(0.02f, 0.52f), new Vector2(0.98f, 0.98f)); // 보스 체력바 이름 텍스트 배치
             Image hpBack = CreateImage(healthBarRoot.transform, "HpBack", new Color(0.22f, 0.05f, 0.05f, 1f)); // 보스 체력 게이지 배경 생성
             SetRect(hpBack.rectTransform, new Vector2(0.03f, 0.16f), new Vector2(0.97f, 0.50f)); // 보스 체력 게이지 배경 배치
             bossHpFillImage = CreateImage(hpBack.transform, "HpFill", HpFillColor); // 보스 체력 게이지 채움 생성
             Stretch(bossHpFillImage.rectTransform); // 보스 체력 게이지 채움 확장 (앵커 기반 채움, Image.Type.Filled는 스프라이트 없이 갱신되지 않아 미사용)
+            UiSkinKit.Gauge(bossHpFillImage); // 정식 게이지 (Day86 — 페이즈 눈금은 그 위에 그대로 그려진다)
             bossHpText = CreateText(healthBarRoot.transform, "HpText", string.Empty, 15, FontStyle.Bold, Color.white); // 보스 체력바 수치 텍스트 생성
             SetRect(bossHpText.rectTransform, new Vector2(0.02f, 0f), new Vector2(0.98f, 0.15f)); // 보스 체력바 수치 텍스트 배치
             healthBarRoot.SetActive(false); // 초기 보스 체력바 숨김

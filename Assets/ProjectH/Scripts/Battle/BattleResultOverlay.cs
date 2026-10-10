@@ -65,7 +65,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
                 ProjectH.UI.UiSkinKit.Panel(topBand, ProjectH.UI.UiSkin.NamePlate); // 남색 띠
             }
 
-            Text battleResultLabel = CreateText(topBand.transform, "BattleResultLabel", "BATTLE RESULT", 22, FontStyle.Bold, new Color(0.80f, 0.86f, 0.92f, 1f)); // 결과 보조 제목 생성
+            Text battleResultLabel = CreateText(topBand.transform, "BattleResultLabel", "전투 결과", 22, FontStyle.Bold, new Color(0.80f, 0.86f, 0.92f, 1f)); // 결과 보조 제목 생성
             SetRect(battleResultLabel.rectTransform, new Vector2(0.03f, 0.70f), new Vector2(0.30f, 0.96f)); // 결과 보조 제목 배치
             resultTitle = CreateText(topBand.transform, "ResultTitle", Result.Outcome == BattleOutcome.Victory ? "승리!" : "패배", 72, FontStyle.Bold, Color.white); // 승패 메인 제목 생성
             SetRect(resultTitle.rectTransform, new Vector2(0.28f, 0.22f), new Vector2(0.72f, 0.88f)); // 승패 메인 제목 배치

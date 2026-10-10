@@ -64,6 +64,8 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
 
         public void Bind(BattleStats stats) // HUD 전투 스탯 연결
         {
+            ProjectH.UI.UiSkinKit.Gauge(hpFillImage); // 정식 체력 게이지 (Day86 — 채움 색은 그대로 입혀진다)
+            ProjectH.UI.UiSkinKit.Gauge(gaugeFillImage); // 정식 궁극기 게이지 (Day86)
             UnbindRuntimeEvents(); // 기존 Runtime 이벤트 연결 해제
             SetSelectionHighlighted(false); // 이전 캐릭터 초상화 선택 윤곽 해제
             Stats = stats; // 전투 스탯 저장

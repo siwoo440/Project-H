@@ -22,24 +22,25 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private const float SourceWidth = 1024f; // 값을 잰 그림의 가로 픽셀
         private const float SourceHeight = 1536f; // 값을 잰 그림의 세로 픽셀
         public const float PortraitScale = 2.6f; // 초상화 한 변 = 얼굴 높이 × 이 값 (머리 전체와 어깨선까지 들어온다)
+        private const float FaceHalfHeight = 88f; // 얼굴 높이의 절반 (Day86 — 12명의 머리 크기를 같게 그렸으므로 한 값을 쓴다. 캐릭터마다 다르면 초상화와 컷인에서 머리 크기가 들쭉날쭉해진다)
 
-        private static readonly Dictionary<string, StandingFace> Faces = new Dictionary<string, StandingFace> // 캐릭터별 얼굴 위치 (76일차 그림의 표정 영역을 잰 값 — 그림을 새로 받으면 다시 잴 것)
+        private static readonly Dictionary<string, StandingFace> Faces = new Dictionary<string, StandingFace> // 캐릭터별 얼굴 위치 (Day86 — 4.5등신 새 그림에서 표정이 바뀌는 영역을 잰 값. 그림을 바꾸면 다시 잰다)
         {
-            { "CH_SERENA", FromPixels(512f, 170f, 62f) }, // 세레나
-            { "CH_ELLEN", FromPixels(510f, 174f, 62f) }, // 엘렌
-            { "CH_LILIA", FromPixels(512f, 172f, 61f) }, // 릴리아
-            { "CH_EVE", FromPixels(514f, 171f, 61f) }, // 이브
-            { "CH_LUCIA", FromPixels(508f, 173f, 59f) }, // 루시아
-            { "CH_CLAIRE", FromPixels(507f, 180f, 61f) }, // 클레어
-            { "CH_MERCIA", FromPixels(514f, 174f, 61f) }, // 메르시아
-            { "CH_PYRA", FromPixels(528f, 207f, 58f) }, // 파이라 (높은 포니테일이라 얼굴이 조금 아래)
-            { "CH_TYRIA", FromPixels(513f, 177f, 61f) }, // 티리아
-            { "CH_NOEL", FromPixels(499f, 195f, 60f) }, // 노엘
-            { "CH_NATASHA", FromPixels(512f, 184f, 60f) }, // 나타샤
-            { "CH_SEPHIRA", FromPixels(514f, 179f, 62f) } // 세피라
+            { "CH_SERENA", FromPixels(508f, 256f, FaceHalfHeight) }, // 세레나
+            { "CH_ELLEN", FromPixels(501f, 255f, FaceHalfHeight) }, // 엘렌
+            { "CH_LILIA", FromPixels(507f, 256f, FaceHalfHeight) }, // 릴리아
+            { "CH_EVE", FromPixels(508f, 256f, FaceHalfHeight) }, // 이브
+            { "CH_LUCIA", FromPixels(483f, 257f, FaceHalfHeight) }, // 루시아 (고개를 살짝 기울여 얼굴이 왼쪽)
+            { "CH_CLAIRE", FromPixels(517f, 257f, FaceHalfHeight) }, // 클레어
+            { "CH_MERCIA", FromPixels(506f, 255f, FaceHalfHeight) }, // 메르시아
+            { "CH_PYRA", FromPixels(509f, 262f, FaceHalfHeight) }, // 파이라 (높은 포니테일이라 얼굴이 조금 아래)
+            { "CH_TYRIA", FromPixels(508f, 255f, FaceHalfHeight) }, // 티리아
+            { "CH_NOEL", FromPixels(506f, 259f, FaceHalfHeight) }, // 노엘
+            { "CH_NATASHA", FromPixels(491f, 257f, FaceHalfHeight) }, // 나타샤 (얼굴이 왼쪽)
+            { "CH_SEPHIRA", FromPixels(492f, 257f, FaceHalfHeight) } // 세피라 (얼굴이 왼쪽)
         };
 
-        public static readonly StandingFace Default = FromPixels(512f, 178f, 61f); // 위치표에 없는 그림에 쓰는 기준값 (12인 평균)
+        public static readonly StandingFace Default = FromPixels(505f, 257f, FaceHalfHeight); // 위치표에 없는 그림에 쓰는 기준값 (12인 평균)
         public static IEnumerable<string> CharacterIds => Faces.Keys; // 위치를 잰 캐릭터 목록
 
         private static StandingFace FromPixels(float centerX, float centerY, float halfHeight) // 잰 픽셀 값을 비율로 변환 (세로는 위에서부터)

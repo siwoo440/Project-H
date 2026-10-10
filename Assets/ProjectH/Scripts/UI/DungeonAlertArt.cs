@@ -4,7 +4,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 {
     public static class DungeonAlertArt // 새 던전 안내 아이콘 (Day66 추가 요청 — 글자 대신 그림 : 노란 원 + 느낌표 모양)
     {
-        private const string ResourcePath = "UI/Icons/ALERT"; // 정식 아이콘 Resources 경로 (PNG를 넣으면 교체)
+        public const string ResourcePath = "Map/ALERT"; // 정식 아이콘 Resources 경로 (PNG를 넣으면 교체. Day86 — 예전 경로 UI/Icons/ALERT는 82일차의 메뉴 아이콘 alert.png와 이름이 겹쳐, 노란 안내 아이콘 대신 흰 느낌표가 나오고 있었다)
         private const int Size = 64; // 임시 아이콘 크기 (픽셀)
         private static Sprite cached; // 임시 아이콘 캐시
 

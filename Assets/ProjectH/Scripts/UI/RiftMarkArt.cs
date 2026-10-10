@@ -4,7 +4,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 {
     public static class RiftMarkArt // 검은 균열 표시 그림 (Day67 신규 — 글자 없이 소용돌이 모양)
     {
-        private const string ResourcePath = "UI/Icons/RIFT"; // 정식 아이콘 Resources 경로 (PNG를 넣으면 교체)
+        public const string ResourcePath = "Map/RIFT"; // 정식 아이콘 Resources 경로 (PNG를 넣으면 교체. Day86 — 지도 위 아이콘은 메뉴 아이콘 폴더(UI/Icons)와 이름이 겹치지 않게 Map 폴더로)
         private const int Size = 64; // 임시 아이콘 크기 (픽셀)
         private static Sprite cached; // 임시 아이콘 캐시
 

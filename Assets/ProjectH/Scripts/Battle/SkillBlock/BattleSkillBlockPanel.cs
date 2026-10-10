@@ -20,6 +20,18 @@ namespace ProjectH.Battle.SkillBlock // 스킬 블록 전투 영역
         private bool interactable; // 현재 블록 UI 입력 상태
         private bool lifecycleBlocked; // Disable 및 Destroy 중 Runtime UI 갱신 차단 상태
 
+        private void Awake() // 판과 칸에 정식 그림 입히기 (Day86 추가 — 씬에 놓인 색 상자를 바꾼다. 블록의 색은 스킬 종류라서 건드리지 않는다)
+        {
+            UiSkinKit.Panel(GetComponent<Image>(), UiSkin.PanelDark); // 판 = 어두운 창
+            Transform slotLayer = transform.Find("SlotLayer"); // 블록이 놓이는 칸 묶음
+            if (slotLayer == null) return; // 칸 없음
+
+            foreach (Transform slot in slotLayer) // 칸 순회
+            {
+                UiSkinKit.Panel(slot.GetComponent<Image>(), UiSkin.Slot, new Color(1f, 1f, 1f, 0.85f)); // 칸 = 은테 칸 (블록이 올라오면 가려진다)
+            }
+        }
+
         private void OnEnable() // 스킬 블록 패널 활성화 처리
         {
             lifecycleBlocked = false; // Runtime UI 갱신 허용

@@ -131,6 +131,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             SetRect(title.rectTransform, new Vector2(0.125f, 0f), new Vector2(0.40f, 1f)); // 제목 배치
             goldText = CreateText(bar.transform, "Gold", "● 0 G", 26, GoldColor, FontStyle.Bold, TextAnchor.MiddleRight); // 골드 표시
             SetRect(goldText.rectTransform, new Vector2(0.70f, 0f), new Vector2(0.985f, 1f)); // 골드 배치
+            UiSkinKit.TrailingIcon(goldText, "gold"); // 금화 아이콘 (Day86 — 숫자 오른쪽)
         }
 
         private void BuildBlacksmith(Transform parent) // 오른쪽 대장장이 스탠딩 + 대사 상자
@@ -354,7 +355,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             SaveData saveData = GetSave(); // 현재 저장
             DataManager dataManager = GetData(); // 데이터 관리자
-            goldText.text = $"● {GoldCurrencyService.GetGold(saveData):N0} G"; // 골드
+            goldText.text = UiSkinKit.HasCurrencyIcon(goldText) ? $"{GoldCurrencyService.GetGold(saveData):N0}" : $"● {GoldCurrencyService.GetGold(saveData):N0} G"; // 골드 (Day86 — 금화 아이콘이 있으면 숫자만)
             RefreshList(saveData, dataManager); // 장비 목록
             EquipmentData equipment = GetSelectedEquipment(out EquipmentInstanceSaveData instance); // 선택 장비
             RefreshOwner(saveData, dataManager, instance); // 장착자 초상

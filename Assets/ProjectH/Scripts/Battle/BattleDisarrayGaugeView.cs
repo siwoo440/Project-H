@@ -81,6 +81,7 @@ namespace ProjectH.Battle // 프로젝트 전투 영역
             background.raycastTarget = false; // 게이지 배경 클릭 차단 비활성화
 
             fillImage = RuntimeUiKit.CreateImage(background.transform, "GaugeFill", FillColor); // 게이지 채움 생성
+            UiSkinKit.Gauge(fillImage, 4f); // 정식 게이지 (Day86 — 몬스터 아래의 작은 막대, 상태별 색은 그대로 입혀진다)
             fillImage.raycastTarget = false; // 게이지 채움 클릭 차단 비활성화
             fillRect = fillImage.rectTransform; // 게이지 채움 RectTransform 저장
             fillRect.anchorMin = Vector2.zero; // 채움 최소 앵커 좌하단 설정

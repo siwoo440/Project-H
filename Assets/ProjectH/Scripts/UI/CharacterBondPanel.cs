@@ -32,6 +32,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = RuntimeUiKit.CreateImage(parent, "BondPanel", new Color(0.97f, 0.96f, 0.99f, 0.98f)); // 패널 배경
             RuntimeUiKit.SetRect(panel.rectTransform, new Vector2(0.18f, 0.10f), new Vector2(0.82f, 0.90f)); // 화면 중앙 배치
             panel.gameObject.AddComponent<Outline>().effectColor = new Color(0.55f, 0.40f, 0.80f, 0.8f); // 보라 외곽선
+            UiSkinKit.Panel(panel, UiSkin.PanelLight); // 정식 밝은 창 (Day85)
             CharacterBondPanel view = panel.gameObject.AddComponent<CharacterBondPanel>(); // 컴포넌트 추가
             view.onChanged = changedCallback; // 콜백 저장
             view.Build(); // 구성
@@ -44,6 +45,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             titleText = RuntimeUiKit.CreateText(transform, "Title", "결속", 22, TitleColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목
             RuntimeUiKit.SetRect(titleText.rectTransform, new Vector2(0.04f, 0.88f), new Vector2(0.80f, 0.97f)); // 제목 배치
             Button closeButton = CreateButton("CloseButton", "닫기", new Color(0.88f, 0.88f, 0.90f, 1f)); // 닫기
+            UiSkinKit.Button(closeButton, UiSkin.ButtonSecondary); // 정식 버튼 (Day85)
             RuntimeUiKit.SetRect((RectTransform)closeButton.transform, new Vector2(0.84f, 0.89f), new Vector2(0.97f, 0.97f)); // 닫기 배치
             closeButton.onClick.AddListener(Toggle); // 닫기 연결
             resourceText = RuntimeUiKit.CreateText(transform, "Resource", string.Empty, 16, new Color(0.35f, 0.20f, 0.50f, 1f), FontStyle.Bold, TextAnchor.MiddleLeft); // 결속 자원 문구
@@ -58,6 +60,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 int level = index + 1; // 단계 번호
                 float top = 0.79f - (index * 0.108f); // 세로 위치
                 Button stage = CreateButton($"BondStage_{level}", string.Empty, LockedColor); // 단계 버튼
+                UiSkinKit.Panel(stage.GetComponent<Image>(), UiSkin.Card, LockedColor); // 정식 카드 (Day85 — 단계 상태 색은 그대로 입혀진다)
                 RuntimeUiKit.SetRect((RectTransform)stage.transform, new Vector2(0.04f, top - 0.098f), new Vector2(0.96f, top)); // 버튼 배치
                 stage.onClick.AddListener(() => Raise(level)); // 올리기 연결
                 stageButtons.Add(stage); // 목록 등록

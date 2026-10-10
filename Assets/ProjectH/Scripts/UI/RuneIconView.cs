@@ -21,6 +21,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         public static Image Create(Transform parent, string name) // 아이콘 틀 생성 (어두운 칸 + 발광 원 + 글자)
         {
             Image frame = RuntimeUiKit.CreateImage(parent, name, new Color(0.10f, 0.10f, 0.14f, 1f)); // 어두운 칸
+            if (UiSkin.Apply(frame, UiSkin.Slot, 3f)) frame.color = Color.white; // 정식 칸 (Day85 — 아이템 칸과 같은 은테)
             frame.raycastTarget = false; // 입력 통과
             Image glow = RuntimeUiKit.CreateImage(frame.transform, "Glow", Color.white); // 발광 원
             glow.sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 채움 원

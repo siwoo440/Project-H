@@ -89,6 +89,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Button toTitle = RuntimeUiKit.CreateButton(card, "ToTitle", ButtonColor); // 타이틀 버튼
             RuntimeUiKit.SetRect(toTitle.GetComponent<RectTransform>(), new Vector2(0.36f, 0.07f), new Vector2(0.64f, 0.14f)); // 아래
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(toTitle.transform, "Label", "타이틀로", 24, Color.white, FontStyle.Bold).rectTransform); // 글자
+            UiSkinKit.Button(toTitle, UiSkin.ButtonTabOff); // 정식 버튼 (Day85)
             toTitle.onClick.AddListener(Finish); // 연결
             Text hint = RuntimeUiKit.CreateText(card, "Hint", "다른 선택을 하면 다른 결말을 볼 수 있습니다. 엔딩 기록과 설정은 새로 시작해도 남습니다.", 15, HintColor, FontStyle.Normal).Wrap(); // 안내
             RuntimeUiKit.SetRect(hint.rectTransform, new Vector2(0.12f, 0.01f), new Vector2(0.88f, 0.06f)); // 맨 아래

@@ -89,6 +89,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 int value = index; // 클릭용 번호
                 Button button = CreateButton(root, $"Filter_{index}", FilterLabels[index], new Color(0.90f, 0.90f, 0.92f, 1f)); // 필터 버튼
+                UiSkinKit.Toggle(button, false); // 정식 탭 (Day85 — 고른 필터는 갱신 때 그림을 바꾼다)
                 float left = 0.28f + (index * 0.14f); // 가로 위치
                 RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(left, 0.91f), new Vector2(left + 0.13f, 0.985f)); // 배치
                 button.onClick.AddListener(() => SetFilter(value)); // 필터 전환
@@ -98,6 +99,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = RuntimeUiKit.CreateImage(root, "DetailBox", new Color(0.86f, 0.86f, 0.88f, 1f)); // 상세 상자 (목업 회색 칸)
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.28f, 0.30f), new Vector2(0.98f, 0.895f)); // 배치
             box.gameObject.AddComponent<Outline>().effectColor = new Color(0.3f, 0.3f, 0.35f, 0.6f); // 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelInset); // 정식 안쪽 칸 (Day85)
             detailIcon = RuneIconView.Create(box.transform, "DetailIcon"); // 큰 아이콘
             RuntimeUiKit.SetRect(detailIcon.rectTransform, new Vector2(0.03f, 0.56f), new Vector2(0.22f, 0.96f)); // 배치
             nameText = CreateLabel(box.transform, "Name", 26, FontStyle.Bold, new Vector2(0.25f, 0.83f), new Vector2(0.98f, 0.96f)); // 이름
@@ -126,6 +128,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             GameObject scroll = new GameObject("RuneList", typeof(RectTransform), typeof(Image), typeof(ScrollRect)); // 스크롤
             scroll.transform.SetParent(root, false); // 부모 연결
             scroll.GetComponent<Image>().color = new Color(0.86f, 0.86f, 0.88f, 1f); // 회색 바탕
+            UiSkinKit.Panel(scroll.GetComponent<Image>(), UiSkin.PanelInset); // 정식 안쪽 칸 (Day85)
             RuntimeUiKit.SetRect((RectTransform)scroll.transform, new Vector2(0.015f, 0.10f), new Vector2(0.26f, 0.985f)); // 좌측 배치
             GameObject viewport = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask)); // 뷰포트
             viewport.transform.SetParent(scroll.transform, false); // 부모 연결
@@ -172,7 +175,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 bool unlocked = RuneService.IsSlotUnlocked(saveData, dataManager, characterId, index); // 해금 여부
                 RuneIconView.Apply(slotIcons[index], unlocked ? equipped[index] : null); // 아이콘
-                slotIcons[index].color = unlocked ? new Color(0.10f, 0.10f, 0.14f, 1f) : new Color(0.25f, 0.25f, 0.28f, 1f); // 잠김 회색
+                UiSkinKit.SetState(slotIcons[index], unlocked ? Color.white : UiSkinKit.DimTint, unlocked ? new Color(0.10f, 0.10f, 0.14f, 1f) : new Color(0.25f, 0.25f, 0.28f, 1f)); // 잠김 회색
                 slotLocks[index].text = unlocked ? (equipped[index] == null ? $"{index + 1}" : string.Empty) : $"잠김\n{RuneCatalog.GetSlotRequirement(index)}"; // 빈 칸 번호 또는 잠금 조건
                 slotStars[index].text = unlocked && equipped[index] != null ? RuneCatalog.GetStars(equipped[index].Grade) : string.Empty; // 별
                 slotOutlines[index].enabled = index == selectedSlot; // 선택 테두리
@@ -183,7 +186,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
             for (int index = 0; index < filterButtons.Count; index++) // 필터 강조
             {
-                filterButtons[index].GetComponent<Image>().color = index == filter ? SelectedColor : new Color(0.90f, 0.90f, 0.92f, 1f); // 선택 금색
+                if (!UiSkinKit.Toggle(filterButtons[index], index == filter)) filterButtons[index].GetComponent<Image>().color = index == filter ? SelectedColor : new Color(0.90f, 0.90f, 0.92f, 1f); // 선택 금색
             }
         }
 
@@ -199,6 +202,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 if (filter > 0 && (int)RuneCatalog.Get(rune.Kind).Category != filter - 1) continue; // 필터 제외
                 string runeId = rune.InstanceId; // 클릭용 ID
                 Button tile = RuntimeUiKit.CreateButton(listContent, $"Rune_{runeId}", new Color(0.97f, 0.97f, 0.98f, 1f)); // 칸
+                UiSkinKit.Panel(tile.GetComponent<Image>(), UiSkin.Card); // 정식 카드 (Day85 — 고른 룬의 금테는 아래에서 붙는다)
                 tile.onClick.AddListener(() => SelectRune(runeId)); // 선택
                 if (runeId == selectedRuneId) tile.gameObject.AddComponent<Outline>().effectColor = SelectedColor; // 선택 강조
                 Image icon = RuneIconView.Create(tile.transform, "Icon"); // 아이콘
@@ -365,6 +369,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private Button CreateAction(RectTransform root, string name, string label, int index, UnityEngine.Events.UnityAction action) // 하단 동작 버튼
         {
             Button button = CreateButton(root, name, label, new Color(0.80f, 0.86f, 0.96f, 1f)); // 버튼 생성
+            UiSkinKit.Button(button, UiSkin.ButtonSecondary); // 정식 버튼 (Day85)
             float left = 0.28f + (index * 0.1175f); // 가로 위치
             RuntimeUiKit.SetRect((RectTransform)button.transform, new Vector2(left, 0.195f), new Vector2(left + 0.11f, 0.285f)); // 배치
             button.onClick.AddListener(action); // 연결

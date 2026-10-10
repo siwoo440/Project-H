@@ -38,6 +38,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = RuntimeUiKit.CreateImage(parent, "AffinityRewardPanel", new Color(0.98f, 0.97f, 0.95f, 0.98f)); // 패널 배경 생성
             RuntimeUiKit.SetRect(panel.rectTransform, new Vector2(0.18f, 0.10f), new Vector2(0.82f, 0.90f)); // 화면 중앙 배치
             panel.gameObject.AddComponent<Outline>().effectColor = new Color(0.75f, 0.55f, 0.30f, 0.8f); // 금색 외곽선 적용
+            UiSkinKit.Panel(panel, UiSkin.PanelLight); // 정식 밝은 창 (Day85)
             CharacterAffinityRewardPanel view = panel.gameObject.AddComponent<CharacterAffinityRewardPanel>(); // 패널 컴포넌트 추가
             view.onClaimed = claimedCallback; // 수령 콜백 저장
             view.onPlayEvent = playEventCallback; // 개인 이벤트 보기 콜백 저장 (Day58 추가)
@@ -51,6 +52,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             titleText = RuntimeUiKit.CreateText(transform, "Title", "호감도 보상", 22, TitleColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목 생성
             RuntimeUiKit.SetRect(titleText.rectTransform, new Vector2(0.04f, 0.88f), new Vector2(0.80f, 0.97f)); // 제목 배치
             Button closeButton = CreateButton("CloseButton", "닫기", new Color(0.88f, 0.88f, 0.90f, 1f)); // 닫기 버튼 생성
+            UiSkinKit.Button(closeButton, UiSkin.ButtonSecondary); // 정식 버튼 (Day85)
             RuntimeUiKit.SetRect((RectTransform)closeButton.transform, new Vector2(0.84f, 0.89f), new Vector2(0.97f, 0.97f)); // 닫기 버튼 배치
             closeButton.onClick.AddListener(Toggle); // 닫기 이벤트 연결
 
@@ -58,6 +60,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 AffinityTier tier = AffinityRewardCatalog.All[index].Tier; // 단계 조회
                 Button tierButton = CreateButton($"TierReward_{tier}", string.Empty, LockedColor); // 단계 보상 버튼 생성
+                UiSkinKit.Panel(tierButton.GetComponent<Image>(), UiSkin.Card, LockedColor); // 정식 카드 (Day85 — 받기 · 받음 · 잠김 색은 그대로 입혀진다)
                 float top = 0.86f - (index * 0.135f); // 버튼 세로 위치 계산
                 RuntimeUiKit.SetRect((RectTransform)tierButton.transform, new Vector2(0.04f, top - 0.12f), new Vector2(0.96f, top)); // 버튼 배치
                 tierButton.onClick.AddListener(() => Claim(tier)); // 수령 이벤트 연결
@@ -78,6 +81,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 rowText.supportRichText = true; // 상태 색 표시
                 RuntimeUiKit.SetRect(rowText.rectTransform, new Vector2(0.04f, top - 0.058f), new Vector2(0.77f, top)); // 줄 문구 배치
                 Button rowButton = CreateButton($"EventPlay_{index}", "보기", LockedColor); // 보기 버튼 생성
+                UiSkinKit.Panel(rowButton.GetComponent<Image>(), UiSkin.Card, LockedColor); // 정식 카드 (Day85)
                 RuntimeUiKit.SetRect((RectTransform)rowButton.transform, new Vector2(0.79f, top - 0.056f), new Vector2(0.96f, top - 0.002f)); // 보기 버튼 배치
                 rowButton.onClick.AddListener(() => PlayEventRow(row)); // 보기 연결
                 eventRowTexts.Add(rowText); // 줄 문구 등록

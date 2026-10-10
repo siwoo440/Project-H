@@ -36,6 +36,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = RuntimeUiKit.CreateImage(transform, "Box", new Color(0.06f, 0.07f, 0.14f, 0.90f)); // 입력 상자 (Day71 — 별이 비치도록 살짝 투명한 남색)
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.28f, 0.34f), new Vector2(0.72f, 0.66f)); // 가운데
             box.gameObject.AddComponent<Outline>().effectColor = new Color(0.92f, 0.78f, 0.42f, 0.9f); // 금색 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelDark); // 정식 어두운 창 (Day85)
             Text title = RuntimeUiKit.CreateText(box.transform, "Title", "당신의 이름을 알려 주세요", 30, Color.white, FontStyle.Bold); // 제목
             RuntimeUiKit.SetRect(title.rectTransform, new Vector2(0.06f, 0.70f), new Vector2(0.94f, 0.90f)); // 위
             Text hint = RuntimeUiKit.CreateText(box.transform, "Hint", $"{HeroNameService.MaxLength}자까지 · 비우면 '{HeroNameService.DefaultName}'으로 시작합니다", 17, new Color(0.80f, 0.82f, 0.88f, 1f), FontStyle.Normal).Wrap(); // 안내
@@ -56,6 +57,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             RuntimeUiKit.SetRect(confirm.GetComponent<RectTransform>(), new Vector2(0.24f, 0.10f), new Vector2(0.76f, 0.28f)); // 아래
             Text confirmLabel = RuntimeUiKit.CreateText(confirm.transform, "Label", "이 이름으로 시작", 26, Color.white, FontStyle.Bold); // 버튼 글자
             RuntimeUiKit.Stretch(confirmLabel.rectTransform); // 버튼 채움
+            UiSkinKit.Button(confirm, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day85)
             confirm.onClick.AddListener(Confirm); // 확인 연결
             field.Select(); // 바로 입력 가능
             field.ActivateInputField(); // 커서 표시

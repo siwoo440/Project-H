@@ -128,24 +128,37 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         private void BuildTopBar(Transform parent) // 상단 바 (목업 : ◀ 캐릭터 · ? · 골드 · 설정)
         {
             Button backButton = CreateButton(parent, "BackButton", "◀  캐릭터", new Color(0.80f, 0.88f, 0.97f, 1f)); // 뒤로 버튼 (로비 복귀)
+            if (UiSkinKit.Button(backButton, UiSkin.ButtonSecondary)) UiSkinKit.LeadIcon(backButton, "back", "캐릭터"); // 정식 버튼과 뒤로 아이콘 (Day85)
             SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.012f, 0.925f), new Vector2(0.14f, 0.982f)); // 좌상단 배치
             backButton.onClick.AddListener(ReturnToLobby); // 로비 복귀 연결
             Button helpButton = CreateButton(parent, "HelpButton", "?", new Color(0.82f, 0.88f, 0.98f, 1f)); // 도움말 버튼
+            if (UiSkinKit.Button(helpButton, UiSkin.ButtonSecondary)) UiSkinKit.Glyph(helpButton, "help"); // 정식 버튼과 도움말 아이콘 (Day85)
             SetRect(helpButton.GetComponent<RectTransform>(), new Vector2(0.735f, 0.928f), new Vector2(0.77f, 0.98f)); // 배치
             helpButton.onClick.AddListener(ToggleHelp); // 도움말 연결
             Image goldPill = CreateImage(parent, "GoldPill", new Color(0.86f, 0.86f, 0.88f, 1f)); // 골드 표시 바탕
             SetRect(goldPill.rectTransform, new Vector2(0.78f, 0.93f), new Vector2(0.93f, 0.978f)); // 배치
             AddOutline(goldPill.gameObject); // 테두리
+            UiSkinKit.Panel(goldPill, UiSkin.PanelInset); // 정식 안쪽 칸 (Day85)
             Image coin = CreateImage(goldPill.transform, "Coin", new Color(1f, 0.80f, 0.25f, 1f)); // 동전 아이콘
             coin.sprite = RhythmCircleSpriteFactory.GetDiscSprite(); // 원형
             coin.preserveAspect = true; // 비율 유지
             SetRect(coin.rectTransform, new Vector2(0.03f, 0.10f), new Vector2(0.20f, 0.90f)); // 왼쪽 배치
             Text coinLabel = CreateText(coin.transform, "G", "G", 15, FontStyle.Bold, new Color(0.45f, 0.30f, 0.02f, 1f)); // 동전 글자
             Stretch(coinLabel.rectTransform); // 채움
+            Sprite goldIcon = UiIcon.Get("gold"); // 정식 금화 아이콘 (Day85)
+
+            if (goldIcon != null) // 아이콘 있음
+            {
+                coin.sprite = goldIcon; // 금화 그림
+                coin.color = Color.white; // 그림 색 그대로
+                coinLabel.text = string.Empty; // "G" 글자 숨김
+            }
+
             goldText = CreateText(goldPill.transform, "Gold", "0", 20, FontStyle.Bold, new Color(0.15f, 0.15f, 0.18f, 1f)); // 골드 수치
             goldText.alignment = TextAnchor.MiddleRight; // 오른쪽 정렬
             SetRect(goldText.rectTransform, new Vector2(0.22f, 0f), new Vector2(0.93f, 1f)); // 배치
             Button settingsButton = CreateButton(parent, "SettingsButton", "⚙", new Color(0.94f, 0.94f, 0.95f, 1f)); // 설정 버튼
+            if (UiSkinKit.Button(settingsButton, UiSkin.ButtonSecondary)) UiSkinKit.Glyph(settingsButton, "settings"); // 정식 버튼과 설정 아이콘 (Day85)
             SetRect(settingsButton.GetComponent<RectTransform>(), new Vector2(0.94f, 0.925f), new Vector2(0.985f, 0.982f)); // 우상단 배치
             settingsButton.onClick.AddListener(() => SetStatus("설정 화면은 설정·접근성 일차(Day71)에 연결됩니다.")); // 설정 안내
         }
@@ -157,6 +170,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             leftArea = (RectTransform)area.transform; // 저장
             SetRect(leftArea, new Vector2(0.015f, 0.03f), new Vector2(0.39f, 0.905f)); // 배치
             Button previousButton = CreateButton(leftArea, "PreviousCharacter", "◀", new Color(0.90f, 0.90f, 0.92f, 1f)); // 이전 캐릭터
+            if (UiSkinKit.Button(previousButton, UiSkin.ButtonSecondary)) UiSkinKit.Glyph(previousButton, "arrow_left"); // 정식 버튼과 화살표 아이콘 (Day85)
             SetRect(previousButton.GetComponent<RectTransform>(), new Vector2(0.14f, 0.93f), new Vector2(0.24f, 1f)); // 배치
             previousButton.onClick.AddListener(SelectPreviousCharacter); // 연결
             characterNameText = CreateText(leftArea, "CharacterName", "캐릭터", 26, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 이름
@@ -164,11 +178,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             characterLevelText = CreateText(leftArea, "CharacterLevel", "Lv. 1", 18, FontStyle.Bold, new Color(0.30f, 0.34f, 0.40f, 1f)); // 레벨
             SetRect(characterLevelText.rectTransform, new Vector2(0.60f, 0.93f), new Vector2(0.75f, 1f)); // 배치
             Button nextButton = CreateButton(leftArea, "NextCharacter", "▶", new Color(0.90f, 0.90f, 0.92f, 1f)); // 다음 캐릭터
+            if (UiSkinKit.Button(nextButton, UiSkin.ButtonSecondary)) UiSkinKit.Glyph(nextButton, "arrow_right"); // 정식 버튼과 화살표 아이콘 (Day85)
             SetRect(nextButton.GetComponent<RectTransform>(), new Vector2(0.76f, 0.93f), new Vector2(0.86f, 1f)); // 배치
             nextButton.onClick.AddListener(SelectNextCharacter); // 연결
             Image frame = CreateImage(leftArea, "IllustrationFrame", Color.white); // 흰색 일러스트 칸 (목업)
             SetRect(frame.rectTransform, new Vector2(0.14f, 0.15f), new Vector2(0.86f, 0.91f)); // 배치
             AddOutline(frame.gameObject); // 테두리
+            UiSkinKit.Panel(frame, UiSkin.Card); // 정식 카드 (Day85 · 일러스트 칸)
             portraitImage = CreateImage(frame.transform, "Portrait", Color.white); // 일러스트
             portraitImage.preserveAspect = true; // 비율 유지
             SetRect(portraitImage.rectTransform, new Vector2(0.04f, 0.02f), new Vector2(0.96f, 0.98f)); // 칸 채움
@@ -185,15 +201,18 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 float left = 0.405f + (index * 0.117f); // 가로 위치
                 SetRect(tabButtons[index].GetComponent<RectTransform>(), new Vector2(left, 0.845f), new Vector2(left + 0.11f, 0.90f)); // 배치
                 AddOutline(tabButtons[index].gameObject); // 테두리
+                UiSkinKit.Toggle(tabButtons[index], false); // 정식 탭 (Day85 — 고른 탭은 SelectTab에서 그림을 바꾼다)
                 tabButtons[index].onClick.AddListener(() => SelectTab(tab)); // 탭 전환
             }
 
             Image frame = CreateImage(parent, "ContentFrame", new Color(0.97f, 0.97f, 0.98f, 1f)); // 바깥 틀 (목업 이중 테두리)
             SetRect(frame.rectTransform, new Vector2(0.405f, 0.03f), new Vector2(0.985f, 0.835f)); // 배치
             AddOutline(frame.gameObject); // 테두리
+            UiSkinKit.Panel(frame, UiSkin.PanelLight); // 정식 밝은 창 (Day85 · 내용 틀)
             Image inner = CreateImage(frame.transform, "Inner", new Color(0.93f, 0.93f, 0.94f, 1f)); // 안쪽 틀
             Stretch(inner.rectTransform, 8f); // 여백
             AddOutline(inner.gameObject); // 테두리
+            UiSkinKit.Panel(inner, UiSkin.PanelInset); // 정식 안쪽 칸 (Day85)
             statusText = CreateText(inner.transform, "Status", string.Empty, 16, FontStyle.Normal, new Color(0.25f, 0.28f, 0.32f, 1f)); // 공용 상태 문구
             statusText.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
             SetRect(statusText.rectTransform, new Vector2(0.02f, 0.005f), new Vector2(0.98f, 0.06f)); // 맨 아래 배치
@@ -222,7 +241,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 if (tab == EquipmentTabIndex) equipmentSlotRoot.SetActive(tab == index); // 장비 탭은 일러스트 둘레 장비 칸도 함께 (Day60 추가)
                 if (tab == RuneTabIndex) runeTab.SetVisible(tab == index); // 룬 탭은 일러스트 둘레 슬롯도 함께
                 else tabRoots[tab].gameObject.SetActive(tab == index); // 내용 표시
-                tabButtons[tab].GetComponent<Image>().color = tab == index ? new Color(0.78f, 0.86f, 0.97f, 1f) : new Color(0.97f, 0.97f, 0.98f, 1f); // 선택 강조
+                if (!UiSkinKit.Toggle(tabButtons[tab], tab == index)) tabButtons[tab].GetComponent<Image>().color = tab == index ? new Color(0.78f, 0.86f, 0.97f, 1f) : new Color(0.97f, 0.97f, 0.98f, 1f); // 선택 강조
             }
 
             if (helpPanel != null && helpPanel.activeSelf) helpText.text = GetHelpText(index); // 열린 도움말 갱신
@@ -266,6 +285,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             float left = 0.03f + (index * 0.24f); // 가로 위치
             SetRect(button.GetComponent<RectTransform>(), new Vector2(left, 0.12f), new Vector2(left + 0.22f, 0.21f)); // 배치
             AddOutline(button.gameObject); // 테두리
+            UiSkinKit.Button(button, UiSkin.Card, color); // 정식 카드 버튼 (Day85 — 기능마다 다른 옅은 색은 그대로 입힌다)
             button.onClick.AddListener(action); // 연결
         }
 
@@ -273,6 +293,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
         {
             BuildEquipmentSlots(); // 일러스트 둘레 장비 5칸 (Day60 — 룬 슬롯과 같은 배치)
             Button allButton = CreateButton(root, "EquipmentFilterAll", "전체 보기", new Color(0.90f, 0.90f, 0.92f, 1f)); // 슬롯 필터 해제 (Day60 추가)
+            UiSkinKit.Button(allButton, UiSkin.ButtonSecondary); // 정식 버튼 (Day85)
             SetRect(allButton.GetComponent<RectTransform>(), new Vector2(0.40f, 0.915f), new Vector2(0.54f, 0.975f)); // 배치
             allButton.onClick.AddListener(ClearEquipmentFilter); // 연결
             Text inventoryLabel = CreateText(root, "InventoryLabel", "보유 장비", 20, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 목록 제목
@@ -287,6 +308,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image detailPanel = CreateImage(root, "DetailPanel", new Color(0.97f, 0.97f, 0.98f, 1f)); // 상세 칸
             SetRect(detailPanel.rectTransform, new Vector2(0.02f, 0.46f), new Vector2(0.54f, 0.90f)); // 배치 (Day60 상단 슬롯 버튼 제거로 확장)
             AddOutline(detailPanel.gameObject); // 테두리
+            UiSkinKit.Panel(detailPanel, UiSkin.Card); // 정식 카드 (Day85)
             detailTitleText = CreateText(detailPanel.transform, "DetailTitle", "장비를 선택하세요", 22, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 이름
             detailTitleText.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
             SetRect(detailTitleText.rectTransform, new Vector2(0.04f, 0.80f), new Vector2(0.72f, 0.97f)); // 배치
@@ -300,6 +322,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image comparisonPanel = CreateImage(root, "ComparisonPanel", new Color(0.90f, 0.93f, 0.96f, 1f)); // 비교 칸
             SetRect(comparisonPanel.rectTransform, new Vector2(0.02f, 0.12f), new Vector2(0.54f, 0.44f)); // 배치
             AddOutline(comparisonPanel.gameObject); // 테두리
+            UiSkinKit.Panel(comparisonPanel, UiSkin.PanelInset); // 정식 안쪽 칸 (Day85)
             Text comparisonLabel = CreateText(comparisonPanel.transform, "ComparisonLabel", "변경 전 → 변경 후", 17, FontStyle.Bold, new Color(0.08f, 0.10f, 0.13f, 1f)); // 비교 제목
             SetRect(comparisonLabel.rectTransform, new Vector2(0.04f, 0.84f), new Vector2(0.96f, 0.98f)); // 배치
             comparisonText = CreateText(comparisonPanel.transform, "ComparisonText", "장비를 선택하면 예상 능력치가 표시됩니다.", 14, FontStyle.Normal, new Color(0.18f, 0.22f, 0.27f, 1f)); // 비교
@@ -308,6 +331,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             comparisonText.verticalOverflow = VerticalWrapMode.Truncate; // 세로 제한
             SetRect(comparisonText.rectTransform, new Vector2(0.05f, 0.03f), new Vector2(0.95f, 0.84f)); // 배치
             actionButton = CreateButton(root, "ActionButton", "사용 불가", new Color(0.72f, 0.82f, 0.72f, 1f)); // 장착 버튼
+            UiSkinKit.Button(actionButton, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day85)
             SetRect(actionButton.GetComponent<RectTransform>(), new Vector2(0.70f, 0.02f), new Vector2(0.98f, 0.10f)); // 배치
             actionButtonText = actionButton.GetComponentInChildren<Text>(); // 라벨
             actionButton.onClick.AddListener(ApplySelectedEquipmentAction); // 연결
@@ -325,6 +349,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 Button button = RuntimeUiKit.CreateButton(equipmentSlotRoot.transform, $"EquipSlot_{slot}", new Color(0.12f, 0.12f, 0.16f, 1f)); // 칸 버튼
                 SetRect(button.GetComponent<RectTransform>(), CharacterSlotLayout.GetMin(index), CharacterSlotLayout.GetMax(index)); // 룬 슬롯과 같은 자리
                 equipmentSlotFrames[index] = button.GetComponent<Image>(); // 틀 저장
+                UiSkin.Apply(equipmentSlotFrames[index], UiSkin.Slot, 3f); // 정식 칸 (Day85 — 고른 칸을 나타내는 외곽선은 그대로 둔다)
                 Outline outline = button.gameObject.AddComponent<Outline>(); // 테두리
                 outline.effectColor = new Color(0.85f, 0.85f, 0.9f, 0.6f); // 연회색
                 outline.effectDistance = new Vector2(2f, -2f); // 두께
@@ -353,7 +378,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 EquipmentSlot slot = EquipmentSlotInfo.All[index]; // 칸 슬롯
                 EquipmentInstanceSaveData instance = CharacterEquipmentService.GetEquippedInstance(saveData, characterSave.CharacterId, slot); // 장착 장비
                 EquipmentData equipment = instance == null ? null : dataManager.GetEquipment(instance.EquipmentId); // 원본
-                equipmentSlotFrames[index].color = equipment == null ? new Color(0.12f, 0.12f, 0.16f, 1f) : GetGradeColor(equipment.Grade); // 등급 색
+                UiSkinKit.SetState(equipmentSlotFrames[index], equipment == null ? Color.white : Color.Lerp(GetGradeColor(equipment.Grade), Color.white, 0.45f), equipment == null ? new Color(0.12f, 0.12f, 0.16f, 1f) : GetGradeColor(equipment.Grade)); // 등급 색 (Day85 — 정식 칸에는 밝게 섞어 입힌다)
                 equipmentSlotNames[index].text = equipment == null ? string.Empty : EquipmentUpgradeCatalog.FormatName(equipment.DisplayName, instance); // 장비 이름 (Day61 강화·초월 표시)
                 Sprite slotArt = equipment == null ? null : ItemIconArt.Get(dataManager.GetItem(equipment.Id)); // 장착 장비 아이콘 (Day80 — 없으면 글자 그대로)
                 equipmentSlotIcons[index].sprite = slotArt; // 아이콘 적용
@@ -393,11 +418,13 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = CreateImage(parent, "HelpPanel", new Color(1f, 1f, 1f, 0.98f)); // 창 배경
             SetRect(panel.rectTransform, new Vector2(0.30f, 0.25f), new Vector2(0.70f, 0.80f)); // 가운데 배치
             AddOutline(panel.gameObject); // 테두리
+            UiSkinKit.Panel(panel, UiSkin.PanelLight); // 정식 밝은 창 (Day85 · 도움말)
             helpText = CreateText(panel.transform, "HelpText", string.Empty, 17, FontStyle.Normal, new Color(0.12f, 0.12f, 0.16f, 1f)); // 도움말 문구
             helpText.alignment = TextAnchor.UpperLeft; // 왼쪽 위 정렬
             helpText.horizontalOverflow = HorizontalWrapMode.Wrap; // 줄바꿈
             SetRect(helpText.rectTransform, new Vector2(0.05f, 0.14f), new Vector2(0.95f, 0.95f)); // 배치
             Button close = CreateButton(panel.transform, "CloseHelp", "닫기", new Color(0.88f, 0.88f, 0.90f, 1f)); // 닫기
+            UiSkinKit.Button(close, UiSkin.ButtonSecondary); // 정식 버튼 (Day85)
             SetRect(close.GetComponent<RectTransform>(), new Vector2(0.38f, 0.03f), new Vector2(0.62f, 0.11f)); // 배치
             close.onClick.AddListener(ToggleHelp); // 연결
             helpPanel = panel.gameObject; // 저장
@@ -543,6 +570,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             scrollImage.color = new Color(0.92f, 0.92f, 0.92f, 1f); // 스크롤 배경 색상 적용
             SetRect(scrollObject.GetComponent<RectTransform>(), new Vector2(0.56f, 0.13f), new Vector2(0.98f, 0.90f)); // 오른쪽 장비 스크롤 영역 배치
             AddOutline(scrollObject); // 스크롤 영역 외곽선 추가
+            UiSkinKit.Panel(scrollImage, UiSkin.PanelInset); // 정식 안쪽 칸 (Day85)
             GameObject viewportObject = new GameObject("Viewport", typeof(RectTransform), typeof(Image), typeof(Mask)); // 스크롤 뷰포트 생성
             viewportObject.transform.SetParent(scrollObject.transform, false); // 스크롤 뷰포트 부모 연결
             Image viewportImage = viewportObject.GetComponent<Image>(); // 뷰포트 이미지 조회
@@ -734,6 +762,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
                 string grade = equipment == null ? string.Empty : GetGradeStars(equipment.Grade); // 장비 등급 별 문구 생성
                 string optionSummary = equipment == null ? "원본 데이터 없음" : BuildCompactStatDescription(equipment); // 장비 옵션 축약 문구 생성
                 Button itemButton = CreateButton(inventoryContent, $"Equipment_{index}", $"[{slotName}] {grade} {equipmentName}\n{optionSummary}\n{state}", new Color(0.90f, 0.90f, 0.90f, 1f)); // 장비 목록 버튼 생성
+                UiSkinKit.Panel(itemButton.GetComponent<Image>(), UiSkin.Card); // 정식 카드 (Day85)
                 RectTransform itemRect = itemButton.GetComponent<RectTransform>(); // 장비 버튼 RectTransform 조회
                 itemRect.sizeDelta = new Vector2(0f, 82f); // 장비 버튼 높이 설정
                 LayoutElement layoutElement = itemButton.gameObject.AddComponent<LayoutElement>(); // 장비 버튼 레이아웃 요소 추가
@@ -743,7 +772,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
 
                 if (string.Equals(selectedInstanceId, instance.InstanceId, StringComparison.Ordinal)) // 현재 선택 장비 여부 확인
                 {
-                    itemButton.GetComponent<Image>().color = new Color(0.75f, 0.86f, 0.94f, 1f); // 선택 장비 버튼 강조
+                    UiSkinKit.SetSelected(itemButton.GetComponent<Image>(), true, new Color(0.75f, 0.86f, 0.94f, 1f), new Color(0.90f, 0.90f, 0.90f, 1f)); // 선택 장비 버튼 강조 (Day85 — 정식 카드는 금빛)
                 }
             }
         }

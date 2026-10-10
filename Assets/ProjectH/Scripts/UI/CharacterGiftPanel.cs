@@ -39,6 +39,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image panel = RuntimeUiKit.CreateImage(parent, "GiftPanel", new Color(0.98f, 0.97f, 0.95f, 0.98f)); // 패널 배경 생성
             RuntimeUiKit.SetRect(panel.rectTransform, new Vector2(0.18f, 0.10f), new Vector2(0.82f, 0.90f)); // 화면 중앙 배치
             panel.gameObject.AddComponent<Outline>().effectColor = new Color(0.80f, 0.45f, 0.55f, 0.8f); // 분홍 외곽선 적용
+            UiSkinKit.Panel(panel, UiSkin.PanelLight); // 정식 밝은 창 (Day85)
             CharacterGiftPanel view = panel.gameObject.AddComponent<CharacterGiftPanel>(); // 패널 컴포넌트 추가
             view.onChanged = changedCallback; // 갱신 콜백 저장
             view.onOpenReward = openRewardCallback; // 보상 바로가기 콜백 저장
@@ -52,6 +53,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             titleText = RuntimeUiKit.CreateText(transform, "Title", "선물하기", 22, TitleColor, FontStyle.Bold, TextAnchor.MiddleLeft); // 제목 생성
             RuntimeUiKit.SetRect(titleText.rectTransform, new Vector2(0.04f, 0.88f), new Vector2(0.80f, 0.97f)); // 제목 배치
             Button closeButton = CreateButton("CloseButton", "닫기", new Color(0.88f, 0.88f, 0.90f, 1f)); // 닫기 버튼 생성
+            UiSkinKit.Button(closeButton, UiSkin.ButtonSecondary); // 정식 버튼 (Day85)
             RuntimeUiKit.SetRect((RectTransform)closeButton.transform, new Vector2(0.84f, 0.89f), new Vector2(0.97f, 0.97f)); // 닫기 버튼 배치
             closeButton.onClick.AddListener(Toggle); // 닫기 이벤트 연결
             dailyText = RuntimeUiKit.CreateText(transform, "DailyText", string.Empty, 16, new Color(0.20f, 0.35f, 0.55f, 1f), FontStyle.Bold, TextAnchor.MiddleLeft); // 오늘 선물 횟수 문구 생성
@@ -61,6 +63,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             {
                 string itemId = GiftPreferenceCatalog.AllGiftIds[index]; // 선물 ID 조회
                 Button giftButton = CreateButton($"Gift_{itemId}", itemId, UnknownColor); // 선물 버튼 생성
+                UiSkinKit.Panel(giftButton.GetComponent<Image>(), UiSkin.Card, UnknownColor); // 정식 카드 (Day85 — 취향 색은 옅은 색이라 카드 위에 그대로 입혀진다)
                 int column = index % 2; // 2열 배치 열 번호
                 int row = index / 2; // 2열 배치 행 번호
                 float top = 0.78f - (row * 0.165f); // 버튼 세로 위치 계산
@@ -79,6 +82,7 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             devGrantButton.onClick.AddListener(GrantDemoGifts); // 테스트 지급 이벤트 연결
             DevelopmentFeatures.HideInRelease(devGrantButton); // 출시 빌드에서는 테스트 버튼 숨김
             rewardShortcutButton = CreateButton("RewardShortcut", "받을 수 있는 호감도 보상이 있어요  ▶", new Color(1f, 0.86f, 0.46f, 1f)); // 호감도 보상 바로가기 버튼 생성
+            UiSkinKit.Button(rewardShortcutButton, UiSkin.ButtonPrimary); // 정식 주요 버튼 (Day85)
             RuntimeUiKit.SetRect((RectTransform)rewardShortcutButton.transform, new Vector2(0.50f, 0.105f), new Vector2(0.96f, 0.185f)); // 바로가기 버튼 배치
             rewardShortcutButton.onClick.AddListener(() => onOpenReward?.Invoke()); // 보상 패널 열기 연결
             rewardShortcutButton.gameObject.SetActive(false); // 초기 숨김

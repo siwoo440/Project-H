@@ -91,6 +91,30 @@ namespace ProjectH.Tests.EditMode // 편집 모드 테스트 영역
             Assert.That(frame.color.r, Is.GreaterThan(0.5f)); // 어두운 색을 그대로 곱하지 않는다
         }
 
+        [Test] // 룬 칸 : 아이템 칸과 같은 정식 칸 그림을 쓰고 그림 색 그대로 둔다 (Day85)
+        public void RuneIcon_UsesSlotSkin() // 룬 칸 테스트
+        {
+            Image frame = RuneIconView.Create(root.transform, "Rune"); // 룬 칸
+            Assert.That(frame.sprite, Is.SameAs(UiSkin.Get(UiSkin.Slot))); // 정식 칸
+            Assert.That(frame.color, Is.EqualTo(Color.white)); // 어두운 상자 색을 곱하지 않는다
+            Assert.That(() => RuneIconView.Apply(frame, null), Throws.Nothing); // 빈 칸도 안전
+        }
+
+        [Test] // 옅은 상태 색(선물 취향 · 보상 단계)은 카드 그림 위에 그대로 입혀도 서로 구분된다 (Day85)
+        public void PastelStateColors_StayDistinctOnCards() // 옅은 상태 색 테스트
+        {
+            Color love = new Color(1f, 0.80f, 0.86f, 1f); // 아주 좋아함 분홍
+            Color like = new Color(0.84f, 0.94f, 0.82f, 1f); // 좋아함 연두
+            Image loveCard = RuntimeUiKit.CreateImage(root.transform, "Love", love); // 분홍 카드
+            Image likeCard = RuntimeUiKit.CreateImage(root.transform, "Like", like); // 연두 카드
+            Assert.That(UiSkinKit.Panel(loveCard, UiSkin.Card, love), Is.True); // 카드 + 분홍
+            Assert.That(UiSkinKit.Panel(likeCard, UiSkin.Card, like), Is.True); // 카드 + 연두
+            Assert.That(loveCard.sprite, Is.SameAs(likeCard.sprite)); // 같은 카드 그림
+            Assert.That(loveCard.color, Is.Not.EqualTo(likeCard.color)); // 색은 서로 다름
+            Assert.That(loveCard.color.r, Is.GreaterThan(loveCard.color.g)); // 분홍은 붉은 쪽
+            Assert.That(likeCard.color.g, Is.GreaterThan(likeCard.color.r)); // 연두는 초록 쪽
+        }
+
         private static Button CreateButton(Transform parent, string name, string label) // 테스트용 버튼
         {
             Button button = RuntimeUiKit.CreateButton(parent, name, Color.white); // 버튼

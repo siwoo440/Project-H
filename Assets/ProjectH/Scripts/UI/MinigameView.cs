@@ -60,12 +60,14 @@ namespace ProjectH.UI // 프로젝트 UI 영역
             Image box = RuntimeUiKit.CreateImage(transform, "Box", BoxColor); // 놀이판 상자
             RuntimeUiKit.SetRect(box.rectTransform, new Vector2(0.14f, 0.10f), new Vector2(0.86f, 0.92f)); // 가운데
             box.gameObject.AddComponent<Outline>().effectColor = new Color(0.86f, 0.66f, 0.30f, 0.85f); // 금색 테두리
+            UiSkinKit.Panel(box, UiSkin.PanelDark); // 정식 어두운 창 (Day85)
             headerText = RuntimeUiKit.CreateText(box.transform, "Header", "야시장 놀이판", 30, Color.white, FontStyle.Bold); // 제목
             RuntimeUiKit.SetRect(headerText.rectTransform, new Vector2(0.04f, 0.90f), new Vector2(0.80f, 0.98f)); // 위
             headerText.alignment = TextAnchor.MiddleLeft; // 왼쪽 정렬
             Button close = RuntimeUiKit.CreateButton(box.transform, "Close", SubColor); // 닫기 버튼
             RuntimeUiKit.SetRect(close.GetComponent<RectTransform>(), new Vector2(0.82f, 0.90f), new Vector2(0.97f, 0.98f)); // 오른쪽 위
             RuntimeUiKit.Stretch(RuntimeUiKit.CreateText(close.transform, "Label", "닫기", 20, Color.white, FontStyle.Bold).rectTransform); // 버튼 글자
+            UiSkinKit.Button(close, UiSkin.ButtonTabOff); // 정식 버튼 (Day85)
             close.onClick.AddListener(Close); // 닫기 연결
             Image bodyImage = RuntimeUiKit.CreateImage(box.transform, "Body", new Color(0f, 0f, 0f, 0f)); // 내용 영역 (투명)
             RuntimeUiKit.SetRect(bodyImage.rectTransform, new Vector2(0.04f, 0.11f), new Vector2(0.97f, 0.88f)); // 가운데
